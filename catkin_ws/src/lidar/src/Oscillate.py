@@ -17,6 +17,9 @@ def map(x, in_min, in_max, out_min, out_max):
 def map_angle(angle):
     return map(angle, 0, 180, 1000, 2000)
 
+def map_time(time):
+    return 5000000 + (100-time) * 100000
+
 def callback(config, level):
     global up, down, speed, enable
     rospy.logdebug("received reconfigure call")
@@ -32,7 +35,7 @@ def callback(config, level):
 def oscillate(event):
     rospy.loginfo("Starting oscillations")
     global rpi
-    global up, down, enable
+    global up, down, enable, speed
 
     pi = None
     try:
@@ -44,15 +47,12 @@ def oscillate(event):
         rospy.logerr("Could not load the pigpio module, will not oscillate")
 
     while not rospy.is_shutdown():
-        print "Loop top"
-        time = rospy.Duration(1, 0)
+        time = rospy.Duration(0, map_time(speed))
         if (rpi and enable) :
             for x in range(up, down):
-                print x
                 pi.set_servo_pulsewidth(18, map_angle(x))
                 rospy.sleep(time)
-            for x in range(down, up):
-                print x
+            for x in range(down, up, -1):
                 pi.set_servo_pulsewidth(18, map_angle(x))
                 rospy.sleep(time)
 
