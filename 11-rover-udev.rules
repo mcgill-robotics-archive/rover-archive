@@ -2,7 +2,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", SYMLINK+="
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ahrs", MODE="0666"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="lidar", MODE="0666"
 
-SUBSYSTEMS=="usb", ATTRS{serial}=="55431313438351F001D0",ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="0042", SYMLINK+="mega_drive", MODE="0666"
+SUBSYSTEMS=="usb", ATTRS{serial}=="9533335393635180B192",ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0042", SYMLINK+="mega_drive", MODE="0666"
 SUBSYSTEMS=="usb", ATTRS{serial}=="9533335393635110A0D0",ATTRS{idVendor}=="2341", ATTRS{idProduct}=="0042", SYMLINK+="mega_arm", MODE="0666"
 SUBSYSTEMS=="usb", ATTRS{serial}=="7543535313835161D180",ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="0043", SYMLINK+="uno_science", MODE="0666"
 
