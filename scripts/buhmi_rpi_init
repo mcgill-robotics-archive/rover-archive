@@ -1,8 +1,8 @@
 #!/bin/bash
 
 source /opt/ros/jade/setup.bash
-source /home/david/rover/catkin_ws/devel/setup.bash
-export ROS_WORKSPACE=/home/david/rover/catkin_ws
+source /home/ubuntu/rover/catkin_ws/devel/setup.bash
+export ROS_WORKSPACE=/home/ubuntu/rover/catkin_ws
 export ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH}:${ROS_WORKSPACE}
 
-roslaunch /home/david/rover/catkin_ws/launch/rpi.launch
+roslaunch /home/ubuntu/rover/catkin_ws/launch/rpi.launch

@@ -18,16 +18,16 @@
 # Do NOT "set -e"
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
-PATH=/sbin:/usr/sbin:/bin:/usr/bin:/home/david/rover/scripts
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/home/ubuntu/rover/scripts
 DESC="LineRanger controller"
 NAME=buhmi
-DAEMON=/home/david/rover/scripts/buhmi
+DAEMON=/home/ubuntu/rover/scripts/buhmi
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
-SCRIPT="/home/david/rover/scripts/buhmi"
-RUNAS=david
-LOGFILE=/home/david/log 
+SCRIPT="/home/ubuntu/rover/scripts/buhmi_rpi_init"
+RUNAS=ubuntu
+LOGFILE=/home/ubuntu/init_log 
 
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
