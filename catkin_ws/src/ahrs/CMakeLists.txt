@@ -15,12 +15,12 @@ include_directories(
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-include_directories(lib/include/ahrs)
-include_directories(lib/include/common)
+include_directories(libraries/include/ahrs)
+include_directories(libraries/include/common)
 include_directories(vendors/sbgCom/src)
 
 add_subdirectory(vendors)
-add_subdirectory(lib)
+add_subdirectory(libraries)
 
 ## Generate messages in the 'msg' folder
 add_message_files(
