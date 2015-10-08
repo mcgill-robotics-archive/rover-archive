@@ -8,6 +8,7 @@ if (NOT APPLE)
       std_msgs
       message_generation
       roscpp
+      tf
     )
 
     include_directories(
@@ -33,6 +34,11 @@ if(NOT APPLE)
       Ig500nGPS.msg
     )
 
+    ## Generate services in the 'srv' folder
+    add_service_files(
+      FILES
+      CenterWorldFrame.srv
+    )
 
     ## Generate added messages and services with any dependencies listed here
     generate_messages(
@@ -52,6 +58,8 @@ endif()
 add_executable(ahrs_node
     src/ahrs_node.cpp
 )
+add_executable(tf_broadcaster
+    src/tf_broadcaster.cpp
 )
 
 if (NOT APPLE)
@@ -66,6 +74,8 @@ target_link_libraries(
     ahrs_lib
     common
 )
+target_link_libraries(tf_broadcaster
+    ${catkin_LIBRARIES}
 )
 
 if(NOT APPLE)
