@@ -5,8 +5,11 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <ahrs/AhrsStdMsg.h>
+#include <ahrs/CenterWorldFrame.h>
 #include <tf/transform_broadcaster.h>
 
+ahrs::AhrsStdMsg msg;
+ahrs::AhrsStdMsg tmp_msg;
 
 void broadcast(
         const tf::Quaternion & quaternion, 
@@ -18,11 +21,27 @@ void broadcast(
 
     trf.setOrigin(vector);
     trf.setRotation(quaternion);
+    ROS_INFO("Sending frame %s", frame); 
     br.sendTransform(tf::StampedTransform(trf, ros::Time::now(), "map", frame));
+}
+
+bool serviceCallback( 
+        ahrs::CenterWorldFrame::Request & request, 
+        ahrs::CenterWorldFrame::Response & response)
+{
+    static tf::TransformBroadcaster br;
+    if (request.GO)
+    {
+        msg = tmp_msg;
+        response.Done = true;
+    }
+    return true;
 }
 
 void poseCallback(const ahrs::AhrsStdMsg & ahrsMsg)
 {
+    tmp_msg = ahrsMsg;
+
     broadcast(
         tf::Quaternion(
             ahrsMsg.pose.pose.orientation.x,
@@ -34,6 +53,15 @@ void poseCallback(const ahrs::AhrsStdMsg & ahrsMsg)
             ahrsMsg.pose.pose.position.y/10.0,
             ahrsMsg.pose.pose.position.z/10.0),
         "ahrs");
+    tf::Quaternion quaternion; 
+    broadcast(
+        quaternion,
+        tf::Vector3(
+            msg.pose.pose.position.x/10.0,
+            msg.pose.pose.position.y/10.0,
+            msg.pose.pose.position.z/10.0),
+        "world");
+
 }
 
 
@@ -45,6 +73,8 @@ int main(int argc, char ** argv)
     ros::NodeHandle nh;
 
     ros::Subscriber sub = nh.subscribe("ahrs_status", 10, &poseCallback);
+    ros::ServiceServer service = nh.advertiseService("center_world", &serviceCallback); 
+    
 
     ros::spin();
     return 0;
