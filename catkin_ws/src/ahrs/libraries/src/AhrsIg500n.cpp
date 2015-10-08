@@ -4,8 +4,6 @@
 
 #include "AhrsIg500n.h"
 #include "stdio.h"
-#include "ros/ros.h"
-
 
 using namespace lineranger::ahrs;
 
@@ -21,10 +19,16 @@ AhrsIg500n::AhrsIg500n(const char * deviceName, uint32 baudRate) {
         throw e;
     }
 
-    mError = sbgSetDefaultOutputMask(mProtocolHandle, SBG_OUTPUT_EULER |
-                                                      SBG_OUTPUT_GPS_POSITION |
-                                                      SBG_OUTPUT_VELOCITY |
-                                                      SBG_OUTPUT_GPS_TRUE_HEADING);
+    mError = sbgSetDefaultOutputMask(mProtocolHandle, 
+                                     SBG_OUTPUT_GPS_POSITION |
+                                     SBG_OUTPUT_GPS_NAVIGATION |
+                                     SBG_OUTPUT_GPS_INFO |
+                                     SBG_OUTPUT_POSITION |
+                                     SBG_OUTPUT_VELOCITY |
+                                     SBG_OUTPUT_DEVICE_STATUS |
+                                     SBG_OUTPUT_GPS_TRUE_HEADING |
+                                     SBG_OUTPUT_QUATERNION);
+
     if (mError != SBG_NO_ERROR) {
         sbgComErrorToString(mError, mErrorMsg);
         std::runtime_error e(mErrorMsg);
@@ -101,14 +105,27 @@ void AhrsIg500n::continuousErrorCallback(SbgProtocolHandleInt *pHandler, SbgErro
 
 void AhrsIg500n::continuousCallback(SbgProtocolHandleInt *handler, SbgOutput *pOutput){
 
-    boost::mutex::scoped_lock lock(mMutex);AhrsStatus status;
+    boost::mutex::scoped_lock lock(mMutex);
+
     mStatus.gpsAltitude = pOutput->gpsAltitude;
     mStatus.gpsLatitude = pOutput->gpsLatitude;
     mStatus.gpsLongitude = pOutput->gpsLongitude;
-    mStatus.heading = pOutput->gpsTrueHeading;
-    mStatus.roll = pOutput->stateEuler[0];
-    mStatus.pitch = pOutput->stateEuler[1];
-    mStatus.yaw = pOutput->stateEuler[2];
-    memcpy(mStatus.velocity, pOutput->velocity, 3);
 
+    mStatus.gpsTrueHeading = pOutput->gpsTrueHeading;
+    mStatus.gpsHeading = pOutput->gpsHeading;
+
+    for (int i = 0; i < 3; i++)
+    {
+        mStatus.velocity[i] = pOutput->velocity[i];
+        mStatus.position[i] = pOutput->position[i];
+        mStatus.gpsVelocity[i] = pOutput->gpsVelocity[i];
+        mStatus.quaternion[i] = pOutput->stateQuat[i];
+    }
+    mStatus.quaternion[3] = pOutput->stateQuat[3];
+
+    mStatus.gpsFlags = pOutput->gpsFlags;
+    mStatus.gpsNbSat = pOutput->gpsNbSats;
+    mStatus.deviceStatus = pOutput->deviceStatus;
+
+    //std::cout << pOutput->gpsAltitude << ", " << pOutput->gpsLatitude << ", " << pOutput->gpsLongitude <<std::endl;
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <time.h>
 #include "AhrsConfig.h"
+#include <sbgCom.h>
 
 namespace lineranger
 {
@@ -16,6 +17,10 @@ namespace ahrs
  * This structure collects all the data output from the AHRS device.
  */
 typedef struct _AhrsStatus {
+ 
+    /// Angle representation in quaternions
+    float quaternion[4];   
+    
     /// Longitude in degrees (1e-7)
     int32_t gpsLongitude;
     /// Latitude in degrees (1e-7)
@@ -23,18 +28,24 @@ typedef struct _AhrsStatus {
     /// Height above sea level in mm
     int32_t gpsAltitude;
 
-    /// The pitch angle in radians from the euler angles
-    float pitch;
-    /// The roll angle in radians from the euler angles
-    float roll;
-    /// The yaw angle in radians from the euler angles
-    float yaw;
+    /// 3d velocity cm/s in north east down coordinate
+    int32_t gpsVelocity[3];
 
+    uint8_t gpsFlags;
+    uint8_t gpsNbSat;
+
+    /// GPS True heading value. (1e-5 unit)
+    int32_t gpsTrueHeading;
+    /// 2D GPS computed heading in degrees
+    int32_t gpsHeading;
+
+    uint32_t deviceStatus;
+
+    /// position in NED coordinates in (degrees, degrees, meters)
+    double position[3];
     /// 3d velocity in device coordinate and in m/s
     float velocity[3];
 
-    /// GPS True heading accuracy value. (1e-5 unit)
-    int32_t heading;
 } AhrsStatus;
 
 
