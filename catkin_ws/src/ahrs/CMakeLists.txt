@@ -29,7 +29,6 @@ if(NOT APPLE)
     ## Generate messages in the 'msg' folder
     add_message_files(
       FILES
-      AhrsStatusMessage.msg
       AhrsStdMsg.msg
       Ig500nGPS.msg
     )
