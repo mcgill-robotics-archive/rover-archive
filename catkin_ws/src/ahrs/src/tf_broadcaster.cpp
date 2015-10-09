@@ -21,7 +21,7 @@ void broadcast(
 
     trf.setOrigin(vector);
     trf.setRotation(quaternion);
-    ROS_INFO("Sending frame %s", frame); 
+
     br.sendTransform(tf::StampedTransform(trf, ros::Time::now(), "map", frame));
 }
 
