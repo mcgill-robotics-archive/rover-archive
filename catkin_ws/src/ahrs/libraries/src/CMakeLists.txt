@@ -1,6 +1,3 @@
-include_directories(${COM_HEADER})
-include_directories(${SBG_BASE})
-
 add_library(common STATIC
     PeriodicThread.cpp
     ../include/common/PeriodicThread.h
