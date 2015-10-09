@@ -95,6 +95,9 @@ if(NOT APPLE)
     #############
     
     catkin_add_gtest(utest test/ahrs_unit_test.cpp)
-    target_link_libraries(utest ${catkin_LIBRARIES} ahrs_lib)
+    target_link_libraries(utest 
+        ${catkin_LIBRARIES} 
+        ${BOOST_THREAD_LIBRARIES} 
+        ahrs_lib)
 
 endif()
