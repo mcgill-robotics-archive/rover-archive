@@ -1,7 +1,3 @@
-//
-// Created by David Lavoie-Boutin on 05/05/15.
-//
-
 #ifndef LINERANGER_AHRS_H
 #define LINERANGER_AHRS_H
 
@@ -41,12 +37,36 @@ typedef struct _AhrsStatus {
     int32_t heading;
 } AhrsStatus;
 
+
+/**
+ * \brief Interface to the ahrs library
+ *
+ * Point of entry is the createAhrs static method.
+ */
 class Ahrs {
 public:
 
+    /**
+     * \brief Pure virtual method that needs to be implemented by each implementation of this interface
+     *
+     * \return Returns a structure contaiting all the pertinant information provided by the device
+     */
     virtual AhrsStatus getStatus() = 0;
+
+    /**
+     * \brief Point of entry to the interface
+     *
+     * This method instantiates the proper implementation of the ahrs based on the configuration object received
+     *
+     * Returns a raw pointer to an AHRS object. This pointer must be properly managed to avoid memory leaks.
+     */
     static Ahrs* createAhrs(const AhrsConfig& config);
+
+    /**
+     * \brief Destructor.
+     */
     virtual ~Ahrs();
+
 protected:
 
     Ahrs();
