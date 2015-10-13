@@ -88,4 +88,15 @@ if(NOT APPLE)
       LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
       RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     )
+
+    #############
+    ## Testing ##
+    #############
+    
+    catkin_add_gtest(utest test/ahrs_unit_test.cpp)
+    target_link_libraries(utest 
+        ${catkin_LIBRARIES} 
+        ${BOOST_THREAD_LIBRARIES} 
+        ahrs_lib)
+
 endif()
