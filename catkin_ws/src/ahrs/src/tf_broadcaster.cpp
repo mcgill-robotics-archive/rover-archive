@@ -49,17 +49,17 @@ void poseCallback(const ahrs::AhrsStdMsg & ahrsMsg)
             ahrsMsg.pose.pose.orientation.z,
             ahrsMsg.pose.pose.orientation.w),
         tf::Vector3(
-            ahrsMsg.pose.pose.position.x/10.0,
-            ahrsMsg.pose.pose.position.y/10.0,
-            ahrsMsg.pose.pose.position.z/10.0),
+            ahrsMsg.pose.pose.position.x,
+            ahrsMsg.pose.pose.position.y,
+            ahrsMsg.pose.pose.position.z),
         "ahrs");
     tf::Quaternion quaternion; 
     broadcast(
         quaternion,
         tf::Vector3(
-            msg.pose.pose.position.x/10.0,
-            msg.pose.pose.position.y/10.0,
-            msg.pose.pose.position.z/10.0),
+            msg.pose.pose.position.x,
+            msg.pose.pose.position.y,
+            msg.pose.pose.position.z),
         "world");
 
 }
