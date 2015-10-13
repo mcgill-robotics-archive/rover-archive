@@ -47,11 +47,11 @@ void AhrsVirtual::update()
 {
     boost::mutex::scoped_lock lock(mMutex);
 
-    mStatus.heading = (int32_t) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
-
-    mStatus.roll = (float) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
-    mStatus.yaw = (float) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
-    mStatus.pitch = (float) (-M_PI_2 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(M_PI))));
+//    mStatus.heading = (int32_t) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
+//
+//    mStatus.roll = (float) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
+//    mStatus.yaw = (float) (-M_PI + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(2*M_PI))));
+//    mStatus.pitch = (float) (-M_PI_2 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(M_PI))));
 
     mStatus.gpsAltitude = rand() /(RAND_MAX/(5000));
     mStatus.gpsLatitude = -90 * 10000 + rand() /(RAND_MAX/(180 * 10000));

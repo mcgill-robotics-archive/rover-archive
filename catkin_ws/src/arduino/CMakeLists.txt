@@ -9,7 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
   rosserial_arduino
   rosserial_client
   std_msgs
+  ahrs
 )
+
+
 
 rosserial_generate_ros_lib(
     PACKAGE rosserial_arduino
@@ -21,8 +24,8 @@ rosserial_configure_client(
     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
 )
 
-rosserial_add_client_target(drive drive ALL)
-rosserial_add_client_target(drive drive-upload)
+#rosserial_add_client_target(drive drive ALL)
+#rosserial_add_client_target(drive drive-upload)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -116,7 +119,7 @@ rosserial_add_client_target(drive drive-upload)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES arduino
-#  CATKIN_DEPENDS geometry_msgs rosserial_arduino rosserial_client std_msgs
+    CATKIN_DEPENDS geometry_msgs rosserial_arduino rosserial_client std_msgs ahrs
 #  DEPENDS system_lib
 )
 

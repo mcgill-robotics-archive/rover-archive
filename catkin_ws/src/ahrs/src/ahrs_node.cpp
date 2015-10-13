@@ -5,8 +5,10 @@
 #include <Ahrs.h>
 #include <boost/smart_ptr/scoped_ptr.hpp>
 #include <signal.h>
-#include <ahrs/AhrsStatusMessage.h>
+#include <ahrs/AhrsStdMsg.h>
 #include "ros/ros.h"
+#include <geometry_msgs/Quaternion.h>
+#include <std_msgs/Header.h>
 
 void mySigintHandler(int sig)
 {
@@ -38,30 +40,57 @@ int main(int argc, char ** argv)
         ahrs.reset(lineranger::ahrs::Ahrs::createAhrs(config));
     }
 
-    ros::Publisher ahrsPublisher = nh.advertise<ahrs::AhrsStatusMessage>("ahrs_status", 100);
+    ros::Publisher ahrsPublisher = nh.advertise<ahrs::AhrsStdMsg>("ahrs_status", 100);
     lineranger::ahrs::AhrsStatus ahrsStatus;
 
     ros::Rate loopRate(10);
-    ahrs::AhrsStatusMessage msg;
+    ahrs::AhrsStdMsg msg;
+    
     ROS_INFO("ahrs_node ready, starting acquisition");
     while (ros::ok())
     {
         ahrsStatus = ahrs->getStatus();
-        msg.gpsLongitude = ahrsStatus.gpsLongitude / 10000000.0;
-        msg.gpsAltitude = ahrsStatus.gpsAltitude / 1000.0;
-        msg.gpsLatitude = ahrsStatus.gpsLatitude / 10000000.0;
 
-        msg.heading = ahrsStatus.heading;
-        msg.pitch = ahrsStatus.pitch;
-        msg.roll = ahrsStatus.roll;
-        msg.yaw = ahrsStatus.yaw;
+        std_msgs::Header header;
 
-        msg.velocity.x = ahrsStatus.velocity[0];
-        msg.velocity.y = ahrsStatus.velocity[1];
-        msg.velocity.z = ahrsStatus.velocity[2];
+        header.frame_id = "ahrs";
+        msg.pose.header = header;
+        msg.gpsVelocity.header = header;
+        msg.filteredVelocity.header = header;
+
+        msg.gps.longitude = ahrsStatus.gpsLongitude / 10000000.0;
+        msg.gps.altitude = ahrsStatus.gpsAltitude / 1000.0;
+        msg.gps.latitude = ahrsStatus.gpsLatitude / 10000000.0;
+
+        int fix = ahrsStatus.gpsFlags & 0b11;
+        msg.gps.FIX_3D = (fix == SBG_GPS_3D_FIX);
+        msg.gps.FIX_2D = (fix == SBG_GPS_2D_FIX);
+        msg.gps.NO_FIX = (fix == SBG_GPS_NO_FIX);
+        msg.gps.TIME_FIX_ONLY = (fix == SBG_GPS_TIME_ONLY);
+
+        msg.gps.validTOW = (ahrsStatus.gpsFlags && SBG_GPS_VALID_TOW) >> 2;
+        msg.gps.validWKN = (ahrsStatus.gpsFlags && SBG_GPS_VALID_WKN) >> 3;
+        msg.gps.validUTC = (ahrsStatus.gpsFlags && SBG_GPS_VALID_UTC) >> 4;
+
+
+        msg.gpsVelocity.twist.linear.x = ahrsStatus.gpsVelocity[0];
+        msg.gpsVelocity.twist.linear.y = ahrsStatus.gpsVelocity[1];
+        msg.gpsVelocity.twist.linear.z = ahrsStatus.gpsVelocity[2];
+
+        msg.filteredVelocity.twist.linear.x = ahrsStatus.velocity[0];
+        msg.filteredVelocity.twist.linear.y = ahrsStatus.velocity[1];
+        msg.filteredVelocity.twist.linear.z = ahrsStatus.velocity[2];
+
+        msg.pose.pose.orientation.w = ahrsStatus.quaternion[0];
+        msg.pose.pose.orientation.x = ahrsStatus.quaternion[1];
+        msg.pose.pose.orientation.y = ahrsStatus.quaternion[2];
+        msg.pose.pose.orientation.z = ahrsStatus.quaternion[3];
+
+        msg.pose.pose.position.x = ahrsStatus.position[0];
+        msg.pose.pose.position.y = ahrsStatus.position[1];
+        msg.pose.pose.position.z = ahrsStatus.position[2];
 
         ahrsPublisher.publish(msg);
-        ros::spinOnce();
         loopRate.sleep();
     }
 
