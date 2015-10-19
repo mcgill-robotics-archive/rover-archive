@@ -2,8 +2,8 @@
 
 import rospy
 import math
-from drive_control.src.drive_controller.Utilities import *
-from drive_control.src.drive_controller import WheelOutputData
+from Utilities import *
+from WheelOutputData import WheelOutputData
 
 __author__ = 'David Lavoie-Boutin'
 

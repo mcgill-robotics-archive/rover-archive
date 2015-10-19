@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from drive_control.src.drive_controller import Steering
+from Steering import Steering
 from drive_control.msg import DriveCommand, WheelCommand
 
 __author__ = 'David Lavoie-Boutin'
