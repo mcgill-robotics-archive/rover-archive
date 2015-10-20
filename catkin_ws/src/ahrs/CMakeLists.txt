@@ -57,9 +57,6 @@ endif()
 add_executable(ahrs_node
     src/ahrs_node.cpp
 )
-add_executable(tf_broadcaster
-    src/tf_broadcaster.cpp
-)
 
 if (NOT APPLE)
     add_dependencies(ahrs_node
@@ -73,9 +70,6 @@ target_link_libraries(
     ahrs_lib
     common
 )
-target_link_libraries(tf_broadcaster
-    ${catkin_LIBRARIES}
-)
 
 if(NOT APPLE)
     #############
@@ -83,7 +77,7 @@ if(NOT APPLE)
     #############
 
     ## Mark executables and/or libraries for installation
-    install(TARGETS ahrs_node tf_broadcaster
+    install(TARGETS ahrs_node 
       ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
       LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
       RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
