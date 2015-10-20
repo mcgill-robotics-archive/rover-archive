@@ -9,7 +9,7 @@
     <node
         name="tf_boradcaster"
         pkg="ahrs"
-        type="tf_broadcaster"
+        type="tf_broadcaster.py"
         respawn="true"
     />
 </group>
