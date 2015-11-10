@@ -24,8 +24,18 @@ rosserial_configure_client(
     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
 )
 
-#rosserial_add_client_target(drive drive ALL)
-#rosserial_add_client_target(drive drive-upload)
+
+rosserial_configure_client(
+    DIRECTORY RS232-router-test 
+    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+)
+
+rosserial_add_client_target(drive drive ALL)
+rosserial_add_client_target(drive drive-upload)
+
+rosserial_add_client_target(RS232-router-test rs232 ALL)
+rosserial_add_client_target(RS232-router-test rs232-upload)
+rosserial_add_client_target(RS232-router-test rs232-size)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
