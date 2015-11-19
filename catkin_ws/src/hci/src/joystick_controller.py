@@ -123,3 +123,4 @@ if __name__ == "__main__":
     while True:
         controller.update()
         print (controller.a1, controller.a2, controller.a3)
+        
