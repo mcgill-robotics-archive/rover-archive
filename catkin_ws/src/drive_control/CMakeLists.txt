@@ -4,7 +4,6 @@ project(drive_control)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   message_generation
-  message_runtime
   std_msgs
 )
 
@@ -24,6 +23,10 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   geometry_msgs  std_msgs
+)
+
+catkin_package(
+    CATKIN_DEPENDS message_runtime   std_msgs geometry_msgs
 )
 
 ################################################

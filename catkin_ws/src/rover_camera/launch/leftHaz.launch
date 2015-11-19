@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find rover_camera)/launch/usb.launch">
+        <arg name="name" value="left" />
+        <arg name="device" value="/dev/video0" />
+    </include>
+</launch>

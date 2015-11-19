@@ -14,18 +14,18 @@ find_package(catkin REQUIRED COMPONENTS
 
 
 
-rosserial_generate_ros_lib(
-    PACKAGE rosserial_arduino
-    SCRIPT make_libraries.py
-)
+# rosserial_generate_ros_lib(
+#     PACKAGE rosserial_arduino
+#     SCRIPT make_libraries.py
+# )
 
-rosserial_configure_client(
-    DIRECTORY drive
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-)
+# rosserial_configure_client(
+#     DIRECTORY drive
+#     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+# )
 
-rosserial_add_client_target(drive drive ALL)
-rosserial_add_client_target(drive drive-upload)
+# rosserial_add_client_target(drive drive ALL)
+# rosserial_add_client_target(drive drive-upload)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
