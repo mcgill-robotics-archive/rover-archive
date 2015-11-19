@@ -3,6 +3,7 @@ import rospy
 from enum import IntEnum
 
 from drive_control.msg import DriveCommand
+from rover_msgs.msg import MotorControllerMode
 
 
 class DrivePublisher(object):
@@ -10,12 +11,15 @@ class DrivePublisher(object):
         self.speed_linear = 0
         self.speed_angular = 0
         self.steering_condition = SteeringCondition.Ackerman
-        self.motor_controller_mode = MotorControllerMode.OpenLoop
+        self.motor_controller_mode = MotorControllerTypeMode.OpenLoop
         self.enable = False
 
-        self.command_publisher = rospy.Publisher("drive_command", DriveCommand, queue_size=1)
+        self.command_publisher = rospy.Publisher(
+            "drive_command", DriveCommand, queue_size=1)
+        self.controller_mode_publisher = rospy.Publisher(
+            "drive_controller_mode", MotorControllerMode, queue_size = 1)
+
         self.timer = rospy.Timer(rospy.Duration(0.1), self.run)
-        # self.run(None)
         
     def run(self, event):
         message = DriveCommand()
@@ -49,11 +53,23 @@ class DrivePublisher(object):
     def set_motor_controller_mode(self, mode):
         self.motor_controller_mode = mode
 
+        message = MotorControllerMode()
+        if self.motor_controller_mode == MotorControllerTypeMode.SlowSpeed:
+            message.lowSpeed = True
+        elif self.motor_controller_mode == MotorControllerTypeMode.MediumSpeed:
+            message.medSpeed = True
+        elif self.motor_controller_mode == MotorControllerTypeMode.HighSpeed:
+            message.highSpeed = True
+        elif self.motor_controller_mode == MotorControllerTypeMode.OpenLoop:
+            message.openLoop = True
+
+        self.controller_mode_publisher.publish(message)
+
     def enable(self, enable):
         self.enable = enable
 
 
-class MotorControllerMode(IntEnum):
+class MotorControllerTypeMode(IntEnum):
     OpenLoop = 0
     SlowSpeed = 1
     MediumSpeed = 2
