@@ -38,6 +38,7 @@ class Steering:
         Bring the 6 wheels to a stop, sets velocity 0 to all wheels
         """
         self.output_command.set_velocity_zero()
+        self.output_command.set_angle_zero()
 
 
     def skid_steer(self, vBody, diff):
@@ -159,8 +160,8 @@ class Steering:
             dist_mid_right = rho - sign_w * (self.B + self.mid_wh_offset)
 
             # Simple trig to get angle to each wheel
-            self.output_command.flv = math.atan(self.D / radius_left)
-            self.output_command.frv = math.atan(self.D / radius_right)
+            self.output_command.flsa = math.atan(self.D / radius_left)
+            self.output_command.frsa = math.atan(self.D / radius_right)
 
             # incorporate the correct direction of the angular
             # displacement of the wheels
