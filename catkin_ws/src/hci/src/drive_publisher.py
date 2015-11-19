@@ -17,9 +17,9 @@ class DrivePublisher(object):
         self.command_publisher = rospy.Publisher(
             "drive_command", DriveCommand, queue_size=1)
         self.controller_mode_publisher = rospy.Publisher(
-            "drive_controller_mode", MotorControllerMode, queue_size = 1)
+            "drive_controller_mode", MotorControllerMode, queue_size=1)
 
-        self.timer = rospy.Timer(rospy.Duration(0.1), self.run)
+        self.timer = rospy.Timer(rospy.Duration(secs=0, nsecs=100000000), self.run)
         
     def run(self, event):
         message = DriveCommand()
@@ -65,15 +65,15 @@ class DrivePublisher(object):
 
         self.controller_mode_publisher.publish(message)
 
-    def enable(self, enable):
+    def set_enable(self, enable):
         self.enable = enable
 
 
 class MotorControllerTypeMode(IntEnum):
-    OpenLoop = 0
-    SlowSpeed = 1
-    MediumSpeed = 2
-    HighSpeed = 3
+    OpenLoop = 3
+    SlowSpeed = 0
+    MediumSpeed = 1
+    HighSpeed = 2
 
 
 class SteeringCondition(IntEnum):
