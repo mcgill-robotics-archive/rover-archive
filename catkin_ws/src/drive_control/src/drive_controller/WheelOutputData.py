@@ -49,6 +49,12 @@ class WheelOutputData:
         self.blv = 0  #: back left velocity
         self.brv = 0  #: back right velocity
 
+    def set_angle_zero(self):
+        self.flsa = 0
+        self.frsa = 0
+        self.blsa = 0
+        self.brsa = 0     
+
     def create_message(self):
         """
         This member function creates a proper output ros message using the values contained in this class.

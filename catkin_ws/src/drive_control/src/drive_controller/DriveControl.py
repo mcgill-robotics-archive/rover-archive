@@ -13,7 +13,7 @@ class DriveControl:
         self.steering = Steering()
 
         rospy.init_node("drive_controller")
-        self.command_subscriber = rospy.Subscriber("/drive_command", DriveCommand, queue_size=1)
+        self.command_subscriber = rospy.Subscriber("/drive_command", DriveCommand, self.update_value_settings)
         self.command_publisher = rospy.Publisher("/wheel_command", WheelCommand, queue_size=1)
         self.verbose = rospy.get_param("~verbose", False)
 
@@ -51,7 +51,7 @@ class DriveControl:
             message = self.steering.output_command.create_message()
             self.command_publisher.publish(message)
 
-        r.sleep()
+            r.sleep()
         pass
 
     def close(self):
