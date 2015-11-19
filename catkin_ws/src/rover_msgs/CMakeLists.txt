@@ -3,9 +3,9 @@ project(rover_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
-  message_runtime
   roscpp
   rospy
+  std_msgs
 )
 
 add_message_files(
@@ -18,4 +18,8 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
+)
+
+catkin_package(
+    CATKIN_DEPENDS message_runtime   std_msgs
 )
