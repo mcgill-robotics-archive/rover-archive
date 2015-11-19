@@ -1,0 +1,10 @@
+float32 flsa
+float32 frsa
+float32 blsa
+float32 brsa
+float32 flv
+float32 frv
+float32 mlv
+float32 mrv
+float32 blv
+float32 brv
