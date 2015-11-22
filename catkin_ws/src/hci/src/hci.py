@@ -83,7 +83,6 @@ class CentralUi(QtGui.QMainWindow):
         self.first_point = False
         self.dx = 0
         self.dy = 0
-
         # list for set of points in mini-map
         self.map_point_list = []
 
@@ -95,13 +94,19 @@ class CentralUi(QtGui.QMainWindow):
 
         self.drive_publisher = DrivePublisher()
 
+        path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/test_overlay.png"
+        self.overlay_pixmap = QtGui.QPixmap(path)
+        if self.overlay_pixmap.isNull():
+            rospy.logerr("Pixmap empty")
+            rospy.logerr(path)
+
         rospy.loginfo("HCI initialization completed")
 
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
         # rospy.Subscriber('ahrs_status', AhrsStatusMessage, self.handle_pose, queue_size=10)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=10)
-        self.main_camera_subscriber = rospy.Subscriber("/econ", CompressedImage, self.receive_image_main)
+        self.main_camera_subscriber = rospy.Subscriber("/econ", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left_nav/image_mono/compressed", CompressedImage, self.receive_image_left)
         rospy.Subscriber("/right_nav/image_mono/compressed", CompressedImage, self.receive_image_right)
         pass
@@ -436,7 +441,7 @@ class CentralUi(QtGui.QMainWindow):
 
         if next_topic is not "":
             self.main_camera_subscriber.unregister()
-            self.main_camera_subscriber = rospy.Subscriber(next_topic, CompressedImage, self.receive_image_main)
+            self.main_camera_subscriber = rospy.Subscriber(next_topic, CompressedImage, self.receive_pixmap_main)
 
         param = self.param_list[index]
         response = service("/" + str(param))
@@ -481,7 +486,7 @@ class CentralUi(QtGui.QMainWindow):
             self.ui.EndEffectorMode.setChecked(False)
             self.ui.function4.setChecked(True)
 
-    def receive_image_main(self, data):
+    def receive_pixmap_main(self, data):
         try:
             self.imageMain = data
         finally:
@@ -503,23 +508,23 @@ class CentralUi(QtGui.QMainWindow):
         if self.imageMain is not None:
             try:
                 qimageMain = QtGui.QImage.fromData(self.imageMain.data)
-                image_main = QtGui.QPixmap.fromImage(qimageMain)
+                pixmap_main = QtGui.QPixmap.fromImage(qimageMain)
 
                 if self.ui.flip_vertical.isChecked():
-                    image_main = image_main.transformed(QtGui.QTransform().scale(-1, 1))  # mirror on the y axis
+                    pixmap_main = pixmap_main.transformed(QtGui.QTransform().scale(-1, 1))  # mirror on the y axis
 
-                image_main = image_main.scaled(QtCore.QSize(image_main.width() * 2, image_main.height() * 2), 0)
+                pixmap_main = pixmap_main.scaled(QtCore.QSize(pixmap_main.width() * 2, pixmap_main.height() * 2), 0)
 
                 if self.ui.rot0.isChecked():
-                    self.ui.camera1.setPixmap(image_main)
+                    self.ui.camera1.setPixmap(pixmap_main)
                 elif self.ui.rot90.isChecked():
-                    rotated = image_main.transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
+                    rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
                     self.ui.camera1.setPixmap(rotated)
                 elif self.ui.rot180.isChecked():
-                    rotated = image_main.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
+                    rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
                     self.ui.camera1.setPixmap(rotated)
                 elif self.ui.rot270.isChecked():
-                    rotated = image_main.transformed(QtGui.QMatrix().rotate(270), QtCore.Qt.SmoothTransformation)
+                    rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(270), QtCore.Qt.SmoothTransformation)
                     self.ui.camera1.setPixmap(rotated)
 
             finally:
@@ -533,11 +538,14 @@ class CentralUi(QtGui.QMainWindow):
                 imageTop = QtGui.QPixmap.fromImage(qimageTop)
                 rotated = imageTop.transformed(QtGui.QMatrix().rotate(-90), QtCore.Qt.SmoothTransformation)
                 rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
-                # transformed(QtGui.QTransform().scale(-1,1))  # mirror on the y axis
-
+                left_painter = QtGui.QPainter(rotated)
+                left_painter.drawPixmap(0,0,imageTop.width(),imageTop.height(),self.overlay_pixmap)
+                self.ui.camera2.setPixmap(rotated)
+                left_painter.end()
             finally:
                 pass
-            self.ui.camera2.setPixmap(rotated)
+            
+
         else:
             self.ui.camera2.setText("no video feed")
 
@@ -551,7 +559,8 @@ class CentralUi(QtGui.QMainWindow):
                 pass
             self.ui.camera3.setPixmap(rotated)
         else:
-            self.ui.camera3.setText("no video feed")
+            self.ui.camera3.setPixmap(self.overlay_pixmap)
+            # self.ui.camera3.setText("no video feed")
 
 
 def sigint_handler(*args):
