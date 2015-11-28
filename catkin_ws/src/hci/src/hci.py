@@ -94,7 +94,7 @@ class CentralUi(QtGui.QMainWindow):
 
         self.drive_publisher = DrivePublisher()
 
-        path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/test_overlay.png"
+        path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/grid_vertical.png"
         self.overlay_pixmap = QtGui.QPixmap(path)
         if self.overlay_pixmap.isNull():
             rospy.logerr("Pixmap empty")
@@ -107,8 +107,8 @@ class CentralUi(QtGui.QMainWindow):
         # rospy.Subscriber('ahrs_status', AhrsStatusMessage, self.handle_pose, queue_size=10)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=10)
         self.main_camera_subscriber = rospy.Subscriber("/econ", CompressedImage, self.receive_pixmap_main)
-        rospy.Subscriber("/left_nav/image_mono/compressed", CompressedImage, self.receive_image_left)
-        rospy.Subscriber("/right_nav/image_mono/compressed", CompressedImage, self.receive_image_right)
+        rospy.Subscriber("/left/image_mono/compressed", CompressedImage, self.receive_image_left)
+        rospy.Subscriber("/right/image_mono/compressed", CompressedImage, self.receive_image_right)
         pass
 
     def motor_status(self, msg):
@@ -539,7 +539,7 @@ class CentralUi(QtGui.QMainWindow):
                 rotated = imageTop.transformed(QtGui.QMatrix().rotate(-90), QtCore.Qt.SmoothTransformation)
                 rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
                 left_painter = QtGui.QPainter(rotated)
-                left_painter.drawPixmap(0,0,imageTop.width(),imageTop.height(),self.overlay_pixmap)
+                left_painter.drawPixmap(0, 0, self.overlay_pixmap)
                 self.ui.camera2.setPixmap(rotated)
                 left_painter.end()
             finally:
