@@ -1,0 +1,3 @@
+[submodule "catkin_ws/src/ros-teensy"]
+	path = catkin_ws/src/ros-teensy
+	url = git@github.com:mcgill-robotics/ros-teensy.git
