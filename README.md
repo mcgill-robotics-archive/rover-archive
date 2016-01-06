@@ -12,7 +12,11 @@ Build Status
 [dev]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_dev
 [dev url]: http://dev.mcgillrobotics.com:8080/job/rover_dev
 
+[all]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_all
+[all url]: http://dev.mcgillrobotics.com:8080/job/rover_all
+
 | Branch   | Status                  |
 |:--------:|:-----------------------:|
 | `master` | [![master]][master url] |
 | `dev`    | [![dev]][dev url]       |
+| `all`    | [![all]][all url]       |
