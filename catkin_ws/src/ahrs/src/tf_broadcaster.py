@@ -2,6 +2,7 @@
 
 import rospy
 
+from tf.transformations import quaternion_multiply
 import tf
 from ahrs.msg import AhrsStdMsg
 from ahrs.srv import *
@@ -39,18 +40,23 @@ class AhrsTfBroadcaster:
             message.pose.pose.position.y,
             message.pose.pose.position.z),
             (0,0,0,1),rospy.Time.now(), "ahrs_position", "world")
-        
-        self.br.sendTransform((0,0,0),(
+
+        quat = (
             message.pose.pose.orientation.x,
             message.pose.pose.orientation.y,
             message.pose.pose.orientation.z,
-            message.pose.pose.orientation.w),
+            message.pose.pose.orientation.w)
+
+        multiply = quaternion_multiply((1,0,0,0), quat)
+
+        self.br.sendTransform((0,0,0),multiply,
             rospy.Time.now(), "ahrs_orientation", "ahrs_position")
 
         self.last_tf = message.pose.pose.position
 
         self.br.sendTransform(self.center_position, (0,0,0,1), 
                 rospy.Time.now(), "center", "world")
+        self.br.sendTransform((0,0,0),(0,0,0,1),rospy.Time.now(),"laser","ahrs_orientation")
 
 if __name__ == "__main__":
     tf_broadcaster = AhrsTfBroadcaster()

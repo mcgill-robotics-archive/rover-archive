@@ -1,0 +1,15 @@
+#mode select:
+joystick/drive_mode :           "5"
+joystick/camera_mode :          "6"
+#joystick/arm_base_mode :        "3"
+
+joystick/ackreman_moving :      "1" # motor enable
+joystick/point_steer :          "4"
+joystick/ackreman :             "3"
+
+logitech/shoulder :             "7"
+logitech/elbow:                 "8"
+logitech/wrist:                 "9"
+logitech/roll:                  "10"
+logitech/grip:                  "11"
+logitech/base:                  "12"
