@@ -12,28 +12,17 @@ find_package(catkin REQUIRED COMPONENTS
   ahrs
 )
 
-set(ARDUINO_SDK_PATH "/home/david/arduino-1.6.5")
+# set(ARDUINO_SDK_PATH "/home/david/arduino-1.6.5")
 
-rosserial_generate_ros_lib(
-    PACKAGE rosserial_arduino
-    SCRIPT make_libraries.py
-)
+# rosserial_generate_ros_lib(
+#     PACKAGE rosserial_arduino
+#     SCRIPT make_libraries.py
+# )
 
-rosserial_configure_client(
-    DIRECTORY drive
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-)
+# rosserial_configure_client(
+#     DIRECTORY drive
+#     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+# )
 
-
-rosserial_configure_client(
-    DIRECTORY RS232-router-test 
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-)
-
-rosserial_add_client_target(drive drive ALL)
-rosserial_add_client_target(drive drive-upload)
-
-rosserial_add_client_target(RS232-router-test rs232 ALL)
-rosserial_add_client_target(RS232-router-test rs232-upload)
-rosserial_add_client_target(RS232-router-test rs232-size)
-
+# rosserial_add_client_target(drive drive ALL)
+# rosserial_add_client_target(drive drive-upload)
