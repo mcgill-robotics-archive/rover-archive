@@ -14,6 +14,12 @@ add_message_files(
   MotorControllerMode.msg
 )
 
+add_service_files(
+    FILES
+    GetVoltageRead.msg
+    ResetWatchDog.msg
+)
+
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
