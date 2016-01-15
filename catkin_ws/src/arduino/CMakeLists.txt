@@ -14,15 +14,15 @@ find_package(catkin REQUIRED COMPONENTS
 
 # set(ARDUINO_SDK_PATH "/home/david/arduino-1.6.5")
 
-# rosserial_generate_ros_lib(
-#     PACKAGE rosserial_arduino
-#     SCRIPT make_libraries.py
-# )
+rosserial_generate_ros_lib(
+    PACKAGE rosserial_arduino
+    SCRIPT make_libraries.py
+)
 
-# rosserial_configure_client(
-#     DIRECTORY drive
-#     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-# )
+rosserial_configure_client(
+    DIRECTORY drive
+    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+)
 
 # rosserial_add_client_target(drive drive ALL)
 # rosserial_add_client_target(drive drive-upload)
