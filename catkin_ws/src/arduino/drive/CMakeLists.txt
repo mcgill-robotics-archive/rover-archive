@@ -6,7 +6,8 @@ include_directories(${ROS_LIB_DIR})
 # add_definitions(-DUSB_CON)
 
 generate_arduino_firmware(drive
-    SRCS main.cpp ${ROS_LIB_DIR}/time.cpp
+    SRCS main.cpp ${ROS_LIB_DIR}/time.cpp SteeringWheel.cpp Wheel.cpp
+    HDRS SteeringWheel.h Wheel.h
     BOARD mega2560
     PORT /dev/mega_drive
 )
