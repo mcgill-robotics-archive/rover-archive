@@ -7,6 +7,6 @@ include_directories(${ROS_LIB_DIR})
 
 generate_arduino_firmware(drive
     SRCS main.cpp ${ROS_LIB_DIR}/time.cpp
-    BOARD mega
+    BOARD mega2560
     PORT /dev/mega_drive
 )

@@ -1,7 +1,5 @@
 #include <Arduino.h>
-
 #include <Servo.h>
-
 
 Servo servo;
 
