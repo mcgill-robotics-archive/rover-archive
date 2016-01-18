@@ -19,7 +19,7 @@ public:
      * \param nodeHandle pointer to the node handle to use for logging.
      * The caller is responsible for memory management
      */
-    Wheel(uint8_t motorPort, ros::NodeHandle * nodeHandle);
+    Wheel(uint8_t motorPort, ros::NodeHandle * nodeHandle); //TODO: Other pins
     virtual ~Wheel();
 
     /**

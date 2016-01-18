@@ -18,6 +18,7 @@ drive::Wheel::Wheel() {
     pinMode(mMotorPort, OUTPUT);
     analogWrite(mMotorPort, 0);
 
+    //TODO: With DRV8308 will need to perform proper register initialization (SPI)
     //TODO: init connection with encoder
 }
 
