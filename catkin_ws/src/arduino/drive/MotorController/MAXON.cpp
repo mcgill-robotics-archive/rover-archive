@@ -7,7 +7,7 @@
 using namespace drive;
 
 MAXON::MAXON(uint8_t speedPin, uint8_t directionPin, uint8_t enablePin, uint8_t data1Pin, uint8_t data2Pin,
-                    uint8_t feedbackPin, MotorConfig::Mode mode) {
+                    uint8_t feedbackPin, Mode mode) {
     mSpeedPin = speedPin;
     mData1Pin = data1Pin;
     mData2Pin = data2Pin;
@@ -57,21 +57,21 @@ bool MAXON::getStatus() {
     return (bool) digitalRead(mFeedbackPin);
 }
 
-void MAXON::setMode(MotorConfig::Mode mode) {
+void MAXON::setMode(Mode mode) {
     switch (mode) {
-        case MotorConfig::Mode::OpenLoop :
+         case OpenLoop :
             digitalWrite(mData1Pin, LOW);
             digitalWrite(mData2Pin, LOW);
             break;
-        case MotorConfig::Mode::Slow:
+        case Slow:
             digitalWrite(mData1Pin, HIGH);
             digitalWrite(mData2Pin, LOW);
             break;
-        case MotorConfig::Mode::Medium:
+        case Medium:
             digitalWrite(mData1Pin, LOW);
             digitalWrite(mData2Pin, HIGH);
             break;
-        case MotorConfig::Mode::Fast:
+        case Fast:
             digitalWrite(mData1Pin, HIGH);
             digitalWrite(mData2Pin, HIGH);
             break;

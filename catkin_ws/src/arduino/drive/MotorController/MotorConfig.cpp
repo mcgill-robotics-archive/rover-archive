@@ -15,6 +15,6 @@ drive::MotorConfig::MotorConfig() {
     speedPin = 0;
     directionPin = 0;
     enablePin = 0;
-    controllerType = MAXON;
+    controllerType = _MAXON;
     mode = OpenLoop;
 }

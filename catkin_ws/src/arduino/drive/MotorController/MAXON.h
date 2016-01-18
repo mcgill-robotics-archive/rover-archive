@@ -11,14 +11,15 @@ namespace drive {
 
 class MAXON : public MotorController {
 public:
-    MAXON(uint8_t speedPin,
-
-    uint8_t directionPin,
-    uint8_t enablePin,
-    uint8_t data1Pin,
-    uint8_t data2Pin,
-    uint8_t feedbackPin,
-    MotorConfig::Mode mode);
+    MAXON(
+            uint8_t speedPin,
+            uint8_t directionPin,
+            uint8_t enablePin,
+            uint8_t data1Pin,
+            uint8_t data2Pin,
+            uint8_t feedbackPin,
+            Mode mode
+    );
 
     virtual void setSpeed(int);
     virtual void setDirection(int);
@@ -34,7 +35,7 @@ private:
     uint8_t mDirectionPin;
     uint8_t mEnablePin;
 
-    void setMode(MotorConfig::Mode mode);
+    void setMode(Mode mode);
 };
 }
 

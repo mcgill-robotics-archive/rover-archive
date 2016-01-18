@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include <Servo.h>
+#include "MotorController/MotorConfig.h"
 #include <MotorController/MotorController.h>
 #include <MotorController/MAXON.h>
 #include "SteeringWheel.h"
@@ -14,7 +15,7 @@ drive::SteeringWheel leftFront(13, 7, &nh);
 void setup()
 {
     servo.attach(10);
-    SPI.begin();
+//    SPI.begin();
 }
 
 int i = 0;
@@ -29,9 +30,9 @@ void loop()
     drive::MotorConfig motorConfig;
 
     motorConfig.brakePin = 5;
-    motorConfig.controllerType = drive::MotorConfig::ControllerType::DRV8308;
+    motorConfig.controllerType = drive::_MAXON;
 
     drive::MotorController * leftWheel = drive::MotorController::createMotorController(motorConfig);
-    drive::MAXON * maxon = static_cast<drive::MAXON*> (leftWheel);
+//    drive::MAXON * maxon = static_cast<drive::MAXON*> (leftWheel);
     delay(10);
 }

@@ -8,6 +8,18 @@
 #include <Arduino.h>
 namespace drive {
 
+enum ControllerType {
+    _MAXON = 0,
+    _DRV8308 = 1
+};
+
+enum Mode{
+    OpenLoop = 0,
+    Slow = 1,
+    Medium = 2,
+    Fast = 3
+};
+
 class MotorConfig {
 public:
     ControllerType controllerType;
@@ -26,17 +38,6 @@ public:
     uint8_t directionPin;
     uint8_t enablePin;
 
-    enum ControllerType {
-        MAXON,
-        DRV8308
-    };
-
-    enum Mode{
-        OpenLoop,
-        Slow,
-        Medium,
-        Fast
-    };
 
     MotorConfig();
     virtual ~MotorConfig() {};
