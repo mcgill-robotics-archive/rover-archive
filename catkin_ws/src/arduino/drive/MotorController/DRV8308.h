@@ -5,10 +5,22 @@
 #ifndef ROVER_ARDUINO_DRV8308_H
 #define ROVER_ARDUINO_DRV8308_H
 
+#include "MotorController.h"
 
-class DRV8308 {
+namespace  drive {
+class DRV8308 : public MotorController{
+public:
+    DRV8308() { };
+    virtual ~DRV8308() { };
+
+    virtual void setSpeed(int);
+    virtual void setDirection(int);
+    virtual void brake(bool);
+    virtual void enable(bool);
+    virtual bool getStatus();
 
 };
+}
 
 
 #endif //ROVER_ARDUINO_DRV8308_H
