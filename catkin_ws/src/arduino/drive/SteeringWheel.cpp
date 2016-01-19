@@ -18,15 +18,15 @@ SteeringWheel::SteeringWheel() {
     }
 }
 
-SteeringWheel::SteeringWheel(uint8_t motorPort, uint8_t servoPort, ros::NodeHandle * nodeHandle) {
+SteeringWheel::SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle * nodeHandle) {
     mServoPort = servoPort;
-    mMotorPort = motorPort;
+    mMotorConfig = motorConfig;
     mNodeHandle = nodeHandle;
     SteeringWheel();
 
     char init_message [64];
-    sprintf(init_message, "Steering wheel initialized with drive pin %d, "
-            "servo pin %d", mMotorPort, mServoPort);
+    sprintf(init_message, "Steering wheel initialized with drive pin %d and "
+            "servo pin %d\n", mMotorConfig.speedPin, mServoPort);
 
     mNodeHandle->logdebug(init_message);
 }

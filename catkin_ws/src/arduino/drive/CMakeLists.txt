@@ -16,7 +16,6 @@ set(SOURCES
         MotorController/MotorController.cpp
         )
 
-
 set(HEADERS
         SteeringWheel.h
         Wheel.h
@@ -25,6 +24,7 @@ set(HEADERS
         MotorController/MotorConfig.h
         MotorController/MotorController.h
         )
+
 generate_arduino_firmware(drive
     SRCS ${SOURCES}
     HDRS ${HEADERS}

@@ -20,7 +20,7 @@ public:
      * \param nodeHandle pointer to the node handle to use for logging.
      * The caller is responsible for memory management
      */
-    SteeringWheel(uint8_t motorPort, uint8_t servoPort, ros::NodeHandle * nodeHandle);
+    SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle * nodeHandle);
     virtual ~SteeringWheel();
 
     void setSteeringAngle(int angle);

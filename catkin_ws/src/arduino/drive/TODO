@@ -1,0 +1,2 @@
+Implement hardware interface for DRV8308 based motor controller
+Implement hardware interface for encoders (i2c)

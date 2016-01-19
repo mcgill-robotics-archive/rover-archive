@@ -7,6 +7,8 @@
 
 #include "Arduino.h"
 #include <ros.h>
+#include <MotorController/MotorConfig.h>
+#include <MotorController/MotorController.h>
 
 namespace drive {
 
@@ -19,7 +21,7 @@ public:
      * \param nodeHandle pointer to the node handle to use for logging.
      * The caller is responsible for memory management
      */
-    Wheel(uint8_t motorPort, ros::NodeHandle * nodeHandle); //TODO: Other pins
+    Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle); //TODO: Other pins
     virtual ~Wheel();
 
     /**
@@ -29,6 +31,8 @@ public:
      */
     void setSpeed(int speed);
     long readEndoder();
+    void brake(bool brk);
+    bool getStatus();
 
 protected:
     /**
@@ -37,11 +41,12 @@ protected:
      */
     Wheel();
 
-    uint8_t mMotorPort;
     ros::NodeHandle * mNodeHandle;
+    MotorConfig mMotorConfig;
 
 private:
     long mTachoCount;
+    MotorController * mMotorController;
 
 };
 

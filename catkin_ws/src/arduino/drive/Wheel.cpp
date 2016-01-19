@@ -5,7 +5,7 @@
 #include "Wheel.h"
 
 void drive::Wheel::setSpeed(int speed) {
-    analogWrite(mMotorPort, speed);
+    mMotorController->setSpeed(speed);
 }
 
 long drive::Wheel::readEndoder() {
@@ -15,24 +15,30 @@ long drive::Wheel::readEndoder() {
 
 drive::Wheel::Wheel() {
     mTachoCount = 0;
-    pinMode(mMotorPort, OUTPUT);
-    analogWrite(mMotorPort, 0);
+    mMotorController = MotorController::createMotorController(mMotorConfig);
+    mMotorController->enable(true);
+    mMotorController->brake(true);
 
-    //TODO: With DRV8308 will need to perform proper register initialization (SPI)
     //TODO: init connection with encoder
 }
 
 drive::Wheel::~Wheel() {
-
+    delete mMotorController;
 }
 
-drive::Wheel::Wheel(uint8_t motorPort, ros::NodeHandle * nodeHandle) {
+drive::Wheel::Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle) {
     mNodeHandle = nodeHandle;
-    mMotorPort = motorPort;
+    mMotorConfig = motorConfig;
     Wheel();
     char init_message [48];
-    sprintf(init_message, "Wheel initialized with drive pin %d", mMotorPort);
-
+    sprintf(init_message, "Wheel initialized with drive pin %d", motorConfig.speedPin);
     mNodeHandle->logdebug(init_message);
+}
 
+void drive::Wheel::brake(bool brk) {
+    mMotorController->brake(brk);
+}
+
+bool drive::Wheel::getStatus() {
+    return mMotorController->getStatus();
 }

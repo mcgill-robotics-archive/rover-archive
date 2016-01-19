@@ -1,38 +1,37 @@
 #include <Arduino.h>
 
 #include <Servo.h>
+#include <SPI.h>
+#include <Wire.h>
+
 #include "MotorController/MotorConfig.h"
 #include <MotorController/MotorController.h>
 #include <MotorController/MAXON.h>
 #include "SteeringWheel.h"
-Servo servo;
+
 ros::NodeHandle nh;
 
-#include "SPI/SPI.h"
-
-drive::SteeringWheel leftFront(13, 7, &nh);
-
-void setup()
-{
-    servo.attach(10);
-//    SPI.begin();
-}
-
-int i = 0;
+void setup() { }
 
 void loop()
 {
+    nh.initNode();
+    drive::MotorConfig leftFrontConfig;
+
+    drive::SteeringWheel leftFront(leftFrontConfig,3,&nh);
+    SPI.begin();
+    Wire.begin();
+
     leftFront.setSteeringAngle(40);
     leftFront.setSpeed(20);
     leftFront.readEndoder();
-    i ++;
 
-    drive::MotorConfig motorConfig;
+    drive::MotorConfig midLeftConfig;
 
-    motorConfig.brakePin = 5;
-    motorConfig.controllerType = drive::_MAXON;
+    midLeftConfig.brakePin = 5;
+    midLeftConfig.controllerType = drive::_MAXON;
 
-    drive::MotorController * leftWheel = drive::MotorController::createMotorController(motorConfig);
-//    drive::MAXON * maxon = static_cast<drive::MAXON*> (leftWheel);
-    delay(10);
+    drive::Wheel middleLeft(midLeftConfig, &nh);
+    middleLeft.setSpeed(150);
+    while(true) delay(10);
 }
