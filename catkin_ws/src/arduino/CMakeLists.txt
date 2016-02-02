@@ -24,5 +24,18 @@ rosserial_configure_client(
     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
 )
 
-# rosserial_add_client_target(drive drive ALL)
+rosserial_configure_client(
+    DIRECTORY arm
+    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+)
+
+rosserial_configure_client(
+    DIRECTORY power
+    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+)
+
+rosserial_add_client_target(drive drive ALL)
 # rosserial_add_client_target(drive drive-upload)
+
+rosserial_add_client_target(arm arm ALL)
+rosserial_add_client_target(arm arm-upload)

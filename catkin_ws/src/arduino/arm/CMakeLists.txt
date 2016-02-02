@@ -6,13 +6,25 @@ include_directories(${ROS_LIB_DIR})
 # Remove this if using an Arduino without native USB (eg, other than Leonardo)
 # add_definitions(-DUSB_CON)
 
-set(SOURCES main.cpp ${ROS_LIB_DIR}/time.cpp Encoder.cpp PitchRollCompute.cpp)
-set(HEADERS Encoder.h PitchRollCompute.h)
+set(SOURCES
+        arm.cpp
+        ${ROS_LIB_DIR}/time.cpp
+        Encoder.cpp
+        PitchRollCompute.cpp
+        TransformFrame/TransformSender.cpp
+        TransformFrame/TransformConfig.cpp
+        PID_v1/PID_v1.cpp)
+
+set(HEADERS
+        Encoder.h
+        PitchRollCompute.h
+        TransformFrame/TransformSender.h
+        TransformFrame/TransformConfig.h
+        PID_v1/PID_v1.h)
 
 generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     BOARD mega2560
-    LIBS pid
-    PORT /dev/mega_arm
+    PORT /dev/ttyACM0
 )
