@@ -4,7 +4,6 @@
 
 #include <Arduino.h>
 #include <ros.h>
-#include <tf/transform_broadcaster.h>
 #include <TransformFrame/TransformSender.h>
 #include "Encoder.h"
 #include "PitchRollCompute.h"
@@ -21,14 +20,14 @@
  */
 
 ros::NodeHandle nodeHandle;
-tf::TransformBroadcaster broadcaster;
 
-arm::Encoder baseYaw(10);
-arm::Encoder basePitch(11);
-arm::Encoder differential1encoderLeft(12);
-arm::Encoder differential1encoderRight(13);
-arm::Encoder differential2encoderLeft(14);
-arm::Encoder differential2encoderRight(15);
+
+arm::Encoder baseYaw(10, &nodeHandle);
+arm::Encoder basePitch(11, &nodeHandle);
+arm::Encoder differential1encoderLeft(12, &nodeHandle);
+arm::Encoder differential1encoderRight(13, &nodeHandle);
+arm::Encoder differential2encoderLeft(14, &nodeHandle);
+arm::Encoder differential2encoderRight(15, &nodeHandle);
 
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);

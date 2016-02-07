@@ -8,7 +8,8 @@
 
 using namespace arm;
 
-Encoder::Encoder(uint8_t pin) {
+Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
+    mNh = nh;
     mPin = pin;
     mOffset = 0;
 }

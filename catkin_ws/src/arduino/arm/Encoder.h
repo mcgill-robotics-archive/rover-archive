@@ -7,6 +7,8 @@
 
 
 #include <stdint.h>
+#include <ros.h>
+
 namespace arm {
 
 /**
@@ -14,7 +16,7 @@ namespace arm {
  */
 class Encoder {
 public:
-    Encoder(uint8_t);
+    Encoder(uint8_t pin, ros::NodeHandle *nh);
     virtual ~Encoder();
 
     float readPosition(); // ensure spi initialisation has been done prior to ordering the read
@@ -24,6 +26,7 @@ public:
 private:
     uint8_t mPin;
     float mOffset;
+    ros::NodeHandle * mNh;
 };
 }
 

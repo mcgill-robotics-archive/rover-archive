@@ -12,8 +12,8 @@ ros::NodeHandle nodeHandle;
 tf::TransformBroadcaster broadcaster;
 
 
-arm::Encoder link1(10);
-arm::Encoder link2(11);
+arm::Encoder link1(10, NULL);
+arm::Encoder link2(11, NULL);
 
 arm::PitchRollCompute pitchRollCompute(&link1, &link2);
 float * pitchRollLink1 = (float *) malloc(2 * sizeof(float));
