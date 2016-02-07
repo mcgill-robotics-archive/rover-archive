@@ -16,6 +16,7 @@ set(SOURCES
         PID_v1/PID_v1.cpp)
 
 set(HEADERS
+        arm.h
         Encoder.h
         PitchRollCompute.h
         TransformFrame/TransformSender.h
@@ -26,5 +27,5 @@ generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     BOARD mega2560
-    PORT /dev/ttyACM0
+    PORT /dev/mega_test
 )

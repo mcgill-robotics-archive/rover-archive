@@ -19,12 +19,24 @@ Encoder::~Encoder() {
 }
 
 float Encoder::readPosition() {
+    return 0;
     digitalWrite(mPin, LOW);
 
     byte dA = SPI.transfer(0x00);
     byte dB = SPI.transfer(0x00);
+
+    char array[20];
+    sprintf(array, "%d", dA);
+    mNh->loginfo(array);
     int x= ((dA & 0x7F)<<6) | (dB>>2);
+
+    sprintf(array, "%d", x);
+    mNh->loginfo(array);
+
     float ax = x*359.956/8191.000;
+
+    sprintf(array, "%f", ax);
+    mNh->loginfo(array);
 
     digitalWrite(mPin, HIGH);
     return ax + mOffset;

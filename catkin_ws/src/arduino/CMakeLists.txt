@@ -10,6 +10,21 @@ find_package(catkin REQUIRED COMPONENTS
   rosserial_client
   std_msgs
   ahrs
+  message_generation
+)
+
+add_service_files(
+    FILES
+    ram.srv
+)
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
+)
+
+catkin_package(
+    CATKIN_DEPENDS message_runtime   std_msgs
 )
 
 # set(ARDUINO_SDK_PATH "/home/david/arduino-1.6.5")
