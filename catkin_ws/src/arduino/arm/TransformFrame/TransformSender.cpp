@@ -8,7 +8,13 @@ using namespace arm;
 TransformSender::TransformSender(ros::NodeHandle &nh, TransformConfig &config) {
     mNh = &nh;
 
-    broadcaster.init(nh);
+    baseYaw.child_frame_id = config.baseYawFrame;
+    mPitch1.child_frame_id = config.pitch1Frame;
+    mPitch2.child_frame_id = config.pitch2Frame;
+    mRoll1.child_frame_id = config.roll1Frame;
+    mPitch3.child_frame_id = config.pitch3Frame;
+    mRoll2.child_frame_id = config.roll2Frame;
+
     baseYaw.header.frame_id = config.baseFrame;
     mPitch1.header.frame_id = baseYaw.child_frame_id;
     mPitch2.header.frame_id = mPitch1.child_frame_id;
@@ -16,12 +22,7 @@ TransformSender::TransformSender(ros::NodeHandle &nh, TransformConfig &config) {
     mPitch3.header.frame_id = mRoll1.child_frame_id;
     mRoll2.header.frame_id = mPitch3.child_frame_id;
 
-    baseYaw.child_frame_id = config.baseYawFrame;
-    mPitch1.child_frame_id = config.pitch1Frame;
-    mPitch2.child_frame_id = config.pitch2Frame;
-    mRoll1.child_frame_id = config.roll1Frame;
-    mPitch3.child_frame_id = config.pitch3Frame;
-    mRoll2.child_frame_id = config.roll2Frame;
+    broadcaster.init(nh);
 
     baseYaw.transform.translation.x = config.armPosition;
     mPitch1.transform.translation.z = config.pitch1offset;
