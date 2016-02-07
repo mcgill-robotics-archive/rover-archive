@@ -69,7 +69,7 @@ void setup() {
      */
 
     SPI.begin();
-    broadcaster.init(nodeHandle);
+    nodeHandle.initNode();
     pinMode(13, OUTPUT);
 }
 
@@ -102,5 +102,6 @@ void loop() {
 
     sender.updateRotations(baseYawValue, pitch1Value, pitchRollLink1[0], pitchRollLink1[1], pitchRollLink2[0], pitchRollLink2[1]);
     sender.sendTransforms();
-    delay(50);
+    nodeHandle.spinOnce();
+    delay(1);
 }

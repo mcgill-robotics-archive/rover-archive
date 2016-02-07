@@ -5,8 +5,8 @@
 #ifndef ROVER_ARDUINO_TRANSFORMSENDER_H
 #define ROVER_ARDUINO_TRANSFORMSENDER_H
 
-#include <tf/transform_broadcaster.h>
 #include <ros.h>
+#include <tf/transform_broadcaster.h>
 #include "TransformConfig.h"
 
 namespace arm {
