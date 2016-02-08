@@ -7,6 +7,7 @@ include_directories(${ROS_LIB_DIR})
 
 set(SOURCES
         main.cpp
+        ../common/ram.cpp
         ${ROS_LIB_DIR}/time.cpp
         SteeringWheel.cpp
         Wheel.cpp
@@ -17,6 +18,7 @@ set(SOURCES
         )
 
 set(HEADERS
+        ../common/ram.h
         SteeringWheel.h
         Wheel.h
         MotorController/MAXON.h

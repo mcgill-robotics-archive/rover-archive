@@ -1,3 +1,5 @@
+
+#include "ros.h"
 #include <Arduino.h>
 
 #include <Servo.h>
@@ -8,14 +10,19 @@
 #include <MotorController/MotorController.h>
 #include <MotorController/MAXON.h>
 #include "SteeringWheel.h"
+#include "../common/ram.h"
 
 ros::NodeHandle nh;
 
-void setup() { }
+ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&freeRamCallback);
+
+void setup() {
+    nh.initNode();
+    nh.advertiseService(ramService);
+}
 
 void loop()
 {
-    nh.initNode();
     drive::MotorConfig leftFrontConfig;
 
     drive::SteeringWheel leftFront(leftFrontConfig,3,&nh);

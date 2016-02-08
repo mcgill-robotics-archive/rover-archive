@@ -6,10 +6,6 @@
 #define ROVER_ARDUINO_ARM_H
 
 #include <ros.h>
-#include <arduino/ram.h>
-
-int freeRam ();
-void freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response);
 
 char array[30];
 int x;
