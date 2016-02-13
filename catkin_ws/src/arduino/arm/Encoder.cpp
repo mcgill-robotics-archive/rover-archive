@@ -12,6 +12,10 @@ Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
     mNh = nh;
     mPin = pin;
     mOffset = 0;
+    dA = 0;
+    dB = 0;
+    x = 0;
+    ax = 0;
 }
 
 Encoder::~Encoder() {
@@ -19,24 +23,14 @@ Encoder::~Encoder() {
 }
 
 float Encoder::readPosition() {
-    return 0;
+//    return 0;
     digitalWrite(mPin, LOW);
 
-    byte dA = SPI.transfer(0x00);
-    byte dB = SPI.transfer(0x00);
+    dA = SPI.transfer(0x00);
+    dB = SPI.transfer(0x00);
 
-    char array[20];
-    sprintf(array, "%d", dA);
-    mNh->loginfo(array);
-    int x= ((dA & 0x7F)<<6) | (dB>>2);
-
-    sprintf(array, "%d", x);
-    mNh->loginfo(array);
-
-    float ax = x*359.956/8191.000;
-
-    sprintf(array, "%f", ax);
-    mNh->loginfo(array);
+    x= ((dA & 0x7F)<<6) | (dB>>2);
+    ax = x * 359.956/8191.000;
 
     digitalWrite(mPin, HIGH);
     return ax + mOffset;

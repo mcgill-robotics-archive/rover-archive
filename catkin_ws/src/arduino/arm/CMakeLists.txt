@@ -31,5 +31,4 @@ generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     BOARD mega2560
-    PORT /dev/mega_test
-)
+    PORT /dev/ttyACM0)

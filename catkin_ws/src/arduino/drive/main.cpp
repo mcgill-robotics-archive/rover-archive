@@ -40,6 +40,5 @@ void loop()
 
     drive::Wheel middleLeft(midLeftConfig, &nh);
     middleLeft.setSpeed(150);
-    while(true) delay(10);
     // TODO: rosify
 }

@@ -27,6 +27,10 @@ private:
     uint8_t mPin;
     float mOffset;
     ros::NodeHandle * mNh;
+
+    byte dA, dB;
+    int x;
+    float ax;
 };
 }
 
