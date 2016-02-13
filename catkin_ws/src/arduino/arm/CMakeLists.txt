@@ -8,6 +8,7 @@ include_directories(${ROS_LIB_DIR})
 
 set(SOURCES
         arm.cpp
+        Motor.cpp
         ../common/ram.cpp
         ${ROS_LIB_DIR}/time.cpp
         Encoder.cpp
@@ -18,6 +19,7 @@ set(SOURCES
 
 set(HEADERS
         arm.h
+        Motor.h
         ../common/ram.h
         Encoder.h
         PitchRollCompute.h

@@ -9,6 +9,7 @@
 #include "PID_v1/PID_v1.h"
 #include <SPI.h>
 #include "../common/ram.h"
+#include "Motor.h"
 
 /**
  * Init ros
@@ -38,6 +39,13 @@ PID pitch3PID((double *) &pitchRollLink2[0], &pitch3SetPoint, &pitch3Output, 0, 
 PID roll1PID((double *) &pitchRollLink1[1], &roll1SetPoint, &roll1Output, 0, 0, 0, DIRECT);
 PID roll2PID((double *) &pitchRollLink2[1], &roll2SetPoint, &roll2Output, 0, 0, 0, DIRECT);
 
+arm::Motor baseYawMotor(1,2,3);
+arm::Motor pitch1Motor(1,2,3);
+arm::Motor pitch2Motor(1,2,3);
+arm::Motor pitch3Motor(1,2,3);
+arm::Motor roll1Motor(1,2,3);
+arm::Motor roll2Motor(1,2,3);
+
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(nodeHandle, transformConfig);
 
@@ -45,12 +53,16 @@ ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~f
 
 void setup() {
     /**
-     * TODO: Init bus for encoders
+     * Init bus for encoders
      * Register tf broadcaster
-     * TODO: Setup motors and brakes
+     * Setup motors and brakes
      */
 
     SPI.begin();
+    SPI.setClockDivider(SPI_CLOCK_DIV8);
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setDataMode(SPI_MODE2);
+
     nodeHandle.initNode();
     nodeHandle.advertiseService(ramService);
     sender.init();
@@ -70,7 +82,7 @@ void loop() {
      */
 
 
-    digitalWrite(13, !digitalRead(13));
+    digitalWrite(13, (uint8_t) !digitalRead(13));
 
     baseYawValue = baseYaw.readPosition();
     pitch1Value = basePitch.readPosition();
@@ -84,8 +96,13 @@ void loop() {
     roll1PID.Compute();
     roll2PID.Compute();
 
-    sprintf(array, "Free Ram: %d bytes", freeRam());
-    nodeHandle.logdebug(array);
+    baseYawMotor.setSpeed(baseYawOutput);
+    pitch1Motor.setSpeed(pitch1Output);
+    pitch2Motor.setSpeed(pitch2Output);
+    pitch3Motor.setSpeed(pitch3Output);
+    roll1Motor.setSpeed(roll1Output);
+    roll2Motor.setSpeed(roll2Output);
+
 
     // TODO: update motor commands
 
