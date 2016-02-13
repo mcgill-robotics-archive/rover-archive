@@ -53,6 +53,7 @@ void setup() {
     SPI.begin();
     nodeHandle.initNode();
     nodeHandle.advertiseService(ramService);
+    sender.init();
 
     pinMode(13, OUTPUT);
 }

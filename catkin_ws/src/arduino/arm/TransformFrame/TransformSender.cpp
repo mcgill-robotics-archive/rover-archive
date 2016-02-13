@@ -22,8 +22,6 @@ TransformSender::TransformSender(ros::NodeHandle &nh, TransformConfig &config) {
     mPitch3.header.frame_id = mRoll1.child_frame_id;
     mRoll2.header.frame_id = mPitch3.child_frame_id;
 
-    broadcaster.init(nh);
-
     baseYaw.transform.translation.x = config.armPosition;
     mPitch1.transform.translation.z = config.pitch1offset;
     mPitch2.transform.translation.x = config.pitch2offset;
@@ -31,8 +29,6 @@ TransformSender::TransformSender(ros::NodeHandle &nh, TransformConfig &config) {
     mPitch3.transform.translation.x = config.pitch3offset;
     mRoll2.transform.translation.x = config.roll2offset;
 
-    updateRotations(0, 0, 0, 0, 0, 0);
-    sendTransforms();
 }
 
 TransformSender::~TransformSender() {
@@ -79,4 +75,12 @@ void TransformSender::sendTransforms() {
     broadcaster.sendTransform(mPitch3);
     broadcaster.sendTransform(mRoll1);
     broadcaster.sendTransform(mRoll2);
+}
+
+void TransformSender::init() {
+
+    broadcaster.init(*mNh);
+    updateRotations(0, 0, 0, 0, 0, 0);
+    sendTransforms();
+
 }

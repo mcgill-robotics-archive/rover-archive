@@ -19,6 +19,7 @@ namespace arm {
 class TransformSender {
 public:
     TransformSender(ros::NodeHandle &nh, TransformConfig &config);
+    void init();
     void updateRotations(float yaw_base, float pitch_base, float pitch2, float roll1, float pitch3, float roll2);
     void sendTransforms();
     virtual ~TransformSender();
