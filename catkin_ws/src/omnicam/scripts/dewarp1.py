@@ -36,15 +36,15 @@ def unwarp(img,xmap,ymap):
 # 1 = r1
 # 2 = r2
 # center of the "donut"    
-Cx = 303
-Cy = 265
+Cx = 596
+Cy = 391
 # Inner donut radius
-R1x = 364
-R1y = 268
+R1x = 663
+R1y = 391
 R1 = R1x-Cx
 # outer donut radius
-R2x = 542
-R2y = 266
+R2x = 973
+R2y = 413
 R2 = R2x-Cx
 # our input and output image siZes
 Wd = 2.0*((R2+R1)/2)*np.pi

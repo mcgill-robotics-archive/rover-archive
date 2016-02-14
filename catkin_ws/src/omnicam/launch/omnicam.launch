@@ -1,0 +1,22 @@
+<launch>
+<group ns="omnicam">
+    <node
+        name="omni_capture"
+        pkg="omnicam"
+        type="omni_capture.py"
+        respawn="true"
+    />
+    <node
+        name="dewarp1"
+        pkg="omnicam"
+        type="dewarp1.py"
+        respawn="true"
+    />
+    <node
+        name="ServiceCropTest"
+        pkg="omnicam"
+        type="ServiceCropTest.py"
+        respawn="true"
+    />
+</group>
+</launch>

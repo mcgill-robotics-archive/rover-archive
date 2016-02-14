@@ -17,6 +17,10 @@ from cv_bridge import CvBridge, CvBridgeError
 
 cap = cv2.VideoCapture(0)
 
+#Set video resolution
+cap.set(3,1280)
+cap.set(4,1024)
+
 if __name__ == '__main__':
 
     rospy.init_node("omnicam_capture", anonymous=False)

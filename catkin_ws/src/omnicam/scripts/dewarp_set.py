@@ -42,7 +42,11 @@ def setCoord(event,x,y,flags,param):
         print setCount
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
+
+#Set capture resolution
+cap.set(3,1280)
+cap.set(4,1024)
 
 #If remains too long in this mode, bug
 while (setMode):
@@ -90,6 +94,7 @@ while(True):
     result = unwarp(frame,xmap,ymap)
     
     #need to convert to an numpy array to show ?
+    cv2.namedWindow('test', WINDOW_NORMAL)
     cv2.imshow('test',result)
 
     if cv2.waitKey(1) == ord('q'):
