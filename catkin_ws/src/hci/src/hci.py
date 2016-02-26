@@ -20,6 +20,7 @@ from rover_msgs.msg import MotorStatus
 from rover_camera.srv import ChangeFeed
 from rover_srvs.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
+from omnicam.srv import ControlView
 
 
 class CentralUi(QtGui.QMainWindow):
@@ -352,7 +353,8 @@ class CentralUi(QtGui.QMainWindow):
         self.map_point_list[-1].addPoints(self.x_waypoints, self.y_waypoints, size=10, symbol='t', brush='b')
 
     def get_signal_quality(self):
-        # s = os.popen("ping -c 1 air")
+        # TODO: make the target dynamic using ros_master_uri
+        # s = os.popen("ping -c 1 artemis")
         s = os.popen("ping -c 1 localhost")
         s.readline()
         k = s.readline()
@@ -412,6 +414,7 @@ class CentralUi(QtGui.QMainWindow):
             elif self.profile.param_value["joystick/next_cam"]:
                 self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() + 1) % self.ui.camera_selector.count())
 
+
         self.controller.clear_buttons()
         self.publish_controls()
 
@@ -461,6 +464,17 @@ class CentralUi(QtGui.QMainWindow):
             pass
         elif self.modeId == 3:
             # camera mode
+            if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
+                try:
+                    rospy.wait_for_service("/omnicam/crop_control", timeout=2)
+                    service = rospy.ServiceProxy("/omnicam/crop_control", ControlView)
+                except rospy.ROSException:
+                    rospy.logerr("Timeout trying to find service /omnicam/crop_control")
+                    return
+
+                response = service(-10 * self.controller.a1, -10 * self.controller.a2, 10 * self.controller.a3)
+                if not response:
+                    rospy.logerr("Failed to adjust omnicam image.")
             pass
 
     def set_controller_mode(self, mode_id):
