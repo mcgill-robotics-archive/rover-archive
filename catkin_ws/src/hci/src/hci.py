@@ -93,6 +93,7 @@ class CentralUi(QtGui.QMainWindow):
         self.setup_minimap()
         self.get_feed_topic_params()
 
+        self.master_name = parse_master_uri()
         self.drive_publisher = DrivePublisher()
 
         path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/grid_vertical.png"
@@ -354,8 +355,7 @@ class CentralUi(QtGui.QMainWindow):
 
     def get_signal_quality(self):
         # TODO: make the target dynamic using ros_master_uri
-        # s = os.popen("ping -c 1 artemis")
-        s = os.popen("ping -c 1 localhost")
+        s = os.popen("ping -c 1 " + self.master_name)
         s.readline()
         k = s.readline()
         temp = k.split('=')
