@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 
-#from __future__ import print_function
-import sys
-import time
 import numpy as np
 import cv2
-import roslib
 import rospy
-#from stdmsgs.msg import String
-from cv_bridge import CvBridge, CvBridge
+from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from omnicam.srv import *
 
