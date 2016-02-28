@@ -6,6 +6,7 @@ project(arduino)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  rover_common
   rosserial_arduino
   rosserial_client
   std_msgs

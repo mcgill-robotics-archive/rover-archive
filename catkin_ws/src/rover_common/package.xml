@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>rover_msgs</name>
+  <name>rover_common</name>
   <version>0.1.0</version>
   <description>Messages used in the rover ros environment</description>
 
