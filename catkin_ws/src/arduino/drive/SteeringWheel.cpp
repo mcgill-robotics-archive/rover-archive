@@ -7,7 +7,12 @@
 
 namespace drive {
 
-SteeringWheel::SteeringWheel() {
+SteeringWheel::SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle *nodeHandle)
+        : Wheel(motorConfig, nodeHandle) {
+    mServoPort = servoPort;
+    mMotorConfig = motorConfig;
+    mNodeHandle = nodeHandle;
+
     mLowLimit = 1000;
     mHighLimit = 2000;
 
@@ -16,17 +21,10 @@ SteeringWheel::SteeringWheel() {
     if (!mServo.attached()) {
         mServo.attach(mServoPort);
     }
-}
-
-SteeringWheel::SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle * nodeHandle) {
-    mServoPort = servoPort;
-    mMotorConfig = motorConfig;
-    mNodeHandle = nodeHandle;
-    SteeringWheel();
 
     char init_message [64];
     sprintf(init_message, "Steering wheel initialized with drive pin %d and "
-            "servo pin %d\n", mMotorConfig.speedPin, mServoPort);
+            "servo pin %d", mMotorConfig.speedPin, mServoPort);
 
     mNodeHandle->logdebug(init_message);
 }

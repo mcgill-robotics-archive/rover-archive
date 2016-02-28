@@ -6,7 +6,7 @@
 #define ROVER_ARDUINO_STEERINGWHEEL_H
 
 
-#include <Servo/Servo.h>
+#include <Servo.h>
 #include "Wheel.h"
 
 namespace drive {
@@ -26,13 +26,6 @@ public:
     void setSteeringAngle(int angle);
     void setHighLimit(int HighLimit);
     void setLowLimit(int LowLimit);
-
-protected:
-    /**
-     * Constructor which instantiates the servo object.
-     * Member variables must be set before calling.
-     */
-    SteeringWheel();
 
 private:
     uint8_t mServoPort;

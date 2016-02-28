@@ -25,11 +25,12 @@ set(HEADERS
         MotorController/DRV8308.h
         MotorController/MotorConfig.h
         MotorController/MotorController.h
+        pins.h
         )
 
 generate_arduino_firmware(drive
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     BOARD mega2560
-    PORT /dev/mega_drive
+    PORT /dev/ttyACM0
 )

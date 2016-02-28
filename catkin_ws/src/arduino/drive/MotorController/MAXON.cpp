@@ -46,8 +46,9 @@ void MAXON::brake(bool brk) {
     {
         analogWrite(mSpeedPin, 0);
         enable(false);
-
     }
+    else
+        enable(true);
 }
 void MAXON::enable(bool en) {
     digitalWrite(mEnablePin, (uint8_t) en);

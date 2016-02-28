@@ -8,18 +8,9 @@ void drive::Wheel::setSpeed(int speed) {
     mMotorController->setSpeed(speed);
 }
 
-long drive::Wheel::readEndoder() {
+long drive::Wheel::readEncoder() {
     //TODO
     return mTachoCount;
-}
-
-drive::Wheel::Wheel() {
-    mTachoCount = 0;
-    mMotorController = MotorController::createMotorController(mMotorConfig);
-    mMotorController->enable(true);
-    mMotorController->brake(true);
-
-    //TODO: init connection with encoder
 }
 
 drive::Wheel::~Wheel() {
@@ -29,7 +20,12 @@ drive::Wheel::~Wheel() {
 drive::Wheel::Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle) {
     mNodeHandle = nodeHandle;
     mMotorConfig = motorConfig;
-    Wheel();
+    mTachoCount = 0;
+    mMotorController = MotorController::createMotorController(mMotorConfig);
+    mMotorController->enable(true);
+    mMotorController->brake(true);
+
+    //TODO: init connection with encoder
     char init_message [48];
     sprintf(init_message, "Wheel initialized with drive pin %d", motorConfig.speedPin);
     mNodeHandle->logdebug(init_message);

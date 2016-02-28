@@ -21,7 +21,7 @@ public:
      * \param nodeHandle pointer to the node handle to use for logging.
      * The caller is responsible for memory management
      */
-    Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle); //TODO: Other pins
+    Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle);
     virtual ~Wheel();
 
     /**
@@ -30,17 +30,11 @@ public:
      * \param speed the relative speed on a 0 - 255 scale.
      */
     void setSpeed(int speed);
-    long readEndoder();
+    long readEncoder();
     void brake(bool brk);
     bool getStatus();
 
 protected:
-    /**
-     * Constructor which initialises controller pin and encoder reader.
-     * Member variables must be set before calling.
-     */
-    Wheel();
-
     ros::NodeHandle * mNodeHandle;
     MotorConfig mMotorConfig;
 

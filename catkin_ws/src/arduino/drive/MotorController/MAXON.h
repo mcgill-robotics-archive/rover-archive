@@ -5,6 +5,7 @@
 #ifndef ROVER_ARDUINO_MAXON_H
 #define ROVER_ARDUINO_MAXON_H
 
+#include <Arduino.h>
 #include "MotorController.h"
 #include "MotorConfig.h"
 namespace drive {
