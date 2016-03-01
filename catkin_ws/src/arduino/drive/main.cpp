@@ -67,14 +67,13 @@ void driveCallback( const drive_control::WheelCommand& setPoints )
 void callbackMoving( const std_msgs::Bool& boolean)
 {
     nh.logdebug("Entering moving");
-    leftFront->brake(!boolean.data);
-    leftBack->brake(!boolean.data);
-    middleLeft->brake(!boolean.data);
-    rightBack->brake(!boolean.data);
-    rightFront->brake(!boolean.data);
-    middleRight->brake(!boolean.data);
+    leftFront->enable(boolean.data);
+    leftBack->enable(boolean.data);
+    middleLeft->enable(boolean.data);
+    rightBack->enable(boolean.data);
+    rightFront->enable(boolean.data);
+    middleRight->enable(boolean.data);
 }
-
 
 void setup() {
     nh.initNode();
@@ -138,9 +137,7 @@ void setup() {
 
     middleLeft = new drive::Wheel(configML, &nh);
     middleRight = new drive::Wheel(configMR, &nh);
-
 }
-
 
 void sendMotorStatus(ros::Publisher &publisher) {
     motorStatusMessage.fl = leftFront->getStatus();

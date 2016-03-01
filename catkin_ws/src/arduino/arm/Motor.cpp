@@ -40,7 +40,7 @@ void Motor::setSpeed(double speed) {
 }
 
 void Motor::unlock() {
-    digitalWrite(mBrakePin, HIGH);
+    digitalWrite(mBrakePin, 1);
 }
 
 bool Motor::isLocked() {

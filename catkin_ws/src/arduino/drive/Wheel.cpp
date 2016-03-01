@@ -38,3 +38,7 @@ void drive::Wheel::brake(bool brk) {
 bool drive::Wheel::getStatus() {
     return mMotorController->getStatus();
 }
+
+void drive::Wheel::enable(bool enable) {
+    mMotorController->enable(enable);
+}

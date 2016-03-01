@@ -19,12 +19,12 @@ public:
     const char *pitch3Frame;
     const char *roll2Frame;
 
-    static const int armPosition = 10; //distance between arm and robot frame
-    static const int pitch1offset = 2;
-    static const int pitch2offset = 10;
-    static const int roll1offset = 2;
-    static const int pitch3offset = 10;
-    static const int roll2offset = 2;
+    static const double armPosition = 0.10; //distance between arm and robot frame
+    static const double pitch1offset = 0.02;
+    static const double pitch2offset = 0.10;
+    static const double roll1offset = 0.02;
+    static const double pitch3offset = 0.10;
+    static const double roll2offset = 0.02;
 };
 }
 

@@ -30,6 +30,7 @@ public:
      * \param speed the relative speed on a 0 - 255 scale.
      */
     void setSpeed(int speed);
+    void enable(bool enable);
     long readEncoder();
     void brake(bool brk);
     bool getStatus();
