@@ -21,6 +21,9 @@ SteeringWheel::SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::No
     if (!mServo.attached()) {
         mServo.attach(mServoPort);
     }
+    else {
+        mNodeHandle->logwarn("Servo already attached");
+    }
 
     char init_message [64];
     sprintf(init_message, "Steering wheel initialized with drive pin %d and "
@@ -34,11 +37,15 @@ SteeringWheel::~SteeringWheel() {
 }
 
 void SteeringWheel::setSteeringAngle(int angle) {
-    int servoCommand = (int) map(angle, 0, 180, 1000, 2000);
-    servoCommand = constrain(servoCommand, mHighLimit, mLowLimit);
+    long servoCommand = map(angle, 0, 180, 1000, 2000);
+    servoCommand = constrain(servoCommand, mLowLimit, mHighLimit);
 
-    mServo.write(servoCommand);
+    mServo.write((int) servoCommand);
 
+    char init_message [64];
+    sprintf(init_message, " Angle received %d and message written %li", angle, servoCommand);
+    mNodeHandle->logdebug(init_message);
+    
 }
 
 void SteeringWheel::setHighLimit(int HighLimit) {

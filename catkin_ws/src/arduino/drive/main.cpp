@@ -49,16 +49,15 @@ void driveCallback( const drive_control::WheelCommand& setPoints )
 {
     char message[10];
     sprintf(message, "%f", setPoints.flv);
-    nh.logdebug("Hello");
     leftFront->setSpeed((int) setPoints.flv);
-//    leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
+    leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
     leftBack->setSpeed((int) setPoints.blv);
-//    leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
+    leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
 
     rightFront->setSpeed((int) setPoints.frv);
-//    rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
+    rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
     rightBack->setSpeed((int) setPoints.brv);
-//    rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
+    rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
 
     middleLeft->setSpeed((int) setPoints.mlv);
     middleRight->setSpeed((int) setPoints.mrv);
