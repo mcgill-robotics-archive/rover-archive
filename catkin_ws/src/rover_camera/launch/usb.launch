@@ -1,6 +1,7 @@
 <launch>
 <arg name="name" />
 <arg name="device" />
+<arg name="decimate_factor" default="3"/>
 
 <group ns="$(arg name)" >
 
@@ -18,8 +19,8 @@
         args="standalone image_proc/crop_decimate"
         name="decimator">
 
-        <param name="decimation_x" type="int" value="3" />
-        <param name="decimation_y" type="int" value="3" />
+        <param name="decimation_x" type="int" value="$(arg decimate_factor)" />
+        <param name="decimation_y" type="int" value="$(arg decimate_factor)" />
 
         <remap from="camera_out/image_raw" to="image_raw" />
       </node>
