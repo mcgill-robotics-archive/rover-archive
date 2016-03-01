@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 
-#from __future__ import print_function
-import sys
-import time
 import numpy as np
 import cv2
-import roslib
 import rospy
-#from stdmsgs.msg import String
-from cv_bridge import CvBridge, CvBridge
+from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from omnicam.srv import *
 
@@ -26,7 +21,7 @@ req_y = 0
 req_zoom = 0
 
 rospy.init_node("omnicam_crop", anonymous=False)
-cropPub = rospy.Publisher("/omnicam_cropped", Image, queue_size=1)
+cropPub = rospy.Publisher("omnicam_cropped", Image, queue_size=1)
 
 bridge = CvBridge()
 
@@ -141,5 +136,5 @@ def callback(data):
 
 if __name__ == '__main__':
     service = rospy.Service("crop_control", ControlView, receive_view_command)
-    rawGRAY = rospy.Subscriber("/omnicam_unwarp_GRAY", Image, callback, queue_size=1)
+    rawGRAY = rospy.Subscriber("unwarp_GRAY", Image, callback, queue_size=1)
     rospy.spin()

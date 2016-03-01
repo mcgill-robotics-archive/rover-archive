@@ -1,22 +1,17 @@
 <launch>
+
+<arg name="config_file" />
+
+<include file="$(find rover_camera)/launch/usb.launch">
+    <arg name="name" value="omnicam" />
+    <arg name="device" value="/dev/video1" />
+</include>
+
 <group ns="omnicam">
-    <node
-        name="omni_capture"
-        pkg="omnicam"
-        type="omni_capture.py"
-        respawn="true"
-    />
-    <node
-        name="dewarp1"
-        pkg="omnicam"
-        type="dewarp1.py"
-        respawn="true"
-    />
-    <node
-        name="ServiceCropTest"
-        pkg="omnicam"
-        type="ServiceCropTest.py"
-        respawn="true"
-    />
+    <param name="config_file" value="$(arg config_file)" />    
+    <node name="dewarp1" pkg="omnicam" type="unwrap.py" respawn="false"/>>
+    
+    <node name="ServiceCropTest" pkg="omnicam" type="ServiceCropTest.py" respawn="true"/>
 </group>
+
 </launch>
