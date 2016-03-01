@@ -16,9 +16,9 @@ import math
 import datetime
 
 from std_msgs.msg import *
-from rover_msgs.msg import MotorStatus
+from rover_common.msg import MotorStatus
 from rover_camera.srv import ChangeFeed
-from rover_srvs.srv import GetVoltageRead
+from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 

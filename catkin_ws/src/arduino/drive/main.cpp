@@ -21,8 +21,8 @@ rover_common::MotorStatus motorStatusMessage;
 
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&freeRamCallback);
 ros::Publisher motorStatusPublisher("motor_status", &motorStatusMessage);
-ros::Subscriber<std_msgs::Bool> movingSubscriber("is_moving", &callbackMoving);
-ros::Subscriber<drive_control::WheelCommand> driveSubscriber("wheels", &driveCallback );
+ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
+ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );
 
 drive::MotorConfig configFL;
 drive::MotorConfig configML;
