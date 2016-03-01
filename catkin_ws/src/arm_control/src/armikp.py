@@ -55,7 +55,7 @@ def armpikp(wrist, rotation):
     root_tol = 0.01
     theta = []
     eta = [0, 0, 0]
-    w = []
+    w = [0,0,0]
 
     for i in xrange(0, 6):
         theta.append([])
@@ -67,7 +67,10 @@ def armpikp(wrist, rotation):
     zc = wrist[2]
 
     Q = transpose(rotation)
-    e6 = np.multiply(Q,[0,0,1])  # todo fix matrix dimensions
+    print Q
+    e6 = rotation * np.matrix([[0],[0],[1]])
+    print "--- E6 ---"
+    print e6
 
     theta[0][0] = 2 * math.atan((xc + math.sqrt(yc * yc + xc * xc + eps)) / (-yc + eps))
     theta[0][1] = 2 * math.atan((xc - math.sqrt(yc * yc + xc * xc + eps)) / (-yc + eps))
@@ -129,36 +132,38 @@ def armpikp(wrist, rotation):
             (eta[0] * mu[3] - math.sqrt((math.pow(eta[0], 2) + math.pow(eta[1], 2)) * math.pow(mu[3], 2) - math.pow(lam[4] - eta[2] * lam[3], 2))) /
             (lam[4] - eta[2] * lam[3] - eta[1] * mu[3]))
 
-        Q3Q2Q1 = [((math.cos(theta[1][j]) * math.cos(theta[2][j]) - math.sin(theta[1][j]) * math.sin(
+        Q3Q2Q1 = np.matrix([[((math.cos(theta[1][j]) * math.cos(theta[2][j]) - math.sin(theta[1][j]) * math.sin(
             theta[2][j])) * math.cos(theta[0][j])),
                   ((math.cos(theta[1][j]) * math.cos(theta[2][j]) - math.sin(theta[1][j]) * math.sin(
                       theta[2][j])) * math.sin(theta[0][j])),
-                  (math.cos(theta[1][j]) * math.sin(theta[2][j]) + math.sin(theta[1][j]) * math.cos(theta[2][j])),
-                  0,
-                  math.sin(theta[0][j]),
+                  (math.cos(theta[1][j]) * math.sin(theta[2][j]) + math.sin(theta[1][j]) * math.cos(theta[2][j]))],
+                  # 0,
+                  [math.sin(theta[0][j]),
                   -math.cos(theta[0][j]),
-                  0,
-                  0,
-                  ((math.cos(theta[1][j]) * math.sin(theta[2][j]) + math.sin(theta[1][j]) * math.cos(
+                  0],
+                  # 0,
+                  [((math.cos(theta[1][j]) * math.sin(theta[2][j]) + math.sin(theta[1][j]) * math.cos(
                       theta[2][j])) * math.cos(theta[0][j])),
                   ((math.cos(theta[1][j]) * math.sin(theta[2][j]) + math.sin(theta[1][j]) * math.cos(
                       theta[2][j])) * math.sin(theta[0][j])),
                   (math.sin(theta[1][j]) * math.sin(theta[2][j]) - math.cos(theta[1][j]) * math.cos(theta[2][j])),
-                  0]
-
+                  # 0]
+]])
         print Q3Q2Q1
-        R = np.multiply(Q3Q2Q1,rotation)
+        R = Q3Q2Q1 *rotation
+        print R
 
         for k in xrange(j, j + 4, 4):
             cosroot1 = math.acos(
-                max(min(1 / -mu[4] * (-lam[3] * (mu[5] * R[1] * lam[5] * R[2]) * math.sin(theta[3][k]) +
-                                      lam[3] * (mu[5] * R[5] + lam[5] * R[6]) * math.cos(theta[3][k]) + mu[3] * (
-                                          mu[5] * R[8] + lam[5] * R[10])), 1), -1))
+                max(min(1 / -mu[4] * (-lam[3] * (mu[5] * R.item(1) * lam[5] * R.item(2)) * math.sin(theta[3][k]) +
+                                      lam[3] * (mu[5] * R.item(4) + lam[5] * R.item(5)) * math.cos(theta[3][k]) + mu[3] * (
+                                          mu[5] * R.item(6) + lam[5] * R.item(8))), 1), -1))
             cosroot2 = -cosroot1 + 2 * math.pi
 
             temp_root = 1 / mu[4] * (
-                (mu[5] * R[1] + lam[5] * R[2]) * math.cos(theta[3][k]) + (mu[5] * R[4] + lam[5] * R[6]) * math.sin(
+                (mu[5] * R.item(1) + lam[5] * R.item(2)) * math.cos(theta[3][k]) + (mu[5] * R.item(3) + lam[5] * R.item(5)) * math.sin(
                     theta[3][k]))
+            print temp_root
             sinroot1 = math.asin(temp_root)
             if temp_root >= 0:
                 sinroot1 = math.asin(temp_root)
@@ -172,14 +177,15 @@ def armpikp(wrist, rotation):
             else:
                 theta[4][k] = cosroot2
 
-            w[0] = R[0] * math.cos(theta[3][k]) + R[4] * math.sin(theta[3][k])
-            w[1] = -lam[3] * (R[0] * math.sin(theta[3][k]) - R[4] * math.cos(theta[3][k])) + mu[3] * R[8]
-            w[2] = mu[3] * (R[0] * math.sin(theta[3][k]) - R[4] * math.cos(theta[3][k])) + lam[3] * R[8]
+            w[0] = R.item(0) * math.cos(theta[3][k]) + R.item(3) * math.sin(theta[3][k])
+            w[1] = -lam[3] * (R.item(0) * math.sin(theta[3][k]) - R.item(3) * math.cos(theta[3][k])) + mu[3] * R.item(6)
+            w[2] = mu[3] * (R.item(0) * math.sin(theta[3][k]) - R.item(3) * math.cos(theta[3][k])) + lam[3] * R.item(6)
 
             cosroot1 = math.acos(max(min(w[0] * math.cos(theta[4][k]) + w[1] * math.sin(theta[4][k]), 1), -1))
             cosroot2 = -cosroot1 + 2 * math.pi
 
             temp_root = -w[0] * lam[4] * math.sin(theta[4][k]) + w[1] * lam[4] * math.cos(theta[4][k]) + w[2] * mu[4]
+            print temp_root
             sinroot1 = math.asin(temp_root)
             if temp_root >= 0:
                 sinroot2 = math.pi - sinroot1
