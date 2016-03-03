@@ -3,7 +3,7 @@ import rospy
 from enum import IntEnum
 
 from drive_control.msg import DriveCommand
-from rover_msgs.msg import MotorControllerMode
+from rover_common.msg import MotorControllerMode
 
 
 class DrivePublisher(object):
