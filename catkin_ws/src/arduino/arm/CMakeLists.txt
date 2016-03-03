@@ -25,7 +25,8 @@ set(HEADERS
         PitchRollCompute.h
         TransformFrame/TransformSender.h
         TransformFrame/TransformConfig.h
-        PID_v1/PID_v1.h)
+        PID_v1/PID_v1.h
+        pins_arm.h)
 
 generate_arduino_firmware(arm
     SRCS ${SOURCES}

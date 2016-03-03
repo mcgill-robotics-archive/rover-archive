@@ -10,6 +10,7 @@
 #include <SPI.h>
 #include "../common/ram.h"
 #include "Motor.h"
+#include "pins_arm.h"
 
 /**
  * Init ros
@@ -22,12 +23,12 @@
 
 ros::NodeHandle nodeHandle;
 
-arm::Encoder baseYaw(10, &nodeHandle);
-arm::Encoder basePitch(11, &nodeHandle);
-arm::Encoder differential1encoderLeft(12, &nodeHandle);
-arm::Encoder differential1encoderRight(13, &nodeHandle);
-arm::Encoder differential2encoderLeft(14, &nodeHandle);
-arm::Encoder differential2encoderRight(15, &nodeHandle);
+arm::Encoder baseYaw(BASE_YAW_SS_PIN, &nodeHandle);
+arm::Encoder basePitch(PITCH_1_SS_PIN, &nodeHandle);
+arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, &nodeHandle);
+arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, &nodeHandle);
+arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, &nodeHandle);
+arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, &nodeHandle);
 
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
@@ -39,12 +40,12 @@ PID pitch3PID((double *) &pitchRollLink2[0], &pitch3SetPoint, &pitch3Output, 0, 
 PID roll1PID((double *) &pitchRollLink1[1], &roll1SetPoint, &roll1Output, 0, 0, 0, DIRECT);
 PID roll2PID((double *) &pitchRollLink2[1], &roll2SetPoint, &roll2Output, 0, 0, 0, DIRECT);
 
-arm::Motor baseYawMotor(1,2,3);
-arm::Motor pitch1Motor(1,2,3);
-arm::Motor pitch2Motor(1,2,3);
-arm::Motor pitch3Motor(1,2,3);
-arm::Motor roll1Motor(1,2,3);
-arm::Motor roll2Motor(1,2,3);
+arm::Motor baseYawMotor(BASE_YAW_SPEED_PIN, BASE_YAW_BRK_PIN, BASE_YAW_INA_PIN, BASE_YAW_INB_PIN);
+arm::Motor pitch1Motor(PITCH_1_SPEED_PIN, PITCH_1_BRK_PIN, PITCH_1_INA_PIN, PITCH_1_INB_PIN);
+arm::Motor diff_1_left(DIFF_1_LEFT_SPEED_PIN, DIFF_1_LEFT_BRK_PIN, DIFF_1_LEFT_INA_PIN, DIFF_1_LEFT_INB_PIN);
+arm::Motor diff_1_right(DIFF_1_RIGHT_SPEED_PIN, DIFF_1_RIGHT_BRK_PIN, DIFF_1_RIGHT_INA_PIN, DIFF_1_RIGHT_INB_PIN);
+arm::Motor diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_INA_PIN, DIFF_2_LEFT_INB_PIN);
+arm::Motor diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN);
 
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(nodeHandle, transformConfig);
@@ -98,10 +99,10 @@ void loop() {
 
     baseYawMotor.setSpeed(baseYawOutput);
     pitch1Motor.setSpeed(pitch1Output);
-    pitch2Motor.setSpeed(pitch2Output);
-    pitch3Motor.setSpeed(pitch3Output);
-    roll1Motor.setSpeed(roll1Output);
-    roll2Motor.setSpeed(roll2Output);
+    diff_1_left.setSpeed(pitch2Output);
+    diff_1_right.setSpeed(pitch3Output);
+    diff_2_left.setSpeed(roll1Output);
+    diff_2_right.setSpeed(roll2Output);
 
 
     // TODO: update motor commands

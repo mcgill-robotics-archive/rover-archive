@@ -7,17 +7,20 @@
 using namespace arm;
 
 
-Motor::Motor(uint8_t motorPin, uint8_t brakePin, uint8_t directionPin) {
+Motor::Motor(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB) {
     mMotorPin = motorPin;
     mBrakePin = brakePin;
-    mDirectionPin = directionPin;
+    mINA = INA;
+    mINB = INB;
 
     pinMode(mMotorPin, OUTPUT);
     pinMode(mBrakePin, OUTPUT);
-    pinMode(mDirectionPin, OUTPUT);
+    pinMode(mINA, OUTPUT);
+    pinMode(mINB, OUTPUT);
 
     digitalWrite(mBrakePin, 0);
-    digitalWrite(mDirectionPin, 0);
+    digitalWrite(mINA, 0);
+    digitalWrite(mINB, 1);
     analogWrite(mMotorPin, 0);
 }
 
@@ -34,7 +37,7 @@ void Motor::setSpeed(double speed) {
     if (speed == 0) lock();
     else {
         unlock();
-        digitalWrite(mDirectionPin, (uint8_t) (speed < 0 == mReverseDirection));
+        setReverseDirection(speed < 0);
         analogWrite(mMotorPin, (int) speed);
     }
 }
@@ -48,9 +51,10 @@ bool Motor::isLocked() {
 }
 
 bool Motor::isReverseDirection() {
-    return mReverseDirection;
+    return (bool) digitalRead(mINA);
 }
 
 void Motor::setReverseDirection(bool reverseDirection) {
-    mReverseDirection = reverseDirection;
+    digitalWrite(mINA, (uint8_t) reverseDirection);
+    digitalWrite(mINA, (uint8_t) !reverseDirection);
 }

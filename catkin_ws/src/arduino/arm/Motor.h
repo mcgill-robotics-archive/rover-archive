@@ -11,7 +11,7 @@ namespace arm {
 
 class Motor {
 public:
-    Motor(uint8_t motorPin, uint8_t brakePin, uint8_t directionPin);
+    Motor(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB);
     ~Motor();
 
     void lock();
@@ -25,8 +25,8 @@ public:
 private:
     uint8_t mMotorPin;
     uint8_t mBrakePin;
-    uint8_t mDirectionPin;
-    bool mReverseDirection;
+    uint8_t mINA;
+    uint8_t mINB;
 };
 
 }

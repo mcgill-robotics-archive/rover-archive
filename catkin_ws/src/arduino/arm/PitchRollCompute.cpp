@@ -29,3 +29,9 @@ void PitchRollCompute::compute(float *feedback) {
     feedback[0] = pitch;
     feedback[1] = roll;
 }
+
+void PitchRollCompute::inverse(float * destination) {
+
+}
+
+

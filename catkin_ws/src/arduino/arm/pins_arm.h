@@ -1,0 +1,44 @@
+//
+// Created by David Lavoie-Boutin on 2016-03-03.
+//
+
+#ifndef ROVER_ARDUINO_PINS_ARM_H
+#define ROVER_ARDUINO_PINS_ARM_H
+
+#define BASE_YAW_SPEED_PIN 1
+#define BASE_YAW_INA_PIN 1
+#define BASE_YAW_INB_PIN 1
+#define BASE_YAW_SS_PIN 1
+#define BASE_YAW_BRK_PIN 1
+
+#define PITCH_1_SPEED_PIN 1
+#define PITCH_1_INA_PIN 1
+#define PITCH_1_INB_PIN 1
+#define PITCH_1_SS_PIN 1
+#define PITCH_1_BRK_PIN 1
+
+#define DIFF_1_LEFT_SPEED_PIN 1
+#define DIFF_1_LEFT_INA_PIN 1
+#define DIFF_1_LEFT_INB_PIN 1
+#define DIFF_1_LEFT_SS_PIN 1
+#define DIFF_1_LEFT_BRK_PIN 1
+
+#define DIFF_1_RIGHT_SPEED_PIN 1
+#define DIFF_1_RIGHT_INA_PIN 1
+#define DIFF_1_RIGHT_INB_PIN 1
+#define DIFF_1_RIGHT_SS_PIN 1
+#define DIFF_1_RIGHT_BRK_PIN 1
+
+#define DIFF_2_LEFT_SPEED_PIN 1
+#define DIFF_2_LEFT_INA_PIN 1
+#define DIFF_2_LEFT_INB_PIN 1
+#define DIFF_2_LEFT_SS_PIN 1
+#define DIFF_2_LEFT_BRK_PIN 1
+
+#define DIFF_2_RIGHT_SPEED_PIN 1
+#define DIFF_2_RIGHT_INA_PIN 1
+#define DIFF_2_RIGHT_INB_PIN 1
+#define DIFF_2_RIGHT_SS_PIN 1
+#define DIFF_2_RIGHT_BRK_PIN 1
+
+#endif //ROVER_ARDUINO_PINS_ARM_H
