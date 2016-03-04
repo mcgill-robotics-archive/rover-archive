@@ -102,10 +102,10 @@ void loop() {
 
 //    baseYawMotor.setSpeed(baseYawOutput);
     pitch1Motor.setSpeed(pitch1Output);
-    diff_1_left.setSpeed(diff1leftOutput);
-    diff_1_right.setSpeed(diff2leftOutput);
-    diff_2_left.setSpeed(diff1rightOutput);
-    diff_2_right.setSpeed(diff2rightOutput);
+    diff_1_left.setSpeed(diff1pos[0]);
+    diff_1_right.setSpeed(diff2pos[0]);
+    diff_2_left.setSpeed(diff1pos[1]);
+    diff_2_right.setSpeed(diff2pos[1]);
     endEffectorMotor.setSpeed(endEffectorOutput);
 
 
