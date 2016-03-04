@@ -109,6 +109,7 @@ void loop() {
     endEffectorMotor.setSpeed(endEffectorOutput);
 
 
+
     // TODO: update motor commands
 
     nodeHandle.spinOnce();

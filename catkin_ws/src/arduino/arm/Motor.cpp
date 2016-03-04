@@ -38,7 +38,7 @@ void Motor::setSpeed(double speed) {
     else {
         unlock();
         setReverseDirection(speed < 0);
-        analogWrite(abs(mMotorPin), (int) speed);
+        analogWrite(mMotorPin, (int) abs(speed));
     }
 }
 
