@@ -168,8 +168,8 @@ class Steering:
             # multiplying this by the sign of the velocity makes the angular
             # velocity of the rover different than the input, but is of a more
             # natural movement
-            self.output_command.flsa *= sign_w
-            self.output_command.frsa *= sign_w
+            self.output_command.flsa *= -sign_w
+            self.output_command.frsa *= -sign_w
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
 
