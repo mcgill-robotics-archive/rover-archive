@@ -2,16 +2,18 @@
 // Created by David Lavoie-Boutin on 2016-02-08.
 //
 
+#include <ros.h>
 #include "Motor.h"
 
 using namespace arm;
 
 
-Motor::Motor(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB) {
+Motor::Motor(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB, ros::NodeHandle *nodeHandle) {
     mMotorPin = motorPin;
     mBrakePin = brakePin;
     mINA = INA;
     mINB = INB;
+    mNh = nodeHandle;
 
     pinMode(mMotorPin, OUTPUT);
     pinMode(mBrakePin, OUTPUT);
@@ -39,6 +41,9 @@ void Motor::setSpeed(double speed) {
         unlock();
         setReverseDirection(speed < 0);
         analogWrite(mMotorPin, (int) abs(speed));
+        char array[32];
+        sprintf(array, "Motor %d, speed %d", mMotorPin, (int) speed);
+        mNh->logdebug(array);
     }
 }
 

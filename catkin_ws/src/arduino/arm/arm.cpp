@@ -42,12 +42,12 @@ arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2enc
 //PID diff1rightPID((double *) &diff1pos[1], &diff1rightSetPoint, &diff1rightOutput, 0, 0, 0, DIRECT);
 //PID diff2rightPID((double *) &diff2pos[1], &diff2rightSetPoint, &diff2rightOutput, 0, 0, 0, DIRECT);
 
-arm::Motor endEffectorMotor(END_EFFECTOR_SPEED_PIN, -1, END_EFFECTOR_INA_PIN, END_EFFECTOR_INB_PIN);
-arm::Motor pitch1Motor(PITCH_1_SPEED_PIN, PITCH_1_BRK_PIN, PITCH_1_INA_PIN, PITCH_1_INB_PIN);
-arm::Motor diff_1_left(DIFF_1_LEFT_SPEED_PIN, DIFF_1_LEFT_BRK_PIN, DIFF_1_LEFT_INA_PIN, DIFF_1_LEFT_INB_PIN);
-arm::Motor diff_1_right(DIFF_1_RIGHT_SPEED_PIN, DIFF_1_RIGHT_BRK_PIN, DIFF_1_RIGHT_INA_PIN, DIFF_1_RIGHT_INB_PIN);
-arm::Motor diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_INA_PIN, DIFF_2_LEFT_INB_PIN);
-arm::Motor diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN);
+arm::Motor endEffectorMotor(END_EFFECTOR_SPEED_PIN, -1, END_EFFECTOR_INA_PIN, END_EFFECTOR_INB_PIN, &nodeHandle);
+arm::Motor pitch1Motor(PITCH_1_SPEED_PIN, PITCH_1_BRK_PIN, PITCH_1_INA_PIN, PITCH_1_INB_PIN, &nodeHandle);
+arm::Motor diff_1_left(DIFF_1_LEFT_SPEED_PIN, DIFF_1_LEFT_BRK_PIN, DIFF_1_LEFT_INA_PIN, DIFF_1_LEFT_INB_PIN, &nodeHandle);
+arm::Motor diff_1_right(DIFF_1_RIGHT_SPEED_PIN, DIFF_1_RIGHT_BRK_PIN, DIFF_1_RIGHT_INA_PIN, DIFF_1_RIGHT_INB_PIN, &nodeHandle);
+arm::Motor diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_INA_PIN, DIFF_2_LEFT_INB_PIN, &nodeHandle);
+arm::Motor diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN, &nodeHandle);
 
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(nodeHandle, transformConfig);
