@@ -6,7 +6,7 @@ from arm_control.msg import *
 
 class ArmPublisher:
     def __init__(self):
-        self.publisher = rospy.Publisher("arm_velocity", JointVelocities, queue_size=1)
+        self.publisher = rospy.Publisher("arm_velocities", JointVelocities, queue_size=1)
         self.message = JointVelocities()
 
     def publish_joint_vels(self, base_pitch, diff_1_pitch, diff_2_pitch, diff_1_roll, diff_2_roll, end_effector):

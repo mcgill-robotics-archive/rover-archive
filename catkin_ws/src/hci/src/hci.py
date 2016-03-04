@@ -413,13 +413,13 @@ class CentralUi(QtGui.QMainWindow):
 
         elif self.modeId == 1:
             if self.ui.pitch1.isChecked():
-                self.arm_publisher.publish_base_pitch(self.controller.a2)
+                self.arm_publisher.publish_base_pitch(self.controller.a2 * 100)
             elif self.ui.diff1.isChecked():
-                self.arm_publisher.publish_diff_1(self.controller.a2, self.controller.a1)
+                self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
             elif self.ui.diff2.isChecked():
-                self.arm_publisher.publish_diff_2(self.controller.a2, self.controller.a1)
+                self.arm_publisher.publish_diff_2(self.controller.a2 * 100, self.controller.a1 * 100)
             elif self.ui.end_eff.isChecked():
-                self.arm_publisher.publish_end_effector(self.controller.a2)
+                self.arm_publisher.publish_end_effector(self.controller.a2 * 100)
 
         elif self.modeId == 3:
             # currently in camera control
