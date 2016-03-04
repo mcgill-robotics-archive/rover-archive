@@ -15,10 +15,10 @@ public:
     PitchRollCompute(Encoder*, Encoder*);
     ~PitchRollCompute();
     void compute(float *);
-    void inverse(float * destination);
+    void inverse(float pitch, float roll, float *destination);
 
-    float pitch;
-    float roll;
+    float mPitch;
+    float mRoll;
 
 private:
     Encoder* mEncoder1;

@@ -10,8 +10,8 @@ PitchRollCompute::PitchRollCompute(Encoder *encoder, Encoder *encoder1) {
     mEncoder1 = encoder;
     mEncoder2 = encoder1;
 
-    pitch = 0;
-    roll = 0;
+    mPitch = 0;
+    mRoll = 0;
 }
 
 PitchRollCompute::~PitchRollCompute() { }
@@ -23,15 +23,18 @@ void PitchRollCompute::compute(float *feedback) {
     float largest = val1 > val2 ? val1 : val2;
     float lowest = val1 <= val2 ? val1 : val2;
 
-    pitch = largest - (largest - lowest) / 2.0;
-    roll = (largest - lowest) / 2.0;
+    mPitch = largest - (largest - lowest) / 2.0;
+    mRoll = (largest - lowest) / 2.0;
 
-    feedback[0] = pitch;
-    feedback[1] = roll;
+    mRoll = (largest == val1) ? mRoll : - mRoll;
+
+    feedback[0] = mPitch;
+    feedback[1] = mRoll;
 }
 
-void PitchRollCompute::inverse(float * destination) {
-
+void PitchRollCompute::inverse(float pitch, float roll, float *destination) {
+    destination[0] = pitch + roll / 2;
+    destination[1] = pitch - roll / 2;
 }
 
 
