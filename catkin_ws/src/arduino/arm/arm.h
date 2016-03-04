@@ -33,5 +33,6 @@ double diff1leftOutput = 0;
 double diff2leftOutput = 0;
 double diff1rightOutput = 0;
 double diff2rightOutput = 0;
+double endEffectorOutput = 0;
 
 #endif //ROVER_ARDUINO_ARM_H
