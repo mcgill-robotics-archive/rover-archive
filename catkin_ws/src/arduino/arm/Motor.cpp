@@ -41,9 +41,6 @@ void Motor::setSpeed(double speed) {
         unlock();
         setReverseDirection(speed < 0);
         analogWrite(mMotorPin, (int) abs(speed));
-        char array[32];
-        sprintf(array, "Motor %d, speed %d", mMotorPin, (int) speed);
-        mNh->logdebug(array);
     }
 }
 
