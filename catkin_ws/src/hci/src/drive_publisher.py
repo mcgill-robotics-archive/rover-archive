@@ -44,7 +44,7 @@ class DrivePublisher(object):
         pass
 
     def set_speed(self, linear, angular):
-        self.speed_linear = linear * 3
+        self.speed_linear = linear / 2.0
         self.speed_angular = angular
 
     def set_steering_condition(self, condition):

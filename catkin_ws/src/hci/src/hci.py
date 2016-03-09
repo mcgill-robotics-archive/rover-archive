@@ -413,7 +413,7 @@ class CentralUi(QtGui.QMainWindow):
 
         elif self.modeId == 1:
             if self.ui.pitch1.isChecked():
-                self.arm_publisher.publish_base_pitch(self.controller.a2 * 100)
+                self.arm_publisher.publish_base_pitch(self.controller.a2 * 40)
             elif self.ui.diff1.isChecked():
                 self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
             elif self.ui.diff2.isChecked():

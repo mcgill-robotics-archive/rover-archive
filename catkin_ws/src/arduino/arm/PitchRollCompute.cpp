@@ -34,7 +34,7 @@ void PitchRollCompute::compute(float *feedback) {
 
 void PitchRollCompute::inverse(float pitch, float roll, float *destination) {
     destination[0] = pitch + (roll / 2.0);
-    destination[1] = pitch - (roll / 2.0);
+    destination[1] = - (pitch - (roll / 2.0));
 }
 
 

@@ -45,7 +45,10 @@ void Motor::setSpeed(double speed) {
 }
 
 void Motor::unlock() {
-    digitalWrite(mBrakePin, 1);
+    if (!isLocked()) {
+        digitalWrite(mBrakePin, 1);
+        delay(30);
+    }
 }
 
 bool Motor::isLocked() {
@@ -58,5 +61,5 @@ bool Motor::isReverseDirection() {
 
 void Motor::setReverseDirection(bool reverseDirection) {
     digitalWrite(mINA, (uint8_t) reverseDirection);
-    digitalWrite(mINA, (uint8_t) !reverseDirection);
+    digitalWrite(mINB, (uint8_t) !reverseDirection);
 }
