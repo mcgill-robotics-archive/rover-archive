@@ -97,6 +97,6 @@ class UnwraperConfiguration(object):
 if __name__ == '__main__':
     filename = rospy.get_param("config_file", "../config/omnicam_config.json")
     config = UnwraperConfiguration(filename)
-    unwarp = Unwraper(config)
+    unwarp = Unwraper(config, False)
 
         

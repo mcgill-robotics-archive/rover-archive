@@ -18,8 +18,8 @@
         args="standalone image_proc/crop_decimate"
         name="decimator">
 
-        <param name="decimation_x" type="int" value="3" />
-        <param name="decimation_y" type="int" value="3" />
+        <param name="decimation_x" type="int" value="1" />
+        <param name="decimation_y" type="int" value="1" />
 
         <remap from="camera_out/image_raw" to="image_raw" />
       </node>
