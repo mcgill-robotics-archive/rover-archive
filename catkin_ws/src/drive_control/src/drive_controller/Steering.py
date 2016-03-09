@@ -168,7 +168,7 @@ class Steering:
             # multiplying this by the sign of the velocity makes the angular
             # velocity of the rover different than the input, but is of a more
             # natural movement
-            self.output_command.flsa *= -sign_w
+            self.output_command.flsa *= sign_w
             self.output_command.frsa *= -sign_w
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
@@ -204,8 +204,8 @@ class Steering:
         # wheels have specific angle - all of them should form a circle together
         self.output_command.flsa = self.pointSteeringAngle  # forms circle
         self.output_command.frsa = -self.output_command.flsa
-        self.output_command.blsa = -self.output_command.flsa
-        self.output_command.brsa = self.output_command.flsa
+        self.output_command.blsa = self.output_command.flsa
+        self.output_command.brsa = -self.output_command.flsa
 
         if abs(wBody) < self.zero:
             # if no velocity, return angles and nothing else
