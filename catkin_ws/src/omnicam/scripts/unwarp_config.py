@@ -8,7 +8,7 @@ class UnwarpConfigGenerator(object):
         
         self.vals = []
         self.setCount = 0
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(0)
         self.filename = filename
 
         #Set capture resolution
