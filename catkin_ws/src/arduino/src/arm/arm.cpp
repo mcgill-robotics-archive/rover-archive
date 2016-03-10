@@ -14,6 +14,7 @@
 #include "arm_control/JointVelocities.h"
 #include "arm_control/JointPosition.h"
 #include "std_msgs/Float32.h"
+#include "arm_control/ControlMode.h"
 #include "MotorConfig.h"
 #include "MotorController.h"
 
@@ -25,13 +26,15 @@
  * enter main loop
  * continuously update encoder positions and publish transforms
  */
+
 drive::MotorConfig baseConfig;
 drive::MotorController * baseYawMotor;
 
 ros::NodeHandle nodeHandle;
 std_msgs::Float32 ee_position;
-//void handle_arm_velocity(const arm_control::JointVelocities & message);
+void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
+void handle_control_mode(const arm_control::ControlMode & message);
 
 arm::Encoder enfEffectorEncoder(END_EFFECTOR_SS_PIN, &nodeHandle);
 arm::Encoder basePitch(PITCH_1_SS_PIN, &nodeHandle);
@@ -44,6 +47,7 @@ arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, &nodeHandle);
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
 
+// todo: find pid constants
 PID baseYawPID((double *) &baseYawPosition, &baseYawSetPoint, &baseYawOutput, 0, 0, 0, DIRECT);
 PID pitch1PID((double *) &pitch1Position, &pitch1SetPoint, &pitch1Output, 0, 0, 0, DIRECT);
 PID diff1leftPID((double *) &diff1pos[0], (double *) &diff1setPoint[0], &diff1leftOutput, 0, 0, 0, DIRECT);
@@ -61,9 +65,9 @@ arm::Motor diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIG
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(nodeHandle, transformConfig);
 
-// TODO: define callback and register subscriber
 ros::Subscriber<arm_control::JointPosition> angleSubscriber("/arm/setPoints", &handle_arm_position);
-//ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);
+ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);
+ros::Subscriber<arm_control::ControlMode> mode_subscriber("/arm_mode", &handle_control_mode);
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&freeRamCallback);
 ros::Publisher eePublisher("/end_effector_position", &ee_position);
 
@@ -92,8 +96,9 @@ void setup() {
 
     nodeHandle.initNode();
     nodeHandle.advertiseService(ramService);
-//    nodeHandle.subscribe(arm_subscriber);
+    nodeHandle.subscribe(arm_subscriber);
     nodeHandle.subscribe(angleSubscriber);
+    nodeHandle.subscribe(mode_subscriber);
     nodeHandle.advertise(eePublisher);
     sender.init();
     nodeHandle.loginfo("Completed initialisation of arm controller");
@@ -119,20 +124,30 @@ void loop() {
     sender.updateRotations(baseYawPosition, pitch1Position, pitchRollLink1[0], pitchRollLink1[1], pitchRollLink2[0], pitchRollLink2[1]);
     sender.sendTransforms();
 
-    baseYawPID.Compute();
-    pitch1PID.Compute();
-    diff1leftPID.Compute();
-    diff2leftPID.Compute();
-    diff1rightPID.Compute();
-    diff2rightPID.Compute();
+    if (pid) {
+        baseYawPID.Compute();
+        pitch1PID.Compute();
+        diff1leftPID.Compute();
+        diff2leftPID.Compute();
+        diff1rightPID.Compute();
+        diff2rightPID.Compute();
 
-    baseYawMotor->setSpeed((int) baseYawOutput);
-    pitch1Motor.setSpeed(pitch1Output);
-    diff_1_left.setSpeed(diff1leftOutput);
-    diff_1_right.setSpeed(diff1rightOutput);
-    diff_2_left.setSpeed(diff2leftOutput);
-    diff_2_right.setSpeed(diff2rightOutput);
-    endEffectorMotor.setSpeed(endEffectorOutput);
+        baseYawMotor->setSpeed((int) baseYawOutput);
+        pitch1Motor.setSpeed(pitch1Output);
+        diff_1_left.setSpeed(diff1leftOutput);
+        diff_1_right.setSpeed(diff1rightOutput);
+        diff_2_left.setSpeed(diff2leftOutput);
+        diff_2_right.setSpeed(diff2rightOutput);
+        endEffectorMotor.setSpeed(endEffectorOutput);
+    } else {
+        baseYawMotor->setSpeed((int) baseYawOutputVel);
+        pitch1Motor.setSpeed(pitch1OutputVel);
+        diff_1_left.setSpeed(diff1Vel[0]);
+        diff_1_right.setSpeed(diff1Vel[1]);
+        diff_2_left.setSpeed(diff2Vel[0]);
+        diff_2_right.setSpeed(diff2Vel[1]);
+        endEffectorMotor.setSpeed(endEffectorOutputVel);
+    }
 
     nodeHandle.spinOnce();
     delay(1);
@@ -145,10 +160,17 @@ void handle_arm_position(const arm_control::JointPosition & message) {
     baseYawSetPoint = message.base_yaw;
     endEffectorOutput = message.end_effector;
 }
-//
-//void handle_arm_velocity(const arm_control::JointVelocities & message){
-//    pitch1Output = message.base_pitch;
-//    differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1pos);
-//    differential2.inverse(message.diff_2_pitch, message.diff_2_roll, diff2pos);
-//    endEffectorOutput = message.end_effector;
-//}
+
+
+void handle_arm_velocity(const arm_control::JointVelocities & message){
+    pitch1OutputVel = message.base_pitch;
+    differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1Vel);
+    differential2.inverse(message.diff_2_pitch, message.diff_2_roll, diff2Vel);
+    endEffectorOutputVel = message.end_effector;
+}
+
+void handle_control_mode(const arm_control::ControlMode & message){
+    if (message.Position) pid = true;
+    else pid = false;
+}
+

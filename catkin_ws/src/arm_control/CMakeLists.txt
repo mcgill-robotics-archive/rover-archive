@@ -51,6 +51,7 @@ add_message_files(
   FILES
 #   Message1.msg
   JointVelocities.msg
+  ControlMode.msg
   JointPosition.msg
 #   Message2.msg
 )
