@@ -16,9 +16,12 @@ float * pitchRollLink1 = new float[2]; // first index is pitch, second is roll
 float * pitchRollLink2 = new float[2]; // first index is pitch, second is roll
 float * diff1pos = new float[2]; // first index is left, second is right
 float * diff2pos = new float[2]; // first index is left, second is right
+float * diff1setPoint = new float[2]; // first index is left, second is right
+float * diff2setPoint = new float[2]; // first index is left, second is right
 
-float baseYawValue = 0;
-float pitch1Value = 0;
+float baseYawPosition = 0;
+float pitch1Position = 0;
+float endEffectorPosition = 0;
 
 double baseYawSetPoint = 0;
 double pitch1SetPoint = 0;

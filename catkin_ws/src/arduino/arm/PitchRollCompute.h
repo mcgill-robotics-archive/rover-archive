@@ -14,7 +14,7 @@ class PitchRollCompute {
 public:
     PitchRollCompute(Encoder*, Encoder*);
     ~PitchRollCompute();
-    void compute(float *);
+    void compute(float *, float *position);
     void inverse(float pitch, float roll, float *destination);
 
     float mPitch;

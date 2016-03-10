@@ -5,32 +5,27 @@ include_directories(${ROS_LIB_DIR})
 # Remove this if using an Arduino without native USB (eg, other than Leonardo)
 # add_definitions(-DUSB_CON)
 
+add_subdirectory(MotorController)
+
 set(SOURCES
         main.cpp
         ../common/ram.cpp
         ${ROS_LIB_DIR}/time.cpp
         SteeringWheel.cpp
         Wheel.cpp
-        MotorController/MAXON.cpp
-        MotorController/DRV8308.cpp
-        MotorController/MotorConfig.cpp
-        MotorController/MotorController.cpp
         )
 
 set(HEADERS
         ../common/ram.h
         SteeringWheel.h
         Wheel.h
-        MotorController/MAXON.h
-        MotorController/DRV8308.h
-        MotorController/MotorConfig.h
-        MotorController/MotorController.h
         pins.h
         )
 
 generate_arduino_firmware(drive
     SRCS ${SOURCES}
     HDRS ${HEADERS}
+    LIBS MotorControllerLib
     BOARD mega2560
     PORT /dev/ttyACM0
 )

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 include_directories(${ROS_LIB_DIR})
-
+include_directories(../drive/MotorController)
 
 # Remove this if using an Arduino without native USB (eg, other than Leonardo)
 # add_definitions(-DUSB_CON)
@@ -31,5 +31,6 @@ set(HEADERS
 generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
+    LIBS MotorControllerLib
     BOARD mega2560
     PORT /dev/mega_arm)
