@@ -28,30 +28,18 @@ catkin_package(
     CATKIN_DEPENDS message_runtime   std_msgs
 )
 
-# set(ARDUINO_SDK_PATH "/home/david/arduino-1.6.5")
-
 rosserial_generate_ros_lib(
     PACKAGE rosserial_arduino
     SCRIPT make_libraries.py
 )
 
 rosserial_configure_client(
-    DIRECTORY drive
+    DIRECTORY src
     TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
 )
 
-rosserial_configure_client(
-    DIRECTORY arm
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-)
-
-rosserial_configure_client(
-    DIRECTORY power
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
-)
-
-rosserial_add_client_target(drive drive ALL)
+rosserial_add_client_target(src drive ALL)
 # rosserial_add_client_target(drive drive-upload)
 
-rosserial_add_client_target(arm arm ALL)
-rosserial_add_client_target(arm arm-upload)
+rosserial_add_client_target(src arm ALL)
+# rosserial_add_client_target(arm arm-upload)
