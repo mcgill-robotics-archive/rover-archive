@@ -3,7 +3,7 @@ import rospy
 from enum import IntEnum
 
 from drive_control.msg import DriveCommand
-from rover_msgs.msg import MotorControllerMode
+from rover_common.msg import MotorControllerMode
 
 
 class DrivePublisher(object):
@@ -44,7 +44,7 @@ class DrivePublisher(object):
         pass
 
     def set_speed(self, linear, angular):
-        self.speed_linear = linear
+        self.speed_linear = linear / 2.0
         self.speed_angular = angular
 
     def set_steering_condition(self, condition):

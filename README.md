@@ -3,6 +3,10 @@ McGill Robotics Rover Project
 
 This repository contains the ROS workspace used for the Mars Rover Project.
 
+API Documentation
+---
+Jenkins generated doxygen documentation: http://dev.mcgillrobotics.com:8080/job/rover_all/doxygen/
+
 Build Status
 ------------
 

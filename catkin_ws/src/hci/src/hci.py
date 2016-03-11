@@ -6,6 +6,7 @@ import pyqtgraph as pg
 from rover_window import *
 from joystick_controller import *
 from drive_publisher import *
+from arm_publisher import *
 from joystick_profile import JoystickProfile
 from utilities import *
 
@@ -16,9 +17,9 @@ import math
 import datetime
 
 from std_msgs.msg import *
-from rover_msgs.msg import MotorStatus
+from rover_common.msg import MotorStatus
 from rover_camera.srv import ChangeFeed
-from rover_srvs.srv import GetVoltageRead
+from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 
@@ -93,7 +94,9 @@ class CentralUi(QtGui.QMainWindow):
         self.setup_minimap()
         self.get_feed_topic_params()
 
+        self.master_name = parse_master_uri()
         self.drive_publisher = DrivePublisher()
+        self.arm_publisher = ArmPublisher()
 
         path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/grid_vertical.png"
         self.overlay_pixmap = QtGui.QPixmap(path)
@@ -147,8 +150,8 @@ class CentralUi(QtGui.QMainWindow):
         # joystick mode buttons signal connect
         QtCore.QObject.connect(self.ui.DriveMode, QtCore.SIGNAL("clicked()"),
                                lambda index=0: self.set_controller_mode(index))
-        # QtCore.QObject.connect(self.ui.ArmBaseMode, QtCore.SIGNAL("clicked()"),
-        #                        lambda index=1: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.ArmBaseMode, QtCore.SIGNAL("clicked()"),
+                               lambda index=1: self.set_controller_mode(index))
         # QtCore.QObject.connect(self.ui.EndEffectorMode, QtCore.SIGNAL("clicked()"),
         #                        lambda index=2: self.set_controller_mode(index))
         QtCore.QObject.connect(self.ui.function4, QtCore.SIGNAL("clicked()"),
@@ -354,8 +357,7 @@ class CentralUi(QtGui.QMainWindow):
 
     def get_signal_quality(self):
         # TODO: make the target dynamic using ros_master_uri
-        # s = os.popen("ping -c 1 artemis")
-        s = os.popen("ping -c 1 localhost")
+        s = os.popen("ping -c 1 " + self.master_name)
         s.readline()
         k = s.readline()
         temp = k.split('=')
@@ -388,6 +390,8 @@ class CentralUi(QtGui.QMainWindow):
 
         if self.profile.param_value["/joystick/drive_mode"]:
             self.set_controller_mode(0)
+        elif self.profile.param_value["/joystick/arm_base_mode"]:
+            self.set_controller_mode(1)
         elif self.profile.param_value["/joystick/camera_mode"]:
             self.set_controller_mode(3)
 
@@ -406,6 +410,16 @@ class CentralUi(QtGui.QMainWindow):
                 else:
                     self.ui.ackreman.setChecked(True)
             pass
+
+        elif self.modeId == 1:
+            if self.ui.pitch1.isChecked():
+                self.arm_publisher.publish_base_pitch(self.controller.a2 * 40)
+            elif self.ui.diff1.isChecked():
+                self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
+            elif self.ui.diff2.isChecked():
+                self.arm_publisher.publish_diff_2(self.controller.a2 * 100, self.controller.a1 * 100)
+            elif self.ui.end_eff.isChecked():
+                self.arm_publisher.publish_end_effector(self.controller.a2 * 100)
 
         elif self.modeId == 3:
             # currently in camera control
