@@ -6,9 +6,9 @@
 
 using namespace arm;
 
-PitchRollCompute::PitchRollCompute(Encoder *encoder, Encoder *encoder1) {
-    mEncoder1 = encoder;
-    mEncoder2 = encoder1;
+PitchRollCompute::PitchRollCompute(Encoder *encoderLeft, Encoder *encoderRight) {
+    mEncoderLeft = encoderLeft;
+    mEncoderRight = encoderRight;
 
     mPitch = 0;
     mRoll = 0;
@@ -17,8 +17,8 @@ PitchRollCompute::PitchRollCompute(Encoder *encoder, Encoder *encoder1) {
 PitchRollCompute::~PitchRollCompute() { }
 
 void PitchRollCompute::compute(float *pitchRoll, float *position) {
-    float val1 = position[0] = mEncoder1->readPosition();
-    float val2 = position[1] = mEncoder2->readPosition();
+    float val1 = position[0] = mEncoderLeft->readPosition();
+    float val2 = position[1] = mEncoderRight->readPosition();
 
     float largest = val1 > val2 ? val1 : val2;
     float lowest = val1 <= val2 ? val1 : val2;

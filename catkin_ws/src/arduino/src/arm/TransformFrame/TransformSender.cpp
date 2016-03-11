@@ -5,8 +5,8 @@
 #include "TransformSender.h"
 using namespace arm;
 
-TransformSender::TransformSender(ros::NodeHandle &nh, TransformConfig &config) {
-    mNh = &nh;
+TransformSender::TransformSender(ros::NodeHandle *nh, TransformConfig &config) {
+    mNh = nh;
 
     baseYaw.child_frame_id = config.baseYawFrame;
     mPitch1.child_frame_id = config.pitch1Frame;

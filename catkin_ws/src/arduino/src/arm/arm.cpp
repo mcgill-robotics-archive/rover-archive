@@ -47,7 +47,7 @@ arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, &nodeHandle);
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
 
-// todo: find pid constants
+//todo: find pid constants
 PID baseYawPID((double *) &baseYawPosition, &baseYawSetPoint, &baseYawOutput, 0, 0, 0, DIRECT);
 PID pitch1PID((double *) &pitch1Position, &pitch1SetPoint, &pitch1Output, 0, 0, 0, DIRECT);
 PID diff1leftPID((double *) &diff1pos[0], (double *) &diff1setPoint[0], &diff1leftOutput, 0, 0, 0, DIRECT);
@@ -63,7 +63,7 @@ arm::Motor diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_I
 arm::Motor diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN, &nodeHandle);
 
 arm::TransformConfig transformConfig;
-arm::TransformSender sender(nodeHandle, transformConfig);
+arm::TransformSender sender(&nodeHandle, transformConfig);
 
 ros::Subscriber<arm_control::JointPosition> angleSubscriber("/arm/setPoints", &handle_arm_position);
 ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);

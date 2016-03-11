@@ -16,6 +16,8 @@ Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
     dB = 0;
     x = 0;
     ax = 0;
+
+    pinMode(mPin, OUTPUT);
 }
 
 Encoder::~Encoder() {

@@ -12,14 +12,20 @@
 
 namespace drive {
 
+/**
+ * \brief Wrap the motor controller and the encoder counter in a single class.
+ */
 class Wheel {
 
 public:
     /**
-     * Public constructor.
-     * \param motorPort is the pin number to the motor controller
-     * \param nodeHandle pointer to the node handle to use for logging.
-     * The caller is responsible for memory management
+     * \brief Public constructor.
+     *
+     * The constructor instantiates a new motor controller with this configuration
+     * and drives the outputs in a safe waiting state
+     *
+     * \param motorConfig Configuration object used for the motor controller
+     * \param nodeHandle Pointer to the node handle to use for logging.
      */
     Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle);
     virtual ~Wheel();

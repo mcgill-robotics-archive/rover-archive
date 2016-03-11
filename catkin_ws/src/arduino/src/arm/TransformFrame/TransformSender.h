@@ -13,16 +13,54 @@ namespace arm {
 
 
 /**
- * This class wants to wrap the mechanics of sending transforms for the rover
- * 6 DOF arm. 
+ * \brief This class wants to wrap the mechanics of sending transforms for
+ * the rover 6 DOF arm.
  */
 class TransformSender {
 public:
-    TransformSender(ros::NodeHandle &nh, TransformConfig &config);
+    /**
+     * \brief Constructor configures the internal transforms with the proper
+     * name and static distances from the configuration object.
+     *
+     * After the object is instantiated, the <code> init() </code> method
+     * should be called to fully register the sender.
+     *
+     * \param nh Pointer to a valid node handle for logging and publishing
+     * transforms.
+     * \param config A configured TransfromConfig object containing the
+     * names and distances for all the transforms
+     */
+    TransformSender(ros::NodeHandle *nh, TransformConfig &config);
+
+    /**
+     * \brief Proceed to correctly initialise the transform sender.
+     *
+     * This method registers the tfBroadcaster with the ros master and sends
+     * a first all zero set of transforms.
+     */
     void init();
+
+    /**
+     * \brief Update the current angle of each transform.
+     */
     void updateRotations(float yaw_base, float pitch_base, float pitch2, float roll1, float pitch3, float roll2);
+
+    /**
+     * \brief Updates the timestamps and sends the transform.
+     */
     void sendTransforms();
     virtual ~TransformSender();
+
+    /**
+     * \brief Convert a RPY angle to a quaternion
+     *
+     * \param roll Roll angle in radians
+     * \param pitch Pitch angle in radians
+     * \param yaw Yaw angle in radians
+     * \param quaternion A quaternion object which will be updated with the
+     * newly computed quaternion parameters
+     */
+    void from_euler(float roll, float pitch, float yaw, geometry_msgs::Quaternion & quaternion);
 
 private:
     geometry_msgs::TransformStamped baseYaw;
@@ -34,7 +72,6 @@ private:
 
     tf::TransformBroadcaster broadcaster;
 
-    void from_euler(float roll, float pitch, float yaw, geometry_msgs::Quaternion & quaternion);
     ros::NodeHandle * mNh;
     ros::Time mTime;
 };
