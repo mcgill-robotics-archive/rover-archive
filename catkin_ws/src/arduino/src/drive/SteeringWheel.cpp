@@ -40,7 +40,7 @@ void SteeringWheel::setSteeringAngle(int angle) {
     long servoCommand = map(angle, 0, 180, 1000, 2000);
     servoCommand = constrain(servoCommand, mLowLimit, mHighLimit);
 
-    mServo.write((int) servoCommand);
+    mServo.writeMicroseconds((int) servoCommand);
 
     char init_message [64];
     sprintf(init_message, " Angle received %d and message written %li", angle, servoCommand);

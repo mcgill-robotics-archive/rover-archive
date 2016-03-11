@@ -13,7 +13,7 @@
 namespace drive {
 
 /**
- * \brief Wrap the motor controller and the encoder counter in a single class.
+ * \brief Wrap a motor controller and an encoder counter in a single class.
  */
 class Wheel {
 
@@ -31,18 +31,46 @@ public:
     virtual ~Wheel();
 
     /**
-     * Set the rotation speed of the motor.
+     * \brief Set the rotation speed of the motor.
      *
-     * \param speed the relative speed on a 0 - 255 scale.
+     * \param speed the relative speed on a -255 to 255 scale.
      */
     void setSpeed(int speed);
+
+    /**
+     * \brief Enable and disable the motor controller
+     *
+     * \param enable True if the motor controller should be on
+     */
     void enable(bool enable);
+
+    /**
+     * \brief Get the current encoder position
+     *
+     * <b> NOT YET IMPLEMENTED</b>
+     *
+     * \return The current tachometer count since turn on.
+     */
     long readEncoder();
+
+    /**
+     * \brief Stop the motor
+     *
+     * \param brk Boolean value true if to stop the motor
+     */
     void brake(bool brk);
+
+    /**
+     * \brief Get the status of the motor controller
+     *
+     * \return True if operational
+     */
     bool getStatus();
 
 protected:
+    /// NodeHandle for logging
     ros::NodeHandle * mNodeHandle;
+    /// Configuration object for the motor controller
     MotorConfig mMotorConfig;
 
 private:

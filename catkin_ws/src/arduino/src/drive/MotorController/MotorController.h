@@ -20,7 +20,7 @@ namespace drive {
  * is responsible for managing this pointer properly. 
  *
  * <code>
- * 
+ *
  *     //Example calling syntax:
  *     int main () {
  *         drive::MotorConfig mMotorConfig;         
@@ -50,7 +50,7 @@ public:
     /**
      * \brief Interface method, sets the angular velocity of the wheel
      *
-     * \param soeed The desired speed output of the motor. The implementation
+     * \param speed The desired speed output of the motor. The implementation
      * should account for setting the direction according to the sign.
      */
     virtual void setSpeed(int speed) = 0;
@@ -58,9 +58,11 @@ public:
     /**
      * \brief Manually set the direction of the motor.
      *
-     * <b> Note: </b> Will be overridden the next time <code> setSpeed()</code> is called.
+     * <b> Note: </b> Will be overridden the next time <code>setSpeed()</code> is called.
+     *
+     * \param speed Signed speed value. The sign will drive the direction.
      */
-    virtual void setDirection(int) = 0;
+    virtual void setDirection(int speed) = 0;
 
     /**
      * \brief Enable or disable the brakes on the motor.
