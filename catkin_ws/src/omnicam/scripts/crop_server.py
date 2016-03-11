@@ -123,18 +123,18 @@ def crop(img_in):
 
 def callback(data):
     try:
-        cv_incoming = bridge.imgmsg_to_cv2(data, "mono8")
+        cv_incoming = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
         print(e)
 
     cropped = crop(cv_incoming)
 
     try:
-        cropPub.publish(bridge.cv2_to_imgmsg(cropped, "mono8"))
+        cropPub.publish(bridge.cv2_to_imgmsg(cropped, "bgr8"))
     except CvBridgeError as e:
         print(e)
 
 if __name__ == '__main__':
     service = rospy.Service("crop_control", ControlView, receive_view_command)
-    rawGRAY = rospy.Subscriber("unwarp_GRAY", Image, callback, queue_size=1)
+    rawGRAY = rospy.Subscriber("unwarp_BGR", Image, callback, queue_size=1)
     rospy.spin()

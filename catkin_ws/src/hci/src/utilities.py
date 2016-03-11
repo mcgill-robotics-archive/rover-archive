@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-
 import rospy
+import rosgraph
 import math
 
 # TODO: implement watchdog reset with new architecture 
@@ -17,6 +16,12 @@ import math
 #     except rospy.ServiceException, e:
 #         print "Service call failed: %s", e
 
+def parse_master_uri():
+    uri = rosgraph.get_master_uri()
+    uri = uri[7:]
+    uri = uri[:uri.find(':')]
+    rospy.loginfo("Master is URI:" + uri)
+    return uri
 
 def lbl_bg_red(thing):
     """sets a style sheet to the @param thing resulting in a red background"""

@@ -4,14 +4,14 @@
 
 <include file="$(find rover_camera)/launch/usb.launch">
     <arg name="name" value="omnicam" />
-    <arg name="device" value="/dev/video1" />
+    <arg name="device" value="/dev/arm_camera" />
 </include>
 
 <group ns="omnicam">
     <param name="config_file" value="$(arg config_file)" />    
     <node name="dewarp1" pkg="omnicam" type="unwrap.py" respawn="false"/>>
     
-    <node name="ServiceCropTest" pkg="omnicam" type="ServiceCropTest.py" respawn="true"/>
+    <node name="ServiceCropTest" pkg="omnicam" type="crop_server.py" respawn="true"/>
 </group>
 
 </launch>
