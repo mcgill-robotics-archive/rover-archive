@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   rosserial_arduino
   rosserial_client
   std_msgs
-  ahrs
   message_generation
 )
 
