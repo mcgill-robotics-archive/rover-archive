@@ -3,12 +3,23 @@
 import json
 import cv2
 
+## Generate the configuration parameters for the Unwarper class
+#
 class UnwarpConfigGenerator(object):
-    def __init__(self, filename):
+    
+    ## Class constructor
+    #
+    # Connects to the camera and starts the mouse event capture.
+    #
+    # @param filename The file where the config will be saved.
+    # @param video_device The camera to use for calibration. Can use device 
+    # index (int) or terminal device name (/dev/video0)
+    #
+    def __init__(self, filename, video_device):
         
         self.vals = []
         self.setCount = 0
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(video_device)
         self.filename = filename
 
         #Set capture resolution
@@ -23,7 +34,10 @@ class UnwarpConfigGenerator(object):
             if cv2.waitKey(1) == ord('q'):
                 break
 
-    #mouse callback function
+    ## Mouse event callback function
+    #
+    # Is called whenever a mouse event is registered by the framework
+    #
     def setCoord(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
             print "Callback"
@@ -31,17 +45,21 @@ class UnwarpConfigGenerator(object):
             self.vals.append(coord)
             self.setCount += 1
         if self.setCount == 3:
-            self.write_to_file(self.filename)
+            self.write_to_file()
             print ("Parameters written in " + self.filename)
             self.quit()
 
+    ## Terminate the process
+    #
     def quit(self):
         self.cap.release()
         cv2.destroyAllWindows()
         exit(0)
 
-    def write_to_file(self, filename):
-        f = open(filename, 'w')
+    ## Write the generated parameters to file for the main script
+    # 
+    def write_to_file(self):
+        f = open(self.filename, 'w')
         try:
             dictionary = {
                 "center":self.vals[0], 
@@ -55,4 +73,4 @@ class UnwarpConfigGenerator(object):
         f.close()
 
 if __name__ == '__main__':
-    test = UnwarpConfigGenerator("test.json")
+    test = UnwarpConfigGenerator("test.json", "/dev/arm_camera")

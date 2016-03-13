@@ -3,12 +3,20 @@ __author__ = 'David'
 import rospy
 from arm_control.msg import *
 
-
+## Group the arm control functions in the same class 
+#
 class ArmPublisher:
+
+    ## Constructor creates the ros publisher object and an empty message
+    #
     def __init__(self):
+
+        ## Publisher object vor velocities
         self.publisher = rospy.Publisher("arm_velocities", JointVelocities, queue_size=1)
         self.message = JointVelocities()
 
+    ## Publish all joint velocities
+    # 
     def publish_joint_vels(self, base_pitch, diff_1_pitch, diff_2_pitch, diff_1_roll, diff_2_roll, end_effector):
         self.message.base_pitch = base_pitch
         self.message.diff_1_pitch = diff_1_pitch

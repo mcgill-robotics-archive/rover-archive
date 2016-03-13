@@ -79,7 +79,17 @@ class Unwraper(object):
             print(e)
 
 
+## Read and aglomerate all the configuration parameters relevant to the unwarping algorithm
+#
+# The constructor will attempt to read from file all the values for the parameters.
+#
 class UnwraperConfiguration(object):
+
+    ## Class constructor
+    #
+    # @param filepath File where to read the configuration from. It should be 
+    # json formated with 3 coordinate pairs labeled 'center', 'inner', 'outer'.
+    #
     def __init__(self, filepath):
         self.filepath = filepath
         
