@@ -14,10 +14,14 @@ except ImportError:
     print "Missing libraries for joystick controller, exiting"
     sys.exit()
 
-##
-#  Class abstracting the joystick controller
+## Class abstracting the joystick controller
 #
 class JoystickController(object):
+    
+    ## Constructor initialises connection to the joystick 
+    # 
+    # Only one joystick must be present when initialising object.
+    # If more than one joystick exist, the constructor will create a Null controller.
     def __init__(self):
         pygame.init()
         pygame.joystick.init()
@@ -56,6 +60,8 @@ class JoystickController(object):
         else:
             self.controller = None
 
+    ## Reset the state of all internal button registers to zero
+    #
     def clear_buttons(self):
         self.b1 = False
         self.b2 = False
@@ -77,12 +83,12 @@ class JoystickController(object):
         self.hat_down = False
         self.hat_right = False
 
+    ## Read the status of the controller and update internal registers.
+    #
+    # This method fetches the information form the controller and stores it in 
+    # class members. If a changed occurred, the value will be updated; else the 
+    # value will be the last one fetched.  
     def update(self):
-        """
-        This method fetches the information form the controller and stores it in class members
-        If a changed occurred, the value will be updated; else the value will be the last one fetched.
-        """
-
         for anEvent in pygame.event.get():
             try:
                 if anEvent.type == pygame.locals.JOYBUTTONDOWN:

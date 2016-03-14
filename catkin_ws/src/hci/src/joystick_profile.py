@@ -1,6 +1,8 @@
 import rospy
-               # mode selection
-param_names = ["/joystick/drive_mode",
+
+## List of legal parameter names for button functions  
+param_names = [# mode selection
+               "/joystick/drive_mode",
                "/joystick/arm_base_mode",
                "/joystick/camera_mode",
 
@@ -16,27 +18,65 @@ param_names = ["/joystick/drive_mode",
                # arm mode:
                "/joystick/next_arm_joint",
                "/joystick/prev_arm_joint",
+               "/joystick/coord_system"]
 
-               "/joystick/coord_system",
-               "/joystick/arm_mode",
-
-               # logitech specific dofs
-               "/logitech/shoulder",
-               "/logitech/elbow",
-               "/logitech/wrist",
-               "/logitech/roll",
-               "/logitech/grip",
-               "/logitech/base"]
-
-
+## Provides a simple mechanism to create button mapping on the controller.
+#
+# Reads ROS parameters to map a button number to a named functionnality. 
+# This class reads the controller state and exposes the buttons under a 
+# different name.
+#
+# Parameter names allowed are:
+#
+#<code>
+#
+#    # mode selection
+#    "/joystick/drive_mode",
+#    "/joystick/arm_base_mode",
+#    "/joystick/camera_mode",
+#
+#    # in drive mode:
+#    "/joystick/toggle_point_steer",
+#    "/joystick/ackreman_moving",
+#    "/joystick/point_steer",
+#    "/joystick/ackreman",
+#
+#    # in camera mode:
+#    # changes which camera is displayed in the main port 
+#    "/joystick/prev_cam", 
+#    "/joystick/next_cam",
+#
+#    # in arm mode:
+#    "/joystick/next_arm_joint",
+#    "/joystick/prev_arm_joint",
+#    "/joystick/coord_system",
+#
+#</code>
+#
 class JoystickProfile:
+
+    ## Constructor reads the parameters from the ROS master and establishes the
+    # button name relationship.
+    #
+    # @param controller The JoystickController object to take the buttons from.
+    #
     def __init__(self, controller):
+
+        ## Handle to the controller object
         self.controller = controller
+
+        ## The named button states
         self.param_value = {}
+
+        ## Map representation of the relationship between name and button number
         self.mapping = {}
         for param in param_names:
             self.mapping[param] = rospy.get_param(param, None)
 
+    ## Update the values in the map.
+    #
+    # Should be called every time JoystickController::update() is called to 
+    # refresh the map.
     def update_values(self):
         for param in param_names:
             value = self.mapping[param]
