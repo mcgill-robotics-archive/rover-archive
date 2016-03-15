@@ -4,14 +4,14 @@
 
 #include "ram.h"
 
-int freeRam ()
+int RAM::freeRam ()
 {
     extern int __heap_start, *__brkval;
     int v;
     return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
 
-void freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response)
+void RAM::freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response)
 {
     response.ram = freeRam();
 }

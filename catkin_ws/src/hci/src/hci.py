@@ -356,7 +356,6 @@ class CentralUi(QtGui.QMainWindow):
         self.map_point_list[-1].addPoints(self.x_waypoints, self.y_waypoints, size=10, symbol='t', brush='b')
 
     def get_signal_quality(self):
-        # TODO: make the target dynamic using ros_master_uri
         s = os.popen("ping -c 1 " + self.master_name)
         s.readline()
         k = s.readline()
@@ -412,14 +411,17 @@ class CentralUi(QtGui.QMainWindow):
             pass
 
         elif self.modeId == 1:
-            if self.ui.pitch1.isChecked():
-                self.arm_publisher.publish_base_pitch(self.controller.a2 * 40)
-            elif self.ui.diff1.isChecked():
-                self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
-            elif self.ui.diff2.isChecked():
-                self.arm_publisher.publish_diff_2(self.controller.a2 * 100, self.controller.a1 * 100)
-            elif self.ui.end_eff.isChecked():
-                self.arm_publisher.publish_end_effector(self.controller.a2 * 100)
+            if self.ui.ackMoving.isChecked():
+                if self.ui.pitch1.isChecked():
+                    self.arm_publisher.publish_base_pitch(self.controller.a2 * 100)
+                elif self.ui.diff1.isChecked():
+                    self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
+                elif self.ui.diff2.isChecked():
+                    self.arm_publisher.publish_diff_2(self.controller.a2 * 100, self.controller.a1 * 100)
+                elif self.ui.end_eff.isChecked():
+                    self.arm_publisher.publish_end_effector(self.controller.a2 * 100)
+            else:
+                self.arm_publisher.publish_joint_vels(0, 0, 0, 0, 0, 0)
 
         elif self.modeId == 3:
             # currently in camera control
@@ -480,7 +482,7 @@ class CentralUi(QtGui.QMainWindow):
             # camera mode
             if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
                 try:
-                    rospy.wait_for_service("/omnicam/crop_control", timeout=2)
+                    rospy.wait_for_service("/omnicam/crop_control", timeout=1)
                     service = rospy.ServiceProxy("/omnicam/crop_control", ControlView)
                 except rospy.ROSException:
                     rospy.logerr("Timeout trying to find service /omnicam/crop_control")

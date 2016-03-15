@@ -2,9 +2,9 @@
 // Created by David Lavoie-Boutin on 2016-01-15.
 //
 
-#include "MotorConfig.h"
+#include "include/MotorConfig.h"
 
-drive::MotorConfig::MotorConfig() {
+motor::MotorConfig::MotorConfig() {
     data1Pin = 0;
     data2Pin = 0;
     feedbackPin = 0;

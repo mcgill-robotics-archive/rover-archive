@@ -7,6 +7,7 @@
 
 
 #include <Servo.h>
+#include <MotorConfig.h>
 #include "Wheel.h"
 
 namespace drive {
@@ -28,7 +29,7 @@ public:
      *
      * The caller is responsible for memory management
      */
-    SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle * nodeHandle);
+    SteeringWheel(motor::MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle * nodeHandle);
     virtual ~SteeringWheel();
 
     /**

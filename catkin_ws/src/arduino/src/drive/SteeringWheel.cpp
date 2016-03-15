@@ -7,7 +7,7 @@
 
 namespace drive {
 
-SteeringWheel::SteeringWheel(MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle *nodeHandle)
+SteeringWheel::SteeringWheel(motor::MotorConfig motorConfig, uint8_t servoPort, ros::NodeHandle *nodeHandle)
         : Wheel(motorConfig, nodeHandle) {
     mServoPort = servoPort;
     mMotorConfig = motorConfig;

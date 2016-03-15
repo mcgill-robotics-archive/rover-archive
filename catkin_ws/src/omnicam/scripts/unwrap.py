@@ -7,9 +7,15 @@ import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
+## Takes a spherical image and unwraps it to a flat image
+#
 class Unwraper(object):
-    """Unwrap image taken off a spherical Mirror."""
 
+    ## Constructor uses configuration structure to deternime image parameters
+    #
+    # @param config Configuration object of type UnwraperConfiguration
+    # @param bw Use or not the black and white image from the camera
+    #
     def __init__(self, config, bw=True):
         self.config = config
         self.map_x = None
@@ -34,6 +40,8 @@ class Unwraper(object):
         rospy.loginfo("Unwrap loaded")
         rospy.spin()
 
+    ##Initialise a proper sized image to be filled with the unwarped image
+    #
     def build_map(self):
         self.map_x = np.zeros((self.config.Hd, self.config.Wd), np.float32)
         self.map_y = np.zeros((self.config.Hd, self.config.Wd), np.float32)
@@ -47,10 +55,21 @@ class Unwraper(object):
                 self.map_x.itemset((y,x),int(xS))
                 self.map_y.itemset((y,x),int(yS))
         
+    ## Actual function to unwarp the image.
+    #
+    # Uses the open cv library to unwarp the image with the internal map.
+    #
+    # @param img The spherical image to be unwarped
     def unwarp(self, img):
         output = cv2.remap(img, self.map_x, self.map_y, cv2.INTER_LINEAR)
         return output
 
+    ## ROS callback function
+    #
+    # Callback function called by the subscriber when receiving a new image.
+    # The new image is unwraped upon arrival.
+    #
+    # @param data The newly arrived ros image.
     def callback(self, data):
         try:
             cv_incoming = self.bridge.imgmsg_to_cv2(data, self.encoding)
@@ -60,7 +79,17 @@ class Unwraper(object):
             print(e)
 
 
+## Read and aglomerate all the configuration parameters relevant to the unwarping algorithm
+#
+# The constructor will attempt to read from file all the values for the parameters.
+#
 class UnwraperConfiguration(object):
+
+    ## Class constructor
+    #
+    # @param filepath File where to read the configuration from. It should be 
+    # json formated with 3 coordinate pairs labeled 'center', 'inner', 'outer'.
+    #
     def __init__(self, filepath):
         self.filepath = filepath
         

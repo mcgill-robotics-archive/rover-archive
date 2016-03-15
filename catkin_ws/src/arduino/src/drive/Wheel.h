@@ -7,8 +7,8 @@
 
 #include "Arduino.h"
 #include <ros.h>
-#include <MotorController/MotorConfig.h>
-#include <MotorController/MotorController.h>
+#include <MotorConfig.h>
+#include <MotorController.h>
 
 namespace drive {
 
@@ -27,7 +27,7 @@ public:
      * \param motorConfig Configuration object used for the motor controller
      * \param nodeHandle Pointer to the node handle to use for logging.
      */
-    Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle);
+    Wheel(motor::MotorConfig motorConfig, ros::NodeHandle * nodeHandle);
     virtual ~Wheel();
 
     /**
@@ -71,11 +71,11 @@ protected:
     /// NodeHandle for logging
     ros::NodeHandle * mNodeHandle;
     /// Configuration object for the motor controller
-    MotorConfig mMotorConfig;
+    motor::MotorConfig mMotorConfig;
 
 private:
     long mTachoCount;
-    MotorController * mMotorController;
+    motor::MotorController * mMotorController;
 
 };
 

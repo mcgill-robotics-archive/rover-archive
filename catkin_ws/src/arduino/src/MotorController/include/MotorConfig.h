@@ -6,14 +6,15 @@
 #define ROVER_ARDUINO_MOTORCONTROLLERCONFIG_H
 
 #include <Arduino.h>
-namespace drive {
+namespace motor {
 
 /**
  * \brief The two motor controllers currently supported
  */
 enum ControllerType {
     _MAXON = 0,
-    _DRV8308 = 1
+    _DRV8308 = 1,
+    _POLOLU = 2
 };
 
 /**
