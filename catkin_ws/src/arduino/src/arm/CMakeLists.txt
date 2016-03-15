@@ -9,7 +9,7 @@ include_directories(../utilities)
 
 set(SOURCES
         arm.cpp
-        ../MotorController/Pololu.cpp
+        ../MotorController/src/Pololu.cpp
         ${ROS_LIB_DIR}/time.cpp
         Encoder.cpp
         PitchRollCompute.cpp
@@ -19,7 +19,7 @@ set(SOURCES
 
 set(HEADERS
         arm.h
-        ../MotorController/Pololu.h
+        ../MotorController/src/Pololu.h
         Encoder.h
         PitchRollCompute.h
         TransformFrame/TransformSender.h

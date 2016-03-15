@@ -7,9 +7,9 @@
 
 #include <Arduino.h>
 #include <ros.h>
-#include <MotorController.h>
+#include <include/MotorController.h>
 
-namespace arm {
+namespace motor {
 
 /**
  * \brief Class to drive a single brushed motor with brakes using the Pololu VNH5019 motor controller
@@ -17,7 +17,7 @@ namespace arm {
  * Drives the control pins to enable and disable the brakes along with the direction of the controllers.
  * Also sets the PWM duty cycle to achieve desired speed.
  */
-class Pololu : public drive::MotorController{
+class Pololu : public MotorController{
 public:
 
     /**

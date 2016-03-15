@@ -6,9 +6,9 @@
 #define ROVER_ARDUINO_MAXON_H
 
 #include <Arduino.h>
-#include "MotorController.h"
-#include "MotorConfig.h"
-namespace drive {
+#include "include/MotorController.h"
+#include "include/MotorConfig.h"
+namespace motor {
 
 /**
  * \brief Implementation of the Motor Controller Interface

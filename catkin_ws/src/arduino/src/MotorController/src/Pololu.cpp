@@ -5,7 +5,7 @@
 #include <ros.h>
 #include "Pololu.h"
 
-using namespace arm;
+using namespace motor;
 
 
 Pololu::Pololu(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB, ros::NodeHandle *nodeHandle) {

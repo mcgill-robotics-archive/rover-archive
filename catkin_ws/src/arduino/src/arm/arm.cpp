@@ -9,14 +9,12 @@
 #include <PID_v1/PID_v1.h>
 #include <SPI.h>
 #include "ram/ram.h"
-#include "Pololu.h"
+#include "src/Pololu.h"
 #include "pins_arm.h"
 #include "arm_control/JointVelocities.h"
 #include "arm_control/JointPosition.h"
 #include "std_msgs/Float32.h"
 #include "arm_control/ControlMode.h"
-#include "MotorConfig.h"
-#include "MotorController.h"
 
 /**
  * Init ros
@@ -27,8 +25,8 @@
  * continuously update encoder positions and publish transforms
  */
 
-drive::MotorConfig baseConfig;
-drive::MotorController * baseYawMotor;
+motor::MotorConfig baseConfig;
+motor::MotorController * baseYawMotor;
 
 ros::NodeHandle nodeHandle;
 std_msgs::Float32 ee_position;
@@ -55,12 +53,12 @@ PID diff2leftPID((double *) &diff2pos[0], (double *) &diff2setPoint[0], &diff2le
 PID diff1rightPID((double *) &diff1pos[1], (double *) &diff1setPoint[1], &diff1rightOutput, 0, 0, 0, DIRECT);
 PID diff2rightPID((double *) &diff2pos[1], (double *) &diff2setPoint[1], &diff2rightOutput, 0, 0, 0, DIRECT);
 
-arm::Pololu endEffectorMotor(END_EFFECTOR_SPEED_PIN, -1, END_EFFECTOR_INA_PIN, END_EFFECTOR_INB_PIN, &nodeHandle);
-arm::Pololu pitch1Motor(PITCH_1_SPEED_PIN, PITCH_1_BRK_PIN, PITCH_1_INA_PIN, PITCH_1_INB_PIN, &nodeHandle);
-arm::Pololu diff_1_left(DIFF_1_LEFT_SPEED_PIN, DIFF_1_LEFT_BRK_PIN, DIFF_1_LEFT_INA_PIN, DIFF_1_LEFT_INB_PIN, &nodeHandle);
-arm::Pololu diff_1_right(DIFF_1_RIGHT_SPEED_PIN, DIFF_1_RIGHT_BRK_PIN, DIFF_1_RIGHT_INA_PIN, DIFF_1_RIGHT_INB_PIN, &nodeHandle);
-arm::Pololu diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_INA_PIN, DIFF_2_LEFT_INB_PIN, &nodeHandle);
-arm::Pololu diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN, &nodeHandle);
+motor::Pololu endEffectorMotor(END_EFFECTOR_SPEED_PIN, -1, END_EFFECTOR_INA_PIN, END_EFFECTOR_INB_PIN, &nodeHandle);
+motor::Pololu pitch1Motor(PITCH_1_SPEED_PIN, PITCH_1_BRK_PIN, PITCH_1_INA_PIN, PITCH_1_INB_PIN, &nodeHandle);
+motor::Pololu diff_1_left(DIFF_1_LEFT_SPEED_PIN, DIFF_1_LEFT_BRK_PIN, DIFF_1_LEFT_INA_PIN, DIFF_1_LEFT_INB_PIN, &nodeHandle);
+motor::Pololu diff_1_right(DIFF_1_RIGHT_SPEED_PIN, DIFF_1_RIGHT_BRK_PIN, DIFF_1_RIGHT_INA_PIN, DIFF_1_RIGHT_INB_PIN, &nodeHandle);
+motor::Pololu diff_2_left(DIFF_2_LEFT_SPEED_PIN, DIFF_2_LEFT_BRK_PIN, DIFF_2_LEFT_INA_PIN, DIFF_2_LEFT_INB_PIN, &nodeHandle);
+motor::Pololu diff_2_right(DIFF_2_RIGHT_SPEED_PIN, DIFF_2_RIGHT_BRK_PIN, DIFF_2_RIGHT_INA_PIN, DIFF_2_RIGHT_INB_PIN, &nodeHandle);
 
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(&nodeHandle, transformConfig);
@@ -86,9 +84,9 @@ void setup() {
     baseConfig.directionPin = BASE_YAW_DIRECTION_PIN;
     baseConfig.feedbackPin = BASE_YAW_READY_PIN;
     baseConfig.speedPin = BASE_YAW_DRIVE_PIN;
-    baseConfig.controllerType = drive::_MAXON;
+    baseConfig.controllerType = motor::_MAXON;
 
-    baseYawMotor = drive::MotorController::createMotorController(baseConfig, &nodeHandle);
+    baseYawMotor = motor::MotorController::createMotorController(baseConfig, &nodeHandle);
     baseYawMotor->enable(true);
 
     SPI.begin();

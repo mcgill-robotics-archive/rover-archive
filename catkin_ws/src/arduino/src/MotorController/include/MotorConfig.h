@@ -6,7 +6,7 @@
 #define ROVER_ARDUINO_MOTORCONTROLLERCONFIG_H
 
 #include <Arduino.h>
-namespace drive {
+namespace motor {
 
 /**
  * \brief The two motor controllers currently supported

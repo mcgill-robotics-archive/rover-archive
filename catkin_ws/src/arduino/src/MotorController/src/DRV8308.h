@@ -5,9 +5,9 @@
 #ifndef ROVER_ARDUINO_DRV8308_H
 #define ROVER_ARDUINO_DRV8308_H
 
-#include "MotorController.h"
+#include "include/MotorController.h"
 
-namespace  drive {
+namespace  motor {
 class DRV8308 : public MotorController{
 public:
     DRV8308() { };

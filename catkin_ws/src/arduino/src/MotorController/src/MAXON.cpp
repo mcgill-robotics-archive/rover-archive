@@ -4,7 +4,7 @@
 
 #include "MAXON.h"
 
-using namespace drive;
+using namespace motor;
 
 MAXON::MAXON(uint8_t speedPin, uint8_t directionPin, uint8_t enablePin, uint8_t data1Pin, uint8_t data2Pin,
                     uint8_t feedbackPin, Mode mode) {

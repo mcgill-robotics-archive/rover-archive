@@ -7,7 +7,7 @@
 
 #include <ros.h>
 #include "MotorConfig.h"
-namespace drive {
+namespace motor {
 
 /**
  * \brief Motor Controller abstract interface.

@@ -17,11 +17,11 @@ drive::Wheel::~Wheel() {
     delete mMotorController;
 }
 
-drive::Wheel::Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle) {
+drive::Wheel::Wheel(motor::MotorConfig motorConfig, ros::NodeHandle * nodeHandle) {
     mNodeHandle = nodeHandle;
     mMotorConfig = motorConfig;
     mTachoCount = 0;
-    mMotorController = MotorController::createMotorController(mMotorConfig, nodeHandle);
+    mMotorController = motor::MotorController::createMotorController(mMotorConfig, nodeHandle);
     mMotorController->enable(true);
     mMotorController->brake(true);
 
