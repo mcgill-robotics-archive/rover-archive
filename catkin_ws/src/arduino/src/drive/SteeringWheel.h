@@ -7,6 +7,7 @@
 
 
 #include <Servo.h>
+#include <MotorConfig.h>
 #include "Wheel.h"
 
 namespace drive {

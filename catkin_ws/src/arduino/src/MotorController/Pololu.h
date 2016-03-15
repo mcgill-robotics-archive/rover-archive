@@ -7,6 +7,7 @@
 
 #include <Arduino.h>
 #include <ros.h>
+#include <MotorController.h>
 
 namespace arm {
 
@@ -16,7 +17,7 @@ namespace arm {
  * Drives the control pins to enable and disable the brakes along with the direction of the controllers.
  * Also sets the PWM duty cycle to achieve desired speed.
  */
-class Motor {
+class Pololu : public drive::MotorController{
 public:
 
     /**
@@ -28,8 +29,8 @@ public:
      * \param INB Digital pin for control INB
      * \param nodeHandle Pointer to a valid ros::nodeHandle for logging debug information
      */
-    Motor(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB, ros::NodeHandle *nodeHandle);
-    ~Motor();
+    Pololu(uint8_t motorPin, uint8_t brakePin, uint8_t INA, uint8_t INB, ros::NodeHandle *nodeHandle);
+    ~Pololu();
 
     /**
      * \brief Engage the brakes
@@ -44,7 +45,7 @@ public:
      *
      * \param speed Signed speed desired for this motor
      */
-    void setSpeed(double speed);
+    virtual void setSpeed(int speed);
 
     /**
      * \brief Disengage the breaks
@@ -70,7 +71,16 @@ public:
      *
      * \param reverseDirection Whether or not the motor should run backwards
      */
-    void setReverseDirection(bool reverseDirection);
+    virtual void setDirection(int speed);
+
+    virtual void brake(bool brk);
+
+
+    virtual void enable(bool en);
+
+
+    virtual bool getStatus();
+
 
 private:
     uint8_t mMotorPin;

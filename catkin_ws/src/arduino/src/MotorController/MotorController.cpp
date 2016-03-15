@@ -5,10 +5,11 @@
 #include "MotorController.h"
 #include "MAXON.h"
 #include "DRV8308.h"
+#include "Pololu.h"
 
 using namespace drive;
 
-MotorController * MotorController::createMotorController(MotorConfig motorConfig) {
+MotorController * MotorController::createMotorController(MotorConfig motorConfig, ros::NodeHandle *nodeHandle) {
     if (motorConfig.controllerType == _MAXON)
     {
         return new MAXON(
@@ -24,6 +25,10 @@ MotorController * MotorController::createMotorController(MotorConfig motorConfig
     else if (motorConfig.controllerType == _DRV8308)
     {
         return new drive::DRV8308();
+    }
+    else if (motorConfig.controllerType == _POLOLU)
+    {
+        return new arm::Pololu(motorConfig.speedPin, motorConfig.brakePin, motorConfig.data1Pin, motorConfig.data2Pin, nodeHandle);
     }
     return NULL;
 }

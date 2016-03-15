@@ -7,8 +7,8 @@
 
 #include "Arduino.h"
 #include <ros.h>
-#include <MotorController/MotorConfig.h>
-#include <MotorController/MotorController.h>
+#include <MotorConfig.h>
+#include <MotorController.h>
 
 namespace drive {
 

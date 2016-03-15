@@ -7,7 +7,10 @@
 
 #include <arduino/ram.h>
 
-int freeRam ();
-void freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response);
 
+class RAM {
+public:
+    static int freeRam ();
+    static void freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response);
+};
 #endif //ROVER_ARDUINO_RAM_H

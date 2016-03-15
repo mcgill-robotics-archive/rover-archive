@@ -21,7 +21,7 @@ drive::Wheel::Wheel(MotorConfig motorConfig, ros::NodeHandle * nodeHandle) {
     mNodeHandle = nodeHandle;
     mMotorConfig = motorConfig;
     mTachoCount = 0;
-    mMotorController = MotorController::createMotorController(mMotorConfig);
+    mMotorController = MotorController::createMotorController(mMotorConfig, nodeHandle);
     mMotorController->enable(true);
     mMotorController->brake(true);
 

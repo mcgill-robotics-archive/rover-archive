@@ -1,15 +1,15 @@
 #include <Arduino.h>
 #include "ros.h"
 
-#include "MotorController/MotorConfig.h"
+#include "MotorConfig.h"
 #include "Wheel.h"
 #include "SteeringWheel.h"
-#include "../common/ram.h"
+#include "ram/ram.h"
 #include "rover_common/MotorStatus.h"
 #include "rover_common/MotorControllerMode.h"
 #include "std_msgs/Bool.h"
 #include "drive_control/WheelCommand.h"
-#include "pins.h"
+#include "pins_drive.h"
 
 #define MOTOR_STATUS_UPDATE_RATE 100
 
@@ -19,7 +19,7 @@ void callbackMoving( const std_msgs::Bool& boolean);
 ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
 
-ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&freeRamCallback);
+ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
 ros::Publisher motorStatusPublisher("motor_status", &motorStatusMessage);
 ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
 ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );

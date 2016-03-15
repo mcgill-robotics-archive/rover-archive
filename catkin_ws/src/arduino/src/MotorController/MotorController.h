@@ -5,6 +5,7 @@
 #ifndef ROVER_ARDUINO_MOTORCONTROLLER_H
 #define ROVER_ARDUINO_MOTORCONTROLLER_H
 
+#include <ros.h>
 #include "MotorConfig.h"
 namespace drive {
 
@@ -42,10 +43,11 @@ public:
      * correct controller type.
      *
      * \param motorConfig Configuration object containing the proper pin and type information
+     * \param nodeHandle Pointer to a node handle for logging
      * \return Pointer to a new controller object which the user is responsible for managing.
      * Note that the pointer returned is generic type. Use caution if static casting to a sub-class.
      */
-    static MotorController * createMotorController(MotorConfig motorConfig);
+    static MotorController *createMotorController(MotorConfig motorConfig, ros::NodeHandle *nodeHandle);
 
     /**
      * \brief Interface method, sets the angular velocity of the wheel
