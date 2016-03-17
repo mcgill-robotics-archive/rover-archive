@@ -37,9 +37,9 @@ public:
     /// Operation mode for the maxon controller
     Mode mode;
 
-    /// D1 digital pin <b>MAXON ONLY</b>
+    /// D1 digital pin <b>MAXON and POLOLU ONLY</b>
     uint8_t data1Pin;
-    /// D2 digital pin <b>MAXON ONLY</b>
+    /// D2 digital pin <b>MAXON and POLOLU ONLY</b>
     uint8_t data2Pin;
     /// Motor status feedback digital pin
     uint8_t feedbackPin;
