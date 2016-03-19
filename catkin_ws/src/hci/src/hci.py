@@ -411,17 +411,7 @@ class CentralUi(QtGui.QMainWindow):
             pass
 
         elif self.modeId == 1:
-            if self.ui.ackMoving.isChecked():
-                if self.ui.pitch1.isChecked():
-                    self.arm_publisher.publish_base_pitch(self.controller.a2 * 100)
-                elif self.ui.diff1.isChecked():
-                    self.arm_publisher.publish_diff_1(self.controller.a2 * 100, self.controller.a1 * 100)
-                elif self.ui.diff2.isChecked():
-                    self.arm_publisher.publish_diff_2(self.controller.a2 * 100, self.controller.a1 * 100)
-                elif self.ui.end_eff.isChecked():
-                    self.arm_publisher.publish_end_effector(self.controller.a2 * 100)
-            else:
-                self.arm_publisher.publish_joint_vels(0, 0, 0, 0, 0, 0)
+            pass
 
         elif self.modeId == 3:
             # currently in camera control
@@ -474,6 +464,21 @@ class CentralUi(QtGui.QMainWindow):
             pass
         elif self.modeId == 1:
             # arm base mode
+            if self.ui.ackMoving.isChecked():
+                constant = (self.controller.a4 + 1) * 100
+                rospy.logdebug("Scaler constant : {0}".format(constant))
+                if self.ui.base.isChecked():
+                    self.arm_publisher.publish_base(self.controller.a2 * constant, self.controller.a1 * constant)
+                elif self.ui.diff1.isChecked():
+                    self.arm_publisher.publish_diff_1(self.controller.a2 * constant, self.controller.a1 * constant)
+                elif self.ui.diff2.isChecked():
+                    self.arm_publisher.publish_diff_2(self.controller.a2 * constant, self.controller.a1 * constant)
+                elif self.ui.end_eff.isChecked():
+                    self.arm_publisher.publish_end_effector(self.controller.a2 * constant)
+
+            else:
+                self.arm_publisher.publish_joint_vels(0, 0, 0, 0, 0, 0, 0)
+
             pass
         elif self.modeId == 2:
             # end effector mode
