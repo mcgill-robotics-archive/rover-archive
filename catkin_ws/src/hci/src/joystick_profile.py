@@ -18,7 +18,12 @@ param_names = [# mode selection
                # arm mode:
                "/joystick/next_arm_joint",
                "/joystick/prev_arm_joint",
-               "/joystick/coord_system"]
+               "/joystick/coord_system",
+
+               "/logitech/base",
+               "/logitech/diff1",
+               "/logitech/diff2",
+               "/logitech/end"]
 
 ## Provides a simple mechanism to create button mapping on the controller.
 #
@@ -50,6 +55,12 @@ param_names = [# mode selection
 #    "/joystick/next_arm_joint",
 #    "/joystick/prev_arm_joint",
 #    "/joystick/coord_system",
+#
+#    buttons only on the logitech controller
+#    "/logitech/base",
+#    "/logitech/diff1",
+#    "/logitech/diff2",
+#    "/logitech/end"
 #
 #</code>
 #

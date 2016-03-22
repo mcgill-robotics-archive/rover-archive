@@ -402,12 +402,28 @@ class CentralUi(QtGui.QMainWindow):
             self.set_controller_mode(0)
             self.ui.ackreman.setChecked(True)
 
+        if self.profile.param_value["/logitech/base"]:
+            self.set_controller_mode(1)
+            self.ui.base.setChecked(True)
+
+        if self.profile.param_value["/logitech/diff1"]:
+            self.set_controller_mode(1)
+            self.ui.diff1.setChecked(True)
+
+        if self.profile.param_value["/logitech/diff2"]:
+            self.set_controller_mode(1)
+            self.ui.diff2.setChecked(True)
+
+        if self.profile.param_value["/logitech/end"]:
+            self.set_controller_mode(1)
+            self.ui.end_eff.setChecked(True)
+
         if self.modeId == 0:
-            if self.profile.param_value["/joystick/toggle_point_steer"]:
-                if self.ui.ackreman.isChecked():
-                    self.ui.pointSteer.setChecked(True)
-                else:
-                    self.ui.ackreman.setChecked(True)
+            # if self.profile.param_value["/joystick/toggle_point_steer"]:
+            #     if self.ui.ackreman.isChecked():
+            #         self.ui.pointSteer.setChecked(True)
+            #     else:
+            #         self.ui.ackreman.setChecked(True)
             pass
 
         elif self.modeId == 1:
