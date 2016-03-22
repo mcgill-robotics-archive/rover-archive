@@ -50,7 +50,7 @@
   <run_depend>rosserial_arduino</run_depend>
   <run_depend>rosserial_client</run_depend>
   <run_depend>std_msgs</run_depend>
-
+  <build_depend>rover_common</build_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
