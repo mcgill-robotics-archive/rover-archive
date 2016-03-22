@@ -594,8 +594,8 @@ class CentralUi(QtGui.QMainWindow):
                 pass
             self.ui.camera3.setPixmap(rotated)
         else:
-            self.ui.camera3.setPixmap(self.overlay_pixmap)
-            # self.ui.camera3.setText("no video feed")
+            # self.ui.camera3.setPixmap(self.overlay_pixmap)
+            self.ui.camera3.setText("no video feed")
 
 
 def sigint_handler(*args):
