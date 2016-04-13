@@ -43,6 +43,7 @@ motor::MotorController * endEffectorMotor;
 
 ros::NodeHandle nodeHandle;
 std_msgs::Float32 ee_position;
+arm_control::JointPosition jointPosition;
 void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
 void handle_control_mode(const arm_control::ControlMode & message);
@@ -74,6 +75,7 @@ ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", 
 ros::Subscriber<arm_control::ControlMode> mode_subscriber("/arm_mode", &handle_control_mode);
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
 ros::Publisher eePublisher("/end_effector_position", &ee_position);
+ros::Publisher armJointPublisher("/arm_joint_feedback", &jointPosition);
 
 void setup() {
     /**
@@ -148,7 +150,8 @@ void setup() {
     nodeHandle.subscribe(angleSubscriber);
     nodeHandle.subscribe(mode_subscriber);
     nodeHandle.advertise(eePublisher);
-    sender.init();
+    nodeHandle.advertise(armJointPublisher);
+    sender.init(&armJointPublisher);
     nodeHandle.loginfo("Completed initialisation of arm controller");
 }
 
