@@ -64,12 +64,12 @@ arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1enc
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
 
 //todo: find pid constants
-PID baseYawPID((double *) &baseYawPosition, &baseYawSetPoint, &baseYawOutput, 0, 0, 0, DIRECT);
-PID pitch1PID((double *) &pitch1Position, &pitch1SetPoint, &pitch1Output, 0, 0, 0, DIRECT);
-PID diff1leftPID((double *) &diff1pos[0], (double *) &diff1setPoint[0], &diff1leftOutput, 0, 0, 0, DIRECT);
-PID diff2leftPID((double *) &diff2pos[0], (double *) &diff2setPoint[0], &diff2leftOutput, 0, 0, 0, DIRECT);
-PID diff1rightPID((double *) &diff1pos[1], (double *) &diff1setPoint[1], &diff1rightOutput, 0, 0, 0, DIRECT);
-PID diff2rightPID((double *) &diff2pos[1], (double *) &diff2setPoint[1], &diff2rightOutput, 0, 0, 0, DIRECT);
+PID baseYawPID( &baseYawPosition, &baseYawOutput, &baseYawSetPoint, 0, 0, 0, DIRECT);
+PID pitch1PID( &pitch1Position, &pitch1Output, &pitch1SetPoint, 0, 0, 0, DIRECT);
+PID diff1leftPID( &diff1pos[0], &diff1leftOutput,  &diff1setPoint[0], 0, 0, 0, DIRECT);
+PID diff2leftPID( diff2posLeft, &diff2leftOutput,  diff2setPointLeft, 1, 0, 0, DIRECT);
+PID diff1rightPID( &diff1pos[1], &diff1rightOutput, &diff1setPoint[1], 0, 0, 0, DIRECT);
+PID diff2rightPID( diff2posRight, &diff2rightOutput, diff2setPointRight, 1, 0, 0, REVERSE);
 
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(&nodeHandle, transformConfig);
@@ -94,12 +94,12 @@ void setup() {
 
     nodeHandle.initNode();
 
-    baseYawConfig.enablePin = BASE_YAW_ENABLE_PIN;
-    baseYawConfig.data1Pin = BASE_YAW_DATA1_PIN;
-    baseYawConfig.data2Pin = BASE_YAW_DATA2_PIN;
-    baseYawConfig.directionPin = BASE_YAW_DIRECTION_PIN;
-    baseYawConfig.feedbackPin = BASE_YAW_READY_PIN;
-    baseYawConfig.speedPin = BASE_YAW_DRIVE_PIN;
+    baseYawConfig.enablePin      = BASE_YAW_ENABLE_PIN;
+    baseYawConfig.data1Pin       = BASE_YAW_DATA1_PIN;
+    baseYawConfig.data2Pin       = BASE_YAW_DATA2_PIN;
+    baseYawConfig.directionPin   = BASE_YAW_DIRECTION_PIN;
+    baseYawConfig.feedbackPin    = BASE_YAW_READY_PIN;
+    baseYawConfig.speedPin       = BASE_YAW_DRIVE_PIN;
     baseYawConfig.controllerType = motor::_MAXON;
 
     basePitchConfig.speedPin = PITCH_1_SPEED_PIN;
@@ -130,7 +130,7 @@ void setup() {
     endEffectorConfig.speedPin = END_EFFECTOR_SPEED_PIN;
     endEffectorConfig.data1Pin = END_EFFECTOR_INA_PIN;
     endEffectorConfig.data2Pin = END_EFFECTOR_INB_PIN;
-    endEffectorConfig.brakePin = 60; // invalid pin on arduino
+    endEffectorConfig.brakePin = NC;
 
     basePitchConfig.controllerType   = motor::_POLOLU;
     diff1leftConfig.controllerType   = motor::_POLOLU;
@@ -152,6 +152,19 @@ void setup() {
     SPI.setClockDivider(SPI_CLOCK_DIV8);
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE2);
+
+    baseYawPID.SetMode(AUTOMATIC);
+    baseYawPID.SetOutputLimits(-255, 255);
+    pitch1PID.SetMode(AUTOMATIC);
+    pitch1PID.SetOutputLimits(-255, 255);
+    diff1leftPID.SetMode(AUTOMATIC);
+    diff1leftPID.SetOutputLimits(-255, 255);
+    diff2leftPID.SetMode(AUTOMATIC);
+    diff2leftPID.SetOutputLimits(-255, 255);
+    diff1rightPID.SetMode(AUTOMATIC);
+    diff1rightPID.SetOutputLimits(-255, 255);
+    diff2rightPID.SetMode(AUTOMATIC);
+    diff2rightPID.SetOutputLimits(-255, 255);
 
     nodeHandle.advertiseService(ramService);
     nodeHandle.subscribe(arm_subscriber);

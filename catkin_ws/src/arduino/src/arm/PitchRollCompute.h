@@ -34,7 +34,7 @@ public:
      * \param position Pointer to a destination array where we place the current
      * position of the encoders. Index 0 is left, index 1 is right.
      */
-    void compute(float *pitchRoll, float *position);
+    void compute(double *pitchRoll, double *position);
 
     /**
      * \brief Compute the position each motor should be at to achieve global pitch adn roll
@@ -43,7 +43,7 @@ public:
      * \param roll Desired roll
      * \param destination Pointer to array to place target motor output
      */
-    void inverse(float pitch, float roll, float *destination);
+    void inverse(float pitch, float roll, double *destination);
 
 
 private:
