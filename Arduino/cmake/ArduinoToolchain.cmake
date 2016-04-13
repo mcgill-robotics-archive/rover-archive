@@ -21,7 +21,9 @@ endif()
 #=============================================================================#
 if(UNIX)
     include(Platform/UnixPaths)
+    set(LINUX 1)
     if(APPLE)
+        set(OSX 1)
         list(APPEND CMAKE_SYSTEM_PREFIX_PATH ~/Applications
                                              /Applications
                                              /Developer/Applications

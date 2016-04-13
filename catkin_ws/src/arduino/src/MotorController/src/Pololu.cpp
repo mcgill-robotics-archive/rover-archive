@@ -40,7 +40,7 @@ void Pololu::setSpeed(int speed) {
     else {
         unlock();
         setDirection(speed < 0);
-        analogWrite(mMotorPin, (int) abs(speed));
+        analogWrite(mMotorPin, abs(speed));
     }
 }
 
