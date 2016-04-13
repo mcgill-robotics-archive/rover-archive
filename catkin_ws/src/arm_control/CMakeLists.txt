@@ -53,6 +53,7 @@ add_message_files(
   JointVelocities.msg
   ControlMode.msg
   JointPosition.msg
+  EncoderPosition.msg
 #   Message2.msg
 )
 
