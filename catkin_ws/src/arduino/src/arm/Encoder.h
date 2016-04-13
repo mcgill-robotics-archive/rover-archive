@@ -28,7 +28,7 @@ public:
      * \param pin Pin number for the encoder selection. Drives the SS pin of the SPI bus
      * \param nh Pointer to a valid ros handle for logging
      */
-    Encoder(uint8_t pin, ros::NodeHandle *nh);
+    Encoder(uint8_t pin, bool inverted, ros::NodeHandle *nh);
     virtual ~Encoder();
 
     /**
@@ -60,6 +60,7 @@ private:
     byte dA, dB;
     int x;
     float ax;
+    bool mInverted;
 };
 }
 

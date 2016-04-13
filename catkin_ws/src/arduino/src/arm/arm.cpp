@@ -48,13 +48,13 @@ void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
 void handle_control_mode(const arm_control::ControlMode & message);
 
-arm::Encoder enfEffectorEncoder(END_EFFECTOR_SS_PIN, &nodeHandle);
-arm::Encoder basePitch(PITCH_1_SS_PIN, &nodeHandle);
-arm::Encoder baseYaw(BASE_YAW_SS_PIN, &nodeHandle);
-arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, &nodeHandle);
-arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, &nodeHandle);
-arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, &nodeHandle);
-arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, &nodeHandle);
+arm::Encoder enfEffectorEncoder(END_EFFECTOR_SS_PIN, false, &nodeHandle);
+arm::Encoder basePitch(PITCH_1_SS_PIN, false, &nodeHandle);
+arm::Encoder baseYaw(BASE_YAW_SS_PIN, false, &nodeHandle);
+arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, true, &nodeHandle);
 
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
