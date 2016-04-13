@@ -8,13 +8,14 @@
 #include "PitchRollCompute.h"
 #include <PID_v1/PID_v1.h>
 #include <SPI.h>
+#include <include/MotorController.h>
 #include "ram/ram.h"
-#include "src/Pololu.h"
 #include "pins_arm.h"
 #include "arm_control/JointVelocities.h"
 #include "arm_control/JointPosition.h"
 #include "std_msgs/Float32.h"
 #include "arm_control/ControlMode.h"
+#include "arm_control/EncoderPosition.h"
 
 /**
  * Init ros
@@ -44,6 +45,9 @@ motor::MotorController * endEffectorMotor;
 ros::NodeHandle nodeHandle;
 std_msgs::Float32 ee_position;
 arm_control::JointPosition jointPosition;
+arm_control::EncoderPosition encoderPosition;
+arm_control::EncoderPosition motorSpeed;
+
 void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
 void handle_control_mode(const arm_control::ControlMode & message);
@@ -73,9 +77,13 @@ arm::TransformSender sender(&nodeHandle, transformConfig);
 ros::Subscriber<arm_control::JointPosition> angleSubscriber("/arm/setPoints", &handle_arm_position);
 ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);
 ros::Subscriber<arm_control::ControlMode> mode_subscriber("/arm_mode", &handle_control_mode);
-ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
-ros::Publisher eePublisher("/end_effector_position", &ee_position);
-ros::Publisher armJointPublisher("/arm_joint_feedback", &jointPosition);
+
+ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram", &RAM::freeRamCallback);
+
+ros::Publisher eePublisher("/arm/end_effector_position", &ee_position);
+ros::Publisher armJointPublisher("/arm/joint_feedback", &jointPosition);
+ros::Publisher armEncoderPublisher("/arm/encoder_position_feedback", &encoderPosition);
+ros::Publisher armMotorSpeedPublisher("/arm/closed_loop_speed", &motorSpeed);
 
 void setup() {
     /**
@@ -151,6 +159,9 @@ void setup() {
     nodeHandle.subscribe(mode_subscriber);
     nodeHandle.advertise(eePublisher);
     nodeHandle.advertise(armJointPublisher);
+    nodeHandle.advertise(armEncoderPublisher);
+    nodeHandle.advertise(armMotorSpeedPublisher);
+
     sender.init(&armJointPublisher);
     nodeHandle.loginfo("Completed initialisation of arm controller");
 }
@@ -159,9 +170,9 @@ void setup() {
 void loop() {
     /**
      * read encoder values
+     * update and publish tf frames
      * update PID output
      * update motor commands
-     * update and publish tf frames
      */
 
     baseYawPosition = baseYaw.readPosition();
@@ -169,19 +180,44 @@ void loop() {
     pitch1Position = basePitch.readPosition();
     differential1.compute(pitchRollLink1, diff1pos);
     differential2.compute(pitchRollLink2, diff2pos);
+    *diff1posLeft = diff1pos[0];
+    *diff1posRight = diff1pos[1];
+    *diff2posLeft = diff2pos[0];
+    *diff2posRight = diff2pos[1];
 
     ee_position.data = endEffectorPosition;
     eePublisher.publish(&ee_position);
+
+    encoderPosition.base_yaw = baseYawPosition;
+    encoderPosition.base_pitch = pitch1Position;
+    encoderPosition.diff_1_left = *diff1posLeft;
+    encoderPosition.diff_1_right = *diff1posRight;
+    encoderPosition.diff_2_left = *diff2posLeft;
+    encoderPosition.diff_2_right = *diff2posRight;
+    armEncoderPublisher.publish(&encoderPosition);
+
     sender.updateRotations(baseYawPosition, pitch1Position, pitchRollLink1[0], pitchRollLink1[1], pitchRollLink2[0], pitchRollLink2[1]);
     sender.sendTransforms();
 
     if (pid) {
+        nodeHandle.logdebug("Compute PID");
+
         baseYawPID.Compute();
         pitch1PID.Compute();
         diff1leftPID.Compute();
         diff2leftPID.Compute();
         diff1rightPID.Compute();
         diff2rightPID.Compute();
+
+        motorSpeed.diff_1_left = diff1leftOutput;
+        motorSpeed.diff_1_right = diff1rightOutput;
+        motorSpeed.end_effector = endEffectorOutput;
+        motorSpeed.base_yaw = baseYawOutput;
+        motorSpeed.base_pitch = pitch1Output;
+        motorSpeed.diff_2_left = diff2leftOutput;
+        motorSpeed.diff_2_right = diff2rightOutput;
+
+        armMotorSpeedPublisher.publish(&motorSpeed);
 
         baseYawMotor->setSpeed((int) baseYawOutput);
         basePitchMotor->setSpeed((int) pitch1Output);
@@ -190,7 +226,8 @@ void loop() {
         diff2leftMotor->setSpeed((int) diff2leftOutput);
         diff2rightMotor->setSpeed((int) diff2rightOutput);
         endEffectorMotor->setSpeed((int) endEffectorOutput);
-    } else {
+    }
+    else {
         baseYawMotor->setSpeed((int) baseYawOutputVel);
         basePitchMotor->setSpeed((int) pitch1OutputVel);
         diff1leftMotor->setSpeed((int) diff1Vel[0]);
@@ -205,14 +242,21 @@ void loop() {
 }
 
 void handle_arm_position(const arm_control::JointPosition & message) {
+    nodeHandle.logdebug("Receive new position");
     pitch1SetPoint = message.base_pitch;
     differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1setPoint);
     differential2.inverse(message.diff_2_pitch, message.diff_2_roll, diff2setPoint);
+    *diff1setPointLeft = diff1setPoint[1];
+    *diff1setPointRight = diff1setPoint[0];
+    *diff2setPointLeft = diff2setPoint[1];
+    *diff2setPointRight = diff2setPoint[0];
+
     baseYawSetPoint = message.base_yaw;
     endEffectorOutput = message.end_effector;
 }
 
 void handle_arm_velocity(const arm_control::JointVelocities & message){
+    nodeHandle.logdebug("Receive new speed");
     baseYawOutputVel = message.base_yaw;
     pitch1OutputVel = message.base_pitch;
     differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1Vel);
@@ -221,7 +265,13 @@ void handle_arm_velocity(const arm_control::JointVelocities & message){
 }
 
 void handle_control_mode(const arm_control::ControlMode & message){
-    if (message.Position) pid = true;
-    else pid = false;
+    if (message.Position) {
+        pid = true;
+        nodeHandle.logdebug("Switching to position control");
+    }
+    else {
+        pid = false;
+        nodeHandle.logdebug("Switching to speed control");
+    }
 }
 
