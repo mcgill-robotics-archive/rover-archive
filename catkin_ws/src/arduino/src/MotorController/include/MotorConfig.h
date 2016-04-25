@@ -14,7 +14,8 @@ namespace motor {
 enum ControllerType {
     _MAXON = 0,
     _DRV8308 = 1,
-    _POLOLU = 2
+    _POLOLU = 2,
+    _AfroESC = 3
 };
 
 /**

@@ -4,12 +4,14 @@ set(MC_SOURCES
         src/DRV8308.cpp
         src/MAXON.cpp
         src/Pololu.cpp
+        src/AfroESC.cpp
         src/MotorConfig.cpp
         src/MotorController.cpp)
 
 set(MC_HEADERS
         src/DRV8308.h
         src/MAXON.h
+        src/AfroESC.h
         src/Pololu.h
         include/MotorConfig.h
         include/MotorController.h)
