@@ -4,23 +4,23 @@
 
 #include "AfroESC.h"
 
-void virtual motor::AfroESC::brake(bool brk) {
+void motor::AfroESC::brake(bool brk) {
 
 }
 
-void virtual motor::AfroESC::enable(bool en) {
+void motor::AfroESC::enable(bool en) {
 
 }
 
-bool virtual motor::AfroESC::getStatus() {
+bool motor::AfroESC::getStatus() {
     return false;
 }
 
-void virtual motor::AfroESC::setDirection(int speed) {
+void motor::AfroESC::setDirection(int speed) {
 
 }
 
-void virtual motor::AfroESC::setSpeed(int speed) {
+void motor::AfroESC::setSpeed(int speed) {
 
 }
 
