@@ -1,3 +1,0 @@
-[submodule "catkin_ws/src/rosserial"]
-	path = catkin_ws/src/rosserial
-url=https://github.com/mcgill-robotics/rosserial
