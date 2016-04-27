@@ -18,6 +18,7 @@ def map_angle(angle):
 	return map(angle, 0, 180, 1000, 2000)
 
 def callback(config, level):
+	rospy.logdebug("received reconfigure call")
 	up = config.up_tilt_angle
 	down = config.down_tilt_angle
 	speed = config.tilt_speed
@@ -28,6 +29,7 @@ def callback(config, level):
 	return config
 
 def oscillate(event):
+	rospy.loginfo("Starting oscillations")
 	global rpi
 	pi = None
 	try:
@@ -42,16 +44,16 @@ def oscillate(event):
 		if (rpi and enable) :
 			
 			for x in range(up, down):
-				pi.set_servo_pulsewidth(17, map_angle(x))
+				pi.set_servo_pulsewidth(12, map_angle(x))
 				rospy.sleep(time)
 
 			for x in range(down, up):
-				pi.set_servo_pulsewidth(17, map_angle(x))
+				pi.set_servo_pulsewidth(12, map_angle(x))
 				rospy.sleep(time)
 
 
 if __name__ == "__main__":
-    rospy.init_node("dynamic_tutorials", anonymous = True)
+    rospy.init_node("lidar_tilt", anonymous = False)
     srv = Server(LidarTiltConfig, callback)
 
     rospy.Timer(rospy.Duration(1), oscillate, oneshot=True)
