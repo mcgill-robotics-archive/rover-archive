@@ -10,7 +10,10 @@
 #include "rover_common/MotorControllerMode.h"
 #include "std_msgs/Bool.h"
 #include "drive_control/WheelCommand.h"
+
+#define MAXON_PINS
 #include "pins_drive.h"
+
 
 #define MOTOR_STATUS_UPDATE_RATE 100
 
@@ -21,7 +24,7 @@ ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
 
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
-ros::Publisher motorStatusPublisher("motor_status", &motorStatusMessage);
+ros::Publisher motorStatusPublisher("/motor_status", &motorStatusMessage);
 ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
 ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );
 
@@ -137,6 +140,7 @@ void setup() {
 
     middleLeft = new drive::Wheel(configML, &nh);
     middleRight = new drive::Wheel(configMR, &nh);
+    delay(0);
 }
 
 void sendMotorStatus(ros::Publisher &publisher) {
