@@ -31,7 +31,7 @@
 
 #define FL_ENABLE_PIN 39
 #define FR_ENABLE_PIN 28
-#define ML_ENABLE_PIN 17
+#define ML_ENABLE_PIN 16
 #define MR_ENABLE_PIN 23
 #define BL_ENABLE_PIN NC
 #define BR_ENABLE_PIN 33
