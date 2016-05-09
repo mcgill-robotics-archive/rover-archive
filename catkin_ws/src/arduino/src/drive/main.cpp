@@ -12,6 +12,8 @@
 #include "drive_control/WheelCommand.h"
 
 #define MAXON_PINS
+#define AFRO_CONTROLLERS
+
 #include "pins_drive.h"
 
 
@@ -91,7 +93,6 @@ void setup() {
     configFL.directionPin = FL_DIRECTION_PIN;
     configFL.feedbackPin = FL_READY_PIN;
     configFL.speedPin = FL_DRIVE_PIN;
-    configFL.controllerType = motor::_MAXON;
 
     configML.enablePin = ML_ENABLE_PIN;
     configML.data1Pin = ML_DATA1_PIN;
@@ -99,7 +100,6 @@ void setup() {
     configML.directionPin = ML_DIRECTION_PIN;
     configML.feedbackPin = ML_READY_PIN;
     configML.speedPin = ML_DRIVE_PIN;
-    configML.controllerType = motor::_MAXON;
 
     configBL.enablePin = BL_ENABLE_PIN;
     configBL.data1Pin = BL_DATA1_PIN;
@@ -107,7 +107,6 @@ void setup() {
     configBL.directionPin = BL_DIRECTION_PIN;
     configBL.feedbackPin = BL_READY_PIN;
     configBL.speedPin = BL_DRIVE_PIN;
-    configBL.controllerType = motor::_MAXON;
 
     configFR.enablePin = FR_ENABLE_PIN;
     configFR.data1Pin = FR_DATA1_PIN;
@@ -115,7 +114,6 @@ void setup() {
     configFR.directionPin = FR_DIRECTION_PIN;
     configFR.feedbackPin = FR_READY_PIN;
     configFR.speedPin = FR_DRIVE_PIN;
-    configFR.controllerType = motor::_MAXON;
 
     configMR.enablePin = MR_ENABLE_PIN;
     configMR.data1Pin = MR_DATA1_PIN;
@@ -123,7 +121,6 @@ void setup() {
     configMR.directionPin = MR_DIRECTION_PIN;
     configMR.feedbackPin = MR_READY_PIN;
     configMR.speedPin = MR_DRIVE_PIN;
-    configMR.controllerType = motor::_MAXON;
 
     configBR.enablePin = BR_ENABLE_PIN;
     configBR.data1Pin = BR_DATA1_PIN;
@@ -131,7 +128,23 @@ void setup() {
     configBR.directionPin = BR_DIRECTION_PIN;
     configBR.feedbackPin = BR_READY_PIN;
     configBR.speedPin = BR_DRIVE_PIN;
+
+#ifdef MAXON_CONTROLLERS
+    configFL.controllerType = motor::_MAXON;
+    configML.controllerType = motor::_MAXON;
+    configBL.controllerType = motor::_MAXON;
+    configFR.controllerType = motor::_MAXON;
+    configMR.controllerType = motor::_MAXON;
     configBR.controllerType = motor::_MAXON;
+#endif
+#ifdef AFRO_CONTROLLERS
+    configFL.controllerType = motor::_AfroESC;
+    configML.controllerType = motor::_AfroESC;
+    configBL.controllerType = motor::_AfroESC;
+    configFR.controllerType = motor::_AfroESC;
+    configMR.controllerType = motor::_AfroESC;
+    configBR.controllerType = motor::_AfroESC;
+#endif
 
     leftFront = new drive::SteeringWheel(configFL, FL_STEERING_PIN, &nh);
     leftBack = new drive::SteeringWheel(configBL, BL_STEERING_PIN, &nh);
