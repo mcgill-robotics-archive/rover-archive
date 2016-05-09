@@ -6,6 +6,7 @@
 #define ROVER_ARDUINO_AFROESC_H
 
 #include <include/MotorController.h>
+#include <Servo/Servo.h>
 
 namespace motor {
 
@@ -13,7 +14,7 @@ class AfroESC : public MotorController {
 
 
 public:
-    AfroESC();
+    AfroESC(uint8_t motorPin);
 
     virtual ~AfroESC();
 
@@ -26,6 +27,12 @@ public:
     virtual void enable(bool en);
 
     virtual bool getStatus();
+
+private:
+    uint8_t mMotorPin;
+    Servo servo;
+    int directionSign = 0;
+    bool mEnabled = false;
 };
 
 }

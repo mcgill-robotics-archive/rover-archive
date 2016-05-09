@@ -33,7 +33,7 @@ MotorController * MotorController::createMotorController(MotorConfig motorConfig
     }
     else if (motorConfig.controllerType == _AfroESC)
     {
-        return new motor::AfroESC();
+        return new motor::AfroESC(motorConfig.speedPin);
     }
     return NULL;
 }
