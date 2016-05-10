@@ -1,0 +1,9 @@
+<launch>
+
+    <include file="$(find arduino)/launch/drive.launch"/>
+    <include file="$(find hci)/launch/logitech.launch"/>
+
+    <group ns="drive">
+    	<node name="drive_control" pkg="drive_control" type="DriveControl.py" respawn="false"/>
+    </group>
+</launch>

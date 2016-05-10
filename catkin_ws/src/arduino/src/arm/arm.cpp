@@ -8,13 +8,14 @@
 #include "PitchRollCompute.h"
 #include <PID_v1/PID_v1.h>
 #include <SPI.h>
+#include <include/MotorController.h>
 #include "ram/ram.h"
-#include "src/Pololu.h"
 #include "pins_arm.h"
 #include "arm_control/JointVelocities.h"
 #include "arm_control/JointPosition.h"
 #include "std_msgs/Float32.h"
 #include "arm_control/ControlMode.h"
+#include "arm_control/EncoderPosition.h"
 
 /**
  * Init ros
@@ -43,28 +44,32 @@ motor::MotorController * endEffectorMotor;
 
 ros::NodeHandle nodeHandle;
 std_msgs::Float32 ee_position;
+arm_control::JointPosition jointPosition;
+arm_control::EncoderPosition encoderPosition;
+arm_control::EncoderPosition motorSpeed;
+
 void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
 void handle_control_mode(const arm_control::ControlMode & message);
 
-arm::Encoder enfEffectorEncoder(END_EFFECTOR_SS_PIN, &nodeHandle);
-arm::Encoder basePitch(PITCH_1_SS_PIN, &nodeHandle);
-arm::Encoder baseYaw(BASE_YAW_SS_PIN, &nodeHandle);
-arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, &nodeHandle);
-arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, &nodeHandle);
-arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, &nodeHandle);
-arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, &nodeHandle);
+arm::Encoder enfEffectorEncoder(END_EFFECTOR_SS_PIN, false, &nodeHandle);
+arm::Encoder basePitch(PITCH_1_SS_PIN, false, &nodeHandle);
+arm::Encoder baseYaw(BASE_YAW_SS_PIN, false, &nodeHandle);
+arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, true, &nodeHandle);
 
 arm::PitchRollCompute differential1(&differential1encoderLeft, &differential1encoderRight);
 arm::PitchRollCompute differential2(&differential2encoderLeft, &differential2encoderRight);
 
 //todo: find pid constants
-PID baseYawPID((double *) &baseYawPosition, &baseYawSetPoint, &baseYawOutput, 0, 0, 0, DIRECT);
-PID pitch1PID((double *) &pitch1Position, &pitch1SetPoint, &pitch1Output, 0, 0, 0, DIRECT);
-PID diff1leftPID((double *) &diff1pos[0], (double *) &diff1setPoint[0], &diff1leftOutput, 0, 0, 0, DIRECT);
-PID diff2leftPID((double *) &diff2pos[0], (double *) &diff2setPoint[0], &diff2leftOutput, 0, 0, 0, DIRECT);
-PID diff1rightPID((double *) &diff1pos[1], (double *) &diff1setPoint[1], &diff1rightOutput, 0, 0, 0, DIRECT);
-PID diff2rightPID((double *) &diff2pos[1], (double *) &diff2setPoint[1], &diff2rightOutput, 0, 0, 0, DIRECT);
+PID baseYawPID( &baseYawPosition, &baseYawOutput, &baseYawSetPoint, 0, 0, 0, DIRECT);
+PID pitch1PID( &pitch1Position, &pitch1Output, &pitch1SetPoint, 0, 0, 0, DIRECT);
+PID diff1leftPID( &diff1pos[0], &diff1leftOutput,  &diff1setPoint[0], 0, 0, 0, DIRECT);
+PID diff2leftPID( diff2posLeft, &diff2leftOutput,  diff2setPointLeft, 1, 0, 0, DIRECT);
+PID diff1rightPID( &diff1pos[1], &diff1rightOutput, &diff1setPoint[1], 0, 0, 0, DIRECT);
+PID diff2rightPID( diff2posRight, &diff2rightOutput, diff2setPointRight, 1, 0, 0, REVERSE);
 
 arm::TransformConfig transformConfig;
 arm::TransformSender sender(&nodeHandle, transformConfig);
@@ -72,8 +77,13 @@ arm::TransformSender sender(&nodeHandle, transformConfig);
 ros::Subscriber<arm_control::JointPosition> angleSubscriber("/arm/setPoints", &handle_arm_position);
 ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);
 ros::Subscriber<arm_control::ControlMode> mode_subscriber("/arm_mode", &handle_control_mode);
-ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
-ros::Publisher eePublisher("/end_effector_position", &ee_position);
+
+ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram", &RAM::freeRamCallback);
+
+ros::Publisher eePublisher("/arm/end_effector_position", &ee_position);
+ros::Publisher armJointPublisher("/arm/joint_feedback", &jointPosition);
+ros::Publisher armEncoderPublisher("/arm/encoder_position_feedback", &encoderPosition);
+ros::Publisher armMotorSpeedPublisher("/arm/closed_loop_speed", &motorSpeed);
 
 void setup() {
     /**
@@ -84,12 +94,12 @@ void setup() {
 
     nodeHandle.initNode();
 
-    baseYawConfig.enablePin = BASE_YAW_ENABLE_PIN;
-    baseYawConfig.data1Pin = BASE_YAW_DATA1_PIN;
-    baseYawConfig.data2Pin = BASE_YAW_DATA2_PIN;
-    baseYawConfig.directionPin = BASE_YAW_DIRECTION_PIN;
-    baseYawConfig.feedbackPin = BASE_YAW_READY_PIN;
-    baseYawConfig.speedPin = BASE_YAW_DRIVE_PIN;
+    baseYawConfig.enablePin      = BASE_YAW_ENABLE_PIN;
+    baseYawConfig.data1Pin       = BASE_YAW_DATA1_PIN;
+    baseYawConfig.data2Pin       = BASE_YAW_DATA2_PIN;
+    baseYawConfig.directionPin   = BASE_YAW_DIRECTION_PIN;
+    baseYawConfig.feedbackPin    = BASE_YAW_READY_PIN;
+    baseYawConfig.speedPin       = BASE_YAW_DRIVE_PIN;
     baseYawConfig.controllerType = motor::_MAXON;
 
     basePitchConfig.speedPin = PITCH_1_SPEED_PIN;
@@ -120,7 +130,7 @@ void setup() {
     endEffectorConfig.speedPin = END_EFFECTOR_SPEED_PIN;
     endEffectorConfig.data1Pin = END_EFFECTOR_INA_PIN;
     endEffectorConfig.data2Pin = END_EFFECTOR_INB_PIN;
-    endEffectorConfig.brakePin = 60; // invalid pin on arduino
+    endEffectorConfig.brakePin = NC;
 
     basePitchConfig.controllerType   = motor::_POLOLU;
     diff1leftConfig.controllerType   = motor::_POLOLU;
@@ -143,12 +153,29 @@ void setup() {
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE2);
 
+    baseYawPID.SetMode(AUTOMATIC);
+    baseYawPID.SetOutputLimits(-255, 255);
+    pitch1PID.SetMode(AUTOMATIC);
+    pitch1PID.SetOutputLimits(-255, 255);
+    diff1leftPID.SetMode(AUTOMATIC);
+    diff1leftPID.SetOutputLimits(-255, 255);
+    diff2leftPID.SetMode(AUTOMATIC);
+    diff2leftPID.SetOutputLimits(-255, 255);
+    diff1rightPID.SetMode(AUTOMATIC);
+    diff1rightPID.SetOutputLimits(-255, 255);
+    diff2rightPID.SetMode(AUTOMATIC);
+    diff2rightPID.SetOutputLimits(-255, 255);
+
     nodeHandle.advertiseService(ramService);
     nodeHandle.subscribe(arm_subscriber);
     nodeHandle.subscribe(angleSubscriber);
     nodeHandle.subscribe(mode_subscriber);
     nodeHandle.advertise(eePublisher);
-    sender.init();
+    nodeHandle.advertise(armJointPublisher);
+    nodeHandle.advertise(armEncoderPublisher);
+    nodeHandle.advertise(armMotorSpeedPublisher);
+
+    sender.init(&armJointPublisher);
     nodeHandle.loginfo("Completed initialisation of arm controller");
 }
 
@@ -156,9 +183,9 @@ void setup() {
 void loop() {
     /**
      * read encoder values
+     * update and publish tf frames
      * update PID output
      * update motor commands
-     * update and publish tf frames
      */
 
     baseYawPosition = baseYaw.readPosition();
@@ -166,19 +193,44 @@ void loop() {
     pitch1Position = basePitch.readPosition();
     differential1.compute(pitchRollLink1, diff1pos);
     differential2.compute(pitchRollLink2, diff2pos);
+    *diff1posLeft = diff1pos[0];
+    *diff1posRight = diff1pos[1];
+    *diff2posLeft = diff2pos[0];
+    *diff2posRight = diff2pos[1];
 
     ee_position.data = endEffectorPosition;
     eePublisher.publish(&ee_position);
+
+    encoderPosition.base_yaw = baseYawPosition;
+    encoderPosition.base_pitch = pitch1Position;
+    encoderPosition.diff_1_left = *diff1posLeft;
+    encoderPosition.diff_1_right = *diff1posRight;
+    encoderPosition.diff_2_left = *diff2posLeft;
+    encoderPosition.diff_2_right = *diff2posRight;
+    armEncoderPublisher.publish(&encoderPosition);
+
     sender.updateRotations(baseYawPosition, pitch1Position, pitchRollLink1[0], pitchRollLink1[1], pitchRollLink2[0], pitchRollLink2[1]);
     sender.sendTransforms();
 
     if (pid) {
+        nodeHandle.logdebug("Compute PID");
+
         baseYawPID.Compute();
         pitch1PID.Compute();
         diff1leftPID.Compute();
         diff2leftPID.Compute();
         diff1rightPID.Compute();
         diff2rightPID.Compute();
+
+        motorSpeed.diff_1_left = diff1leftOutput;
+        motorSpeed.diff_1_right = diff1rightOutput;
+        motorSpeed.end_effector = endEffectorOutput;
+        motorSpeed.base_yaw = baseYawOutput;
+        motorSpeed.base_pitch = pitch1Output;
+        motorSpeed.diff_2_left = diff2leftOutput;
+        motorSpeed.diff_2_right = diff2rightOutput;
+
+        armMotorSpeedPublisher.publish(&motorSpeed);
 
         baseYawMotor->setSpeed((int) baseYawOutput);
         basePitchMotor->setSpeed((int) pitch1Output);
@@ -187,7 +239,8 @@ void loop() {
         diff2leftMotor->setSpeed((int) diff2leftOutput);
         diff2rightMotor->setSpeed((int) diff2rightOutput);
         endEffectorMotor->setSpeed((int) endEffectorOutput);
-    } else {
+    }
+    else {
         baseYawMotor->setSpeed((int) baseYawOutputVel);
         basePitchMotor->setSpeed((int) pitch1OutputVel);
         diff1leftMotor->setSpeed((int) diff1Vel[0]);
@@ -202,14 +255,21 @@ void loop() {
 }
 
 void handle_arm_position(const arm_control::JointPosition & message) {
+    nodeHandle.logdebug("Receive new position");
     pitch1SetPoint = message.base_pitch;
     differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1setPoint);
     differential2.inverse(message.diff_2_pitch, message.diff_2_roll, diff2setPoint);
+    *diff1setPointLeft = diff1setPoint[1];
+    *diff1setPointRight = diff1setPoint[0];
+    *diff2setPointLeft = diff2setPoint[1];
+    *diff2setPointRight = diff2setPoint[0];
+
     baseYawSetPoint = message.base_yaw;
     endEffectorOutput = message.end_effector;
 }
 
 void handle_arm_velocity(const arm_control::JointVelocities & message){
+    nodeHandle.logdebug("Receive new speed");
     baseYawOutputVel = message.base_yaw;
     pitch1OutputVel = message.base_pitch;
     differential1.inverse(message.diff_1_pitch, message.diff_1_roll, diff1Vel);
@@ -218,7 +278,13 @@ void handle_arm_velocity(const arm_control::JointVelocities & message){
 }
 
 void handle_control_mode(const arm_control::ControlMode & message){
-    if (message.Position) pid = true;
-    else pid = false;
+    if (message.Position) {
+        pid = true;
+        nodeHandle.logdebug("Switching to position control");
+    }
+    else {
+        pid = false;
+        nodeHandle.logdebug("Switching to speed control");
+    }
 }
 

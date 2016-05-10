@@ -67,3 +67,4 @@ CATKIN_IGNORE
 catkin_ws/src/arduino/docs
 docs
 build_isolated/
+*.sublime*

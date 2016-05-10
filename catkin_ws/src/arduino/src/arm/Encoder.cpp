@@ -8,7 +8,7 @@
 
 using namespace arm;
 
-Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
+Encoder::Encoder(uint8_t pin, bool inverted, ros::NodeHandle *nh) {
     mNh = nh;
     mPin = pin;
     mOffset = 0;
@@ -16,7 +16,7 @@ Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
     dB = 0;
     x = 0;
     ax = 0;
-
+    mInverted = inverted;
     pinMode(mPin, OUTPUT);
 }
 
@@ -35,6 +35,11 @@ float Encoder::readPosition() {
     ax = x * 359.956/8191.000;
 
     digitalWrite(mPin, HIGH);
+
+    if (mInverted){
+        ax = 360.0 - ax;
+    }
+
     return ax + mOffset;
 }
 

@@ -28,7 +28,6 @@ TransformSender::TransformSender(ros::NodeHandle *nh, TransformConfig &config) {
     mRoll1.transform.translation.x = config.roll1offset;
     mPitch3.transform.translation.x = config.pitch3offset;
     mRoll2.transform.translation.x = config.roll2offset;
-
 }
 
 TransformSender::~TransformSender() {
@@ -58,6 +57,13 @@ void TransformSender::updateRotations(float yaw_base, float pitch_base, float pi
     from_euler(roll1, 0, 0, mRoll1.transform.rotation);
     from_euler(0, pitch3, 0, mPitch3.transform.rotation);
     from_euler(roll2, 0, 0, mRoll2.transform.rotation);
+
+    jointPosition.base_pitch = yaw_base;
+    jointPosition.base_yaw = pitch_base;
+    jointPosition.diff_1_pitch = pitch2;
+    jointPosition.diff_1_roll = roll1;
+    jointPosition.diff_2_pitch = pitch3;
+    jointPosition.diff_2_roll = roll2;
 }
 
 void TransformSender::sendTransforms() {
@@ -75,12 +81,14 @@ void TransformSender::sendTransforms() {
     broadcaster.sendTransform(mPitch3);
     broadcaster.sendTransform(mRoll1);
     broadcaster.sendTransform(mRoll2);
+
+    mPublisher->publish(&jointPosition);
 }
 
-void TransformSender::init() {
+void TransformSender::init(ros::Publisher *publisher) {
 
     broadcaster.init(*mNh);
     updateRotations(0, 0, 0, 0, 0, 0);
+    mPublisher = publisher;
     sendTransforms();
-
 }
