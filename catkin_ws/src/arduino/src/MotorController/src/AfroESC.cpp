@@ -35,6 +35,8 @@ motor::AfroESC::~AfroESC() {
 }
 
 motor::AfroESC::AfroESC(uint8_t motorPin) : mMotorPin(motorPin) {
+    directionSign = 1;
+    mEnabled = false;
     pinMode(mMotorPin, OUTPUT);
     servo.attach(mMotorPin);
     servo.writeMicroseconds(1500);

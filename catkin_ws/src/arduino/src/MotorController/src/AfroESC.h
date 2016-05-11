@@ -6,7 +6,7 @@
 #define ROVER_ARDUINO_AFROESC_H
 
 #include <include/MotorController.h>
-#include <Servo/Servo.h>
+#include <Servo.h>
 
 namespace motor {
 
@@ -31,8 +31,8 @@ public:
 private:
     uint8_t mMotorPin;
     Servo servo;
-    int directionSign = 0;
-    bool mEnabled = false;
+    int directionSign;
+    bool mEnabled;
 };
 
 }
