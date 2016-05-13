@@ -55,18 +55,18 @@ void driveCallback( const drive_control::WheelCommand& setPoints )
 {
     char message[10];
     sprintf(message, "%f", setPoints.flv);
-    leftFront->setSpeed((int) setPoints.flv * 50);
+    leftFront->setSpeed((int) setPoints.flv);
     leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
     leftBack->setSpeed((int) setPoints.blv * 50);
     leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
 
-    rightFront->setSpeed((int) -setPoints.frv * 50);
+    rightFront->setSpeed((int) -setPoints.frv);
     rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
-    rightBack->setSpeed((int) -setPoints.brv * 50);
+    rightBack->setSpeed((int) -setPoints.brv);
     rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
 
-    middleLeft->setSpeed((int) setPoints.mlv * 50);
-    middleRight->setSpeed((int) -setPoints.mrv * 50);
+    middleLeft->setSpeed((int) setPoints.mlv);
+    middleRight->setSpeed((int) -setPoints.mrv);
 }
 
 void callbackMoving( const std_msgs::Bool& boolean)

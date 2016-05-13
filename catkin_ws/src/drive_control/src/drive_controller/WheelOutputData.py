@@ -61,12 +61,12 @@ class WheelOutputData:
         command.frsa = self.frsa
         command.blsa = self.blsa
         command.brsa = self.brsa
-        command.flv = self.flv
-        command.frv = self.frv
-        command.mlv = self.mlv
-        command.mrv = self.mrv
-        command.blv = self.blv
-        command.brv = self.brv
+        command.flv = self.flv * 10
+        command.frv = self.frv * 10
+        command.mlv = self.mlv * 10
+        command.mrv = self.mrv * 10
+        command.blv = self.blv * 10
+        command.brv = self.brv * 10
 
         return command
 
