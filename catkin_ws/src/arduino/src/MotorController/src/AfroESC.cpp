@@ -4,6 +4,12 @@
 
 #include "AfroESC.h"
 
+float map(float x, float in_min, float in_max, float out_min, float out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
 void motor::AfroESC::brake(bool brk) {
     if (brk) setSpeed(0);
 }
@@ -23,7 +29,7 @@ void motor::AfroESC::setDirection(float speed) {
 
 void motor::AfroESC::setSpeed(float speed) {
     if (mEnabled) {
-        int mapSpeed = (int) map((long) abs(speed), 0, 100, 0, 400);
+        int mapSpeed = (int) map(abs(speed), 0, 100, 0, 400);
         setDirection(speed);
         servo.writeMicroseconds(1500 + directionSign * mapSpeed);
     }
