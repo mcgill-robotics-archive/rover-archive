@@ -16,7 +16,7 @@ void motor::AfroESC::brake(bool brk) {
 
 void motor::AfroESC::enable(bool en) {
     mEnabled = en;
-    if (!en)    setSpeed(0);
+    if (!en) setSpeed(0);
 }
 
 bool motor::AfroESC::getStatus() {
@@ -29,9 +29,8 @@ void motor::AfroESC::setDirection(float speed) {
 
 void motor::AfroESC::setSpeed(float speed) {
     if (mEnabled) {
-        int mapSpeed = (int) map(abs(speed), 0, 100, 0, 400);
         setDirection(speed);
-        servo.writeMicroseconds(1500 + directionSign * mapSpeed);
+        servo.writeMicroseconds((int) (1500 + directionSign * abs(speed) * 4));
     }
     else servo.writeMicroseconds(1500);
 }
