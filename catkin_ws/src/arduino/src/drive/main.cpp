@@ -53,16 +53,14 @@ float radToDeg(float rad)
 
 void driveCallback( const drive_control::WheelCommand& setPoints )
 {
-    char message[10];
-    sprintf(message, "%f", setPoints.flv);
-    leftFront->setSpeed((int) setPoints.flv);
+    leftFront->setSpeed(setPoints.flv);
     leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
-    leftBack->setSpeed((int) setPoints.blv * 50);
+    leftBack->setSpeed( setPoints.blv);
     leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
 
-    rightFront->setSpeed((int) -setPoints.frv);
+    rightFront->setSpeed( -setPoints.frv);
     rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
-    rightBack->setSpeed((int) -setPoints.brv);
+    rightBack->setSpeed( -setPoints.brv);
     rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
 
     middleLeft->setSpeed((int) setPoints.mlv);

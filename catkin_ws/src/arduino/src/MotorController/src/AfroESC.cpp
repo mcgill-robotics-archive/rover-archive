@@ -17,13 +17,13 @@ bool motor::AfroESC::getStatus() {
     return true;
 }
 
-void motor::AfroESC::setDirection(int speed) {
+void motor::AfroESC::setDirection(float speed) {
     directionSign = speed > 0 ? 1 : -1;
 }
 
-void motor::AfroESC::setSpeed(int speed) {
+void motor::AfroESC::setSpeed(float speed) {
     if (mEnabled) {
-        int mapSpeed = (int) map(abs(speed), 0, 100, 0, 400);
+        int mapSpeed = (int) map((long) abs(speed), 0, 100, 0, 400);
         setDirection(speed);
         servo.writeMicroseconds(1500 + directionSign * mapSpeed);
     }
