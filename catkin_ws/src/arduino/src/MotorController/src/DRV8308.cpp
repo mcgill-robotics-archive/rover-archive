@@ -4,11 +4,11 @@
 
 #include "DRV8308.h"
 
-void motor::DRV8308::setSpeed(int i) {
+void motor::DRV8308::setSpeed(float i) {
 
 }
 
-void motor::DRV8308::setDirection(int i) {
+void motor::DRV8308::setDirection(float i) {
 
 }
 
