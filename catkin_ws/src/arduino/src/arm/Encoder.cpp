@@ -61,5 +61,8 @@ float Encoder::getOffset() {
 }
 
 Encoder::Encoder(uint8_t pin, bool inverted, float scaleFactor, ros::NodeHandle *nh) :
-        Encoder(pin, inverted, nh), mFactor(scaleFactor){ }
+        Encoder(pin, inverted, nh){
+    mFactor = scaleFactor;
+}
+
 
