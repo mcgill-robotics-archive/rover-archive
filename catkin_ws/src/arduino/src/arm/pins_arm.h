@@ -7,7 +7,7 @@
 
 #define NC 60
 
-#define BASE_YAW_SS_PIN NC
+#define BASE_YAW_SS_PIN 31
 #define BASE_YAW_ENABLE_PIN NC
 #define BASE_YAW_DATA1_PIN NC
 #define BASE_YAW_DATA2_PIN NC

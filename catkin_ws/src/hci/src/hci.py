@@ -475,7 +475,7 @@ class CentralUi(QtGui.QMainWindow):
     def publish_controls(self):
         if self.modeId == 0:
             self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
-            self.drive_publisher.set_speed(-self.controller.a2, -self.controller.a1)
+            self.drive_publisher.set_speed(self.controller.a2, -self.controller.a1)
             # drive mode
             pass
         elif self.modeId == 1:

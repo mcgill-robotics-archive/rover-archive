@@ -25,7 +25,6 @@ Encoder::~Encoder() {
 }
 
 float Encoder::readPosition() {
-//    return 0;
     digitalWrite(mPin, LOW);
 
     dA = SPI.transfer(0x00);

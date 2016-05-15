@@ -177,6 +177,7 @@ void setup() {
 }
 
 
+
 void loop() {
     /**
      * read encoder values
@@ -198,7 +199,10 @@ void loop() {
     encoderPosition.diff_2_right = *diff2posRight;
     armEncoderPublisher.publish(&encoderPosition);
 
-    sender.updateRotations(*baseYawPosition, *pitch1Position, *pitchLink1, *rollLink1, *pitchLink2, *rollLink2);
+    //send radian representation of the angles to the tf sender
+    sender.updateRotations(radians(*baseYawPosition), radians(*pitch1Position),
+                           radians(*pitchLink1), radians(*rollLink1),
+                           radians(*pitchLink2), radians(*rollLink2));
     sender.sendTransforms();
 
     if (pid) {
@@ -246,8 +250,10 @@ void loop() {
 void handle_arm_position(const arm_control::JointPosition & message) {
     nodeHandle.logdebug("Receive new position");
     *pitch1SetPoint = message.base_pitch;
-    differential1.inversePosition(message.diff_1_pitch, message.diff_1_roll, diff1setPointLeft, diff1setPointRight);
-    differential2.inversePosition(message.diff_2_pitch, message.diff_2_roll, diff2setPointLeft, diff2setPointRight);
+    differential1.inversePosition(message.diff_1_pitch, message.diff_1_roll,
+                                  diff1setPointLeft, diff1setPointRight);
+    differential2.inversePosition(message.diff_2_pitch, message.diff_2_roll,
+                                  diff2setPointLeft, diff2setPointRight);
 
     *baseYawSetPoint = message.base_yaw;
     endEffectorOutput = message.end_effector;

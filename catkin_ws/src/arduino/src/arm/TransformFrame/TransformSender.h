@@ -43,6 +43,8 @@ public:
 
     /**
      * \brief Update the current angle of each transform.
+     *
+     * Note all angles are in radians
      */
     void updateRotations(float yaw_base, float pitch_base, float pitch2, float roll1, float pitch3, float roll2);
 
