@@ -27,6 +27,8 @@ public:
      *
      * \param pin Pin number for the encoder selection. Drives the SS pin of the SPI bus
      * \param nh Pointer to a valid ros handle for logging
+     * \param inverted Flag to account for mirrored encoders on the arm. Setting this to True will return
+     * <code>360 - angle</code> for the angle instead of the angle directly.
      */
     Encoder(uint8_t pin, bool inverted, ros::NodeHandle *nh);
     virtual ~Encoder();
@@ -34,9 +36,11 @@ public:
     /**
      * \brief Get the absolute position of the encoder
      *
+     * <b>Note:</> Ensure spi initialisation has been done prior to ordering the read
+     *
      * \return Current position of the encoder on the 0 to 360 degrees circle
      */
-    float readPosition(); // ensure spi initialisation has been done prior to ordering the read
+    float readPosition();
 
     /**
      * \brief Set possible offset to account for imprecise mounting
