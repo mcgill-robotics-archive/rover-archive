@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find arduino)/launch/arduino.launch"/>
+    <include file="$(find ahrs)/launch/ahrs.launch"/>
+</launch>
