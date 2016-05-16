@@ -1,16 +1,6 @@
 <launch>
-<group ns="ahrs">
-    <node
-        name="ahrs_node"
-        pkg="ahrs"
-        type="ahrs_node"
-        respawn="true"
-    />
-    <node
-        name="tf_boradcaster"
-        pkg="ahrs"
-        type="tf_broadcaster.py"
-        respawn="true"
-    />
-</group>
+    <group ns="ahrs">
+        <node name="ahrs_node" pkg="ahrs" type="ahrs_node" respawn="true" />
+        <node name="tf_boradcaster" pkg="ahrs" type="tf_broadcaster.py" respawn="true" />
+    </group>
 </launch>
