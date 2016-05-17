@@ -54,7 +54,10 @@ do_start()
 #
 do_stop()
 {
-	kill -15 $(cat "${PIDFILE}") && rm -f ${PIDFILE}
+	for i in `ps -ef | grep ros | grep -v grep | awk '{print $2}'`; do
+		kill -9 $i
+	done
+	rm -f ${PIDFILE}
 }
 
 case "$1" in
