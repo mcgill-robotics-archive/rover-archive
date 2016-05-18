@@ -6,7 +6,7 @@
 #define ROVER_ARDUINO_AFROESC_H
 
 #include <include/MotorController.h>
-#include <Servo/Servo.h>
+#include <Servo.h>
 
 namespace motor {
 
