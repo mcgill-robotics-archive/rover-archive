@@ -16,9 +16,9 @@ PitchRollCompute::PitchRollCompute(Encoder *encoderLeft, Encoder *encoderRight) 
 
 PitchRollCompute::~PitchRollCompute() { }
 
-void PitchRollCompute::compute(double *pitchRoll, double *position) {
-    float val1 = position[0] = mEncoderLeft->readPosition();
-    float val2 = position[1] = mEncoderRight->readPosition();
+void PitchRollCompute::compute(double *pitch, double *roll, double *positionLeft, double *positionRight) {
+    float val1 = *positionLeft = mEncoderLeft->readPosition();
+    float val2 = *positionRight = mEncoderRight->readPosition();
 
     float largest = val1 > val2 ? val1 : val2;
     float lowest = val1 <= val2 ? val1 : val2;
@@ -28,13 +28,19 @@ void PitchRollCompute::compute(double *pitchRoll, double *position) {
 
     mRoll = (largest == val1) ? mRoll : - mRoll;
 
-    pitchRoll[0] = mPitch;
-    pitchRoll[1] = mRoll;
+    *pitch = mPitch;
+    *roll = mRoll;
 }
 
-void PitchRollCompute::inverse(float pitch, float roll, double *destination) {
+void PitchRollCompute::inverseSpeed(float pitch, float roll, double *destination) {
     destination[0] = pitch + (roll / 2.0);
     destination[1] = - (pitch - (roll / 2.0));
+}
+
+
+void PitchRollCompute::inversePosition(float pitch, float roll, double * left, double * right){
+    *left = pitch + roll / 2.0;
+    *right = pitch - roll / 2.0;
 }
 
 

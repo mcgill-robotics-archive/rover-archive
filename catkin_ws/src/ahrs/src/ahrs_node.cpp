@@ -36,8 +36,8 @@ int main(int argc, char ** argv)
     {
         //ROS_ERROR(error.what());
         config.setSimulation(true);
-        ROS_WARN("real ahrs not found, creating virtual ahrs");
-        ahrs.reset(lineranger::ahrs::Ahrs::createAhrs(config));
+        ROS_FATAL("real ahrs not found, exiting");
+        return 1;
     }
 
     ros::Publisher ahrsPublisher = nh.advertise<ahrs::AhrsStdMsg>("ahrs_status", 100);

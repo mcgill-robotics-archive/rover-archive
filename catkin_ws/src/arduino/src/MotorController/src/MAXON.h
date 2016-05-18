@@ -47,7 +47,7 @@ public:
      * \param speed The desired speed output of the motor. The speed should be
      * signed to drive the direction
      */
-    virtual void setSpeed(int speed);
+    virtual void setSpeed(float speed);
 
     /**
      * \brief Manually set the direction of the motor.
@@ -56,7 +56,7 @@ public:
      *
      * \param speed Signed speed value. The sign will drive the direction.
      */
-    virtual void setDirection(int speed);
+    virtual void setDirection(float speed);
 
     /**
      * \brief Implementation of the brake method.

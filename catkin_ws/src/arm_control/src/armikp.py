@@ -41,7 +41,8 @@ def split(str, sep):
     # return the array
     pass
 
-
+# wrist = [0, 0, 0] mm 
+# rotation = [0, 0, 0] radians
 def armpikp(wrist, rotation):
     a = [0, 457, 0, 0, 0, 0]
     b = [76, 0, 0, 400, 0, 50]
@@ -210,6 +211,9 @@ def armpikp(wrist, rotation):
                 theta[i][j] -= 2 * math.pi
 
     return theta
+    #theta = [0, 0, 0, 0, 0, 0] radians
+    #theta = [base_roll, base_pitch, pitch_diff_1, roll_diff_1, pitch_diff_2, roll_diff_2]
+
 
 
 def lower_magnitude(a, b):

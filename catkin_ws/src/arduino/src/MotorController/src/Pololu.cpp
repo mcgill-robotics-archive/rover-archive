@@ -35,7 +35,7 @@ void Pololu::lock() {
     analogWrite(mMotorPin, 0);
 }
 
-void Pololu::setSpeed(int speed) {
+void Pololu::setSpeed(float speed) {
     if (speed == 0) lock();
     else {
         unlock();
@@ -59,7 +59,7 @@ bool Pololu::isReverseDirection() {
     return (bool) digitalRead(mINA);
 }
 
-void Pololu::setDirection(int speed) {
+void Pololu::setDirection(float speed) {
     digitalWrite(mINA, (uint8_t) speed);
     digitalWrite(mINB, (uint8_t) !speed);
 }

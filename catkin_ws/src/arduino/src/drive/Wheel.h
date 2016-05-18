@@ -35,7 +35,7 @@ public:
      *
      * \param speed the relative speed on a -255 to 255 scale.
      */
-    void setSpeed(int speed);
+    void setSpeed(float speed);
 
     /**
      * \brief Enable and disable the motor controller

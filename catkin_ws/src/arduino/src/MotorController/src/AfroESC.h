@@ -18,9 +18,9 @@ public:
 
     virtual ~AfroESC();
 
-    virtual void setSpeed(int speed);
+    virtual void setSpeed(float speed);
 
-    virtual void setDirection(int speed);
+    virtual void setDirection(float speed);
 
     virtual void brake(bool brk);
 
@@ -31,8 +31,8 @@ public:
 private:
     uint8_t mMotorPin;
     Servo servo;
-    int directionSign = 0;
-    bool mEnabled = false;
+    int directionSign;
+    bool mEnabled;
 };
 
 }
