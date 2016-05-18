@@ -23,7 +23,7 @@
 #define PITCH_1_SPEED_PIN 4
 #define PITCH_1_INA_PIN A14
 #define PITCH_1_INB_PIN A15
-#define PITCH_1_SS_PIN 48
+#define PITCH_1_PIN A1
 #define PITCH_1_BRK_PIN A13
 
 #define DIFF_1_LEFT_SPEED_PIN 2
