@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
     FILES
     ram.srv
+    ResetArduino.srv
 )
 
 generate_messages(
