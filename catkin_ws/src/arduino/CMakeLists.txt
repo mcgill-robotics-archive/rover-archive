@@ -23,6 +23,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
     FILES
     ram.srv
+    sensor.srv
+    drill.srv
 )
 
 generate_messages(
