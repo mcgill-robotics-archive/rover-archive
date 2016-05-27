@@ -1,6 +1,6 @@
 <launch>
   <group ns="arm">
-    <node pkg="rosserial_python" type="serial_node.py" name="serial_arm">
+    <node pkg="rosserial_python" type="serial_node.py" name="serial_arm" respawn="false">
       <param name="port" value="/dev/mega_arm"/>
     </node>
   </group>

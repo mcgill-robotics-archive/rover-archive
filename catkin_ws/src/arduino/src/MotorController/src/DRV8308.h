@@ -13,8 +13,8 @@ public:
     DRV8308() { };
     virtual ~DRV8308() { };
 
-    virtual void setSpeed(int);
-    virtual void setDirection(int);
+    virtual void setSpeed(float);
+    virtual void setDirection(float);
     virtual void brake(bool);
     virtual void enable(bool);
     virtual bool getStatus();

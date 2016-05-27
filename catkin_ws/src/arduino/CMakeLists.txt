@@ -25,6 +25,7 @@ add_service_files(
     ram.srv
     sensor.srv
     drill.srv
+    ResetArduino.srv
 )
 
 generate_messages(

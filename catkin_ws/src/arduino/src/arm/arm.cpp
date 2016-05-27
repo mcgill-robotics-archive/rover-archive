@@ -17,6 +17,7 @@
 #include "arm_control/JointPosition.h"
 #include "arm_control/ControlMode.h"
 #include "arm_control/EncoderPosition.h"
+#include "Potentiometer.h"
 
 /**
  * Init ros
@@ -26,6 +27,8 @@
  * enter main loop
  * continuously update encoder positions and publish transforms
  */
+
+const float Base_Scale_Factor = 63.0/20.0;
 
 motor::MotorConfig baseYawConfig;
 motor::MotorConfig basePitchConfig;
@@ -52,10 +55,10 @@ void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
 void handle_control_mode(const arm_control::ControlMode & message);
 
-arm::Encoder basePitch(PITCH_1_SS_PIN, false, &nodeHandle);
-arm::Encoder baseYaw(BASE_YAW_SS_PIN, false, &nodeHandle);
+Potentiometer basePitch(PITCH_1_PIN, false, 1, &nodeHandle);
+arm::Encoder baseYaw(BASE_YAW_SS_PIN, true, Base_Scale_Factor, &nodeHandle);
 arm::Encoder differential1encoderLeft(DIFF_1_LEFT_SS_PIN, false, &nodeHandle);
-arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, false, &nodeHandle);
+arm::Encoder differential1encoderRight(DIFF_1_RIGHT_SS_PIN, true, &nodeHandle);
 arm::Encoder differential2encoderLeft(DIFF_2_LEFT_SS_PIN, false, &nodeHandle);
 arm::Encoder differential2encoderRight(DIFF_2_RIGHT_SS_PIN, true, &nodeHandle);
 
@@ -177,6 +180,7 @@ void setup() {
 }
 
 
+
 void loop() {
     /**
      * read encoder values
@@ -198,7 +202,10 @@ void loop() {
     encoderPosition.diff_2_right = *diff2posRight;
     armEncoderPublisher.publish(&encoderPosition);
 
-    sender.updateRotations(*baseYawPosition, *pitch1Position, *pitchLink1, *rollLink1, *pitchLink2, *rollLink2);
+    //send radian representation of the angles to the tf sender
+    sender.updateRotations(radians(*baseYawPosition), radians(*pitch1Position),
+                           radians(*pitchLink1), radians(*rollLink1),
+                           radians(*pitchLink2), radians(*rollLink2));
     sender.sendTransforms();
 
     if (pid) {
@@ -246,8 +253,10 @@ void loop() {
 void handle_arm_position(const arm_control::JointPosition & message) {
     nodeHandle.logdebug("Receive new position");
     *pitch1SetPoint = message.base_pitch;
-    differential1.inversePosition(message.diff_1_pitch, message.diff_1_roll, diff1setPointLeft, diff1setPointRight);
-    differential2.inversePosition(message.diff_2_pitch, message.diff_2_roll, diff2setPointLeft, diff2setPointRight);
+    differential1.inversePosition(message.diff_1_pitch, message.diff_1_roll,
+                                  diff1setPointLeft, diff1setPointRight);
+    differential2.inversePosition(message.diff_2_pitch, message.diff_2_roll,
+                                  diff2setPointLeft, diff2setPointRight);
 
     *baseYawSetPoint = message.base_yaw;
     endEffectorOutput = message.end_effector;

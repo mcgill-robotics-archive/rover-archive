@@ -4,7 +4,7 @@
 
 <include file="$(find rover_camera)/launch/usb.launch">
     <arg name="name" value="omnicam" />
-    <arg name="device" value="/dev/arm_camera" />
+    <arg name="device" value="/dev/omnicam" />
 </include>
 
 <group ns="omnicam">

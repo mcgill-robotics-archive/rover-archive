@@ -31,6 +31,7 @@ public:
      * <code>360 - angle</code> for the angle instead of the angle directly.
      */
     Encoder(uint8_t pin, bool inverted, ros::NodeHandle *nh);
+    Encoder(uint8_t pin, bool inverted, float scaleFactor, ros::NodeHandle *nh);
     virtual ~Encoder();
 
     /**
@@ -65,6 +66,9 @@ private:
     int x;
     float ax;
     bool mInverted;
+    int mRevolution;
+    double mPreviousAngle ;
+    float mFactor;
 };
 }
 

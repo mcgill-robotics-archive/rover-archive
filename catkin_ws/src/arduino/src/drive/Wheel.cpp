@@ -4,7 +4,7 @@
 
 #include "Wheel.h"
 
-void drive::Wheel::setSpeed(int speed) {
+void drive::Wheel::setSpeed(float speed) {
     mMotorController->setSpeed(speed);
 }
 
