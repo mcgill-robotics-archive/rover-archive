@@ -2,6 +2,7 @@
 import rospy
 from Steering import Steering
 from drive_control.msg import DriveCommand, WheelCommand
+from std_msgs.msg import Bool
 
 __author__ = 'David Lavoie-Boutin'
 
@@ -15,6 +16,7 @@ class DriveControl:
         rospy.init_node("drive_controller")
         self.command_subscriber = rospy.Subscriber("/drive_command", DriveCommand, self.update_value_settings)
         self.command_publisher = rospy.Publisher("/wheel_command", WheelCommand, queue_size=1)
+        self.moving_publisher = rospy.Publisher("/is_moving", Bool, queue_size = 1)
         self.verbose = rospy.get_param("~verbose", False)
 
         self.is_moving = False
@@ -32,7 +34,7 @@ class DriveControl:
         elif msg.motion_pointsteer:
             self.steering.pointTurn(self.general_command[1])
 
-        elif msg.motion_tranlatory:
+        elif msg.motion_translatory:
             self.steering.translationalMotion(self.general_command[0], self.general_command[1])
 
         elif msg.motion_skid:
@@ -48,8 +50,11 @@ class DriveControl:
                 # TODO: log information to screen
                 pass
 
+            bool_msg = Bool()
+            bool_msg.data = self.is_moving
             message = self.steering.output_command.create_message()
             self.command_publisher.publish(message)
+            self.moving_publisher.publish(bool_msg)
 
             r.sleep()
         pass

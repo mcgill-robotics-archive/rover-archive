@@ -1,0 +1,5 @@
+<launch>
+    <group ns="drive">
+    	<node name="drive_control" pkg="drive_control" type="DriveControl.py" respawn="false"/>
+    </group>
+</launch>
