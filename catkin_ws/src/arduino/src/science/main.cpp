@@ -16,6 +16,7 @@ void sensorServiceCallback(const arduino::sensor::Request &request, arduino::sen
 Barometer * barometer;
 PhSensor * phSensor;
 Augur * augur;
+
 ros::NodeHandle * nodeHandle;
 ros::ServiceServer<arduino::sensor::Request, arduino::sensor::Response> sensorService ("", &sensorServiceCallback);
 
