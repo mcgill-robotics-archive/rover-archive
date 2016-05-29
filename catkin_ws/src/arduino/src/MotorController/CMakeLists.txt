@@ -20,3 +20,8 @@ generate_arduino_library(MotorControllerLib
         SRCS ${MC_SOURCES}
         HDRS ${MC_HEADERS}
         BOARD mega2560)
+
+generate_arduino_library(MotorControllerLibUno
+        SRCS ${MC_SOURCES}
+        HDRS ${MC_HEADERS}
+        BOARD uno)
