@@ -43,9 +43,9 @@ public:
      * \param roll Desired roll
      * \param destination Pointer to array to place target motor output
      */
-    void inverseSpeed(float pitch, float roll, double *destination);
+    static void inverseSpeed(float pitch, float roll, double *destination);
 
-    void inversePosition(float pitch, float roll, double * left, double * right);
+    static void inversePosition(float pitch, float roll, double * left, double * right);
 
 
 private:
