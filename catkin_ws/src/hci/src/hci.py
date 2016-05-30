@@ -9,6 +9,7 @@ from drive_publisher import *
 from arm_publisher import *
 from joystick_profile import JoystickProfile
 from utilities import *
+from ScienceController import *
 
 import rospy
 import Queue
@@ -97,6 +98,7 @@ class CentralUi(QtGui.QMainWindow):
         self.master_name = parse_master_uri()
         self.drive_publisher = DrivePublisher()
         self.arm_publisher = ArmPublisher()
+        self.science = ScienceController()
 
         path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/grid_vertical.png"
         self.overlay_pixmap = QtGui.QPixmap(path)
@@ -152,8 +154,8 @@ class CentralUi(QtGui.QMainWindow):
                                lambda index=0: self.set_controller_mode(index))
         QtCore.QObject.connect(self.ui.ArmBaseMode, QtCore.SIGNAL("clicked()"),
                                lambda index=1: self.set_controller_mode(index))
-        # QtCore.QObject.connect(self.ui.EndEffectorMode, QtCore.SIGNAL("clicked()"),
-        #                        lambda index=2: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.ScienceMode, QtCore.SIGNAL("clicked()"),
+                               lambda index=2: self.set_controller_mode(index))
         QtCore.QObject.connect(self.ui.function4, QtCore.SIGNAL("clicked()"),
                                lambda index=3: self.set_controller_mode(index))
 
@@ -173,6 +175,8 @@ class CentralUi(QtGui.QMainWindow):
                                self.set_motor_controller_mode)
         QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"),
                                self.change_video_feed)
+
+        QtCore.QObject.connect(self.ui.augurDrillEnable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
 
         # motor readys
         self.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
@@ -393,6 +397,8 @@ class CentralUi(QtGui.QMainWindow):
             self.set_controller_mode(1)
         elif self.profile.param_value["/joystick/camera_mode"]:
             self.set_controller_mode(3)
+        elif self.profile.param_value["/joystick/science_mode"]:
+            self.set_controller_mode(2)
 
         if self.profile.param_value["/joystick/point_steer"]:
             self.set_controller_mode(0)
@@ -426,7 +432,18 @@ class CentralUi(QtGui.QMainWindow):
             #         self.ui.ackreman.setChecked(True)
             pass
 
-        elif self.modeId == 1:
+        elif self.modeId == 2:
+            # Science mode.
+            # Activate or not
+            if self.profile.param_value["joystick/drill_on"]:
+                if not self.ui.augurDrillEnable.isChecked():
+                    self.ui.augurDrillEnable.setChecked(self.science.activate_drill())
+
+            if self.profile.param_value["joystick/drill_off"]:
+                if self.ui.augurDrillEnable.isChecked():
+                    self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
+
+            self.science.publish_auger_height(self.controller.a2)  # todo: change sign to match direction
             pass
 
         elif self.modeId == 3:
@@ -436,9 +453,14 @@ class CentralUi(QtGui.QMainWindow):
             elif self.profile.param_value["joystick/next_cam"]:
                 self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() + 1) % self.ui.camera_selector.count())
 
-
         self.controller.clear_buttons()
         self.publish_controls()
+
+    def toggle_drill(self):
+        if not self.ui.augurDrillEnable.isChecked():
+            self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
+        else:
+            self.ui.augurDrillEnable.setChecked(self.science.activate_drill())
 
     def get_feed_topic_params(self):
         for index in xrange(0, self.ui.camera_selector.count()):
@@ -519,22 +541,22 @@ class CentralUi(QtGui.QMainWindow):
         if mode_id == 0:
             self.ui.DriveMode.setChecked(True)
             self.ui.ArmBaseMode.setChecked(False)
-            self.ui.EndEffectorMode.setChecked(False)
+            self.ui.ScienceMode.setChecked(False)
             self.ui.function4.setChecked(False)
         if mode_id == 1:
             self.ui.DriveMode.setChecked(False)
             self.ui.ArmBaseMode.setChecked(True)
-            self.ui.EndEffectorMode.setChecked(False)
+            self.ui.ScienceMode.setChecked(False)
             self.ui.function4.setChecked(False)
         if mode_id == 2:
             self.ui.DriveMode.setChecked(False)
             self.ui.ArmBaseMode.setChecked(False)
-            self.ui.EndEffectorMode.setChecked(True)
+            self.ui.ScienceMode.setChecked(True)
             self.ui.function4.setChecked(False)
         if mode_id == 3:
             self.ui.DriveMode.setChecked(False)
             self.ui.ArmBaseMode.setChecked(False)
-            self.ui.EndEffectorMode.setChecked(False)
+            self.ui.ScienceMode.setChecked(False)
             self.ui.function4.setChecked(True)
 
     def receive_pixmap_main(self, data):

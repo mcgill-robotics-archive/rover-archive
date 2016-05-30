@@ -130,8 +130,17 @@
          <bool>true</bool>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
-         <property name="margin">
+         <property name="leftMargin">
           <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
          <item>
           <widget class="QRadioButton" name="rot0">
@@ -249,7 +258,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
@@ -357,7 +375,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
@@ -618,6 +645,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="augurDrillEnable">
+            <property name="text">
+             <string>Augur Drill</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="screenshot">
             <property name="text">
              <string>Capture cam</string>
@@ -810,14 +844,23 @@
          <bool>true</bool>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <property name="horizontalSpacing">
           <number>0</number>
          </property>
          <property name="verticalSpacing">
           <number>4</number>
-         </property>
-         <property name="margin">
-          <number>0</number>
          </property>
          <item row="0" column="1">
           <widget class="QRadioButton" name="end_eff">
@@ -836,17 +879,17 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QRadioButton" name="diff1">
-           <property name="text">
-            <string>Differential 1</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="QRadioButton" name="diff2">
            <property name="text">
             <string>Differential 2</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="diff1">
+           <property name="text">
+            <string>Differential 1</string>
            </property>
           </widget>
          </item>
@@ -865,7 +908,16 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -898,12 +950,12 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QPushButton" name="EndEffectorMode">
+            <widget class="QPushButton" name="ScienceMode">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
-              <string/>
+              <string>Science</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -959,7 +1011,16 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
         </layout>
@@ -995,7 +1056,7 @@
      <x>0</x>
      <y>0</y>
      <width>994</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1047,7 +1108,7 @@
   <tabstop>screenshot</tabstop>
   <tabstop>driveModeSelection</tabstop>
   <tabstop>DriveMode</tabstop>
-  <tabstop>EndEffectorMode</tabstop>
+  <tabstop>ScienceMode</tabstop>
   <tabstop>ArmBaseMode</tabstop>
   <tabstop>function4</tabstop>
   <tabstop>zoomGraph</tabstop>

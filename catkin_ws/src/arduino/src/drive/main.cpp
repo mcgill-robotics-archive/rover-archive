@@ -12,7 +12,7 @@
 #include "drive_control/WheelCommand.h"
 
 #define MAXON_PINS
-#define AFRO_CONTROLLERS
+#define MAXON_CONTROLLERS
 
 #include "pins_drive.h"
 

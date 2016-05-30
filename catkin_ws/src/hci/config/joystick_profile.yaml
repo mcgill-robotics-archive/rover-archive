@@ -16,4 +16,8 @@ joystick/prev_cam :             "7"
 #arm mode:
 joystick/next_arm_joint :       "6"
 joystick/prev_arm_joint :       "7"
-joystick/arm_mode :             "5"
+#joystick/arm_mode :             "5"
+
+# science mode
+joystick/drill_on: "6"
+joystick/drill_off: "7"
