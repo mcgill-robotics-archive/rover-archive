@@ -73,4 +73,4 @@ class UnwarpConfigGenerator(object):
         f.close()
 
 if __name__ == '__main__':
-    test = UnwarpConfigGenerator("test.json", "/dev/arm_camera")
+    test = UnwarpConfigGenerator("test.json", "/dev/omnicam")
