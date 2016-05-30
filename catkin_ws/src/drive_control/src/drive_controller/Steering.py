@@ -15,9 +15,9 @@ class Steering:
     def __init__(self):
         self.output_command = WheelOutputData()
 
-        self.D = rospy.get_param('control/wh_distance_fr', 0.437)  #: distance between longitudinal axis and wheels[m]
-        self.B = rospy.get_param('control/wh_base', 0.318)
-        self.R = rospy.get_param('control/wh_radius', 0.165)  #: wheel radius [m]
+        self.D = rospy.get_param('control/wh_distance_fr', 1.1684)  #: distance between longitudinal axis and wheels[m]
+        self.B = rospy.get_param('control/wh_base', 0.66)
+        self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
         self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
 
         self.mid_wh_offset = rospy.get_param('control/middle_wh_offset', 0.106)
@@ -168,7 +168,7 @@ class Steering:
             # velocity of the rover different than the input, but is of a more
             # natural movement
             self.output_command.flsa *= sign_w
-            self.output_command.frsa *= -sign_w
+            self.output_command.frsa *= sign_w
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
 
