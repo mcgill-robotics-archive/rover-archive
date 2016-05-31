@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find rover_camera)/launch/usb.launch">
+        <arg name="name" value="wide_angle" />
+        <arg name="device" value="/dev/cam_ultra_wide" />
+    </include>
+</launch>
