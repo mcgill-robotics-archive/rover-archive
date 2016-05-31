@@ -1,6 +1,7 @@
 <launch>
     <include file="$(find rover_camera)/launch/usb.launch">
-        <arg name="name" value="left" />
-        <arg name="device" value="/dev/logitech1" />
+        <arg name="name" value="omnicam" />
+        <arg name="device" value="/dev/omnicam" />
+        <arg name="decimate_factor" value="1" />
     </include>
 </launch>
