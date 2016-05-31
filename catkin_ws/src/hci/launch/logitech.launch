@@ -1,4 +1,5 @@
 <launch>
     <rosparam command="load" file="$(find hci)/config/logitech_profile.yaml"/>
+    <rosparam command="load" file="$(find hci)/config/camera_topics.yaml"/>
     <node pkg="hci" type="hci.py" name="hci" />
 </launch>
