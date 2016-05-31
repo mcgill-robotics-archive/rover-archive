@@ -1,0 +1,9 @@
+#!/usr/bin/zsh
+
+if [[ -f ~/rover/catkin_ws/launch/control_station.launch ]]; then
+    roslaunch ~/rover/catkin_ws/launch/control_station.launch
+else
+    echo "Error, arm launch file not found"
+    exit 1
+fi
+
