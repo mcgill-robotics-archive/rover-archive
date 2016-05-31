@@ -245,7 +245,6 @@ class CentralUi(QtGui.QMainWindow):
         rospy.loginfo("created screenshot subscriber " + topic)
 
     def screenshot_callback(self, msg):
-        rospy.loginfo("shot callback")
         self.sub.unregister()
         image = QtGui.QImage(msg.data, msg.width, msg.height, QtGui.QImage.Format_RGB888)
         rospy.logerr(msg.width)
@@ -471,6 +470,13 @@ class CentralUi(QtGui.QMainWindow):
             self.feed_topics_hires.append(param_value)
 
     def change_video_feed(self, index):
+        if index == 0:
+            self.ui.rot180.setChecked(True)
+            self.ui.flip_vertical.setChecked(True)
+        else:
+            self.ui.rot0.setChecked(True)
+            self.ui.flip_vertical.setChecked(False)
+
         next_topic = self.feed_topics[index]
 
         if next_topic is not "":
@@ -480,16 +486,16 @@ class CentralUi(QtGui.QMainWindow):
     def publish_controls(self):
         if self.modeId == 0:
             self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
-            self.drive_publisher.set_speed(self.controller.a2 * 3, self.controller.a1)
+            self.drive_publisher.set_speed(self.controller.a2 * 5, self.controller.a1)
             # drive mode
             pass
         elif self.modeId == 1:
             # arm base mode
             if self.ui.ackMoving.isChecked():
                 constant = (self.controller.a4 + 1) * 100
-                rospy.logdebug("Scaler constant : {0}".format(constant))
+                rospy.logdebug("Scalar constant : {0}".format(constant))
                 if self.ui.base.isChecked():
-                    self.arm_publisher.publish_base(self.controller.a2 * constant, self.controller.a1 * constant)
+                    self.arm_publisher.publish_base(self.controller.a2 * constant, -self.controller.a1 * constant)
                 elif self.ui.diff1.isChecked():
                     self.arm_publisher.publish_diff_1(self.controller.a2 * constant, self.controller.a1 * constant)
                 elif self.ui.diff2.isChecked():
@@ -509,10 +515,10 @@ class CentralUi(QtGui.QMainWindow):
             if self.ui.camera_selector.currentIndex() == 0:
                 if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
                     try:
-                        rospy.wait_for_service("/omnicam/crop_control", timeout=1)
-                        service = rospy.ServiceProxy("/omnicam/crop_control", ControlView)
+                        rospy.wait_for_service("crop_control", timeout=1)
+                        service = rospy.ServiceProxy("crop_control", ControlView)
                     except rospy.ROSException:
-                        rospy.logerr("Timeout trying to find service /omnicam/crop_control")
+                        rospy.logerr("Timeout trying to find service /crop_control")
                         return
 
                     response = service(-10 * self.controller.a1, -10 * self.controller.a2, 10 * self.controller.a3)
