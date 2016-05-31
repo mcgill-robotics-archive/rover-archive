@@ -385,39 +385,39 @@ class CentralUi(QtGui.QMainWindow):
         self.controller.update()
         self.profile.update_values()
 
-        if self.profile.param_value["/joystick/ackreman_moving"]:
+        if self.profile.param_value["joystick/ackreman_moving"]:
                 self.ui.ackMoving.setChecked(not self.ui.ackMoving.isChecked())
 
-        if self.profile.param_value["/joystick/drive_mode"]:
+        if self.profile.param_value["joystick/drive_mode"]:
             self.set_controller_mode(0)
-        elif self.profile.param_value["/joystick/arm_base_mode"]:
+        elif self.profile.param_value["joystick/arm_base_mode"]:
             self.set_controller_mode(1)
-        elif self.profile.param_value["/joystick/camera_mode"]:
+        elif self.profile.param_value["joystick/camera_mode"]:
             self.set_controller_mode(3)
-        elif self.profile.param_value["/joystick/science_mode"]:
+        elif self.profile.param_value["joystick/science_mode"]:
             self.set_controller_mode(2)
 
-        if self.profile.param_value["/joystick/point_steer"]:
+        if self.profile.param_value["joystick/point_steer"]:
             self.set_controller_mode(0)
             self.ui.pointSteer.setChecked(True)
 
-        if self.profile.param_value["/joystick/ackreman"]:
+        if self.profile.param_value["joystick/ackreman"]:
             self.set_controller_mode(0)
             self.ui.ackreman.setChecked(True)
 
-        if self.profile.param_value["/logitech/base"]:
+        if self.profile.param_value["logitech/base"]:
             self.set_controller_mode(1)
             self.ui.base.setChecked(True)
 
-        if self.profile.param_value["/logitech/diff1"]:
+        if self.profile.param_value["logitech/diff1"]:
             self.set_controller_mode(1)
             self.ui.diff1.setChecked(True)
 
-        if self.profile.param_value["/logitech/diff2"]:
+        if self.profile.param_value["logitech/diff2"]:
             self.set_controller_mode(1)
             self.ui.diff2.setChecked(True)
 
-        if self.profile.param_value["/logitech/end"]:
+        if self.profile.param_value["logitech/end"]:
             self.set_controller_mode(1)
             self.ui.end_eff.setChecked(True)
 

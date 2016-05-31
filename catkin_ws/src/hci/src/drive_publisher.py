@@ -22,10 +22,10 @@ class DrivePublisher(object):
 
         ## Publisher object for drive commands
         self.command_publisher = rospy.Publisher(
-            "drive_command", DriveCommand, queue_size=1)
+            "/drive_command", DriveCommand, queue_size=1)
         ## Publisher object for motor controller mode
         self.controller_mode_publisher = rospy.Publisher(
-            "drive_controller_mode", MotorControllerMode, queue_size=1)
+            "/drive_controller_mode", MotorControllerMode, queue_size=1)
 
         ## Timer which publishes drive instructions at 10 hz (0.1 s)
         self.timer = rospy.Timer(rospy.Duration(secs=0, nsecs=100000000), self.run)
