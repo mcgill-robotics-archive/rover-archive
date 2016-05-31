@@ -21,7 +21,7 @@ class ScienceController(object):
         self.height_publisher.publish(mes)
 
     def deactivate_drill(self):
-        rospy.logerr("Try to deactivate")
+        rospy.loginfo("Try to deactivate")
         if self.drill_service:
             try:
                 resp = self.drill_service(False)
@@ -34,7 +34,7 @@ class ScienceController(object):
             return False
 
     def activate_drill(self):
-        rospy.logerr("Try to activate")
+        rospy.loginfo("Try to activate")
 
         if self.drill_service:
             try:

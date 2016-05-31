@@ -100,11 +100,7 @@ class CentralUi(QtGui.QMainWindow):
         self.arm_publisher = ArmPublisher()
         self.science = ScienceController()
 
-        path = os.environ.get('ROBOTIC_PATH') + "/rover/catkin_ws/src/hci/src/grid_vertical.png"
-        self.overlay_pixmap = QtGui.QPixmap(path)
-        if self.overlay_pixmap.isNull():
-            rospy.logerr("Pixmap empty")
-            rospy.logerr(path)
+        self.ui.camera_selector.setCurrentIndex(1)
 
         rospy.loginfo("HCI initialization completed")
 
@@ -112,9 +108,9 @@ class CentralUi(QtGui.QMainWindow):
         rospy.init_node('hci_window', anonymous=False)
         # rospy.Subscriber('ahrs_status', AhrsStatusMessage, self.handle_pose, queue_size=10)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=10)
-        self.main_camera_subscriber = rospy.Subscriber("/econ", CompressedImage, self.receive_pixmap_main)
-        rospy.Subscriber("/left/image_mono/compressed", CompressedImage, self.receive_image_left)
-        rospy.Subscriber("/right/image_mono/compressed", CompressedImage, self.receive_image_right)
+        self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
+        rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
+        rospy.Subscriber("/right/image_raw/compressed", CompressedImage, self.receive_image_right)
         pass
 
     def motor_status(self, msg):
@@ -252,9 +248,11 @@ class CentralUi(QtGui.QMainWindow):
         rospy.loginfo("shot callback")
         self.sub.unregister()
         image = QtGui.QImage(msg.data, msg.width, msg.height, QtGui.QImage.Format_RGB888)
+        rospy.logerr(msg.width)
+        rospy.logerr(msg.height)
         time = datetime.datetime.now().strftime("%H:%M:%S")
         topic = self.feed_topics_hires[self.ui.camera_selector.currentIndex()]
-        filename = "screenshot_" + time + ".jpg"
+        filename = "/home/david/screenshot_" + time + ".jpg"
         save = image.save(filename)
         if save:
             rospy.logwarn("save successful " + filename)
@@ -446,12 +444,12 @@ class CentralUi(QtGui.QMainWindow):
             self.science.publish_auger_height(self.controller.a2)  # todo: change sign to match direction
             pass
 
-        elif self.modeId == 3:
+        # elif self.modeId == 3:
             # currently in camera control
-            if self.profile.param_value["joystick/prev_cam"]:
-                self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() - 1) % self.ui.camera_selector.count())
-            elif self.profile.param_value["joystick/next_cam"]:
-                self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() + 1) % self.ui.camera_selector.count())
+        if self.profile.param_value["joystick/prev_cam"]:
+            self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() - 1) % self.ui.camera_selector.count())
+        elif self.profile.param_value["joystick/next_cam"]:
+            self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() + 1) % self.ui.camera_selector.count())
 
         self.controller.clear_buttons()
         self.publish_controls()
@@ -473,31 +471,16 @@ class CentralUi(QtGui.QMainWindow):
             self.feed_topics_hires.append(param_value)
 
     def change_video_feed(self, index):
-        if index == 0:
-            self.ui.flip_vertical.setChecked(True)
-        else:
-            self.ui.flip_vertical.setChecked(False)
-
         next_topic = self.feed_topics[index]
-        try:
-            rospy.wait_for_service("/changeFeed", timeout=2)
-            service = rospy.ServiceProxy("/changeFeed", ChangeFeed)
-        except rospy.ROSException:
-            rospy.logerr("Timeout trying to find service /changeFeed")
-            return
 
         if next_topic is not "":
             self.main_camera_subscriber.unregister()
             self.main_camera_subscriber = rospy.Subscriber(next_topic, CompressedImage, self.receive_pixmap_main)
 
-        param = self.param_list[index]
-        response = service("/" + str(param))
-        print response
-
     def publish_controls(self):
         if self.modeId == 0:
             self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
-            self.drive_publisher.set_speed(self.controller.a2, -self.controller.a1)
+            self.drive_publisher.set_speed(self.controller.a2 * 3, self.controller.a1)
             # drive mode
             pass
         elif self.modeId == 1:
@@ -519,21 +502,22 @@ class CentralUi(QtGui.QMainWindow):
 
             pass
         elif self.modeId == 2:
-            # end effector mode
+            # science mode
             pass
         elif self.modeId == 3:
             # camera mode
-            if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
-                try:
-                    rospy.wait_for_service("/omnicam/crop_control", timeout=1)
-                    service = rospy.ServiceProxy("/omnicam/crop_control", ControlView)
-                except rospy.ROSException:
-                    rospy.logerr("Timeout trying to find service /omnicam/crop_control")
-                    return
+            if self.ui.camera_selector.currentIndex() == 0:
+                if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
+                    try:
+                        rospy.wait_for_service("/omnicam/crop_control", timeout=1)
+                        service = rospy.ServiceProxy("/omnicam/crop_control", ControlView)
+                    except rospy.ROSException:
+                        rospy.logerr("Timeout trying to find service /omnicam/crop_control")
+                        return
 
-                response = service(-10 * self.controller.a1, -10 * self.controller.a2, 10 * self.controller.a3)
-                if not response:
-                    rospy.logerr("Failed to adjust omnicam image.")
+                    response = service(-10 * self.controller.a1, -10 * self.controller.a2, 10 * self.controller.a3)
+                    if not response:
+                        rospy.logerr("Failed to adjust omnicam image.")
             pass
 
     def set_controller_mode(self, mode_id):
@@ -611,10 +595,10 @@ class CentralUi(QtGui.QMainWindow):
                 imageTop = QtGui.QPixmap.fromImage(qimageTop)
                 rotated = imageTop.transformed(QtGui.QMatrix().rotate(-90), QtCore.Qt.SmoothTransformation)
                 rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
-                left_painter = QtGui.QPainter(rotated)
-                left_painter.drawPixmap(0, 0, self.overlay_pixmap)
+                # left_painter = QtGui.QPainter(rotated)
+                # left_painter.drawPixmap(0, 0, self.overlay_pixmap)
                 self.ui.camera2.setPixmap(rotated)
-                left_painter.end()
+                # left_painter.end()
             finally:
                 pass
             
