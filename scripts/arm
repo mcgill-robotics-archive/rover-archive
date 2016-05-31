@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 
-if [[ -f ~/rover/catkin_ws/launch/arm-test.launch ]]; then
-    roslaunch ~/rover/catkin_ws/launch/arm-test.launch
+if [[ -f ~/rover/catkin_ws/launch/arm_control.launch ]]; then
+    roslaunch ~/rover/catkin_ws/launch/arm_control.launch user:=duo
 else
     echo "Error, arm launch file not found"
     exit 1
