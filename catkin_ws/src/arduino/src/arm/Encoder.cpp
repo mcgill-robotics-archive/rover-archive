@@ -8,15 +8,17 @@
 
 using namespace arm;
 
-Encoder::Encoder(uint8_t pin, ros::NodeHandle *nh) {
+Encoder::Encoder(uint8_t pin, bool inverted, ros::NodeHandle *nh) {
     mNh = nh;
     mPin = pin;
     mOffset = 0;
+    mRevolution = 0;
+    mPreviousAngle = 0;
     dA = 0;
     dB = 0;
     x = 0;
     ax = 0;
-
+    mInverted = inverted;
     pinMode(mPin, OUTPUT);
 }
 
@@ -25,7 +27,6 @@ Encoder::~Encoder() {
 }
 
 float Encoder::readPosition() {
-//    return 0;
     digitalWrite(mPin, LOW);
 
     dA = SPI.transfer(0x00);
@@ -35,7 +36,20 @@ float Encoder::readPosition() {
     ax = x * 359.956/8191.000;
 
     digitalWrite(mPin, HIGH);
-    return ax + mOffset;
+
+    if (mInverted){
+        ax = 360.0 - ax;
+    }
+    ax += mOffset;
+    float rem = (int) mPreviousAngle % 360 - ax;
+
+    if (rem > 350 )  // completed a full revolution (passed from 350 to 0)
+        mRevolution ++;
+    else if (rem < -350 ) // passed 0 to 350
+           mRevolution --;
+
+    mPreviousAngle = ax + mRevolution * 360;
+    return mPreviousAngle * mFactor;
 }
 
 void Encoder::setOffset(float offset) {
@@ -45,3 +59,10 @@ void Encoder::setOffset(float offset) {
 float Encoder::getOffset() {
     return mOffset;
 }
+
+Encoder::Encoder(uint8_t pin, bool inverted, float scaleFactor, ros::NodeHandle *nh) :
+        Encoder(pin, inverted, nh){
+    mFactor = scaleFactor;
+}
+
+

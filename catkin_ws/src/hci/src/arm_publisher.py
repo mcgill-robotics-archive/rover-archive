@@ -17,7 +17,9 @@ class ArmPublisher:
 
     ## Publish all joint velocities
     # 
-    def publish_joint_vels(self, base_pitch, diff_1_pitch, diff_2_pitch, diff_1_roll, diff_2_roll, end_effector):
+    def publish_joint_vels(self, base_yaw, base_pitch, diff_1_pitch, diff_2_pitch, diff_1_roll, diff_2_roll,
+                           end_effector):
+        self.message.base_yaw = base_yaw
         self.message.base_pitch = base_pitch
         self.message.diff_1_pitch = diff_1_pitch
         self.message.diff_2_pitch = diff_2_pitch
@@ -27,13 +29,14 @@ class ArmPublisher:
 
         self.publisher.publish(self.message)
 
-    def publish_base_pitch(self, base_pitch):
+    def publish_base(self, base_pitch, base_yaw):
         self.message.base_pitch = base_pitch
         self.message.diff_1_pitch = 0
         self.message.diff_2_pitch = 0
         self.message.diff_1_roll = 0
         self.message.diff_2_roll = 0
         self.message.end_effector = 0
+        self.message.base_yaw = base_yaw
 
         self.publisher.publish(self.message)
 
@@ -45,6 +48,7 @@ class ArmPublisher:
         self.message.diff_1_roll = diff_1_roll
         self.message.diff_2_roll = 0
         self.message.end_effector = 0
+        self.message.base_yaw = 0
 
         self.publisher.publish(self.message)
 
@@ -56,6 +60,7 @@ class ArmPublisher:
         self.message.diff_2_roll = diff_2_roll
         self.message.diff_1_roll = 0
         self.message.end_effector = 0
+        self.message.base_yaw = 0
 
         self.publisher.publish(self.message)
 
@@ -67,6 +72,7 @@ class ArmPublisher:
         self.message.diff_2_roll = 0
         self.message.diff_1_roll = 0
         self.message.end_effector = end_effector
+        self.message.base_yaw = 0
 
         self.publisher.publish(self.message)
 

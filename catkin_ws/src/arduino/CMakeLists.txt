@@ -4,19 +4,28 @@ project(arduino)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
+if(APPLE) 
+  set(ahrs_pkg)
+elseif(UNIX)
+  set(ahrs_pkg ahrs)
+endif()
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   rover_common
   rosserial_arduino
   rosserial_client
   std_msgs
-  ahrs
+  ${ahrs_pkg}
   message_generation
 )
 
 add_service_files(
     FILES
     ram.srv
+    sensor.srv
+    drill.srv
+    ResetArduino.srv
 )
 
 generate_messages(

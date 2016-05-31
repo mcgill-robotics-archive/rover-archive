@@ -1,9 +1,0 @@
-#!/usr/bin/zsh
-
-if [[ -f /home/robotics/rover/Arduino/CMakeLists.txt ]]; then
-    (cd /home/robotics/rover/Arduino && rm -rf build && mkdir build && cd build && cmake .. && make arm-upload ) || (echo "Failed to upload code" && exit 1)
-else
-    echo "Could not find the arduino folder"
-    exit 1
-fi
-

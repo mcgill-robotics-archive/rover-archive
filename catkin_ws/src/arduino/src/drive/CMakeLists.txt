@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.3)
-
 include_directories(${ROS_LIB_DIR})
 include_directories(../utilities)
 include_directories(../MotorController/include)
@@ -25,5 +23,5 @@ generate_arduino_firmware(drive
     HDRS ${HEADERS}
     LIBS MotorControllerLib ram
     BOARD mega2560
-    PORT /dev/ttyACM0
+    PORT /dev/mega_drive
 )

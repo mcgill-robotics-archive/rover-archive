@@ -15,9 +15,9 @@ class Steering:
     def __init__(self):
         self.output_command = WheelOutputData()
 
-        self.D = rospy.get_param('control/wh_distance_fr', 0.437)  #: distance between longitudinal axis and wheels[m]
-        self.B = rospy.get_param('control/wh_base', 0.318)
-        self.R = rospy.get_param('control/wh_radius', 0.165)  #: wheel radius [m]
+        self.D = rospy.get_param('control/wh_distance_fr', 1.1684)  #: distance between longitudinal axis and wheels[m]
+        self.B = rospy.get_param('control/wh_base', 0.66)
+        self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
         self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
 
         self.mid_wh_offset = rospy.get_param('control/middle_wh_offset', 0.106)
@@ -40,7 +40,6 @@ class Steering:
         self.output_command.set_velocity_zero()
         self.output_command.set_angle_zero()
 
-
     def skid_steer(self, vBody, diff):
         """
         Use skid steering method to drive the robot
@@ -54,44 +53,44 @@ class Steering:
         self.output_command.blsa = 0
         self.output_command.brsa = 0
         
-        #point steering
+        # point steering
         if abs(diff) > 0.5:
             # Turn right
             if diff > 0:
                 self.output_command.flv = vBody
                 self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
                 self.output_command.mlv = vBody
-                self.output_command.mrv = self.output_command.frv
+                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
                 self.output_command.blv = vBody
-                self.output_command.brv = self.output_command.frv
+                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
             # Turn left
             else:
                 self.output_command.flv = vBody
                 self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
                 self.output_command.mlv = vBody
-                self.output_command.mrv = self.output_command.flv
+                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
                 self.output_command.blv = vBody
-                self.output_command.brv = self.output_command.flv
+                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
     
         else:
-            #Turn right
+            # Turn right
             if diff>0:
                 #
                 self.output_command.flv = vBody
                 self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
                 self.output_command.mlv = vBody
-                self.output_command.mrv = self.output_command.frv
+                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
                 self.output_command.blv = vBody
-                self.output_command.brv = self.output_command.frv
-            #turn left
+                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
+            # turn left
             else:
                 #
                 self.output_command.flv = vBody
                 self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
                 self.output_command.mlv = vBody
-                self.output_command.mrv = self.output_command.flv
+                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
                 self.output_command.blv = vBody
-                self.output_command.brv = self.output_command.flv
+                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
 
 
     def steer(self, vBody, wBody):
@@ -169,7 +168,7 @@ class Steering:
             # velocity of the rover different than the input, but is of a more
             # natural movement
             self.output_command.flsa *= sign_w
-            self.output_command.frsa *= -sign_w
+            self.output_command.frsa *= sign_w
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
 
@@ -184,12 +183,14 @@ class Steering:
             self.output_command.flv = vpLin / self.R
             self.output_command.frv = vsLin / self.R
             # notice the middle wheels have different distance to ICR center of rotation
-            self.output_command.mlv = sign_v * dist_mid_left * wBody / self.R
-            self.output_command.mrv = sign_v * dist_mid_right * wBody / self.R
+            #self.output_command.mlv = sign_v * dist_mid_left * wBody / self.R
+            #self.output_command.mrv = sign_v * dist_mid_right * wBody / self.R
+
+            self.output_command.mlv = self.output_command.flv
+            self.output_command.mrv = self.output_command.frv
 
             self.output_command.blv = self.output_command.flv
             self.output_command.brv = self.output_command.frv
-
 
     def pointTurn(self, wBody):
         """

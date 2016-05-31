@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.3)
-
 include_directories(${ROS_LIB_DIR})
 include_directories(../MotorController)
 include_directories(../utilities)
@@ -15,6 +13,7 @@ set(SOURCES
         PitchRollCompute.cpp
         TransformFrame/TransformSender.cpp
         TransformFrame/TransformConfig.cpp
+        Potentiometer.cpp
         )
 
 set(HEADERS
@@ -24,6 +23,7 @@ set(HEADERS
         PitchRollCompute.h
         TransformFrame/TransformSender.h
         TransformFrame/TransformConfig.h
+        Potentiometer.h
         pins_arm.h)
 
 generate_arduino_firmware(arm

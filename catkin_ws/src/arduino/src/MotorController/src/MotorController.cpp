@@ -6,6 +6,7 @@
 #include "MAXON.h"
 #include "DRV8308.h"
 #include "Pololu.h"
+#include "AfroESC.h"
 
 using namespace motor;
 
@@ -29,6 +30,10 @@ MotorController * MotorController::createMotorController(MotorConfig motorConfig
     else if (motorConfig.controllerType == _POLOLU)
     {
         return new motor::Pololu(motorConfig.speedPin, motorConfig.brakePin, motorConfig.data1Pin, motorConfig.data2Pin, nodeHandle);
+    }
+    else if (motorConfig.controllerType == _AfroESC)
+    {
+        return new motor::AfroESC(motorConfig.speedPin);
     }
     return NULL;
 }
