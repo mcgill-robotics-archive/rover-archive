@@ -13,5 +13,10 @@ logitech/diff1:                 "9"
 logitech/diff2:                 "10"
 logitech/end:                   "8"
 
-joystick/drill_on: "hat_top"
-joystick/drill_off: "hat_down"
+joystick/drill_on:              "hat_left"
+joystick/drill_off:             "hat_right"
+
+
+#cam mode
+joystick/next_cam :             "hat_top"
+joystick/prev_cam :             "hat_down"
