@@ -52,3 +52,6 @@ rosserial_add_client_target(src drive ALL)
 
 rosserial_add_client_target(src arm ALL)
 # rosserial_add_client_target(arm arm-upload)
+
+rosserial_add_client_target(src science ALL)
+rosserial_add_client_target(src science-upload)
