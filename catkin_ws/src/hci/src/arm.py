@@ -271,13 +271,13 @@ class CentralUi(QtGui.QMainWindow):
                 pixmap_main = pixmap_main.scaled(QtCore.QSize(pixmap_main.width() * 2, pixmap_main.height() * 2), 0)
 
                 # if self.ui.rot0.isChecked():
-                self.ui.camera1.setPixmap(pixmap_main)
+                #self.ui.camera1.setPixmap(pixmap_main)
                 # elif self.ui.rot90.isChecked():
                 #     rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
                 #     self.ui.camera1.setPixmap(rotated)
                 # elif self.ui.rot180.isChecked():
-                #     rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
-                #     self.ui.camera1.setPixmap(rotated)
+                rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
+                self.ui.camera1.setPixmap(rotated)
                 # elif self.ui.rot270.isChecked():
                 #     rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(270), QtCore.Qt.SmoothTransformation)
                 #     self.ui.camera1.setPixmap(rotated)

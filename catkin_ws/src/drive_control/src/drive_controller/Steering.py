@@ -48,50 +48,18 @@ class Steering:
         :param vBody: General body velocity
         :param diff: Rate of rotation
         """
-        self.output_command.flsa = 0
-        self.output_command.frsa = 0
-        self.output_command.blsa = 0
-        self.output_command.brsa = 0
-        
-        # point steering
-        if abs(diff) > 0.5:
-            # Turn right
-            if diff > 0:
-                self.output_command.flv = vBody
-                self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
-            # Turn left
-            else:
-                self.output_command.flv = vBody
-                self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
-    
-        else:
-            # Turn right
-            if diff>0:
-                #
-                self.output_command.flv = vBody
-                self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
-            # turn left
-            else:
-                #
-                self.output_command.flv = vBody
-                self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
+        common_mode_scale = 10
+        differential_mode_scale = 10
 
+        common_mode = vBody * common_mode_scale
+        differential_mode = diff * differential_mode_scale
+
+        self.output_command.flv = common_mode + differential_mode
+        self.output_command.frv = common_mode - differential_mode
+        self.output_command.mlv = self.output_command.flv
+        self.output_command.blv = self.output_command.flv
+        self.output_command.mrv = self.output_command.frv
+        self.output_command.brv = self.output_command.frv
 
     def steer(self, vBody, wBody):
         """
