@@ -461,7 +461,11 @@ class CentralUi(QtGui.QMainWindow):
                 if self.ui.augurDrillEnable.isChecked():
                     self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
 
-            self.science.publish_auger_height(self.controller.a2)  # todo: change sign to match direction
+            if self.ui.drill_height.isChecked():
+                self.science.publish_auger_height(self.controller.a2)  # todo: change sign to match direction
+            elif self.ui.gate.isChecked():
+                self.science.move_gate(self.controller.a2)
+
             pass
 
         # elif self.modeId == 3:
