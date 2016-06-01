@@ -20,6 +20,11 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
+add_message_files(
+    FILES
+    LimitSwitchClaw.msg
+)
+
 add_service_files(
     FILES
     ram.srv

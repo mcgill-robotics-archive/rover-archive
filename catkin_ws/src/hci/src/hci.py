@@ -23,10 +23,15 @@ from rover_camera.srv import ChangeFeed
 from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
+from arduino.msg import LimitSwitchClaw
 
 
 class CentralUi(QtGui.QMainWindow):
 
+    claw_open_on = QtCore.pyqtSignal()
+    claw_open_off = QtCore.pyqtSignal()
+    claw_close_on = QtCore.pyqtSignal()
+    claw_close_off = QtCore.pyqtSignal()
     fl_signal_ok = QtCore.pyqtSignal()
     fr_signal_ok = QtCore.pyqtSignal()
     ml_signal_ok = QtCore.pyqtSignal()
@@ -106,12 +111,22 @@ class CentralUi(QtGui.QMainWindow):
 
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
-        # rospy.Subscriber('ahrs_status', AhrsStatusMessage, self.handle_pose, queue_size=10)
-        rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=10)
+        rospy.Subscriber('/claw_limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
+        rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
         rospy.Subscriber("/right/image_raw/compressed", CompressedImage, self.receive_image_right)
         pass
+
+    def claw_callback(self, msg):
+        if msg.open:
+            self.claw_open_on.emit()
+        else:
+            self.claw_open_off.emit()
+        if msg.close:
+            self.claw_close_on.emit()
+        else:
+            self.claw_close_off.emit()
 
     def motor_status(self, msg):
         if msg.fl:
@@ -175,12 +190,18 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.augurDrillEnable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
 
         # motor readys
+        self.claw_close_on.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_norm(lbl))
+        self.claw_open_on.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_norm(lbl))
+
         self.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
         self.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
         self.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
         self.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
         self.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
         self.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
+
+        self.claw_close_off.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_red(lbl))
+        self.claw_open_off.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_red(lbl))
 
         self.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
         self.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
