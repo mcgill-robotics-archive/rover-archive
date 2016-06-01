@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
     FILES
     LimitSwitchClaw.msg
+    LimitSwitchScience.msg
 )
 
 add_service_files(
@@ -32,7 +33,6 @@ add_service_files(
     drill.srv
     ResetArduino.srv
 )
-
 generate_messages(
     DEPENDENCIES
     std_msgs
