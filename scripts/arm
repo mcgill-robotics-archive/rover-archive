@@ -1,5 +1,6 @@
 #!/usr/bin/zsh
 
+export ROS_MASTER_URI=http://david-native:11311
 if [[ -f ~/rover/catkin_ws/launch/arm_control.launch ]]; then
     roslaunch ~/rover/catkin_ws/launch/arm_control.launch user:=duo
 else

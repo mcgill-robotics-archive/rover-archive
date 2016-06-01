@@ -119,13 +119,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QCheckBox" name="augurDrillEnable">
-              <property name="text">
-               <string>Augur Drill</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
          </layout>

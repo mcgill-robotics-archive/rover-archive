@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ArmGui.ui'
 #
-# Created: Tue May 31 17:35:44 2016
+# Created: Tue May 31 18:14:26 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -70,9 +70,6 @@ class Ui_MainWindow(object):
         self.ackMoving.setChecked(True)
         self.ackMoving.setObjectName(_fromUtf8("ackMoving"))
         self.verticalLayout_5.addWidget(self.ackMoving)
-        self.augurDrillEnable = QtGui.QCheckBox(self.centralwidget)
-        self.augurDrillEnable.setObjectName(_fromUtf8("augurDrillEnable"))
-        self.verticalLayout_5.addWidget(self.augurDrillEnable)
         self.horizontalLayout_6.addLayout(self.verticalLayout_5)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -201,7 +198,6 @@ class Ui_MainWindow(object):
         self.camera3.setText(_translate("MainWindow", "camRight", None))
         self.camera1.setText(_translate("MainWindow", "camMain", None))
         self.ackMoving.setText(_translate("MainWindow", "Motor Enable", None))
-        self.augurDrillEnable.setText(_translate("MainWindow", "Augur Drill", None))
         self.label_4.setText(_translate("MainWindow", "Signal quality", None))
         self.sig_qual.setText(_translate("MainWindow", "123 ms", None))
         self.fl_ok.setText(_translate("MainWindow", "Ok", None))
