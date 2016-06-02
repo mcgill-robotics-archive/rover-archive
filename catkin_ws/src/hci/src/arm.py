@@ -68,6 +68,7 @@ class CentralUi(QtGui.QMainWindow):
         self.imageMain = None
         self.imageLeft = None
         self.imageRight = None
+        self.image4 = None
         self.main_camera_subscriber = None
 
         self.init_ros()
@@ -83,6 +84,7 @@ class CentralUi(QtGui.QMainWindow):
         rospy.init_node('hci_window', anonymous=False)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=10)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_color/compressed", CompressedImage, self.receive_pixmap_main)
+        rospy.Subscriber("/side/image_color/compressed", CompressedImage, self.receive_image_side)
         rospy.Subscriber("/omnicam/image_color/compressed", CompressedImage, self.receive_image_left)
         rospy.Subscriber("/camera_arm/image_color/compressed", CompressedImage, self.receive_image_right)
         pass
@@ -253,6 +255,12 @@ class CentralUi(QtGui.QMainWindow):
         finally:
             pass
 
+    def receive_image_side(self, data):
+        try:
+            self.image4 = data
+        finally:
+            pass
+
     def receive_image_right(self, data):
         try:
             self.imageRight = data
@@ -276,7 +284,7 @@ class CentralUi(QtGui.QMainWindow):
                 #     rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
                 #     self.ui.camera1.setPixmap(rotated)
                 # elif self.ui.rot180.isChecked():
-                rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
+                rotated = pixmap_main#.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
                 self.ui.camera1.setPixmap(rotated)
                 # elif self.ui.rot270.isChecked():
                 #     rotated = pixmap_main.transformed(QtGui.QMatrix().rotate(270), QtCore.Qt.SmoothTransformation)
@@ -303,18 +311,31 @@ class CentralUi(QtGui.QMainWindow):
         else:
             self.ui.camera2.setText("no video feed")
 
-        if self.imageRight is not None:
+        if self.image4 is not None:
             try:
-                qimageBottom = QtGui.QImage.fromData(self.imageRight.data)
-                imageBottom = QtGui.QPixmap.fromImage(qimageBottom)
-                rotated = imageBottom#.transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
+                qimageBottom2 = QtGui.QImage.fromData(self.image4.data)
+                imageBottom2 = QtGui.QPixmap.fromImage(qimageBottom2)
+                rotated = imageBottom2.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
                 rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
             finally:
                 pass
-            self.ui.camera3.setPixmap(rotated)
+            self.ui.camera4.setPixmap(rotated)
         else:
             # self.ui.camera3.setPixmap(self.overlay_pixmap)
-            self.ui.camera3.setText("no video feed")
+            self.ui.camera4.setText("no video feed")
+
+            if self.imageRight is not None:
+                try:
+                    qimageBottom = QtGui.QImage.fromData(self.imageRight.data)
+                    imageBottom = QtGui.QPixmap.fromImage(qimageBottom)
+                    rotated = imageBottom  # .transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
+                    rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
+                finally:
+                    pass
+                self.ui.camera3.setPixmap(rotated)
+            else:
+                # self.ui.camera3.setPixmap(self.overlay_pixmap)
+                self.ui.camera3.setText("no video feed")
 
 
 def sigint_handler(*args):

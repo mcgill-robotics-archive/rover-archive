@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ArmGui.ui'
 #
-# Created: Tue May 31 18:14:26 2016
+# Created: Wed Jun  1 21:33:53 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(994, 779)
+        MainWindow.resize(406, 384)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
@@ -59,7 +59,19 @@ class Ui_MainWindow(object):
         self.camera1.setIndent(0)
         self.camera1.setObjectName(_fromUtf8("camera1"))
         self.verticalLayout_2.addWidget(self.camera1)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.camera4 = QtGui.QLabel(self.centralwidget)
+        self.camera4.setMinimumSize(QtCore.QSize(0, 0))
+        self.camera4.setSizeIncrement(QtCore.QSize(1, 1))
+        self.camera4.setFrameShape(QtGui.QFrame.Box)
+        self.camera4.setScaledContents(False)
+        self.camera4.setIndent(0)
+        self.camera4.setObjectName(_fromUtf8("camera4"))
+        self.verticalLayout.addWidget(self.camera4)
         self.verticalLayout_6 = QtGui.QVBoxLayout()
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
@@ -111,8 +123,8 @@ class Ui_MainWindow(object):
         self.br_ok.setObjectName(_fromUtf8("br_ok"))
         self.gridLayout.addWidget(self.br_ok, 2, 1, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_6.addItem(spacerItem1)
         self.groupBox_2 = QtGui.QGroupBox(self.centralwidget)
         self.groupBox_2.setTitle(_fromUtf8(""))
         self.groupBox_2.setFlat(True)
@@ -166,11 +178,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14 = QtGui.QHBoxLayout()
         self.horizontalLayout_14.setObjectName(_fromUtf8("horizontalLayout_14"))
         self.verticalLayout_6.addLayout(self.horizontalLayout_14)
-        self.horizontalLayout_2.addLayout(self.verticalLayout_6)
+        self.verticalLayout.addLayout(self.verticalLayout_6)
+        self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 994, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 406, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -197,6 +210,7 @@ class Ui_MainWindow(object):
         self.camera2.setText(_translate("MainWindow", "camLeft", None))
         self.camera3.setText(_translate("MainWindow", "camRight", None))
         self.camera1.setText(_translate("MainWindow", "camMain", None))
+        self.camera4.setText(_translate("MainWindow", "camMain", None))
         self.ackMoving.setText(_translate("MainWindow", "Motor Enable", None))
         self.label_4.setText(_translate("MainWindow", "Signal quality", None))
         self.sig_qual.setText(_translate("MainWindow", "123 ms", None))
