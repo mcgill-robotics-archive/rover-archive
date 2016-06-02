@@ -137,7 +137,7 @@ void handle_auger_position(const std_msgs::Int16 & message){
         digitalWrite(PIN_AUGER_POSITION_INA, HIGH);
         digitalWrite(PIN_AUGER_POSITION_INB, LOW);
         analogWrite(PIN_AUGER_POSITION_PWM, min(last_command_auger_position,255));
-    } else if (digitalRead(PIN_LIMIT_SWITCH_DOWN) && last_command_auger_position < 0){
+    } else if (last_command_auger_position < 0){
         digitalWrite(PIN_AUGER_POSITION_INA, LOW);
         digitalWrite(PIN_AUGER_POSITION_INB, HIGH);
         analogWrite(PIN_AUGER_POSITION_PWM, min(abs(last_command_auger_position),255));  
