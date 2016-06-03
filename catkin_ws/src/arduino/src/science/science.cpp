@@ -32,11 +32,11 @@ int16_t last_command_auger_position = 0;
 int16_t last_command_gate_position = 0;
 int16_t last_command_prob_position = 0;
 
-ros::Subscriber<std_msgs::Int16> augerVelocitySub("~auger_velocity", &handle_auger_velocity);
-ros::Subscriber<std_msgs::Int16> augerPositionSub("~auger_position", &handle_auger_position);
-ros::Subscriber<std_msgs::Int16> gatePositionSub("~gate_position", &handle_gate_position);
-ros::Subscriber<std_msgs::Int16> tempeProbPositionSub("~temp_prob_position", &handle_temp_prob_position);
-ros::Publisher limitSwitchPub("~limit_switch", &limitSwitchMsg);
+ros::Subscriber<std_msgs::Int16> augerVelocitySub("auger_velocity", &handle_auger_velocity);
+ros::Subscriber<std_msgs::Int16> augerPositionSub("auger_position", &handle_auger_position);
+ros::Subscriber<std_msgs::Int16> gatePositionSub("gate_position", &handle_gate_position);
+ros::Subscriber<std_msgs::Int16> tempeProbPositionSub("temp_prob_position", &handle_temp_prob_position);
+ros::Publisher limitSwitchPub("limit_switch", &limitSwitchMsg);
 
 Barometer * barometer;
 PhSensor * phSensor;

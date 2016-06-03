@@ -122,7 +122,7 @@ class CentralUi(QtGui.QMainWindow):
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
         rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.handle_pose, queue_size=5)
-        rospy.Subscriber('/claw_limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
+        rospy.Subscriber('/limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
         rospy.Subscriber('/claw_limit_switch', LimitSwitchScience, self.science_callback, queue_size=1)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
@@ -297,7 +297,7 @@ class CentralUi(QtGui.QMainWindow):
         message += "C\nSoil Ph: {0}\nGround Temperature: {1} ".format(response.ph,
                                                                       response.ground_temperature)
         message = message + str(chr(176)) + "C\nHumidity: {0}".format(response.humidity)
-        
+
         QtGui.QMessageBox.information(None, "Sensor status", message, QtGui.QMessageBox.Ok)
 
     def take_screenshot(self):
