@@ -1,6 +1,5 @@
 
 import rospy
-from arduino.srv import *
 from std_msgs.msg import Int16
 
 
@@ -38,8 +37,8 @@ class ScienceController(object):
     def move_thermocouple(self, speed):
         mes = Int16()
         if speed > 0:
-            mes.data = speed * 75
+            mes.data = 50
         else:
-            mes.data = speed * 50
+            mes.data = -75
 
         self.thermo_publisher.publish(mes)

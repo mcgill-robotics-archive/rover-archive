@@ -10,7 +10,6 @@ from arm_publisher import *
 from joystick_profile import JoystickProfile
 from utilities import *
 from ScienceController import *
-from sensor_popup import *
 
 import rospy
 import Queue
@@ -290,13 +289,15 @@ class CentralUi(QtGui.QMainWindow):
 
         response = service()
         # response = sensorResponse()
-        message = "Altitude: {0}\nPressure: {1}\nAmbiant Temperature: {2}\n" + \
-                  "Soil Ph: {3}\nGround Temperature: {4}\nHumidity: {5}".format(response.altitude,
-                                                                                response.pressure,
-                                                                                response.ambiant_temperature,
-                                                                                response.ph,
-                                                                                response.ground_temperature,
-                                                                                response.humidity)
+        message = "Altitude: {0} m\nPressure: {1} kPa\nAmbiant Temperature: {2} ".format(
+            response.altitude,
+            response.pressure / 1000.0,
+            response.ambiant_temperature)
+        message += str(chr(176))
+        message += "C\nSoil Ph: {0}\nGround Temperature: {1} ".format(response.ph,
+                                                                      response.ground_temperature)
+        message = message + str(chr(176)) + "C\nHumidity: {0}".format(response.humidity)
+        
         QtGui.QMessageBox.information(None, "Sensor status", message, QtGui.QMessageBox.Ok)
 
     def take_screenshot(self):
@@ -513,9 +514,11 @@ class CentralUi(QtGui.QMainWindow):
                     self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
 
             if self.ui.drill_height.isChecked():
-                self.science.publish_auger_height(self.controller.a2)  # todo: change sign to match direction
+                self.science.publish_auger_height(self.controller.a2)
             elif self.ui.gate.isChecked():
                 self.science.move_gate(self.controller.a2)
+            elif self.ui.Thermocouple.isChecked():
+                self.science.move_thermocouple(self.controller.a2)
 
             pass
 
@@ -683,7 +686,7 @@ class CentralUi(QtGui.QMainWindow):
                 # left_painter.end()
             finally:
                 pass
-            
+
 
         else:
             self.ui.camera2.setText("no video feed")
