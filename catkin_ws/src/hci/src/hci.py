@@ -23,15 +23,23 @@ from rover_camera.srv import ChangeFeed
 from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
-from arduino.msg import LimitSwitchClaw
+from arduino.msg import LimitSwitchClaw, LimitSwitchScience
 
 
 class CentralUi(QtGui.QMainWindow):
-
     claw_open_on = QtCore.pyqtSignal()
     claw_open_off = QtCore.pyqtSignal()
     claw_close_on = QtCore.pyqtSignal()
     claw_close_off = QtCore.pyqtSignal()
+    limit_switch_up_on = QtCore.pyqtSignal()
+    limit_switch_down_on = QtCore.pyqtSignal()
+    limit_switch_gate_on = QtCore.pyqtSignal()
+    limit_switch_prob_on = QtCore.pyqtSignal()
+    limit_switch_up_off = QtCore.pyqtSignal()
+    limit_switch_down_off = QtCore.pyqtSignal()
+    limit_switch_gate_off = QtCore.pyqtSignal()
+    limit_switch_prob_off = QtCore.pyqtSignal()
+
     fl_signal_ok = QtCore.pyqtSignal()
     fr_signal_ok = QtCore.pyqtSignal()
     ml_signal_ok = QtCore.pyqtSignal()
@@ -112,6 +120,7 @@ class CentralUi(QtGui.QMainWindow):
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
         rospy.Subscriber('/claw_limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
+        rospy.Subscriber('/claw_limit_switch', LimitSwitchScience, self.science_callback, queue_size=1)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
@@ -119,6 +128,24 @@ class CentralUi(QtGui.QMainWindow):
         pass
 
     def claw_callback(self, msg):
+        if msg.limit_switch_up:
+            self.limit_switch_up_on.emit()
+        else:
+            self.limit_switch_up_off.emit()
+        if msg.limit_switch_down:
+            self.limit_switch_down_on.emit()
+        else:
+            self.limit_switch_down_off.emit()
+        if msg.limit_switch_gate:
+            self.limit_switch_gate_on.emit()
+        else:
+            self.limit_switch_gate_off.emit()
+        if msg.limit_switch_prob:
+            self.limit_switch_prob_on.emit()
+        else:
+            self.limit_switch_prob_off.emit()
+
+    def science_callback(self, msg):
         if msg.open:
             self.claw_open_on.emit()
         else:
@@ -420,7 +447,7 @@ class CentralUi(QtGui.QMainWindow):
 
         if self.profile.param_value["joystick/point_steer"]:
             self.set_controller_mode(0)
-            self.ui.pointSteer.setChecked(True)
+            self.ui.translatory.setChecked(True)
 
         if self.profile.param_value["joystick/ackreman"]:
             self.set_controller_mode(0)

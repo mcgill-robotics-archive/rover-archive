@@ -246,5 +246,5 @@ class Steering:
         self.output_command.frv = self.output_command.flv
         self.output_command.mlv = 0
         self.output_command.mrv = 0
-        self.output_command.blv = self.output_command.flv
+        self.output_command.blv = -self.output_command.flv
         self.output_command.brv = self.output_command.flv
