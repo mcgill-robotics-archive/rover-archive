@@ -9,6 +9,7 @@ class ScienceController(object):
         self.height_publisher = rospy.Publisher("/auger_position", Int16, queue_size=1)
         self.drill_publisher = rospy.Publisher("/auger_velocity", Int16, queue_size=1)
         self.gate_publisher = rospy.Publisher("/gate_position", Int16, queue_size=1)
+        self.thermo_publisher = rospy.Publisher("/gate_position", Int16, queue_size=1)
 
     def publish_auger_height(self, speed):
         mes = Int16()
@@ -33,3 +34,12 @@ class ScienceController(object):
         mes = Int16()
         mes.data = speed * 255
         self.gate_publisher.publish(mes)
+
+    def move_thermocouple(self, speed):
+        mes = Int16()
+        if speed > 0:
+            mes.data = speed * 75
+        else:
+            mes.data = speed * 50
+
+        self.thermo_publisher.publish(mes)

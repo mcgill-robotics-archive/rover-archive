@@ -327,8 +327,8 @@ class CentralUi(QtGui.QMainWindow):
             if self.imageRight is not None:
                 try:
                     qimageBottom = QtGui.QImage.fromData(self.imageRight.data)
-                    imageBottom = QtGui.QPixmap.fromImage(qimageBottom)
-                    rotated = imageBottom  # .transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
+                    rotated = QtGui.QPixmap.fromImage(qimageBottom)
+                    # rotated = imageBottom  # .transformed(QtGui.QMatrix().rotate(90), QtCore.Qt.SmoothTransformation)
                     rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
                 finally:
                     pass

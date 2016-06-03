@@ -15,7 +15,8 @@ class Steering:
     def __init__(self):
         self.output_command = WheelOutputData()
 
-        self.D = rospy.get_param('control/wh_distance_fr', 1.1684)  #: distance between longitudinal axis and wheels[m]
+        # distance between longitudinal axis and wheels[m]
+        self.D = rospy.get_param('control/wh_distance_fr', 1.1684 / 2.0)
         self.B = rospy.get_param('control/wh_base', 0.66)
         self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
         self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
@@ -127,8 +128,11 @@ class Steering:
             dist_mid_right = rho - sign_w * (self.B + self.mid_wh_offset)
 
             # Simple trig to get angle to each wheel
-            self.output_command.flsa = math.atan(self.D / radius_left)
-            self.output_command.frsa = math.atan(self.D / radius_right)
+            angle_left = math.atan(self.D / radius_left)
+            angle_right = math.atan(self.D / radius_right)
+
+            self.output_command.flsa = (angle_left + angle_right) / 2.0 - math.radians(5)  # todo change constant
+            self.output_command.frsa = (angle_left + angle_right) / 2.0
 
             # incorporate the correct direction of the angular
             # displacement of the wheels

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>994</width>
-    <height>779</height>
+    <width>1100</width>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -949,6 +949,13 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="QRadioButton" name="Thermocouple">
+           <property name="text">
+            <string>Thermocouple</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QRadioButton" name="gate">
            <property name="text">
             <string>Gate</string>
@@ -1172,16 +1179,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
-         <widget class="QPushButton" name="read_voltage_button">
+         <widget class="QPushButton" name="read_sensor_button">
           <property name="text">
-           <string>Read Voltage</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="input_voltage_label">
-          <property name="text">
-           <string>Input Voltage</string>
+           <string>Read Sensor</string>
           </property>
          </widget>
         </item>
@@ -1192,27 +1192,13 @@
    </layout>
    <zorder></zorder>
    <zorder></zorder>
-   <zorder>AugUpLim</zorder>
-   <zorder>line_2</zorder>
-   <zorder>label_8</zorder>
-   <zorder>AugDnLim</zorder>
-   <zorder>label_10</zorder>
-   <zorder>label_11</zorder>
-   <zorder>GateLim</zorder>
-   <zorder>line_3</zorder>
-   <zorder>label_17</zorder>
-   <zorder>ClawOpenLimit</zorder>
-   <zorder>label_22</zorder>
-   <zorder>ClawCloseLimit</zorder>
-   <zorder>line_4</zorder>
-   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>994</width>
+     <width>1100</width>
      <height>25</height>
     </rect>
    </property>

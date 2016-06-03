@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow_V4.ui'
 #
-# Created: Wed Jun  1 10:45:22 2016
+# Created: Fri Jun  3 09:30:20 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(994, 779)
+        MainWindow.resize(1100, 848)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.horizontalLayout_4 = QtGui.QHBoxLayout(self.centralwidget)
@@ -425,6 +425,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setMargin(0)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.Thermocouple = QtGui.QRadioButton(self.groupBox_3)
+        self.Thermocouple.setObjectName(_fromUtf8("Thermocouple"))
+        self.horizontalLayout_2.addWidget(self.Thermocouple)
         self.gate = QtGui.QRadioButton(self.groupBox_3)
         self.gate.setObjectName(_fromUtf8("gate"))
         self.horizontalLayout_2.addWidget(self.gate)
@@ -515,17 +518,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.frame_2)
         self.horizontalLayout_14 = QtGui.QHBoxLayout()
         self.horizontalLayout_14.setObjectName(_fromUtf8("horizontalLayout_14"))
-        self.read_voltage_button = QtGui.QPushButton(self.centralwidget)
-        self.read_voltage_button.setObjectName(_fromUtf8("read_voltage_button"))
-        self.horizontalLayout_14.addWidget(self.read_voltage_button)
-        self.input_voltage_label = QtGui.QLabel(self.centralwidget)
-        self.input_voltage_label.setObjectName(_fromUtf8("input_voltage_label"))
-        self.horizontalLayout_14.addWidget(self.input_voltage_label)
+        self.read_sensor_button = QtGui.QPushButton(self.centralwidget)
+        self.read_sensor_button.setObjectName(_fromUtf8("read_sensor_button"))
+        self.horizontalLayout_14.addWidget(self.read_sensor_button)
         self.verticalLayout_6.addLayout(self.horizontalLayout_14)
         self.horizontalLayout_4.addLayout(self.verticalLayout_6)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 994, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1100, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -641,6 +641,7 @@ class Ui_MainWindow(object):
         self.ClawOpenLimit.setText(_translate("MainWindow", "Ok", None))
         self.label_22.setText(_translate("MainWindow", "Claw Open", None))
         self.ClawCloseLimit.setText(_translate("MainWindow", "Ok", None))
+        self.Thermocouple.setText(_translate("MainWindow", "Thermocouple", None))
         self.gate.setText(_translate("MainWindow", "Gate", None))
         self.drill_height.setText(_translate("MainWindow", "Drill Height", None))
         self.end_eff.setText(_translate("MainWindow", "End Effector", None))
@@ -652,8 +653,7 @@ class Ui_MainWindow(object):
         self.ScienceMode.setText(_translate("MainWindow", "Science", None))
         self.ArmBaseMode.setText(_translate("MainWindow", "Arm", None))
         self.function4.setText(_translate("MainWindow", "Camera", None))
-        self.read_voltage_button.setText(_translate("MainWindow", "Read Voltage", None))
-        self.input_voltage_label.setText(_translate("MainWindow", "Input Voltage", None))
+        self.read_sensor_button.setText(_translate("MainWindow", "Read Sensor", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.actionQuit.setText(_translate("MainWindow", "Quit", None))

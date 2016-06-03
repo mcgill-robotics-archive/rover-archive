@@ -10,6 +10,7 @@ from arm_publisher import *
 from joystick_profile import JoystickProfile
 from utilities import *
 from ScienceController import *
+from sensor_popup import *
 
 import rospy
 import Queue
@@ -24,7 +25,9 @@ from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 from arduino.msg import LimitSwitchClaw, LimitSwitchScience
-
+from arduino.srv import *
+from ahrs.msg import AhrsStdMsg
+import tf.transformations
 
 class CentralUi(QtGui.QMainWindow):
     claw_open_on = QtCore.pyqtSignal()
@@ -119,6 +122,7 @@ class CentralUi(QtGui.QMainWindow):
 
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
+        rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.handle_pose, queue_size=5)
         rospy.Subscriber('/claw_limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
         rospy.Subscriber('/claw_limit_switch', LimitSwitchScience, self.science_callback, queue_size=1)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
@@ -204,7 +208,7 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.translatory, QtCore.SIGNAL("toggled(bool)"), self.set_translatory)
         QtCore.QObject.connect(self.ui.add_waypoint_dd, QtCore.SIGNAL("clicked()"), self.add_coord_dd)
         QtCore.QObject.connect(self.ui.add_waypoint_dms, QtCore.SIGNAL("clicked()"), self.add_coord_dms)
-        QtCore.QObject.connect(self.ui.read_voltage_button, QtCore.SIGNAL("clicked()"), self.read_voltage)
+        QtCore.QObject.connect(self.ui.read_sensor_button, QtCore.SIGNAL("clicked()"), self.read_voltage)
 
         # camera feed selection signal connects
         QtCore.QObject.connect(self.ui.waypoint, QtCore.SIGNAL("clicked()"), self.add_way_point)
@@ -278,14 +282,22 @@ class CentralUi(QtGui.QMainWindow):
 
     def read_voltage(self):
         try:
-            rospy.wait_for_service("arm/get_voltage", timeout=2)
-            service = rospy.ServiceProxy("arm/get_voltage", GetVoltageRead)
+            rospy.wait_for_service("/sensor_server", timeout=5)
+            service = rospy.ServiceProxy("/sensor_server", sensor)
         except rospy.ROSException:
-            rospy.logerr("Timeout, service get_voltage unavailable")
+            rospy.logerr("Timeout, service /sensor_server unavailable")
             return
 
         response = service()
-        self.ui.input_voltage_label.setText(str(response.Voltage))
+        # response = sensorResponse()
+        message = "Altitude: {0}\nPressure: {1}\nAmbiant Temperature: {2}\n" + \
+                  "Soil Ph: {3}\nGround Temperature: {4}\nHumidity: {5}".format(response.altitude,
+                                                                                response.pressure,
+                                                                                response.ambiant_temperature,
+                                                                                response.ph,
+                                                                                response.ground_temperature,
+                                                                                response.humidity)
+        QtGui.QMessageBox.information(None, "Sensor status", message, QtGui.QMessageBox.Ok)
 
     def take_screenshot(self):
         topic = self.feed_topics_hires[self.ui.camera_selector.currentIndex()]
@@ -326,11 +338,11 @@ class CentralUi(QtGui.QMainWindow):
         self.map_point_list[-1].addPoints(self.x_waypoints, self.y_waypoints, size=10, symbol='t', brush='b')
 
     def handle_pose(self, data):
-        if data.gpsLongitude is not 0:
+        if data.gps.FIX_3D:
             if not self.first_point:
                 self.first_point = True
-                self.dx = data.gpsLongitude
-                self.dy = data.gpsLatitude
+                self.dx = data.gps.longitude
+                self.dy = data.gps.latitude
 
             # add (x,y) to tempPose queue
             self.tempPose.put(data)
@@ -339,14 +351,26 @@ class CentralUi(QtGui.QMainWindow):
         while not self.tempPose.empty():
             pose = self.tempPose.get()
 
-            self.new_x = [(pose.gpsLongitude - self.dx)]
-            self.new_y = [(pose.gpsLatitude - self.dy)]
-            self.ui.latActual.setText(format_dms(pose.gpsLatitude))
-            self.ui.lonActual.setText(format_dms(pose.gpsLongitude))
+            self.new_x = [(pose.gps.longitude - self.dx)]
+            self.new_y = [(pose.gps.latitude - self.dy)]
+            self.ui.latActual.setText(format_dms(pose.gps.latitude))
+            self.ui.lonActual.setText(format_dms(pose.gps.longitude))
 
-            self.ui.pitchLBL.setText(format_euler_angle(pose.pitch))
-            self.ui.rollLBL.setText(format_euler_angle(pose.roll))
-            self.ui.yawLBL.setText(format_euler_angle(pose.yaw))
+            quaternion = (
+                pose.pose.pose.orientation.x,
+                pose.pose.pose.orientation.y,
+                pose.pose.pose.orientation.z,
+                pose.pose.pose.orientation.w)
+            euler = tf.transformations.euler_from_quaternion(quaternion)
+            # euler = tf.transformations.euler_from_quaternion(pose.pose.pose.orientation)
+            roll = euler[0]
+            pitch = euler[1]
+            yaw = euler[2]
+
+            self.ui.pitchLBL.setText(format_euler_angle(pitch))
+            self.ui.rollLBL.setText(format_euler_angle(roll))
+            self.ui.yawLBL.setText(format_euler_angle(yaw))
+
 
             self.points_counter += 1
             if self.points_counter % 1000 == 0:
