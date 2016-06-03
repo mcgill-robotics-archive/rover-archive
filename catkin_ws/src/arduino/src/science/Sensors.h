@@ -11,8 +11,8 @@
 //defines for pins
 //TODO: fill these in with the actual pinout. the ones here are just placeholders
 
-#define pin_humidity 0
-#define pin_thermocouple 1
+#define pin_humidity A1
+#define pin_thermocouple A0
 #define pin_augur_servo_limit_switch 13
 
 int get_humidity ();

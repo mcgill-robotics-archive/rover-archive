@@ -92,7 +92,7 @@ void loop ()
     if (!digitalRead(PIN_LIMIT_SWITCH_GATE) && last_command_gate_position > 0) {
         analogWrite(PIN_GATE_POSITION_PWM, 0);
     }
-    if (!digitalRead(PIN_LIMIT_SWITCH_PROB) && last_command_prob_position > 0) {
+    if (!digitalRead(PIN_LIMIT_SWITCH_PROB) && last_command_prob_position < 0) {
         tempProbServo.writeMicroseconds(1500);
     }
 
@@ -108,9 +108,9 @@ void loop ()
 
 void sensorServiceCallback(const arduino::sensor::Request &request, arduino::sensor::Response &response) {
     response.ph = phSensor->get_pH('a');
+    response.pressure = barometer->get_pressure()/5.5238471703;
     response.altitude = barometer->get_altitude();
     response.ambiant_temperature = barometer->get_ambient_temperature();
-    response.pressure = barometer->get_pressure();
     response.ground_temperature = get_ground_temperature();
     response.humidity = get_humidity();
 
@@ -163,9 +163,9 @@ void handle_gate_position(const std_msgs::Int16 & message){
 
 void handle_temp_prob_position(const std_msgs::Int16 & message){
     last_command_prob_position = message.data;
-    if(digitalRead(PIN_LIMIT_SWITCH_PROB) && last_command_prob_position > 0 ){
+    if (last_command_prob_position > 0 ){
         tempProbServo.writeMicroseconds(1500 + last_command_prob_position);
-    } else if (last_command_prob_position < 0){
+    } else if (digitalRead(PIN_LIMIT_SWITCH_PROB) && last_command_prob_position < 0){
         tempProbServo.writeMicroseconds(1500 + last_command_prob_position);
     } else { 
         tempProbServo.writeMicroseconds(1500);
