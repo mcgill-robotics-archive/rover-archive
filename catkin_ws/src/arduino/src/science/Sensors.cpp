@@ -15,7 +15,7 @@ int get_humidity ()
 //thermocouple
 float get_ground_temperature ()
 {
-    return (((analogRead(pin_thermocouple)*5.0/1023.0)-1.25)/0.005);
+    return (((analogRead(pin_thermocouple)*5.0/1023.0)-1.21)/0.005);
 }
 
 //void set_servo_switch(bool flag) //sets the direction for servo rotation
