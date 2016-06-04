@@ -8,9 +8,4 @@
     <node pkg="hci" type="hci.py" name="hci" />
 </group>
 
-    <include file="$(find omnicam)/launch/omnicam.launch">
-           <arg name="user" value="$(arg user)" />
-           <arg name="config_file" value="/home/david/rover/catkin_ws/src/omnicam/config/omnicam_config.json" />
-    </include>
-
 </launch>

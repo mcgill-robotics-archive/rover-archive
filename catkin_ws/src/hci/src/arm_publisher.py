@@ -12,7 +12,7 @@ class ArmPublisher:
     def __init__(self):
 
         ## Publisher object vor velocities
-        self.publisher = rospy.Publisher("arm_velocities", JointVelocities, queue_size=1)
+        self.publisher = rospy.Publisher("/arm_velocities", JointVelocities, queue_size=1)
         self.message = JointVelocities()
 
     ## Publish all joint velocities

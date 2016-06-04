@@ -17,6 +17,7 @@
 #include "arm_control/JointPosition.h"
 #include "arm_control/ControlMode.h"
 #include "arm_control/EncoderPosition.h"
+#include <arduino/LimitSwitchClaw.h>
 #include "Potentiometer.h"
 
 /**
@@ -50,6 +51,7 @@ ros::NodeHandle nodeHandle;
 arm_control::JointPosition jointPosition;
 //arm_control::EncoderPosition encoderPosition;
 arm_control::EncoderPosition motorSpeed;
+arduino::LimitSwitchClaw limitSwitchClawMsg;
 
 void handle_arm_velocity(const arm_control::JointVelocities & message);
 void handle_arm_position(const arm_control::JointPosition & message);
@@ -79,7 +81,7 @@ void handle_control_mode(const arm_control::ControlMode & message);
 ros::Subscriber<arm_control::JointPosition> angleSubscriber("/arm/setPoints", &handle_arm_position);
 ros::Subscriber<arm_control::JointVelocities> arm_subscriber("/arm_velocities", &handle_arm_velocity);
 ros::Subscriber<arm_control::ControlMode> mode_subscriber("/arm_mode", &handle_control_mode);
-
+ros::Publisher clawPublisher("/claw_limit_switch", &limitSwitchClawMsg);
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram", &RAM::freeRamCallback);
 
 ros::Publisher armJointPublisher("/arm/joint_feedback", &jointPosition);
@@ -171,6 +173,7 @@ void setup() {
     nodeHandle.subscribe(arm_subscriber);
     nodeHandle.subscribe(angleSubscriber);
     nodeHandle.subscribe(mode_subscriber);
+    nodeHandle.advertise(clawPublisher);
 //    nodeHandle.advertise(armJointPublisher);
 //    nodeHandle.advertise(armEncoderPublisher);
     nodeHandle.advertise(armMotorSpeedPublisher);
@@ -246,6 +249,11 @@ void loop() {
         diff2rightMotor->setSpeed((int) diff2Vel[1]);
         endEffectorMotor->setSpeed((int) endEffectorOutputVel);
     }
+
+    // todo check which ss pin to use
+    limitSwitchClawMsg.open = !digitalRead(END_EFFECTOR_SS_PIN);
+    limitSwitchClawMsg.close = !digitalRead(BASE_YAW_SS_PIN);
+    clawPublisher.publish(&limitSwitchClawMsg);
 
     nodeHandle.spinOnce();
     delay(1);

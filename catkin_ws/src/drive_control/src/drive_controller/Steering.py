@@ -15,7 +15,8 @@ class Steering:
     def __init__(self):
         self.output_command = WheelOutputData()
 
-        self.D = rospy.get_param('control/wh_distance_fr', 1.1684)  #: distance between longitudinal axis and wheels[m]
+        # distance between longitudinal axis and wheels[m]
+        self.D = rospy.get_param('control/wh_distance_fr', 1.1684 / 2.0)
         self.B = rospy.get_param('control/wh_base', 0.66)
         self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
         self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
@@ -48,50 +49,18 @@ class Steering:
         :param vBody: General body velocity
         :param diff: Rate of rotation
         """
-        self.output_command.flsa = 0
-        self.output_command.frsa = 0
-        self.output_command.blsa = 0
-        self.output_command.brsa = 0
-        
-        # point steering
-        if abs(diff) > 0.5:
-            # Turn right
-            if diff > 0:
-                self.output_command.flv = vBody
-                self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
-            # Turn left
-            else:
-                self.output_command.flv = vBody
-                self.output_command.frv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = -vBody*abs(abs(diff)-0.5)/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = -vBody*abs(abs(diff)-0.5)/0.5
-    
-        else:
-            # Turn right
-            if diff>0:
-                #
-                self.output_command.flv = vBody
-                self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
-            # turn left
-            else:
-                #
-                self.output_command.flv = vBody
-                self.output_command.frv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.mlv = vBody
-                self.output_command.mrv = vBody*abs(0.5-abs(diff))/0.5
-                self.output_command.blv = vBody
-                self.output_command.brv = vBody*abs(0.5-abs(diff))/0.5
+        common_mode_scale = 10
+        differential_mode_scale = 10
 
+        common_mode = vBody * common_mode_scale
+        differential_mode = diff * differential_mode_scale
+
+        self.output_command.flv = common_mode + differential_mode
+        self.output_command.frv = common_mode - differential_mode
+        self.output_command.mlv = self.output_command.flv
+        self.output_command.blv = self.output_command.flv
+        self.output_command.mrv = self.output_command.frv
+        self.output_command.brv = self.output_command.frv
 
     def steer(self, vBody, wBody):
         """
@@ -159,8 +128,11 @@ class Steering:
             dist_mid_right = rho - sign_w * (self.B + self.mid_wh_offset)
 
             # Simple trig to get angle to each wheel
-            self.output_command.flsa = math.atan(self.D / radius_left)
-            self.output_command.frsa = math.atan(self.D / radius_right)
+            angle_left = math.atan(self.D / radius_left)
+            angle_right = math.atan(self.D / radius_right)
+
+            self.output_command.flsa = (angle_left + angle_right) / 2.0 - math.radians(5)  # todo change constant
+            self.output_command.frsa = (angle_left + angle_right) / 2.0
 
             # incorporate the correct direction of the angular
             # displacement of the wheels
@@ -278,5 +250,5 @@ class Steering:
         self.output_command.frv = self.output_command.flv
         self.output_command.mlv = 0
         self.output_command.mrv = 0
-        self.output_command.blv = self.output_command.flv
+        self.output_command.blv = -self.output_command.flv
         self.output_command.brv = self.output_command.flv

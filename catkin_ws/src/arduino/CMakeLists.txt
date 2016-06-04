@@ -20,6 +20,12 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
+add_message_files(
+    FILES
+    LimitSwitchClaw.msg
+    LimitSwitchScience.msg
+)
+
 add_service_files(
     FILES
     ram.srv
@@ -27,7 +33,6 @@ add_service_files(
     drill.srv
     ResetArduino.srv
 )
-
 generate_messages(
     DEPENDENCIES
     std_msgs
@@ -52,3 +57,6 @@ rosserial_add_client_target(src drive ALL)
 
 rosserial_add_client_target(src arm ALL)
 # rosserial_add_client_target(arm arm-upload)
+
+rosserial_add_client_target(src science ALL)
+rosserial_add_client_target(src science-upload)

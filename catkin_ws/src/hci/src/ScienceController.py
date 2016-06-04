@@ -1,48 +1,44 @@
 
 import rospy
-from arduino.srv import *
-from std_msgs.msg import Float32
+from std_msgs.msg import Int16
 
 
 class ScienceController(object):
     def __init__(self):
-        self.height_publisher = rospy.Publisher("/augur_height", Float32, queue_size=1)
-        try:
-            rospy.wait_for_service("/drill", timeout=2)
-            self.drill_service = rospy.ServiceProxy("/drill", drill)
-
-        except rospy.ROSException:
-            rospy.logerr("Could not acquire the drill service")
-            self.drill_service = None
+        self.height_publisher = rospy.Publisher("/auger_position", Int16, queue_size=1)
+        self.drill_publisher = rospy.Publisher("/auger_velocity", Int16, queue_size=1)
+        self.gate_publisher = rospy.Publisher("/gate_position", Int16, queue_size=1)
+        self.thermo_publisher = rospy.Publisher("/temp_prob_position", Int16, queue_size=1)
 
     def publish_auger_height(self, speed):
-        mes = Float32()
-        mes.data = speed
+        mes = Int16()
+        mes.data = speed * 255
         self.height_publisher.publish(mes)
 
     def deactivate_drill(self):
         rospy.loginfo("Try to deactivate")
-        if self.drill_service:
-            try:
-                resp = self.drill_service(False)
-                return resp.activated
-
-            except rospy.ROSException:
-                rospy.logerr("Failed to change drill")
-                return True
-        else:
-            return False
+        mes = Int16()
+        mes.data = 0
+        self.drill_publisher.publish(mes)
+        return False
 
     def activate_drill(self):
         rospy.loginfo("Try to activate")
+        mes = Int16()
+        mes.data = -255
+        self.drill_publisher.publish(mes)
+        return True
 
-        if self.drill_service:
-            try:
-                resp = self.drill_service(True)
-                return resp.activated
+    def move_gate(self, speed):
+        mes = Int16()
+        mes.data = speed * 5
+        self.gate_publisher.publish(mes)
 
-            except rospy.ROSException:
-                rospy.logerr("Failed to change drill")
-                return False
+    def move_thermocouple(self, speed):
+        mes = Int16()
+        if speed > 0:
+            mes.data = 50
         else:
-            return True
+            mes.data = -75
+
+        self.thermo_publisher.publish(mes)

@@ -1,0 +1,4 @@
+bool limit_switch_up
+bool limit_switch_down
+bool limit_switch_gate
+bool limit_switch_prob

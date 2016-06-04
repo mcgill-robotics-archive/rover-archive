@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find arduino)/launch/arm.launch"/>
-    <include file="$(find hci)/launch/logitech.launch"/>
-</launch>
