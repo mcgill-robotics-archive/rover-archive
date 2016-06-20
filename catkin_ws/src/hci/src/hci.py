@@ -291,7 +291,7 @@ class CentralUi(QtGui.QMainWindow):
         # response = sensorResponse()
         message = "Altitude: {0} m\nPressure: {1} kPa\nAmbiant Temperature: {2} ".format(
             response.altitude,
-            response.pressure / 1000.0,
+            response.pressure,
             response.ambiant_temperature)
         message += str(chr(176))
         message += "C\nSoil Ph: {0}\nGround Temperature: {1} ".format(response.ph,
