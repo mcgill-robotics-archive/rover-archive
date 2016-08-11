@@ -11,7 +11,7 @@ byte humidity_sensor_pin = A1;
 Adafruit_MPL3115A2 baro = Adafruit_MPL3115A2();
 Servo auger_servo, rock_servo, soil_servo;
 String readString;
-
+//************************************************************************************************
 const int sensorPin = A2; //Defines the pin that the anemometer output is connected to
 int sensorValue = 0; //Variable stores the value direct from the analog pin
 float sensorVoltage = 0; //Variable that stores the voltage (in Volts) from the anemometer being sent to the analog pin
@@ -28,7 +28,7 @@ float windSpeedMin = 0; // Wind speed in meters/sec corresponding to minimum vol
  
 float voltageMax = 2.0; // Maximum output voltage from anemometer in mV.
 float windSpeedMax = 32; // Wind speed in meters/sec corresponding to maximum voltage
-
+//**************************************************************************************************
 int InA1 = 26, InB1 = 27, PWM1 = 2, InA2 = 36, InB2 = 37, PWM2 = 3, flag = 0;
 
 void setup() {
@@ -85,7 +85,7 @@ void loop() {
   if (Serial.available()) {
     char c = Serial.read();
     if (c == ',') {
-      if (readString.length() >1) {
+      if (readString.length() >0) {
         if(readString.indexOf('z') >0) {
           auger_loadcell.tare();				                           
           top_loadcell.tare();
@@ -104,7 +104,7 @@ void loop() {
           Serial.println(read_humidity_sensor()); 
           delay(100);
         }
-        if(readString.indexOf('W') >0) {
+        if(readString.indexOf('w') >0) {
           sensorValue = analogRead(sensorPin); //Get a value between 0 and 1023 from the analog pin connected to the anemometer
           sensorVoltage = sensorValue * voltageConversionConstant; //Convert sensor value to actual voltage
            
@@ -135,7 +135,7 @@ void loop() {
         
           delay(250);
         }
-        int n = readString.toInt(); 
+        int n = readString.toInt();
         if(readString.indexOf('a') >0) {
           if (n == 1) {
             Serial.println("sealing auger soil sample box");
@@ -193,24 +193,25 @@ void loop() {
             digitalWrite(InA1, LOW);
             Serial.print("drilling down soil: ");
             Serial.println(n);
+            analogWrite(PWM1, n);
           }
           else if (n > 0) {
             digitalWrite(InB1, LOW);
             digitalWrite(InA1, HIGH);
             Serial.print("drilling up soil: ");
             Serial.println(n);
+            analogWrite(PWM1, n);
           }
           else{
             analogWrite(PWM1, 0);
             Serial.print("drill stop");
           }
-          analogWrite(PWM1, abs(n));
         }
         if(readString.indexOf('c') >0) {
           if(n < 0 && topLimit == HIGH) {
             digitalWrite(InB2, HIGH);
             digitalWrite(InA2, LOW);
-            analogWrite(PWM2, abs(n));
+            analogWrite(PWM2, n);
             flag = 1;
             Serial.print("carage up: ");
             Serial.println(n);
@@ -223,7 +224,7 @@ void loop() {
           else if (n > 0 && bottomLimit == HIGH) {
             digitalWrite(InB2, LOW);
             digitalWrite(InA2, HIGH);
-            analogWrite(PWM2, abs(n));
+            analogWrite(PWM2, n);
             flag = 2;
             Serial.print("carage down: ");
             Serial.println(n);
