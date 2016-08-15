@@ -6,30 +6,14 @@
 HX711 auger_loadcell(22, 23);
 HX711 top_loadcell(24, 25);
 byte humidity_sensor_pin = A1;
-
+const int wind_sensor_pin = A2;
+int InA1 = 26, InB1 = 27, PWM1 = 2, InA2 = 36, InB2 = 37, PWM2 = 3;
 
 Adafruit_MPL3115A2 baro = Adafruit_MPL3115A2();
 Servo auger_servo, rock_servo, soil_servo;
 String readString;
-//************************************************************************************************
-const int sensorPin = A2; //Defines the pin that the anemometer output is connected to
-int sensorValue = 0; //Variable stores the value direct from the analog pin
-float sensorVoltage = 0; //Variable that stores the voltage (in Volts) from the anemometer being sent to the analog pin
-float windSpeed = 0; // Wind speed in meters per second (m/s)
- 
-float voltageConversionConstant = .004882814; //This constant maps the value provided from the analog read function, which ranges from 0 to 1023, to actual voltage, which ranges from 0V to 5V
-int sensorDelay = 1000; //Delay between sensor readings, measured in milliseconds (ms)
- 
-//Anemometer Technical Variables
-//The following variables correspond to the anemometer sold by Adafruit, but could be modified to fit other anemometers.
- 
-float voltageMin = .4; // Mininum output voltage from anemometer in mV.
-float windSpeedMin = 0; // Wind speed in meters/sec corresponding to minimum voltage
- 
-float voltageMax = 2.0; // Maximum output voltage from anemometer in mV.
-float windSpeedMax = 32; // Wind speed in meters/sec corresponding to maximum voltage
-//**************************************************************************************************
-int InA1 = 26, InB1 = 27, PWM1 = 2, InA2 = 36, InB2 = 37, PWM2 = 3, flag = 0;
+int limit_switch = 0, wind_sensor_value = 0;
+float wind_sensor_voltage = 0, wind_speed = 0, voltage_constant = .004882814, voltage_min = .4, voltage_max = 2.0, wind_speed_max = 32;
 
 void setup() {
   Serial.begin(38400);
@@ -65,77 +49,71 @@ void setup() {
   Serial.println("Ready");
 }
 
-int read_humidity_sensor() {
-  delay(500);
-  int value = analogRead(humidity_sensor_pin);
-  return 1023 - value;
-}
 void loop() { 
-  int topLimit = digitalRead(8), mildeLimit = digitalRead(10), bottomLimit = digitalRead(12);
-  if (flag == 2 && bottomLimit == LOW){
+  if (! baro.begin()) {
+    Serial.println("Couldnt find sensor");
+    return;
+  }
+  int topLimit = digitalRead(8), bottomLimit = digitalRead(12);
+  if (limit_switch == 2 && bottomLimit == LOW){
     analogWrite(PWM2, 0);
-    flag = 0;
+    limit_switch = 0;
     Serial.println("bottom limit switch");
   }
-  if (flag == 1 && topLimit == LOW){
+  if (limit_switch == 1 && topLimit == LOW){
     analogWrite(PWM2, 0);
-    flag = 0;
+    limit_switch = 0;
     Serial.println("top limit switch");
   }
   if (Serial.available()) {
     char c = Serial.read();
     if (c == ',') {
       if (readString.length() >0) {
+        int n = readString.toInt();
+        //************************************************************************************Zero loadcells        
         if(readString.indexOf('z') >0) {
           auger_loadcell.tare();				                           
           top_loadcell.tare();
-          Serial.println("Zero");
-        }
+          Serial.println("Zero");}
+        //*****************************************************************************Rock and soil loadcell        
         if(readString.indexOf('t') >0) {
           Serial.print("Rock and soil loadcell:\t");
-          Serial.println(top_loadcell.get_units(10), 2);
-        }
+          float load_t = ((abs(top_loadcell.get_units(10)))*5.0552);
+          Serial.println(load_t, 2);}
+        //*************************************************************************************Auger loadcell        
         if(readString.indexOf('b') >0) {
           Serial.print("Auger loadcell:\t");
-          Serial.print(auger_loadcell.get_units(10), 2);
-        }
+          Serial.println(auger_loadcell.get_units(10), 2);}
+        //*******************************************************************************************Humidity        
         if(readString.indexOf('h') >0) {
+          int humidity_value = analogRead(humidity_sensor_pin);
           Serial.print("Humidity Level (0-1023): ");
-          Serial.println(read_humidity_sensor()); 
-          delay(100);
-        }
+          Serial.println(1023-humidity_value);}
+        //*****************************************************************************************Wind speed        
         if(readString.indexOf('w') >0) {
-          sensorValue = analogRead(sensorPin); //Get a value between 0 and 1023 from the analog pin connected to the anemometer
-          sensorVoltage = sensorValue * voltageConversionConstant; //Convert sensor value to actual voltage
-           
-          //Convert voltage value to wind speed using range of max and min voltages and wind speed for the anemometer
-          if (sensorVoltage <= voltageMin){
-           windSpeed = 0; //Check if voltage is below minimum value. If so, set wind speed to zero.
+          wind_sensor_value = analogRead(wind_sensor_pin);
+          wind_sensor_voltage = wind_sensor_value * voltage_constant;
+          if (wind_sensor_voltage <= voltage_min){
+            wind_speed = 0;
           }
           else {
-            windSpeed = (sensorVoltage - voltageMin)*windSpeedMax/(voltageMax - voltageMin); //For voltages above minimum value, use the linear relationship to calculate wind speed.
+            wind_speed = (wind_sensor_voltage - voltage_min)*wind_speed_max/(voltage_max - voltage_min);
           }
-            Serial.print("Voltage: ");
-            Serial.print(sensorVoltage);
-            Serial.print("\t"); 
-            Serial.print("Wind speed: ");
-            Serial.println(windSpeed); 
-           delay(sensorDelay);
-        }
+          Serial.print("Wind speed: ");
+          Serial.print(wind_speed);
+          Serial.println("m/s");}
+        //******************************************************************************************Pressure        
         if(readString.indexOf('p') >0) {
-          float pascals = baro.getPressure();
-          Serial.print(pascals/3377); Serial.println(" Inches (Hg)");
-        
+          float pascals = ((baro.getPressure()/1000) + 100);
+          Serial.print(pascals); 
+          Serial.println(" kPa");
           float altm = baro.getAltitude();
-          Serial.print(altm); Serial.println(" meters");
-        
+          Serial.print(altm); 
+          Serial.println(" m");
           float tempC = baro.getTemperature();
           Serial.print(tempC); 
-          Serial.println("*C");
-        
-          delay(250);
-        }
-        int n = readString.toInt();
+          Serial.println(" C");}
+        //**************************************************************************************************        
         if(readString.indexOf('a') >0) {
           if (n == 1) {
             Serial.println("sealing auger soil sample box");
@@ -151,6 +129,7 @@ void loop() {
             auger_servo.write(n);
           }
         }
+        //**************************************************************************************************        
         if(readString.indexOf('r') >0) {
           if (n == 1) {
             Serial.println("sealing rock sample box");
@@ -166,6 +145,7 @@ void loop() {
             rock_servo.write(n);
           }
         }
+        //**************************************************************************************************        
         if(readString.indexOf('s') >0) {
           if (n == 1) {
             Serial.println("sealing soil sample box");
@@ -181,64 +161,65 @@ void loop() {
             soil_servo.write(n);
           }
         }
+        //**************************************************************************************************        
         if(readString.indexOf('k') >0) {
           analogWrite(PWM1, 0);
           analogWrite(PWM2, 0);
-          flag = 0;
-          Serial.println("kill auger and carage");
-        }
+          limit_switch = 0;
+          Serial.println("kill auger and carage");}
+        //**************************************************************************************************        
         if(readString.indexOf('d') >0) {
           if(n < 0) {
             digitalWrite(InB1, HIGH);
             digitalWrite(InA1, LOW);
             Serial.print("drilling down soil: ");
             Serial.println(n);
-            analogWrite(PWM1, n);
+            analogWrite(PWM1, abs(n));
           }
           else if (n > 0) {
             digitalWrite(InB1, LOW);
             digitalWrite(InA1, HIGH);
             Serial.print("drilling up soil: ");
             Serial.println(n);
-            analogWrite(PWM1, n);
+            analogWrite(PWM1, abs(n));
           }
           else{
             analogWrite(PWM1, 0);
-            Serial.print("drill stop");
+            Serial.println("drill stop");
           }
         }
+        //**************************************************************************************************        
         if(readString.indexOf('c') >0) {
           if(n < 0 && topLimit == HIGH) {
             digitalWrite(InB2, HIGH);
             digitalWrite(InA2, LOW);
-            analogWrite(PWM2, n);
-            flag = 1;
+            analogWrite(PWM2, abs(n));
+            limit_switch = 1;
             Serial.print("carage up: ");
             Serial.println(n);
           }
           else if(n < 0 && topLimit == LOW) {
             analogWrite(PWM2, 0);
-            flag = 0;
+            limit_switch = 0;
             Serial.println("top limit switch");
           }
           else if (n > 0 && bottomLimit == HIGH) {
             digitalWrite(InB2, LOW);
             digitalWrite(InA2, HIGH);
-            analogWrite(PWM2, n);
-            flag = 2;
+            analogWrite(PWM2, abs(n));
+            limit_switch = 2;
             Serial.print("carage down: ");
             Serial.println(n);
           }
           else if(n > 0 && bottomLimit == LOW) {
             analogWrite(PWM2, 0);
-            flag = 0;
+            limit_switch = 0;
             Serial.println("bottom limit switch");
           }
           else{
             analogWrite(PWM2, 0);
-            flag = 0;
-            Serial.print("carage stop: ");
-            Serial.println(n);
+            limit_switch = 0;
+            Serial.println("carage stop");
           }
         }
       }
