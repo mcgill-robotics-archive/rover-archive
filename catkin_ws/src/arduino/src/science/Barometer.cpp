@@ -20,10 +20,3 @@ float Barometer::get_altitude() {
 Barometer::Barometer() {
     mBarometer.begin();
 }
-
-
-
-
-
-
-
