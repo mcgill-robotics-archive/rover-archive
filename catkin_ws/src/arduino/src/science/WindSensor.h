@@ -23,6 +23,6 @@ public:
      * Returns the wind speed in m/s.
      */
     float get_wind_speed();
-}
+};
 
 #endif //ROVER_ARDUINO_WINDSENSOR_H
