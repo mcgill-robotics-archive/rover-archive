@@ -15,13 +15,27 @@
 
 #define SWITCH_PUB_TIMEOUT 500
 
+#define CLOSE_SERVO_SIGNAL 1
+#define OPEN_SERVO_SIGNAL 0
+
+#define AUGER_SERVO_CLOSE_ANGLE 75
+#define AUGER_SERVO_OPEN_ANGLE 175
+
+#define ROCK_SOIL_SERVO_CLOSE_ANGLE 45
+#define ROCK_SOIL_SERVO_OPEN_ANGLE 145
 
 unsigned long switch_pub_schedule = 0;
 void sensorServiceCallback(const arduino::sensor::Request &request, arduino::sensor::Response &response);
+
+void handle_auger_servo_position(const std_msgs::Int16 &message);
+void handle_soil_servo_position(const std_msgs::Int16 &message);
+void handle_rock_servo_position(const std_msgs::Int16 &message);
+void set_science_servo_position(Servo servo, int16_t servoInput, int openPositionValue, int closePositionValue);
+
 void handle_auger_angular_velocity(const std_msgs::Int16 &message);
 void handle_auger_vertical_velocity(const std_msgs::Int16 &message);
 
-Servo tempProbServo;
+Servo auger_servo, rock_servo, soil_servo;
 
 arduino::LimitSwitchScience limitSwitchMsg;
 
@@ -30,6 +44,9 @@ int16_t last_command_auger_vertical_velocity = 0; // How fast and in what direct
 int16_t last_command_gate_position = 0;
 int16_t last_command_prob_position = 0;
 
+ros::Subscriber<std_msgs::Int16> augerServoSub("auger_servo_position", &handle_auger_servo_position);
+ros::Subscriber<std_msgs::Int16> soilServoSub("soil_servo_position", &handle_soil_servo_position);
+ros::Subscriber<std_msgs::Int16> rockServoSub("rock_servo_position", &handle_rock_servo_position);
 ros::Subscriber<std_msgs::Int16> augerVelocitySub("auger_velocity", &handle_auger_angular_velocity);
 ros::Subscriber<std_msgs::Int16> augerPositionSub("auger_position", &handle_auger_vertical_velocity);
 ros::Publisher limitSwitchPub("limit_switch", &limitSwitchMsg);
@@ -45,6 +62,16 @@ ros::ServiceServer<arduino::sensor::Request, arduino::sensor::Response> sensorSe
  * Arduino setup
  */
 void setup(){
+    // Initialize servos to 0 state
+    auger_servo.write(0);
+    rock_servo.write(0);
+    soil_servo.write(0);
+
+    // Setup servo pins
+    auger_servo.attach(PIN_AUGER_SERVO);
+    rock_servo.attach(PIN_ROCK_SERVO);
+    soil_servo.attach(PIN_SOIL_SERVO);
+
     // Up / Down auger velocity pins
     pinMode(PIN_AUGER_VERTICAL_VELOCITY_INA, OUTPUT);
     pinMode(PIN_AUGER_VERTICAL_VELOCITY_INB, OUTPUT);
@@ -59,13 +86,18 @@ void setup(){
     pinMode(PIN_LIMIT_SWITCH_UP, INPUT_PULLUP);
     pinMode(PIN_LIMIT_SWITCH_DOWN, INPUT_PULLUP);
 
-    tempProbServo.attach(PIN_TEMP_PROB_POSITION);
-
     // Initialize ROS interactions
     nodeHandle.initNode();
+
     nodeHandle.advertiseService(sensorService);
+
+    nodeHandle.subscribe(augerServoSub);
+    nodeHandle.subscribe(soilServoSub);
+    nodeHandle.subscribe(rockServoSub);
+
     nodeHandle.subscribe(augerVelocitySub);
     nodeHandle.subscribe(augerPositionSub);
+
     nodeHandle.advertise(limitSwitchPub);
 
     // Initialize interfaces for Science sensors
@@ -135,28 +167,33 @@ void handle_auger_vertical_velocity(const std_msgs::Int16 &message){
     }
 }
 
-void handle_gate_position(const std_msgs::Int16 & message){
-    last_command_gate_position = message.data;
-    if(digitalRead(PIN_LIMIT_SWITCH_UP) && last_command_gate_position > 0 ){
-        digitalWrite(PIN_GATE_POSITION_INA, HIGH);
-        digitalWrite(PIN_GATE_POSITION_INB, LOW);
-        analogWrite(PIN_GATE_POSITION_PWM, min(last_command_gate_position,120));
-    } else if (last_command_gate_position < 0){
-        digitalWrite(PIN_GATE_POSITION_INA, LOW);
-        digitalWrite(PIN_GATE_POSITION_INB, HIGH);
-        analogWrite(PIN_GATE_POSITION_PWM, min(abs(last_command_gate_position),120));
-    } else {
-        analogWrite(PIN_GATE_POSITION_PWM, 0);
-    }
+void handle_auger_servo_position(const std_msgs::Int16 &message){
+    int16_t position = message.data;
+    set_science_servo_position(auger_servo, position, AUGER_SERVO_OPEN_ANGLE, AUGER_SERVO_CLOSE_ANGLE);
 }
 
-void handle_temp_prob_position(const std_msgs::Int16 & message){
-    last_command_prob_position = message.data;
-    if (last_command_prob_position > 0 ){
-        tempProbServo.writeMicroseconds(1500 + last_command_prob_position);
-    } else if (digitalRead(PIN_LIMIT_SWITCH_PROB) && last_command_prob_position < 0){
-        tempProbServo.writeMicroseconds(1500 + last_command_prob_position);
-    } else {
-        tempProbServo.writeMicroseconds(1500);
+void handle_soil_servo_position(const std_msgs::Int16 &message){
+    int16_t position = message.data;
+    set_science_servo_position(soil_servo, position, ROCK_SOIL_SERVO_OPEN_ANGLE, ROCK_SOIL_SERVO_CLOSE_ANGLE);
+}
+
+void handle_rock_servo_position(const std_msgs::Int16 &message){
+    int16_t position = message.data;
+    set_science_servo_position(rock_servo, position, ROCK_SOIL_SERVO_OPEN_ANGLE, ROCK_SOIL_SERVO_CLOSE_ANGLE);
+}
+
+/**
+ * Helper for oppening or closing servos.
+ *
+ * @param servo: The particular servo that we want to open or close
+ * @param servoInput: The value received by the subscriber
+ * @param openPositionValue: The angle at which this particular servo is open
+ * @param closePositionValue: The angle at which this particular servo is closed
+ */
+void set_science_servo_position(Servo servo, int16_t servoInput, int openPositionValue, int closePositionValue){
+    if(servoInput == CLOSE_SERVO_SIGNAL){
+        servo.write(closePositionValue);
+    } else if(servoInput == OPEN_SERVO_SIGNAL){
+        servo.write(openPositionValue);
     }
 }
