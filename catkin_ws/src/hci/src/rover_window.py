@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '../MainWindow_V4.ui'
 #
-# Created: Fri Aug 26 08:53:51 2016
+# Created: Fri Aug 26 10:17:43 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -655,7 +655,7 @@ class Ui_MainWindow(object):
         self.ClawCloseLimit.setText(_translate("MainWindow", "Ok", None))
         self.rock_container_status_label.setText(_translate("MainWindow", "TextLabel", None))
         self.soil_container_status_label.setText(_translate("MainWindow", "TextLabel", None))
-        self.soil_container_checkbox.setText(_translate("MainWindow", "CheckBox", None))
+        self.soil_container_checkbox.setText(_translate("MainWindow", "Soil Container", None))
         self.rock_container_checkbox.setText(_translate("MainWindow", "Rock Container", None))
         self.augur_drill_enable.setText(_translate("MainWindow", "Augur Drill", None))
         self.augur_drill_status.setText(_translate("MainWindow", "TextLabel", None))

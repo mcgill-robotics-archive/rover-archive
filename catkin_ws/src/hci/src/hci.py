@@ -93,6 +93,8 @@ class CentralUi(QtGui.QMainWindow):
         self.arm_publisher = ArmPublisher()
 
         self.ui.camera_selector.setCurrentIndex(1)
+        self.soil_checkbox_callback(False)
+        self.rock_checkbox_callback(False)
 
         rospy.loginfo("HCI initialization completed")
 
