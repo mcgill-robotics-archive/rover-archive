@@ -46,7 +46,7 @@ float Encoder::readPosition() {
     if (rem > 350 )  // completed a full revolution (passed from 350 to 0)
         mRevolution ++;
     else if (rem < -350 ) // passed 0 to 350
-           mRevolution --;
+        mRevolution --;
 
     mPreviousAngle = ax + mRevolution * 360;
     return mPreviousAngle * mFactor;
