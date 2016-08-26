@@ -18,7 +18,7 @@ namespace arm {
  *
  * This class only drives the slave select line and transfers data on the SPI bus.
  *
- * <b>Note: </b> The SPI bus configuration and initialisation should be done be the caller of <code> readPosition() </code>
+ * <b>Note: </b> The SPI bus configuration and initialisation should be done by the caller of <code> readPosition() </code>
  */
 class Encoder {
 public:
@@ -37,7 +37,7 @@ public:
     /**
      * \brief Get the absolute position of the encoder
      *
-     * <b>Note:</> Ensure spi initialisation has been done prior to ordering the read
+     * <b>Note:</b> Ensure spi initialisation has been done prior to ordering the read
      *
      * \return Current position of the encoder on the 0 to 360 degrees circle
      */
