@@ -933,7 +933,7 @@
         <item row="1" column="0">
          <widget class="QCheckBox" name="soil_container_checkbox">
           <property name="text">
-           <string>CheckBox</string>
+           <string>Soil Container</string>
           </property>
          </widget>
         </item>
