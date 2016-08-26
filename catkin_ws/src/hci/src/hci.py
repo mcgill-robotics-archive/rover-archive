@@ -23,7 +23,7 @@ from rover_camera.srv import ChangeFeed
 from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
-from arduino.msg import LimitSwitchClaw, LimitSwitchScience
+from arduino.msg import LimitSwitchClaw
 from arduino.srv import *
 from ahrs.msg import AhrsStdMsg
 import tf.transformations
@@ -33,14 +33,6 @@ class CentralUi(QtGui.QMainWindow):
     claw_open_off = QtCore.pyqtSignal()
     claw_close_on = QtCore.pyqtSignal()
     claw_close_off = QtCore.pyqtSignal()
-    limit_switch_up_on = QtCore.pyqtSignal()
-    limit_switch_down_on = QtCore.pyqtSignal()
-    limit_switch_gate_on = QtCore.pyqtSignal()
-    limit_switch_prob_on = QtCore.pyqtSignal()
-    limit_switch_up_off = QtCore.pyqtSignal()
-    limit_switch_down_off = QtCore.pyqtSignal()
-    limit_switch_gate_off = QtCore.pyqtSignal()
-    limit_switch_prob_off = QtCore.pyqtSignal()
 
     fl_signal_ok = QtCore.pyqtSignal()
     fr_signal_ok = QtCore.pyqtSignal()
@@ -105,7 +97,10 @@ class CentralUi(QtGui.QMainWindow):
         self.map_point_list = []
 
         self.init_ros()
+        
+        self.science = ScienceController()
         self.init_connects()
+        
         self.init_timers()
         self.setup_minimap()
         self.get_feed_topic_params()
@@ -113,7 +108,6 @@ class CentralUi(QtGui.QMainWindow):
         self.master_name = parse_master_uri()
         self.drive_publisher = DrivePublisher()
         self.arm_publisher = ArmPublisher()
-        self.science = ScienceController()
 
         self.ui.camera_selector.setCurrentIndex(1)
 
@@ -123,7 +117,6 @@ class CentralUi(QtGui.QMainWindow):
         rospy.init_node('hci_window', anonymous=False)
         rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.handle_pose, queue_size=5)
         rospy.Subscriber('/limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
-        rospy.Subscriber('/claw_limit_switch', LimitSwitchScience, self.science_callback, queue_size=1)
         rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
@@ -147,16 +140,6 @@ class CentralUi(QtGui.QMainWindow):
             self.limit_switch_prob_on.emit()
         else:
             self.limit_switch_prob_off.emit()
-
-    def science_callback(self, msg):
-        if msg.open:
-            self.claw_open_on.emit()
-        else:
-            self.claw_open_off.emit()
-        if msg.close:
-            self.claw_close_on.emit()
-        else:
-            self.claw_close_off.emit()
 
     def motor_status(self, msg):
         if msg.fl:
@@ -191,14 +174,10 @@ class CentralUi(QtGui.QMainWindow):
 
     def init_connects(self):
         # joystick mode buttons signal connect
-        QtCore.QObject.connect(self.ui.DriveMode, QtCore.SIGNAL("clicked()"),
-                               lambda index=0: self.set_controller_mode(index))
-        QtCore.QObject.connect(self.ui.ArmBaseMode, QtCore.SIGNAL("clicked()"),
-                               lambda index=1: self.set_controller_mode(index))
-        QtCore.QObject.connect(self.ui.ScienceMode, QtCore.SIGNAL("clicked()"),
-                               lambda index=2: self.set_controller_mode(index))
-        QtCore.QObject.connect(self.ui.function4, QtCore.SIGNAL("clicked()"),
-                               lambda index=3: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.DriveMode, QtCore.SIGNAL("clicked()"), lambda index=0: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.ArmBaseMode, QtCore.SIGNAL("clicked()"), lambda index=1: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.ScienceMode, QtCore.SIGNAL("clicked()"), lambda index=2: self.set_controller_mode(index))
+        QtCore.QObject.connect(self.ui.function4, QtCore.SIGNAL("clicked()"), lambda index=3: self.set_controller_mode(index))
 
         QtCore.QObject.connect(self.ui.screenshot, QtCore.SIGNAL("clicked()"), self.take_screenshot)
         QtCore.QObject.connect(self.ui.pointSteer, QtCore.SIGNAL("toggled(bool)"), self.set_point_steer)
@@ -212,27 +191,31 @@ class CentralUi(QtGui.QMainWindow):
         # camera feed selection signal connects
         QtCore.QObject.connect(self.ui.waypoint, QtCore.SIGNAL("clicked()"), self.add_way_point)
         QtCore.QObject.connect(self.ui.clearMap, QtCore.SIGNAL("clicked()"), self.clear_map)
-        QtCore.QObject.connect(self.ui.driveModeSelection, QtCore.SIGNAL("currentIndexChanged(int)"),
-                               self.set_motor_controller_mode)
-        QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"),
-                               self.change_video_feed)
+        QtCore.QObject.connect(self.ui.driveModeSelection, QtCore.SIGNAL("currentIndexChanged(int)"), self.set_motor_controller_mode)
+        QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"), self.change_video_feed)
 
         QtCore.QObject.connect(self.ui.augurDrillEnable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
 
-        # motor readys
+        # claw limit switches
         self.claw_close_on.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_norm(lbl))
         self.claw_open_on.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_norm(lbl))
+        self.claw_close_off.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_red(lbl))
+        self.claw_open_off.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_red(lbl))
 
+        # augur limit switches
+        self.science.limit_switch_up_on.connect(lmabda lbl=self.ui.AugUpLim : lbl_bg_norm(lbl))
+        self.science.limit_switch_down_on.connect(lmabda lbl=self.ui.AugDnLim : lbl_bg_norm(lbl))
+        self.science.limit_switch_up_off.connect(lmabda lbl=self.ui.AugUpLim : llb_bg_red(lbl))
+        self.science.limit_switch_down_off.connect(lmabda lbl=self.ui.AugDnLim : llb_bg_red(lbl))
+
+        # motor readys
         self.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
         self.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
         self.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
         self.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
         self.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
         self.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
-
-        self.claw_close_off.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_red(lbl))
-        self.claw_open_off.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_red(lbl))
-
+        
         self.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
         self.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
         self.ml_signal_bad.connect(lambda lbl=self.ui.ml_ok: lbl_bg_red(lbl))
