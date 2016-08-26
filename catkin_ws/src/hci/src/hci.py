@@ -138,6 +138,8 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"), self.change_video_feed)
 
         QtCore.QObject.connect(self.ui.augur_drill_enable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
+        QtCore.QObject.connect(self.ui.soil_container_checkbox, QtCore.SIGNAL("toggled(bool)"), self.soil_checkbox_callback)
+        QtCore.QObject.connect(self.ui.rock_container_checkbox, QtCore.SIGNAL("toggled(bool)"), self.rock_checkbox_callback)
 
         # claw limit switches
         self.claw_close_on.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_norm(lbl))
@@ -204,6 +206,22 @@ class CentralUi(QtGui.QMainWindow):
             self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.HighSpeed)
         elif mode_index == 3:
             self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.OpenLoop)
+
+    def soil_checkbox_callback(self, open):
+        if open:
+            self.science.open_soil_gate()
+            self.ui.soil_container_status_label.setText("Opened")
+        else:
+            self.science.close_soil_gate()
+            self.ui.soil_container_status_label.setText("Closed")
+
+    def rock_checkbox_callback(self, open):
+        if open:
+            self.science.open_rock_gate()
+            self.ui.rock_container_status_label.setText("Opened")
+        else:
+            self.science.close_rock_gate()
+            self.ui.rock_container_status_label.setText("Closed")
 
     def read_voltage(self):
         try:
