@@ -3,6 +3,7 @@
 
 #include "MotorConfig.h"
 #include "MotorController.h"
+#include "PanTiltControl.h"
 #include "Wheel.h"
 #include "SteeringWheel.h"
 #include "ram/ram.h"
@@ -10,6 +11,7 @@
 #include "rover_common/MotorControllerMode.h"
 #include "std_msgs/Bool.h"
 #include "drive_control/WheelCommand.h"
+#include "geometry_msgs/Twist.h"
 
 #define MAXON_PINS
 #define MAXON_CONTROLLERS
@@ -21,6 +23,7 @@
 
 void driveCallback( const drive_control::WheelCommand& setPoints );
 void callbackMoving( const std_msgs::Bool& boolean);
+void panTiltCallback(const geometry_msgs::Twist& speeds);
 
 ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
@@ -29,6 +32,7 @@ ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~f
 ros::Publisher motorStatusPublisher("/motor_status", &motorStatusMessage);
 ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
 ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );
+ros::Subscriber<geometry_msgs::Twist> panTiltSubscriber("/pan_camera_command", &panTiltCallback);
 
 motor::MotorConfig configFL;
 motor::MotorConfig configML;
@@ -43,6 +47,8 @@ drive::SteeringWheel * rightFront;
 drive::SteeringWheel * rightBack;
 drive::Wheel * middleLeft;
 drive::Wheel * middleRight;
+
+pan_tilt_control::PanTiltControl * mastCameraController;
 
 unsigned long lastSend = 0;
 
@@ -78,11 +84,17 @@ void callbackMoving( const std_msgs::Bool& boolean)
     middleRight->enable(boolean.data);
 }
 
+void panTiltCallback(const geometry_msgs::Twist& speeds) {
+    mastCameraController->setTiltSpeed(speeds.linear.y);
+    mastCameraController->setPanSpeed(speeds.linear.x);
+}
+
 void setup() {
     nh.initNode();
     nh.advertiseService(ramService);
     nh.subscribe(movingSubscriber);
     nh.subscribe(driveSubscriber);
+    nh.subscribe(panTiltSubscriber);
     nh.advertise(motorStatusPublisher);
 
     configFL.enablePin = FL_ENABLE_PIN;
@@ -151,6 +163,9 @@ void setup() {
 
     middleLeft = new drive::Wheel(configML, &nh);
     middleRight = new drive::Wheel(configMR, &nh);
+
+    mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO);
+
     delay(0);
 }
 
@@ -175,5 +190,8 @@ void loop()
     }
 
     nh.spinOnce();
+
+
+
     delay(1);
 }
