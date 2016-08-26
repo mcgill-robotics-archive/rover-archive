@@ -10,6 +10,7 @@ from arm_publisher import *
 from joystick_profile import JoystickProfile
 from utilities import *
 from ScienceController import *
+from pan_tilt_controller import PanTiltController
 
 import rospy
 import Queue
@@ -84,7 +85,7 @@ class CentralUi(QtGui.QMainWindow):
         self.science = ScienceController()
         self.drive_publisher = DriveController()
         self.init_connects()
-        
+        self.pan_tilt_control = PanTiltController()
         self.init_timers()
         self.setup_minimap()
         self.get_feed_topic_params()
@@ -418,7 +419,7 @@ class CentralUi(QtGui.QMainWindow):
 
         if self.profile.param_value["joystick/point_steer"]:
             self.set_controller_mode(0)
-            self.ui.translatory.setChecked(True)
+            self.ui.pointSteer.setChecked(True)
 
         if self.profile.param_value["joystick/ackreman"]:
             self.set_controller_mode(0)
@@ -441,30 +442,46 @@ class CentralUi(QtGui.QMainWindow):
             self.ui.end_eff.setChecked(True)
 
         if self.modeId == 0:
-            # if self.profile.param_value["/joystick/toggle_point_steer"]:
-            #     if self.ui.ackreman.isChecked():
-            #         self.ui.pointSteer.setChecked(True)
-            #     else:
-            #         self.ui.ackreman.setChecked(True)
-            pass
+            self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
+            self.drive_publisher.set_speed(self.controller.a2 * 5, self.controller.a1)
+            # drive mode
 
-        elif self.modeId == 2:
+        elif self.modeId == 1:
+            # arm base mode
+            if self.ui.ackMoving.isChecked():
+                constant = (self.controller.a4 + 1) * 100
+                rospy.logdebug("Scalar constant : {0}".format(constant))
+                if self.ui.base.isChecked():
+                    self.arm_publisher.publish_base(self.controller.a2 * constant, -self.controller.a1 * constant)
+                elif self.ui.diff1.isChecked():
+                    self.arm_publisher.publish_diff_1(self.controller.a2 * constant, self.controller.a1 * constant)
+                elif self.ui.diff2.isChecked():
+                    self.arm_publisher.publish_diff_2(self.controller.a2 * constant, self.controller.a1 * constant)
+                elif self.ui.end_eff.isChecked():
+                    self.arm_publisher.publish_end_effector(self.controller.a2 * constant)
+            else:
+                self.arm_publisher.publish_joint_vels(0, 0, 0, 0, 0, 0, 0)
+
+        if self.modeId == 2:
             # Science mode.
             # Activate or not
             if self.profile.param_value["joystick/drill_on"]:
-                if not self.ui.augur_drill_enable.isChecked():
-                    self.ui.augur_drill_enable.setChecked(self.science.activate_drill())
-                    self.ui.augur_drill_status.setText("Enabled")
+                self.ui.augur_drill_enable.setChecked(self.science.activate_drill())
+                self.ui.augur_drill_status.setText("Enabled")
 
             if self.profile.param_value["joystick/drill_off"]:
-                if self.ui.augur_drill_enable.isChecked():
-                    self.ui.augur_drill_enable.setChecked(self.science.deactivate_drill())
-                    self.ui.augur_drill_status.setText("Disabled")
+                self.ui.augur_drill_enable.setChecked(self.science.deactivate_drill())
+                self.ui.augur_drill_status.setText("Disabled")
 
+            # todo: confirm proper axis and sign
+            self.science.publish_auger_height(self.controller.a1)
+
+        elif self.modeId == 3:
+            # camera mode
+            # todo: confirm proper axis and sign
+            self.pan_tilt_control.publish_pan_tilt(self.controller.a1, self.controller.a2)
             pass
 
-        # elif self.modeId == 3:
-            # currently in camera control
         if self.profile.param_value["joystick/prev_cam"]:
             self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() - 1) % self.ui.camera_selector.count())
         elif self.profile.param_value["joystick/next_cam"]:
@@ -504,49 +521,6 @@ class CentralUi(QtGui.QMainWindow):
         if next_topic is not "":
             self.main_camera_subscriber.unregister()
             self.main_camera_subscriber = rospy.Subscriber(next_topic, CompressedImage, self.receive_pixmap_main)
-
-    def publish_controls(self):
-        if self.modeId == 0:
-            self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
-            self.drive_publisher.set_speed(self.controller.a2 * 5, self.controller.a1)
-            # drive mode
-            pass
-        elif self.modeId == 1:
-            # arm base mode
-            if self.ui.ackMoving.isChecked():
-                constant = (self.controller.a4 + 1) * 100
-                rospy.logdebug("Scalar constant : {0}".format(constant))
-                if self.ui.base.isChecked():
-                    self.arm_publisher.publish_base(self.controller.a2 * constant, -self.controller.a1 * constant)
-                elif self.ui.diff1.isChecked():
-                    self.arm_publisher.publish_diff_1(self.controller.a2 * constant, self.controller.a1 * constant)
-                elif self.ui.diff2.isChecked():
-                    self.arm_publisher.publish_diff_2(self.controller.a2 * constant, self.controller.a1 * constant)
-                elif self.ui.end_eff.isChecked():
-                    self.arm_publisher.publish_end_effector(self.controller.a2 * constant)
-
-            else:
-                self.arm_publisher.publish_joint_vels(0, 0, 0, 0, 0, 0, 0)
-
-            pass
-        elif self.modeId == 2:
-            # science mode
-            pass
-        elif self.modeId == 3:
-            # camera mode
-            if self.ui.camera_selector.currentIndex() == 0:
-                if (self.controller.a2 != 0) or (self.controller.a3 != 0) or (self.controller.a1 != 0):
-                    try:
-                        rospy.wait_for_service("crop_control", timeout=1)
-                        service = rospy.ServiceProxy("crop_control", ControlView)
-                    except rospy.ROSException:
-                        rospy.logerr("Timeout trying to find service /crop_control")
-                        return
-
-                    response = service(-10 * self.controller.a1, -10 * self.controller.a2, 10 * self.controller.a3)
-                    if not response:
-                        rospy.logerr("Failed to adjust omnicam image.")
-            pass
 
     def set_controller_mode(self, mode_id):
         self.modeId = mode_id
@@ -629,7 +603,6 @@ class CentralUi(QtGui.QMainWindow):
                 # left_painter.end()
             finally:
                 pass
-
 
         else:
             self.ui.camera2.setText("no video feed")
