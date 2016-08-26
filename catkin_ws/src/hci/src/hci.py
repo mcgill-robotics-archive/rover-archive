@@ -478,7 +478,7 @@ class CentralUi(QtGui.QMainWindow):
 
         elif self.modeId == 3:
             # camera mode
-            # todo: confirm proper axis and sign
+            # todo: confirm proper sign
             self.pan_tilt_control.publish_pan_tilt(self.controller.a1, self.controller.a2)
             pass
 
@@ -488,7 +488,6 @@ class CentralUi(QtGui.QMainWindow):
             self.ui.camera_selector.setCurrentIndex((self.ui.camera_selector.currentIndex() + 1) % self.ui.camera_selector.count())
 
         self.controller.clear_buttons()
-        self.publish_controls()
 
     def toggle_drill(self):
         if not self.ui.augur_drill_enable.isChecked():
