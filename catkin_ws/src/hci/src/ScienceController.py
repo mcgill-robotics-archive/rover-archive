@@ -1,17 +1,20 @@
 
 import rospy
+from PyQt4 import QtCore
 from std_msgs.msg import Int16
 from arduino.msg import LimitSwitchScience
 
 
-class ScienceController(object):
+class ScienceController(QtCore.QObject):
     
     limit_switch_up_on = QtCore.pyqtSignal()
     limit_switch_down_on = QtCore.pyqtSignal()
     limit_switch_up_off = QtCore.pyqtSignal()
     limit_switch_down_off = QtCore.pyqtSignal()
 
-    def __init__(self, ui):
+    def __init__(self):
+
+        QtCore.QObject.__init__(self)
 
         self.height_publisher = rospy.Publisher("/serial_node/auger_position", Int16, queue_size=1)
         self.drill_publisher = rospy.Publisher("/serial_node/auger_velocity", Int16, queue_size=1)
@@ -68,7 +71,6 @@ class ScienceController(object):
             self.limit_switch_up_off.emit()
 
         if msg.limit_switch_down:
-            self.limit_switch_down_off.emit()
+            self.limit_switch_down_on.emit()
         else:
             self.limit_switch_down_off.emit()
-        

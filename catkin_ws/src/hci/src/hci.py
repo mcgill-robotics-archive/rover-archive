@@ -14,19 +14,17 @@ from ScienceController import *
 import rospy
 import Queue
 import os
-import math
 import datetime
 
 from std_msgs.msg import *
 from rover_common.msg import MotorStatus
-from rover_camera.srv import ChangeFeed
-from rover_common.srv import GetVoltageRead
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 from arduino.msg import LimitSwitchClaw
 from arduino.srv import *
 from ahrs.msg import AhrsStdMsg
 import tf.transformations
+
 
 class CentralUi(QtGui.QMainWindow):
     claw_open_on = QtCore.pyqtSignal()
@@ -194,7 +192,7 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.driveModeSelection, QtCore.SIGNAL("currentIndexChanged(int)"), self.set_motor_controller_mode)
         QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"), self.change_video_feed)
 
-        QtCore.QObject.connect(self.ui.augurDrillEnable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
+        QtCore.QObject.connect(self.ui.augur_drill_enable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
 
         # claw limit switches
         self.claw_close_on.connect(lambda lbl=self.ui.ClawCloseLimit: lbl_bg_norm(lbl))
@@ -203,10 +201,10 @@ class CentralUi(QtGui.QMainWindow):
         self.claw_open_off.connect(lambda lbl=self.ui.ClawOpenLimit: lbl_bg_red(lbl))
 
         # augur limit switches
-        self.science.limit_switch_up_on.connect(lmabda lbl=self.ui.AugUpLim : lbl_bg_norm(lbl))
-        self.science.limit_switch_down_on.connect(lmabda lbl=self.ui.AugDnLim : lbl_bg_norm(lbl))
-        self.science.limit_switch_up_off.connect(lmabda lbl=self.ui.AugUpLim : llb_bg_red(lbl))
-        self.science.limit_switch_down_off.connect(lmabda lbl=self.ui.AugDnLim : llb_bg_red(lbl))
+        self.science.limit_switch_up_on.connect(lambda lbl=self.ui.AugUpLim: lbl_bg_norm(lbl))
+        self.science.limit_switch_down_on.connect(lambda lbl=self.ui.AugDnLim: lbl_bg_norm(lbl))
+        self.science.limit_switch_up_off.connect(lambda lbl=self.ui.AugUpLim: lbl_bg_red(lbl))
+        self.science.limit_switch_down_off.connect(lambda lbl=self.ui.AugDnLim: lbl_bg_red(lbl))
 
         # motor readys
         self.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
@@ -489,19 +487,14 @@ class CentralUi(QtGui.QMainWindow):
             # Science mode.
             # Activate or not
             if self.profile.param_value["joystick/drill_on"]:
-                if not self.ui.augurDrillEnable.isChecked():
-                    self.ui.augurDrillEnable.setChecked(self.science.activate_drill())
+                if not self.ui.augur_drill_enable.isChecked():
+                    self.ui.augur_drill_enable.setChecked(self.science.activate_drill())
+                    self.ui.augur_drill_status.setText("Enabled")
 
             if self.profile.param_value["joystick/drill_off"]:
-                if self.ui.augurDrillEnable.isChecked():
-                    self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
-
-            if self.ui.drill_height.isChecked():
-                self.science.publish_auger_height(self.controller.a2)
-            elif self.ui.gate.isChecked():
-                self.science.move_gate(self.controller.a2)
-            elif self.ui.Thermocouple.isChecked():
-                self.science.move_thermocouple(self.controller.a2)
+                if self.ui.augur_drill_enable.isChecked():
+                    self.ui.augur_drill_enable.setChecked(self.science.deactivate_drill())
+                    self.ui.augur_drill_status.setText("Disabled")
 
             pass
 
@@ -516,10 +509,12 @@ class CentralUi(QtGui.QMainWindow):
         self.publish_controls()
 
     def toggle_drill(self):
-        if not self.ui.augurDrillEnable.isChecked():
-            self.ui.augurDrillEnable.setChecked(self.science.deactivate_drill())
+        if not self.ui.augur_drill_enable.isChecked():
+            self.ui.augur_drill_enable.setChecked(self.science.deactivate_drill())
+            self.ui.augur_drill_status.setText("Disabled")
         else:
-            self.ui.augurDrillEnable.setChecked(self.science.activate_drill())
+            self.ui.augur_drill_enable.setChecked(self.science.activate_drill())
+            self.ui.augur_drill_status.setText("Enabled")
 
     def get_feed_topic_params(self):
         for index in xrange(0, self.ui.camera_selector.count()):
