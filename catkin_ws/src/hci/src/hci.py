@@ -17,7 +17,6 @@ import os
 import datetime
 
 from std_msgs.msg import *
-from rover_common.msg import MotorStatus
 from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 from arduino.msg import LimitSwitchClaw
@@ -31,20 +30,6 @@ class CentralUi(QtGui.QMainWindow):
     claw_open_off = QtCore.pyqtSignal()
     claw_close_on = QtCore.pyqtSignal()
     claw_close_off = QtCore.pyqtSignal()
-
-    fl_signal_ok = QtCore.pyqtSignal()
-    fr_signal_ok = QtCore.pyqtSignal()
-    ml_signal_ok = QtCore.pyqtSignal()
-    mr_signal_ok = QtCore.pyqtSignal()
-    bl_signal_ok = QtCore.pyqtSignal()
-    br_signal_ok = QtCore.pyqtSignal()
-
-    fl_signal_bad = QtCore.pyqtSignal()
-    fr_signal_bad = QtCore.pyqtSignal()
-    ml_signal_bad = QtCore.pyqtSignal()
-    mr_signal_bad = QtCore.pyqtSignal()
-    bl_signal_bad = QtCore.pyqtSignal()
-    br_signal_bad = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         super(CentralUi, self).__init__(parent)
@@ -97,6 +82,7 @@ class CentralUi(QtGui.QMainWindow):
         self.init_ros()
         
         self.science = ScienceController()
+        self.drive_publisher = DriveController()
         self.init_connects()
         
         self.init_timers()
@@ -104,7 +90,6 @@ class CentralUi(QtGui.QMainWindow):
         self.get_feed_topic_params()
 
         self.master_name = parse_master_uri()
-        self.drive_publisher = DrivePublisher()
         self.arm_publisher = ArmPublisher()
 
         self.ui.camera_selector.setCurrentIndex(1)
@@ -115,60 +100,20 @@ class CentralUi(QtGui.QMainWindow):
         rospy.init_node('hci_window', anonymous=False)
         rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.handle_pose, queue_size=5)
         rospy.Subscriber('/limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
-        rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
         rospy.Subscriber("/right/image_raw/compressed", CompressedImage, self.receive_image_right)
         pass
 
     def claw_callback(self, msg):
-        if msg.limit_switch_up:
-            self.limit_switch_up_on.emit()
+        if msg.open:
+            self.claw_open_on.emit()
         else:
-            self.limit_switch_up_off.emit()
-        if msg.limit_switch_down:
-            self.limit_switch_down_on.emit()
+            self.claw_open_off.emit()
+        if msg.close:
+            self.claw_close_on.emit()
         else:
-            self.limit_switch_down_off.emit()
-        if msg.limit_switch_gate:
-            self.limit_switch_gate_on.emit()
-        else:
-            self.limit_switch_gate_off.emit()
-        if msg.limit_switch_prob:
-            self.limit_switch_prob_on.emit()
-        else:
-            self.limit_switch_prob_off.emit()
-
-    def motor_status(self, msg):
-        if msg.fl:
-            self.fl_signal_ok.emit()
-        else:
-            self.fl_signal_bad.emit()
-
-        if msg.fr:
-            self.fr_signal_ok.emit()
-        else:
-            self.fr_signal_bad.emit()
-
-        if msg.ml:
-            self.ml_signal_ok.emit()
-        else:
-            self.ml_signal_bad.emit()
-
-        if msg.mr:
-            self.mr_signal_ok.emit()
-        else:
-            self.mr_signal_bad.emit()
-
-        if msg.bl:
-            self.bl_signal_ok.emit()
-        else:
-            self.bl_signal_bad.emit()
-
-        if msg.br:
-            self.br_signal_ok.emit()
-        else:
-            self.br_signal_bad.emit()
+            self.claw_close_off.emit()
 
     def init_connects(self):
         # joystick mode buttons signal connect
@@ -207,19 +152,19 @@ class CentralUi(QtGui.QMainWindow):
         self.science.limit_switch_down_off.connect(lambda lbl=self.ui.AugDnLim: lbl_bg_red(lbl))
 
         # motor readys
-        self.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
-        self.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
-        self.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
-        self.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
-        self.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
-        self.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
+        self.drive_publisher.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
         
-        self.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
-        self.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
-        self.ml_signal_bad.connect(lambda lbl=self.ui.ml_ok: lbl_bg_red(lbl))
-        self.mr_signal_bad.connect(lambda lbl=self.ui.mr_ok: lbl_bg_red(lbl))
-        self.bl_signal_bad.connect(lambda lbl=self.ui.bl_ok: lbl_bg_red(lbl))
-        self.br_signal_bad.connect(lambda lbl=self.ui.br_ok: lbl_bg_red(lbl))
+        self.drive_publisher.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
+        self.drive_publisher.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
+        self.drive_publisher.ml_signal_bad.connect(lambda lbl=self.ui.ml_ok: lbl_bg_red(lbl))
+        self.drive_publisher.mr_signal_bad.connect(lambda lbl=self.ui.mr_ok: lbl_bg_red(lbl))
+        self.drive_publisher.bl_signal_bad.connect(lambda lbl=self.ui.bl_ok: lbl_bg_red(lbl))
+        self.drive_publisher.br_signal_bad.connect(lambda lbl=self.ui.br_ok: lbl_bg_red(lbl))
 
     def init_timers(self):
         # signal quality timer

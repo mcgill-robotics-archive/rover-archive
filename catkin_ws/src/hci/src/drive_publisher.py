@@ -1,19 +1,40 @@
 #!/usr/bin/env python
 import rospy
 from enum import IntEnum
-
+from PyQt4.QtCore import QObject
+from PyQt4.QtCore import pyqtSignal
 from drive_control.msg import DriveCommand
 from rover_common.msg import MotorControllerMode
+from rover_common.msg import MotorStatus
+
+
 
 ## Group all the drive related ros operations 
 #
-class DrivePublisher(object):
+class DriveController(QObject):
+
+    fl_signal_ok = pyqtSignal()
+    fr_signal_ok = pyqtSignal()
+    ml_signal_ok = pyqtSignal()
+    mr_signal_ok = pyqtSignal()
+    bl_signal_ok = pyqtSignal()
+    br_signal_ok = pyqtSignal()
+
+    fl_signal_bad = pyqtSignal()
+    fr_signal_bad = pyqtSignal()
+    ml_signal_bad = pyqtSignal()
+    mr_signal_bad = pyqtSignal()
+    bl_signal_bad = pyqtSignal()
+    br_signal_bad = pyqtSignal()
+
     ## Constructor
     #
     # Registers the ROS publishers for general speed commands and controller mode.
     # When initialisation completes, a new timer is launched and published the 
     # drive instructions periodically.
     def __init__(self):
+        QObject.__init__(self)
+
         self.speed_linear = 0
         self.speed_angular = 0
         self.steering_condition = SteeringCondition.Ackerman
@@ -29,6 +50,9 @@ class DrivePublisher(object):
 
         ## Timer which publishes drive instructions at 10 hz (0.1 s)
         self.timer = rospy.Timer(rospy.Duration(secs=0, nsecs=100000000), self.run)
+
+        rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
+
         
     ## Generate and send the message
     #
@@ -96,6 +120,38 @@ class DrivePublisher(object):
     def set_enable(self, enable):
         self.enable = enable
 
+    def motor_status(self, msg):
+        if msg.fl:
+            self.fl_signal_ok.emit()
+        else:
+            self.fl_signal_bad.emit()
+
+        if msg.fr:
+            self.fr_signal_ok.emit()
+        else:
+            self.fr_signal_bad.emit()
+
+        if msg.ml:
+            self.ml_signal_ok.emit()
+        else:
+            self.ml_signal_bad.emit()
+
+        if msg.mr:
+            self.mr_signal_ok.emit()
+        else:
+            self.mr_signal_bad.emit()
+
+        if msg.bl:
+            self.bl_signal_ok.emit()
+        else:
+            self.bl_signal_bad.emit()
+
+        if msg.br:
+            self.br_signal_ok.emit()
+        else:
+            self.br_signal_bad.emit()
+
+
 ## Enumerated class for easier passing of the current motor controller mode
 class MotorControllerTypeMode(IntEnum):
     OpenLoop = 3
@@ -113,5 +169,5 @@ class SteeringCondition(IntEnum):
 
 if __name__ == '__main__':
     rospy.init_node("drive_publisher")
-    ctl = DrivePublisher()
+    ctl = DriveController()
     rospy.spin()
