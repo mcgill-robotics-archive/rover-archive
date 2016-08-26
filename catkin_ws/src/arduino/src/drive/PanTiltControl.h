@@ -19,7 +19,7 @@ namespace pan_tilt_control {
 class PanTiltControl {
 private:
     int currentPanPosition = 0;
-    int panServoPin;
+    Servo * panServo;
     Servo * tiltServo;
 public:
     /**
