@@ -8,17 +8,12 @@
 #include "ram/ram.h"
 
 #include <TransformFrame/TransformSender.h>
-#include "Encoder.h"
 #include "PitchRollCompute.h"
-#include <PID_v1/PID_v1.h>
-#include <SPI.h>
 #include <include/MotorController.h>
 #include "arm_control/JointVelocities.h"
-#include "arm_control/JointPosition.h"
 #include "arm_control/ControlMode.h"
 #include "arm_control/EncoderPosition.h"
 #include <arduino/LimitSwitchClaw.h>
-#include "Potentiometer.h"
 
 /**
  * Init ros
