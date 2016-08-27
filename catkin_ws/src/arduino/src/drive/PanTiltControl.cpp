@@ -5,23 +5,21 @@
 #include "PanTiltControl.h"
 
 pan_tilt_control::PanTiltControl::PanTiltControl(uint8_t panPin, uint8_t tiltPin) {
-    panServo->attach(panPin);
-    tiltServo->attach(tiltPin);
+    panServo.attach(panPin);
+    tiltServo.attach(tiltPin);
 }
 
-pan_tilt_control::PanTiltControl::~PanTiltControl() {
-    delete tiltServo;
-}
+pan_tilt_control::PanTiltControl::~PanTiltControl() {}
 
 void pan_tilt_control::PanTiltControl::setPanSpeed(int speed) {
     // Implicitly, since the constant is the 0 speed point, if we have a negative speed then it reverses and vice versa
-    unsigned int pulseWidth = STOP_PAN_PW + speed;
+    int pulseWidth = STOP_PAN_PW + speed;
 
-    panServo->writeMicroseconds(pulseWidth);
+    panServo.writeMicroseconds(pulseWidth);
 }
 
 void pan_tilt_control::PanTiltControl::setTiltSpeed(int speed) {
     // Uses position control to mimic speed control
     currentPanPosition += speed;
-    tiltServo->write(currentPanPosition);
+    tiltServo.write(currentPanPosition);
 }

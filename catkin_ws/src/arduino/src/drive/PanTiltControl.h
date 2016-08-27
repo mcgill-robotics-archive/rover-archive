@@ -9,7 +9,6 @@
 #include <ros.h>
 #include "Servo.h"
 
-#define STOP_PAN_PW 1500 // In microseconds, the pulsewidth required to stop the pan servo
 
 namespace pan_tilt_control {
 
@@ -18,9 +17,10 @@ namespace pan_tilt_control {
  */
 class PanTiltControl {
 private:
+    const static int STOP_PAN_PW = 1500; // In microseconds, the pulsewidth required to stop the pan servo
     int currentPanPosition = 0;
-    Servo * panServo;
-    Servo * tiltServo;
+    Servo panServo;
+    Servo tiltServo;
 public:
     /**
      * \brief Public constructor.
