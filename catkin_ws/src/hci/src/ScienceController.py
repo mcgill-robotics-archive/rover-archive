@@ -16,12 +16,12 @@ class ScienceController(QtCore.QObject):
 
         QtCore.QObject.__init__(self)
 
-        self.height_publisher = rospy.Publisher("/serial_node/auger_position", Int16, queue_size=1)
-        self.drill_publisher = rospy.Publisher("/serial_node/auger_velocity", Int16, queue_size=1)
-        self.soil_gate_publisher = rospy.Publisher("/serial_node/soil_servo_position", Int16, queue_size=1)
-        self.rock_gate_publisher = rospy.Publisher("/serial_node/rock_servo_position", Int16, queue_size=1)
+        self.height_publisher = rospy.Publisher("/science/auger_position", Int16, queue_size=1)
+        self.drill_publisher = rospy.Publisher("/science/auger_velocity", Int16, queue_size=1)
+        self.soil_gate_publisher = rospy.Publisher("/science/soil_servo_position", Int16, queue_size=1)
+        self.rock_gate_publisher = rospy.Publisher("/science/rock_servo_position", Int16, queue_size=1)
         self.limit_switch_science_status = LimitSwitchScience()
-        rospy.Subscriber("/serial_node/limit_switch", LimitSwitchScience, self.limit_switch_callback, queue_size=1)
+        rospy.Subscriber("/science/limit_switch", LimitSwitchScience, self.limit_switch_callback, queue_size=1)
 
     def publish_auger_height(self, speed):
         mes = Int16()

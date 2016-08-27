@@ -13,8 +13,8 @@ file(GLOB SCIENCE_HDRS [^.]*.h)
 
 generate_arduino_firmware(science
         SRCS ${SCIENCE_SRCS} ${SCIENCE_HDRS} ${ROS_LIB_DIR}/time.cpp
-        BOARD uno
-        LIBS MotorControllerLibUno baro_driver
-        PORT /dev/uno_science
+        BOARD mega2560
+        LIBS MotorControllerLib baro_driver
+        PORT /dev/ttyACM0
         )
 
