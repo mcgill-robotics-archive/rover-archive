@@ -112,18 +112,18 @@ void loop (){
     nodeHandle.spinOnce();
 
     // We need to check the limit switches explicitly in every loop
-    if (!digitalRead(PIN_LIMIT_SWITCH_UP) && last_command_auger_vertical_velocity > 0){
+    if (!digitalRead(PIN_LIMIT_SWITCH_UP) && last_command_auger_vertical_velocity < 0){
         analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, 0);
     }
-    if (!digitalRead(PIN_LIMIT_SWITCH_DOWN) && last_command_auger_vertical_velocity < 0) {
+    if (!digitalRead(PIN_LIMIT_SWITCH_DOWN) && last_command_auger_vertical_velocity > 0) {
         analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, 0);
     }
 
     // Publish limit switch details
     if( switch_pub_schedule < millis() ){
         switch_pub_schedule += SWITCH_PUB_TIMEOUT;
-        limitSwitchMsg.limit_switch_up = digitalRead(PIN_LIMIT_SWITCH_UP);
-        limitSwitchMsg.limit_switch_down = digitalRead(PIN_LIMIT_SWITCH_DOWN);
+        limitSwitchMsg.limit_switch_up = (bool) digitalRead(PIN_LIMIT_SWITCH_UP);
+        limitSwitchMsg.limit_switch_down = (bool) digitalRead(PIN_LIMIT_SWITCH_DOWN);
         limitSwitchPub.publish(&limitSwitchMsg);
     }
 }
@@ -153,7 +153,7 @@ void handle_auger_angular_velocity(const std_msgs::Int16 &message){
 
 void handle_auger_vertical_velocity(const std_msgs::Int16 &message){
     last_command_auger_vertical_velocity = message.data;
-    if(digitalRead(PIN_LIMIT_SWITCH_UP) && last_command_auger_vertical_velocity > 0 ){
+    if(last_command_auger_vertical_velocity > 0 ){
         digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INA, HIGH);
         digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INB, LOW);
         analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, min(last_command_auger_vertical_velocity,255));

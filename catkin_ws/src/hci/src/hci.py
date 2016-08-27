@@ -228,10 +228,10 @@ class CentralUi(QtGui.QMainWindow):
 
     def read_voltage(self):
         try:
-            rospy.wait_for_service("/sensor_server", timeout=5)
-            service = rospy.ServiceProxy("/sensor_server", sensor)
+            rospy.wait_for_service("/science/sensor_server", timeout=5)
+            service = rospy.ServiceProxy("/science/sensor_server", sensor)
         except rospy.ROSException:
-            rospy.logerr("Timeout, service /sensor_server unavailable")
+            rospy.logerr("Timeout, service /science/sensor_server unavailable")
             return
 
         response = service()
@@ -474,7 +474,7 @@ class CentralUi(QtGui.QMainWindow):
                 self.ui.augur_drill_status.setText("Disabled")
 
             # todo: confirm proper axis and sign
-            self.science.publish_auger_height(self.controller.a1)
+            self.science.publish_auger_height(self.controller.a2)
 
         elif self.modeId == 3:
             # camera mode
