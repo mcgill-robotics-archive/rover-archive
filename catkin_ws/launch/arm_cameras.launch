@@ -1,0 +1,9 @@
+<launch>
+    <include file="$(find rover_camera)/launch/arm.launch"/>
+    <!--include file="$(find rover_camera)/launch/side.launch"/-->
+    <include file="$(find rover_camera)/launch/omnicam.launch"/>
+    <include file="$(find rover_camera)/launch/wideAngle.launch"/>
+    <include file="$(find rover_camera)/launch/leftHaz.launch"/>
+    <include file="$(find rover_camera)/launch/rightHaz.launch"/>
+    <include file="$(find arduino)/launch/arm.launch"/>
+</launch>
