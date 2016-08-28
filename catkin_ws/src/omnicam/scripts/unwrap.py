@@ -24,11 +24,11 @@ class Unwraper(object):
         if bw:
             self.encoding = "mono8"
             self.publisher_topic = "unwarp_GRAY"
-            self.subscriber_topic = "image_mono"
+            self.subscriber_topic = "/omnicam/image_mono"
         else:
             self.encoding = "bgr8"
             self.publisher_topic = "unwarp_BGR"
-            self.subscriber_topic = "image_color"
+            self.subscriber_topic = "/omnicam/image_color"
 
         rospy.init_node("omnicam_unwarp", anonymous=False)
         self.publisher = rospy.Publisher(self.publisher_topic, Image, queue_size=1)

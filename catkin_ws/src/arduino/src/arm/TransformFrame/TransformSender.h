@@ -8,6 +8,7 @@
 #include <ros.h>
 #include <tf/transform_broadcaster.h>
 #include "TransformConfig.h"
+#include "arm_control/JointPosition.h"
 
 namespace arm {
 
@@ -38,10 +39,12 @@ public:
      * This method registers the tfBroadcaster with the ros master and sends
      * a first all zero set of transforms.
      */
-    void init();
+    void init(ros::Publisher *publisher);
 
     /**
      * \brief Update the current angle of each transform.
+     *
+     * Note all angles are in radians
      */
     void updateRotations(float yaw_base, float pitch_base, float pitch2, float roll1, float pitch3, float roll2);
 
@@ -71,7 +74,8 @@ private:
     geometry_msgs::TransformStamped mRoll2;
 
     tf::TransformBroadcaster broadcaster;
-
+    arm_control::JointPosition jointPosition;
+    ros::Publisher * mPublisher;
     ros::NodeHandle * mNh;
     ros::Time mTime;
 };

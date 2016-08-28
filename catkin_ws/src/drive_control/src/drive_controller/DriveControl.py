@@ -34,7 +34,7 @@ class DriveControl:
         elif msg.motion_pointsteer:
             self.steering.pointTurn(self.general_command[1])
 
-        elif msg.motion_tranlatory:
+        elif msg.motion_translatory:
             self.steering.translationalMotion(self.general_command[0], self.general_command[1])
 
         elif msg.motion_skid:

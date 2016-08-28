@@ -1,0 +1,8 @@
+---
+int16 altitude
+int16 pressure
+int16 ambiant_temperature
+int16 ph
+int16 ground_temperature
+int16 humidity
+float32 wind_speed

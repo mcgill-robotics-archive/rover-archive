@@ -3,6 +3,7 @@
 
 #include "MotorConfig.h"
 #include "MotorController.h"
+#include "PanTiltControl.h"
 #include "Wheel.h"
 #include "SteeringWheel.h"
 #include "ram/ram.h"
@@ -10,20 +11,28 @@
 #include "rover_common/MotorControllerMode.h"
 #include "std_msgs/Bool.h"
 #include "drive_control/WheelCommand.h"
+#include "geometry_msgs/Twist.h"
+
+#define MAXON_PINS
+#define MAXON_CONTROLLERS
+
 #include "pins_drive.h"
+
 
 #define MOTOR_STATUS_UPDATE_RATE 100
 
 void driveCallback( const drive_control::WheelCommand& setPoints );
 void callbackMoving( const std_msgs::Bool& boolean);
+void panTiltCallback(const geometry_msgs::Twist& speeds);
 
 ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
 
 ros::ServiceServer<arduino::ram::Request, arduino::ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
-ros::Publisher motorStatusPublisher("motor_status", &motorStatusMessage);
+ros::Publisher motorStatusPublisher("/motor_status", &motorStatusMessage);
 ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
 ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );
+ros::Subscriber<geometry_msgs::Twist> panTiltSubscriber("/pan_camera_command", &panTiltCallback);
 
 motor::MotorConfig configFL;
 motor::MotorConfig configML;
@@ -39,6 +48,8 @@ drive::SteeringWheel * rightBack;
 drive::Wheel * middleLeft;
 drive::Wheel * middleRight;
 
+pan_tilt_control::PanTiltControl * mastCameraController;
+
 unsigned long lastSend = 0;
 
 float radToDeg(float rad)
@@ -48,20 +59,18 @@ float radToDeg(float rad)
 
 void driveCallback( const drive_control::WheelCommand& setPoints )
 {
-    char message[10];
-    sprintf(message, "%f", setPoints.flv);
-    leftFront->setSpeed((int) setPoints.flv * 50);
+    leftFront->setSpeed(-setPoints.flv);
     leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
-    leftBack->setSpeed((int) setPoints.blv * 50);
+    leftBack->setSpeed(-setPoints.blv);
     leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
 
-    rightFront->setSpeed((int) -setPoints.frv * 50);
+    rightFront->setSpeed(setPoints.frv);
     rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
-    rightBack->setSpeed((int) -setPoints.brv * 50);
+    rightBack->setSpeed(setPoints.brv);
     rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
 
-    middleLeft->setSpeed((int) setPoints.mlv * 50);
-    middleRight->setSpeed((int) -setPoints.mrv * 50);
+    middleLeft->setSpeed(-setPoints.mlv);
+    middleRight->setSpeed(setPoints.mrv);
 }
 
 void callbackMoving( const std_msgs::Bool& boolean)
@@ -75,11 +84,17 @@ void callbackMoving( const std_msgs::Bool& boolean)
     middleRight->enable(boolean.data);
 }
 
+void panTiltCallback(const geometry_msgs::Twist& speeds) {
+    mastCameraController->setTiltSpeed(speeds.linear.y);
+    mastCameraController->setPanSpeed(speeds.linear.x);
+}
+
 void setup() {
     nh.initNode();
     nh.advertiseService(ramService);
     nh.subscribe(movingSubscriber);
     nh.subscribe(driveSubscriber);
+    nh.subscribe(panTiltSubscriber);
     nh.advertise(motorStatusPublisher);
 
     configFL.enablePin = FL_ENABLE_PIN;
@@ -88,7 +103,6 @@ void setup() {
     configFL.directionPin = FL_DIRECTION_PIN;
     configFL.feedbackPin = FL_READY_PIN;
     configFL.speedPin = FL_DRIVE_PIN;
-    configFL.controllerType = motor::_MAXON;
 
     configML.enablePin = ML_ENABLE_PIN;
     configML.data1Pin = ML_DATA1_PIN;
@@ -96,7 +110,6 @@ void setup() {
     configML.directionPin = ML_DIRECTION_PIN;
     configML.feedbackPin = ML_READY_PIN;
     configML.speedPin = ML_DRIVE_PIN;
-    configML.controllerType = motor::_MAXON;
 
     configBL.enablePin = BL_ENABLE_PIN;
     configBL.data1Pin = BL_DATA1_PIN;
@@ -104,7 +117,6 @@ void setup() {
     configBL.directionPin = BL_DIRECTION_PIN;
     configBL.feedbackPin = BL_READY_PIN;
     configBL.speedPin = BL_DRIVE_PIN;
-    configBL.controllerType = motor::_MAXON;
 
     configFR.enablePin = FR_ENABLE_PIN;
     configFR.data1Pin = FR_DATA1_PIN;
@@ -112,7 +124,6 @@ void setup() {
     configFR.directionPin = FR_DIRECTION_PIN;
     configFR.feedbackPin = FR_READY_PIN;
     configFR.speedPin = FR_DRIVE_PIN;
-    configFR.controllerType = motor::_MAXON;
 
     configMR.enablePin = MR_ENABLE_PIN;
     configMR.data1Pin = MR_DATA1_PIN;
@@ -120,7 +131,6 @@ void setup() {
     configMR.directionPin = MR_DIRECTION_PIN;
     configMR.feedbackPin = MR_READY_PIN;
     configMR.speedPin = MR_DRIVE_PIN;
-    configMR.controllerType = motor::_MAXON;
 
     configBR.enablePin = BR_ENABLE_PIN;
     configBR.data1Pin = BR_DATA1_PIN;
@@ -128,7 +138,23 @@ void setup() {
     configBR.directionPin = BR_DIRECTION_PIN;
     configBR.feedbackPin = BR_READY_PIN;
     configBR.speedPin = BR_DRIVE_PIN;
+
+#ifdef MAXON_CONTROLLERS
+    configFL.controllerType = motor::_MAXON;
+    configML.controllerType = motor::_MAXON;
+    configBL.controllerType = motor::_MAXON;
+    configFR.controllerType = motor::_MAXON;
+    configMR.controllerType = motor::_MAXON;
     configBR.controllerType = motor::_MAXON;
+#endif
+#ifdef AFRO_CONTROLLERS
+    configFL.controllerType = motor::_AfroESC;
+    configML.controllerType = motor::_AfroESC;
+    configBL.controllerType = motor::_AfroESC;
+    configFR.controllerType = motor::_AfroESC;
+    configMR.controllerType = motor::_AfroESC;
+    configBR.controllerType = motor::_AfroESC;
+#endif
 
     leftFront = new drive::SteeringWheel(configFL, FL_STEERING_PIN, &nh);
     leftBack = new drive::SteeringWheel(configBL, BL_STEERING_PIN, &nh);
@@ -137,6 +163,10 @@ void setup() {
 
     middleLeft = new drive::Wheel(configML, &nh);
     middleRight = new drive::Wheel(configMR, &nh);
+
+    mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO);
+
+    delay(0);
 }
 
 void sendMotorStatus(ros::Publisher &publisher) {

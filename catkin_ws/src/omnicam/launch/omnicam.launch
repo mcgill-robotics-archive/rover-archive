@@ -1,13 +1,9 @@
 <launch>
 
-<arg name="config_file" />
+<arg name="config_file" default="/home/rover/rover/catkin_ws/src/omnicam/config/omnicam_config.json"/>
+<arg name="user" />
 
-<include file="$(find rover_camera)/launch/usb.launch">
-    <arg name="name" value="omnicam" />
-    <arg name="device" value="/dev/arm_camera" />
-</include>
-
-<group ns="omnicam">
+<group ns="$(arg user)">
     <param name="config_file" value="$(arg config_file)" />    
     <node name="dewarp1" pkg="omnicam" type="unwrap.py" respawn="false"/>>
     

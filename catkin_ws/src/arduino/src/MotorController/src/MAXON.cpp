@@ -31,13 +31,13 @@ MAXON::MAXON(uint8_t speedPin, uint8_t directionPin, uint8_t enablePin, uint8_t 
     setMode(mode);
 }
 
-void MAXON::setSpeed(int speed) {
+void MAXON::setSpeed(float speed) {
     setDirection(speed);
     speed = constrain(abs(speed), 0, 255);
     analogWrite(mSpeedPin, speed);
 }
 
-void MAXON::setDirection(int dir) {
+void MAXON::setDirection(float dir) {
     if (dir <= 0) digitalWrite(mDirectionPin, 0);
     else if (dir > 0) digitalWrite(mDirectionPin, 1);
 }

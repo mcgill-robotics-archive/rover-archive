@@ -2,23 +2,34 @@ import rospy
 
 ## List of legal parameter names for button functions  
 param_names = [# mode selection
-               "/joystick/drive_mode",
-               "/joystick/arm_base_mode",
-               "/joystick/camera_mode",
+               "joystick/drive_mode",
+               "joystick/arm_base_mode",
+               "joystick/camera_mode",
+               "joystick/science_mode",
 
-               # drive mode:
-               "/joystick/toggle_point_steer",
-               "/joystick/ackreman_moving",
-               "/joystick/point_steer",
-               "/joystick/ackreman",
+    # drive mode:
+               "joystick/toggle_point_steer",
+               "joystick/ackreman_moving",
+               "joystick/point_steer",
+               "joystick/ackreman",
 
                "joystick/prev_cam",
                "joystick/next_cam",
 
+               # Science:
+               "joystick/drill_on",
+               "joystick/drill_off",
+
                # arm mode:
-               "/joystick/next_arm_joint",
-               "/joystick/prev_arm_joint",
-               "/joystick/coord_system"]
+               "joystick/next_arm_joint",
+               "joystick/prev_arm_joint",
+               "joystick/coord_system",
+
+
+               "logitech/base",
+               "logitech/diff1",
+               "logitech/diff2",
+               "logitech/end"]
 
 ## Provides a simple mechanism to create button mapping on the controller.
 #
@@ -50,6 +61,12 @@ param_names = [# mode selection
 #    "/joystick/next_arm_joint",
 #    "/joystick/prev_arm_joint",
 #    "/joystick/coord_system",
+#
+#    buttons only on the logitech controller
+#    "/logitech/base",
+#    "/logitech/diff1",
+#    "/logitech/diff2",
+#    "/logitech/end"
 #
 #</code>
 #

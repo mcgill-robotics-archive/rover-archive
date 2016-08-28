@@ -6,4 +6,4 @@ add_subdirectory(power)
 add_subdirectory(arm)
 add_subdirectory(utilities)
 add_subdirectory(MotorController)
-
+add_subdirectory(science)

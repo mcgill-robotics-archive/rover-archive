@@ -45,7 +45,7 @@ public:
      *
      * \param speed Signed speed desired for this motor
      */
-    virtual void setSpeed(int speed);
+    virtual void setSpeed(float speed);
 
     /**
      * \brief Disengage the breaks
@@ -71,7 +71,7 @@ public:
      *
      * \param reverseDirection Whether or not the motor should run backwards
      */
-    virtual void setDirection(int speed);
+    virtual void setDirection(float speed);
 
     virtual void brake(bool brk);
 
