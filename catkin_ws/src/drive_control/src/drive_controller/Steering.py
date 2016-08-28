@@ -177,8 +177,8 @@ class Steering:
         # wheels have specific angle - all of them should form a circle together
         self.output_command.flsa = self.pointSteeringAngle  # forms circle
         self.output_command.frsa = -self.output_command.flsa
-        self.output_command.blsa = self.output_command.flsa
-        self.output_command.brsa = -self.output_command.flsa
+        self.output_command.blsa = -self.output_command.flsa
+        self.output_command.brsa = self.output_command.flsa
 
         if abs(wBody) < self.zero:
             # if no velocity, return angles and nothing else

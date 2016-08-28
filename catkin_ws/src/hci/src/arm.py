@@ -315,7 +315,7 @@ class CentralUi(QtGui.QMainWindow):
             try:
                 qimageBottom2 = QtGui.QImage.fromData(self.image4.data)
                 imageBottom2 = QtGui.QPixmap.fromImage(qimageBottom2)
-                rotated = imageBottom2.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
+                rotated = imageBottom2#.transformed(QtGui.QMatrix().rotate(180), QtCore.Qt.SmoothTransformation)
                 rotated = rotated.scaled(QtCore.QSize(rotated.width() * 2, rotated.height() * 2), 0)
             finally:
                 pass
