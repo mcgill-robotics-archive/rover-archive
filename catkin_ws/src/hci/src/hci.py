@@ -11,9 +11,8 @@ from joystick_profile import JoystickProfile
 from utilities import *
 from ScienceController import *
 from pan_tilt_controller import PanTiltController
-
+from map_controller import MapController
 import rospy
-import Queue
 import os
 import datetime
 
@@ -22,8 +21,6 @@ from sensor_msgs.msg import CompressedImage, Image
 from omnicam.srv import ControlView
 from arduino.msg import LimitSwitchClaw
 from arduino.srv import *
-from ahrs.msg import AhrsStdMsg
-import tf.transformations
 
 
 class CentralUi(QtGui.QMainWindow):
@@ -64,30 +61,14 @@ class CentralUi(QtGui.QMainWindow):
         self.imageRight = None
         self.main_camera_subscriber = None
 
-        # map place holders
-        self.tempPose = Queue.Queue()
-        self.new_x = []
-        self.new_y = []
-        self.w1 = None
-        self.s1 = None
-
-        self.x_waypoints = []
-        self.y_waypoints = []
-
-        self.first_point = False
-        self.dx = 0
-        self.dy = 0
-        # list for set of points in mini-map
-        self.map_point_list = []
-
         self.init_ros()
         
         self.science = ScienceController()
         self.drive_publisher = DriveController()
+        self.map_controller = MapController(self.ui)
         self.init_connects()
         self.pan_tilt_control = PanTiltController()
         self.init_timers()
-        self.setup_minimap()
         self.get_feed_topic_params()
 
         self.master_name = parse_master_uri()
@@ -101,7 +82,6 @@ class CentralUi(QtGui.QMainWindow):
 
     def init_ros(self):
         rospy.init_node('hci_window', anonymous=False)
-        rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.handle_pose, queue_size=5)
         rospy.Subscriber('/limit_switch', LimitSwitchClaw, self.claw_callback, queue_size=1)
         self.main_camera_subscriber = rospy.Subscriber("/wide_angle/image_raw/compressed", CompressedImage, self.receive_pixmap_main)
         rospy.Subscriber("/left/image_raw/compressed", CompressedImage, self.receive_image_left)
@@ -130,13 +110,14 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.ackreman, QtCore.SIGNAL("toggled(bool)"), self.set_ackreman)
         QtCore.QObject.connect(self.ui.skid, QtCore.SIGNAL("toggled(bool)"), self.set_skid)
         QtCore.QObject.connect(self.ui.translatory, QtCore.SIGNAL("toggled(bool)"), self.set_translatory)
-        QtCore.QObject.connect(self.ui.add_waypoint_dd, QtCore.SIGNAL("clicked()"), self.add_coord_dd)
-        QtCore.QObject.connect(self.ui.add_waypoint_dms, QtCore.SIGNAL("clicked()"), self.add_coord_dms)
         QtCore.QObject.connect(self.ui.read_sensor_button, QtCore.SIGNAL("clicked()"), self.read_voltage)
 
+        QtCore.QObject.connect(self.ui.add_waypoint_dd, QtCore.SIGNAL("clicked()"), self.map_controller.add_coord_dd)
+        QtCore.QObject.connect(self.ui.add_waypoint_dms, QtCore.SIGNAL("clicked()"), self.map_controller.add_coord_dms)
+        QtCore.QObject.connect(self.ui.waypoint, QtCore.SIGNAL("clicked()"), self.map_controller.add_way_point)
+        QtCore.QObject.connect(self.ui.clearMap, QtCore.SIGNAL("clicked()"), self.map_controller.clear_map)
+
         # camera feed selection signal connects
-        QtCore.QObject.connect(self.ui.waypoint, QtCore.SIGNAL("clicked()"), self.add_way_point)
-        QtCore.QObject.connect(self.ui.clearMap, QtCore.SIGNAL("clicked()"), self.clear_map)
         QtCore.QObject.connect(self.ui.driveModeSelection, QtCore.SIGNAL("currentIndexChanged(int)"), self.set_motor_controller_mode)
         QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"), self.change_video_feed)
 
@@ -177,10 +158,6 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.quality_timer, QtCore.SIGNAL("timeout()"), self.get_signal_quality)
         self.quality_timer.start(1000)
 
-        # add point to map
-        self.addPointTimer = QtCore.QTimer()
-        QtCore.QObject.connect(self.addPointTimer, QtCore.SIGNAL("timeout()"), self.add_point_timeout)
-        self.addPointTimer.start(100)
 
         # self.watchdog_timer = QtCore.QTimer()
         # QtCore.QObject.connect(self.watchdog_timer, QtCore.SIGNAL("timeout()"), reset_watchdog)
@@ -265,116 +242,6 @@ class CentralUi(QtGui.QMainWindow):
             rospy.logwarn("save successful " + filename)
         else:
             rospy.logwarn("fail save " + filename)
-
-    def add_point_set_to_mini_map(self):
-        new_set = pg.ScatterPlotItem(size=10, pen=pg.mkPen('w'), pxMode=True)  # create new point set
-        self.map_point_list.append(new_set)  # add point set to member list
-        self.w1.addItem(self.map_point_list[-1])  # add point set to graph window
-        rospy.loginfo("Added new scatter plot item")
-
-    def setup_minimap(self):
-
-        self.w1 = self.ui.graphicsView.addViewBox()
-        self.w1.setAspectLocked(False)
-        self.w1.enableAutoRange('xy', True)
-        self.ui.graphicsView.nextRow()
-
-        self.x_waypoints.append(0)
-        self.y_waypoints.append(0)
-
-        self.add_point_set_to_mini_map()
-        self.map_point_list[-1].addPoints(self.x_waypoints, self.y_waypoints, size=10, symbol='t', brush='b')
-
-    def handle_pose(self, data):
-        if data.gps.FIX_3D:
-            if not self.first_point:
-                self.first_point = True
-                self.dx = data.gps.longitude
-                self.dy = data.gps.latitude
-
-            # add (x,y) to tempPose queue
-            self.tempPose.put(data)
-
-    def add_point_timeout(self):
-        while not self.tempPose.empty():
-            pose = self.tempPose.get()
-
-            self.new_x = [(pose.gps.longitude - self.dx)]
-            self.new_y = [(pose.gps.latitude - self.dy)]
-            self.ui.latActual.setText(format_dms(pose.gps.latitude))
-            self.ui.lonActual.setText(format_dms(pose.gps.longitude))
-
-            quaternion = (
-                pose.pose.pose.orientation.x,
-                pose.pose.pose.orientation.y,
-                pose.pose.pose.orientation.z,
-                pose.pose.pose.orientation.w)
-            euler = tf.transformations.euler_from_quaternion(quaternion)
-            # euler = tf.transformations.euler_from_quaternion(pose.pose.pose.orientation)
-            roll = euler[0]
-            pitch = euler[1]
-            yaw = euler[2]
-
-            self.ui.pitchLBL.setText(format_euler_angle(pitch))
-            self.ui.rollLBL.setText(format_euler_angle(roll))
-            self.ui.yawLBL.setText(format_euler_angle(yaw))
-
-
-            self.points_counter += 1
-            if self.points_counter % 1000 == 0:
-                self.add_point_set_to_mini_map()
-
-            self.map_point_list[-1].addPoints(self.new_x, self.new_y, size=3, symbol='o', brush='w')
-            if self.ui.zoomGraph.isChecked():
-                self.w1.autoRange()
-
-    def add_way_point(self):
-        self.x_waypoints.append(self.new_x[0])
-        self.y_waypoints.append(self.new_y[0])
-        self.map_point_list[-1].addPoints([self.new_x[0]], [self.new_y[0]], size=10, symbol='t', brush='b')
-        if self.ui.zoomGraph.isChecked():
-            self.w1.autoRange()
-
-    def add_coord_dms(self):
-        longitude = self.ui.lon_deg.value() + self.ui.lon_min.value() / 60.0 + self.ui.lon_sec.value() / 3600.0
-        latitude = self.ui.lat_deg.value() + self.ui.lat_min.value() / 60.0 + self.ui.lat_sec.value() / 3600.0
-
-        if self.ui.lat_sign.currentIndex() == 1:
-            latitude = - latitude
-
-        if self.ui.lon_sign.currentIndex() == 1:
-            longitude = - longitude
-
-        x = longitude - self.dx
-        y = latitude - self.dy
-        self.x_waypoints.append(x)
-        self.y_waypoints.append(y)
-        self.map_point_list[-1].addPoints([x], [y], size=10, symbol='t', brush='r')
-        if self.ui.zoomGraph.isChecked():
-            self.w1.autoRange()
-
-    def add_coord_dd(self):
-        x = self.ui.x.value() - self.dx
-        y = self.ui.y.value() - self.dy
-        self.x_waypoints.append(x)
-        self.y_waypoints.append(y)
-        self.map_point_list[-1].addPoints([x], [y], size=10, symbol='t', brush='r')
-        if self.ui.zoomGraph.isChecked():
-            self.w1.autoRange()
-
-    def clear_map(self):
-        self.first_point = False
-        self.dx = 0
-        self.dy = 0
-
-        for item in self.map_point_list:
-            self.w1.removeItem(item)
-            self.map_point_list.remove(item)
-
-        self.add_point_set_to_mini_map()
-
-        self.map_point_list[-1].setData([], [], size=10, symbol='o', brush='r')
-        self.map_point_list[-1].addPoints(self.x_waypoints, self.y_waypoints, size=10, symbol='t', brush='b')
 
     def get_signal_quality(self):
         s = os.popen("ping -c 1 " + self.master_name)
