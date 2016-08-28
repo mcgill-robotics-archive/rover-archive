@@ -1,4 +1,3 @@
-import rospy
 from PyQt4 import QtCore
 import pyqtgraph as pg
 from ahrs.msg import AhrsStdMsg
@@ -99,11 +98,15 @@ class MapController(QtCore.QObject):
                 self.w1.autoRange()
 
     def add_way_point(self):
-        self.x_waypoints.append(self.new_x[0])
-        self.y_waypoints.append(self.new_y[0])
-        self.map_point_list[-1].addPoints([self.new_x[0]], [self.new_y[0]], size=10, symbol='t', brush='b')
-        if self.view.zoomGraph.isChecked():
-            self.w1.autoRange()
+        try:
+            self.x_waypoints.append(self.new_x[0])
+            self.y_waypoints.append(self.new_y[0])
+            self.map_point_list[-1].addPoints([self.new_x[0]], [self.new_y[0]], size=10, symbol='t', brush='b')
+            if self.view.zoomGraph.isChecked():
+                self.w1.autoRange()
+        except IndexError:
+            rospy.logwarn("Index error, skipping waypoint")
+            pass
 
     def add_coord_dms(self):
         longitude = self.view.lon_deg.value() + self.view.lon_min.value() / 60.0 + self.view.lon_sec.value() / 3600.0
