@@ -7,38 +7,32 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   roscpp
+  tf
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-find_package(Boost REQUIRED COMPONENTS system thread)
-
-include_directories(libraries/include/ahrs)
-include_directories(libraries/include/common)
-include_directories(vendors/sbgCom/src)
-
-add_subdirectory(vendors)
-add_subdirectory(libraries)
-
 ## Generate messages in the 'msg' folder
+
 add_message_files(
   FILES
-  AhrsStatusMessage.msg
+  AhrsStdMsg.msg
+  Ig500nGPS.msg
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-# )
+add_service_files(
+  FILES
+  CenterWorldFrame.srv
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  geometry_msgs  
-  sensor_msgs  
+  geometry_msgs
+  sensor_msgs
   std_msgs
 )
 
@@ -48,33 +42,51 @@ catkin_package()
 ## Build ##
 ###########
 
-file(GLOB AHRS_NODE_SOURCES src/[^.]*.cpp)
-file(GLOB AHRS_NODE_PRIVATE_HEADERS src/[^.]*.h)
+if(NOT APPLE)
 
-add_executable(ahrs_node
-    ${AHRS_NODE_SOURCES}
-    ${AHRS_NODE_PRIVATE_HEADERS}
-)
+  find_package(Boost REQUIRED COMPONENTS system thread)
 
-add_dependencies(ahrs_node 
-    ahrs_generate_messages_cpp
-)
+    include_directories(libraries/include/ahrs)
+    include_directories(libraries/include/common)
+    include_directories(vendors/sbgCom/src)
 
-target_link_libraries(
-    ahrs_node
-    ${catkin_LIBRARIES}
-    ahrs_lib
-    common
-)
+    add_subdirectory(vendors)
+    add_subdirectory(libraries)
 
-#############
-## Install ##
-#############
+    add_executable(ahrs_node
+        src/ahrs_node.cpp
+    )
 
-## Mark executables and/or libraries for installation
-install(TARGETS ahrs_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+    add_dependencies(ahrs_node
+        ahrs_generate_messages_cpp
+    )
 
+    target_link_libraries(
+        ahrs_node
+        ${catkin_LIBRARIES}
+        ahrs_lib
+        common
+    )
+
+    #############
+    ## Install ##
+    #############
+
+    ## Mark executables and/or libraries for installation
+    install(TARGETS ahrs_node 
+      ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+      LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+      RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    )
+
+    #############
+    ## Testing ##
+    #############
+    
+    catkin_add_gtest(utest test/ahrs_unit_test.cpp)
+    target_link_libraries(utest 
+        ${catkin_LIBRARIES} 
+        ${BOOST_THREAD_LIBRARIES} 
+        ahrs_lib)
+
+endif()

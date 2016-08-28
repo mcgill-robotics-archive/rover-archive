@@ -1,5 +1,6 @@
 #catkin devel
 devel/
+devel_isolated/
 install/
 
 # Byte-compiled / optimized / DLL files
@@ -61,4 +62,9 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-
+*.DS_Store
+CATKIN_IGNORE
+catkin_ws/src/arduino/docs
+docs
+build_isolated/
+*.sublime*

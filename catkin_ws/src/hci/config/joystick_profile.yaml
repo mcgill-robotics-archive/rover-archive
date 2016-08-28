@@ -1,0 +1,23 @@
+#mode select:
+joystick/drive_mode :           "2"
+joystick/camera_mode :          "4"
+joystick/arm_base_mode :        "3"
+
+#drive mode:
+joystick/ackreman_moving :      "1" # motor enable
+joystick/toggle_point_steer :   "5"
+#joystick/point_steer :          "5"
+#joystick/ackreman :             "3"
+
+#cam mode
+joystick/next_cam :             "6"
+joystick/prev_cam :             "7"
+
+#arm mode:
+joystick/next_arm_joint :       "6"
+joystick/prev_arm_joint :       "7"
+#joystick/arm_mode :             "5"
+
+# science mode
+joystick/drill_on: "6"
+joystick/drill_off: "7"
