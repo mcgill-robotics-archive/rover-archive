@@ -29,14 +29,18 @@ class ScienceController(QtCore.QObject):
         self.height_publisher.publish(mes)
 
     def deactivate_drill(self):
-        rospy.loginfo("Try to deactivate")
         mes = Int16()
         mes.data = 0
         self.drill_publisher.publish(mes)
         return False
 
     def activate_drill(self):
-        rospy.loginfo("Try to activate")
+        mes = Int16()
+        mes.data = 255
+        self.drill_publisher.publish(mes)
+        return True
+
+    def reverse_drill(self):
         mes = Int16()
         mes.data = -255
         self.drill_publisher.publish(mes)

@@ -23,6 +23,7 @@ class MapController(QtCore.QObject):
         self.y_waypoints = []
 
         self.first_point = False
+        self.points_counter = 0
         self.dx = 0
         self.dy = 0
         # list for set of points in mini-map
@@ -63,8 +64,8 @@ class MapController(QtCore.QObject):
                 self.dx = data.gps.longitude
                 self.dy = data.gps.latitude
 
-            # add (x,y) to tempPose queue
-            self.tempPose.put(data)
+        # add (x,y) to tempPose queue
+        self.tempPose.put(data)
 
     def add_point_timeout(self):
         while not self.tempPose.empty():
