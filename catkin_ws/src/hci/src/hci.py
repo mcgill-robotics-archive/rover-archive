@@ -62,7 +62,7 @@ class CentralUi(QtGui.QMainWindow):
 
         self.init_ros()
         
-        self.science = ScienceController()
+        self.science = ScienceController(self.ui)
         self.drive_publisher = DriveController()
         self.map_controller = MapController(self.ui)
         self.init_connects()
