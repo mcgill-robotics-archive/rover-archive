@@ -12,10 +12,10 @@ class ScienceController(QtCore.QObject):
     limit_switch_up_off = QtCore.pyqtSignal()
     limit_switch_down_off = QtCore.pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, main_view):
 
         QtCore.QObject.__init__(self)
-
+        self.main_view = main_view
         self.height_publisher = rospy.Publisher("/science/auger_position", Int16, queue_size=1)
         self.drill_publisher = rospy.Publisher("/science/auger_velocity", Int16, queue_size=1)
         self.soil_gate_publisher = rospy.Publisher("/science/soil_servo_position", Int16, queue_size=1)
@@ -27,6 +27,7 @@ class ScienceController(QtCore.QObject):
         mes = Int16()
         mes.data = speed * 255
         self.height_publisher.publish(mes)
+        self.main_view.aug_vert_speed.setText(str(mes.data))
 
     def deactivate_drill(self):
         mes = Int16()
