@@ -32,7 +32,6 @@ class CentralUi(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(CentralUi, self).__init__(parent)
 
-        self.points_counter = 0
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -120,8 +119,6 @@ class CentralUi(QtGui.QMainWindow):
         # camera feed selection signal connects
         QtCore.QObject.connect(self.ui.driveModeSelection, QtCore.SIGNAL("currentIndexChanged(int)"), self.set_motor_controller_mode)
         QtCore.QObject.connect(self.ui.camera_selector, QtCore.SIGNAL("currentIndexChanged(int)"), self.change_video_feed)
-
-        QtCore.QObject.connect(self.ui.augur_drill_enable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
         QtCore.QObject.connect(self.ui.soil_container_checkbox, QtCore.SIGNAL("toggled(bool)"), self.soil_checkbox_callback)
         QtCore.QObject.connect(self.ui.rock_container_checkbox, QtCore.SIGNAL("toggled(bool)"), self.rock_checkbox_callback)
 
@@ -136,6 +133,11 @@ class CentralUi(QtGui.QMainWindow):
         self.science.limit_switch_down_on.connect(lambda lbl=self.ui.AugDnLim: lbl_bg_norm(lbl))
         self.science.limit_switch_up_off.connect(lambda lbl=self.ui.AugUpLim: lbl_bg_red(lbl))
         self.science.limit_switch_down_off.connect(lambda lbl=self.ui.AugDnLim: lbl_bg_red(lbl))
+
+        # drill buttons
+        QtCore.QObject.connect(self.ui.augur_drill_enable, QtCore.SIGNAL("clicked()"), self.toggle_drill)
+        QtCore.QObject.connect(self.ui.reverse_drill_enable, QtCore.SIGNAL("pressed()"), self.science.reverse_drill)
+        QtCore.QObject.connect(self.ui.reverse_drill_enable, QtCore.SIGNAL("released()"), self.science.deactivate_drill)
 
         # motor readys
         self.drive_publisher.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
