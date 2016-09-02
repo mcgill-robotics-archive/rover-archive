@@ -9,6 +9,8 @@
 #include <arduino/LimitSwitchScience.h>
 #include "Humidity.h"
 #include <std_msgs/Int16.h>
+#include <MotorConfig.h>
+#include <MotorController.h>
 #include "pins_auger.h"
 #include "Servo.h"
 #include "WindSensor.h"
@@ -57,6 +59,10 @@ WindSensor * windSensor;
 ros::NodeHandle nodeHandle;
 ros::ServiceServer<arduino::sensor::Request, arduino::sensor::Response> sensorService ("sensor_server", &sensorServiceCallback);
 
+motor::MotorConfig configDrillMotor;
+motor::MotorConfig configHeightMotor;
+motor::MotorController *drillMotor;
+motor::MotorController *heightMotor;
 
 /**
  * Arduino setup
@@ -73,14 +79,15 @@ void setup(){
     soil_servo.attach(PIN_SOIL_SERVO);
 
     // Up / Down auger velocity pins
-    pinMode(PIN_AUGER_VERTICAL_VELOCITY_INA, OUTPUT);
-    pinMode(PIN_AUGER_VERTICAL_VELOCITY_INB, OUTPUT);
-    pinMode(PIN_AUGER_VERTICAL_VELOCITY_PWM, OUTPUT);
+    configHeightMotor.data1Pin = PIN_AUGER_VERTICAL_VELOCITY_INA;
+    configHeightMotor.data2Pin = PIN_AUGER_VERTICAL_VELOCITY_INB;
+    configHeightMotor.speedPin = PIN_AUGER_VERTICAL_VELOCITY_PWM;
+    configHeightMotor.controllerType = motor::_POLOLU;
 
-    // Spin velocity pins for the auger
-    pinMode(PIN_AUGER_ANGULAR_VELOCITY_INA, OUTPUT);
-    pinMode(PIN_AUGER_ANGULAR_VELOCITY_INB, OUTPUT);
-    pinMode(PIN_AUGER_ANGULAR_VELOCITY_PWM, OUTPUT);
+    configDrillMotor.data1Pin = PIN_AUGER_ANGULAR_VELOCITY_INA;
+    configDrillMotor.data2Pin = PIN_AUGER_ANGULAR_VELOCITY_INB;
+    configDrillMotor.speedPin = PIN_AUGER_ANGULAR_VELOCITY_PWM;
+    configDrillMotor.controllerType = motor::_POLOLU;
 
     // Limit switches for the auger
     pinMode(PIN_LIMIT_SWITCH_UP, INPUT_PULLUP);
@@ -88,6 +95,8 @@ void setup(){
 
     // Initialize ROS interactions
     nodeHandle.initNode();
+    drillMotor = motor::MotorController::createMotorController(configDrillMotor, &nodeHandle);
+    heightMotor = motor::MotorController::createMotorController(configHeightMotor, &nodeHandle);
 
     nodeHandle.advertiseService(sensorService);
 
@@ -113,10 +122,10 @@ void loop (){
 
     // We need to check the limit switches explicitly in every loop
     if (!digitalRead(PIN_LIMIT_SWITCH_UP) && last_command_auger_vertical_velocity < 0){
-        analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, 0);
+        heightMotor->setSpeed(0);
     }
     if (!digitalRead(PIN_LIMIT_SWITCH_DOWN) && last_command_auger_vertical_velocity > 0) {
-        analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, 0);
+        heightMotor->setSpeed(0);
     }
 
     // Publish limit switch details
@@ -138,33 +147,12 @@ void sensorServiceCallback(const arduino::sensor::Request &request, arduino::sen
 
 void handle_auger_angular_velocity(const std_msgs::Int16 &message){
     last_command_auger_angular_velocity = message.data;
-    if(last_command_auger_angular_velocity > 0 ){
-        digitalWrite(PIN_AUGER_ANGULAR_VELOCITY_INA, HIGH);
-        digitalWrite(PIN_AUGER_ANGULAR_VELOCITY_INB, LOW);
-        analogWrite(PIN_AUGER_ANGULAR_VELOCITY_PWM, min(last_command_auger_angular_velocity,255));
-    } else if (last_command_auger_angular_velocity < 0){
-        digitalWrite(PIN_AUGER_ANGULAR_VELOCITY_INA, LOW);
-        digitalWrite(PIN_AUGER_ANGULAR_VELOCITY_INB, HIGH);
-        analogWrite(PIN_AUGER_ANGULAR_VELOCITY_PWM, min(abs(last_command_auger_angular_velocity),255));
-    } else {
-        analogWrite(PIN_AUGER_ANGULAR_VELOCITY_PWM, 0);
-    }
+    drillMotor->setSpeed(last_command_auger_angular_velocity);
 }
 
 void handle_auger_vertical_velocity(const std_msgs::Int16 &message){
     last_command_auger_vertical_velocity = message.data;
-    if(last_command_auger_vertical_velocity > 0 ){
-        digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INA, HIGH);
-        digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INB, LOW);
-        analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, min(last_command_auger_vertical_velocity,255));
-    } else if (last_command_auger_vertical_velocity < 0){
-        digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INA, LOW);
-        digitalWrite(PIN_AUGER_VERTICAL_VELOCITY_INB, HIGH);
-        analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, min(abs(last_command_auger_vertical_velocity),255));
-    } else {
-        // If there is an unwanted condition, such as a limit switch being triggered
-        analogWrite(PIN_AUGER_VERTICAL_VELOCITY_PWM, 0);
-    }
+    heightMotor->setSpeed(last_command_auger_vertical_velocity);
 }
 
 void handle_auger_servo_position(const std_msgs::Int16 &message){
