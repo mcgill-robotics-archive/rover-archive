@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import sys
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import QObject
 from PyQt4.QtGui import QCheckBox
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QLabel
@@ -20,6 +21,10 @@ class DrillStatus(QWidget):
     openSoilContainter = pyqtSignal()
     closeSoilContainter = pyqtSignal()
 
+    reverseDrill = pyqtSignal()
+    forwardDrill = pyqtSignal()
+    offDrill = pyqtSignal()
+
     def __init__(self):
         QWidget.__init__(self)
         hbox1 = QHBoxLayout()
@@ -30,6 +35,8 @@ class DrillStatus(QWidget):
         hbox3.setContentsMargins(0, 0, 0, 0)
         hbox4 = QHBoxLayout()
         hbox4.setContentsMargins(0, 0, 0, 0)
+        hbox5 = QHBoxLayout()
+        hbox5.setContentsMargins(0, 0, 0, 0)
         vbox1 = QVBoxLayout()
         vbox1.setContentsMargins(0, 0, 0, 0)
 
@@ -61,7 +68,19 @@ class DrillStatus(QWidget):
 
         self.closed_rock_container()
         self.closed_soil_container()
-        
+
+        self.drill_forward_button = QtGui.QRadioButton()
+        self.drill_forward_button.setText("Drill Forward")
+        self.drill_reverse_button = QtGui.QRadioButton()
+        self.drill_reverse_button.setText("Drill Reverse")
+        self.drill_off_button = QtGui.QRadioButton()
+        self.drill_off_button.setText("Drill OFF")
+        self.drill_off_button.click()
+
+        line_3 = QtGui.QFrame()
+        line_3.setFrameShape(QtGui.QFrame.HLine)
+        line_3.setFrameShadow(QtGui.QFrame.Sunken)
+
         hbox1.addWidget(label1)
         hbox1.addWidget(self.ls_up_status)
         hbox1.addWidget(label2)
@@ -72,12 +91,21 @@ class DrillStatus(QWidget):
         hbox3.addWidget(self.rock_status)
         hbox4.addWidget(self.soil_checkbox)
         hbox4.addWidget(self.soil_status)
+        hbox5.addWidget(self.drill_off_button)
+        hbox5.addWidget(self.drill_forward_button)
+        hbox5.addWidget(self.drill_reverse_button)
         vbox1.addItem(hbox1)
         vbox1.addItem(hbox2)
         vbox1.addWidget(line_2)
         vbox1.addItem(hbox3)
         vbox1.addItem(hbox4)
+        vbox1.addWidget(line_3)
+        vbox1.addItem(hbox5)
         self.setLayout(vbox1)
+
+        QObject.connect(self.drill_off_button, QtCore.SIGNAL("clicked()"), self.drill_button)
+        QObject.connect(self.drill_forward_button, QtCore.SIGNAL("clicked()"), self.drill_button)
+        QObject.connect(self.drill_reverse_button, QtCore.SIGNAL("clicked()"), self.drill_button)
 
     def drill_reverse(self):
         lbl_bg_red(self.drill_status_label, "Reverse")
@@ -130,6 +158,14 @@ class DrillStatus(QWidget):
 
     def closed_rock_container(self):
         lbl_bg_grn(self.rock_status, "CLOSED")
+
+    def drill_button(self):
+        if self.drill_forward_button.isChecked():
+            self.forwardDrill.emit()
+        elif self.drill_reverse_button.isChecked():
+            self.reverseDrill.emit()
+        else:
+            self.offDrill.emit()
 
 
 if __name__ == "__main__":
