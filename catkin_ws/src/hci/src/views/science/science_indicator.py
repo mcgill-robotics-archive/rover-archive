@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+
+import sys
+from PyQt4 import QtGui
+
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtGui import QCheckBox
+from PyQt4.QtGui import QHBoxLayout
+from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QVBoxLayout
+from PyQt4.QtGui import QWidget
+
+from hci.src.views.utilities import *
+
+
+class DrillStatus(QWidget):
+    openRockContainter = pyqtSignal()
+    closeRockContainter = pyqtSignal()
+
+    openSoilContainter = pyqtSignal()
+    closeSoilContainter = pyqtSignal()
+
+    def __init__(self):
+        QWidget.__init__(self)
+        hbox1 = QHBoxLayout()
+        hbox1.setContentsMargins(0, 0, 0, 0)
+        hbox2 = QHBoxLayout()
+        hbox2.setContentsMargins(0, 0, 0, 0)
+        hbox3 = QHBoxLayout()
+        hbox3.setContentsMargins(0, 0, 0, 0)
+        hbox4 = QHBoxLayout()
+        hbox4.setContentsMargins(0, 0, 0, 0)
+        vbox1 = QVBoxLayout()
+        vbox1.setContentsMargins(0, 0, 0, 0)
+
+        label1 = QLabel()
+        label1.setText("Limit Switch Up")
+        label2 = QLabel()
+        label2.setText("Limit Switch Down")
+        self.ls_up_status = QLabel()
+        self.limit_switch_up_off()
+        self.ls_down_status = QLabel()
+        self.limit_switch_down_off()
+
+        label3 = QLabel()
+        label3.setText("Drill status")
+        self.drill_status_label = QLabel()
+        self.drill_off()
+
+        line_2 = QtGui.QFrame()
+        line_2.setFrameShape(QtGui.QFrame.HLine)
+        line_2.setFrameShadow(QtGui.QFrame.Sunken)
+
+        self.rock_checkbox = QCheckBox()
+        self.rock_checkbox.setText("Rock Container")
+        self.rock_status = QLabel()
+
+        self.soil_checkbox = QCheckBox()
+        self.soil_checkbox.setText("Soil Container")
+        self.soil_status = QLabel()
+
+        self.closed_rock_container()
+        self.closed_soil_container()
+        
+        hbox1.addWidget(label1)
+        hbox1.addWidget(self.ls_up_status)
+        hbox1.addWidget(label2)
+        hbox1.addWidget(self.ls_down_status)
+        hbox2.addWidget(label3)
+        hbox2.addWidget(self.drill_status_label)
+        hbox3.addWidget(self.rock_checkbox)
+        hbox3.addWidget(self.rock_status)
+        hbox4.addWidget(self.soil_checkbox)
+        hbox4.addWidget(self.soil_status)
+        vbox1.addItem(hbox1)
+        vbox1.addItem(hbox2)
+        vbox1.addWidget(line_2)
+        vbox1.addItem(hbox3)
+        vbox1.addItem(hbox4)
+        self.setLayout(vbox1)
+
+    def drill_reverse(self):
+        lbl_bg_red(self.drill_status_label, "Reverse")
+        return
+
+    def drill_forward(self):
+        lbl_bg_red(self.drill_status_label, "Forward")
+        return
+
+    def drill_off(self):
+        lbl_bg_grn(self.drill_status_label, "Off")
+        return
+
+    def limit_switch_up_on(self):
+        lbl_bg_red(self.ls_up_status, "ON")
+        return
+
+    def limit_switch_down_on(self):
+        lbl_bg_red(self.ls_down_status, "ON")
+        return
+
+    def limit_switch_up_off(self):
+        lbl_bg_grn(self.ls_up_status, "OFF")
+        return
+
+    def limit_switch_down_off(self):
+        lbl_bg_grn(self.ls_down_status, "OFF")
+        return
+
+    def rock_checkbox_callback(self):
+        if self.rock_checkbox.isChecked():
+            self.openRockContainter.emit()
+        else:
+            self.closeRockContainter.emit()
+
+    def soil_checkbox_callback(self):
+        if self.soil_checkbox.isChecked():
+            self.openSoilContainter.emit()
+        else:
+            self.closeSoilContainter.emit()
+
+    def opened_soil_container(self):
+        lbl_bg_red(self.soil_status, "OPENED")
+
+    def closed_soil_container(self):
+        lbl_bg_grn(self.soil_status, "CLOSED")
+
+    def opened_rock_container(self):
+        lbl_bg_red(self.rock_status, "OPENED")
+
+    def closed_rock_container(self):
+        lbl_bg_grn(self.rock_status, "CLOSED")
+
+
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    ui = DrillStatus()
+    ui.show()
+    sys.exit(app.exec_())

@@ -63,7 +63,7 @@ class CentralUi(QtGui.QMainWindow):
         self.init_ros()
         
         self.science = ScienceController(self.ui)
-        self.drive_publisher = DriveController()
+        self.drive_controller = DriveController()
         self.map_controller = MapController(self.ui)
         self.init_connects()
         self.pan_tilt_control = PanTiltController()
@@ -140,19 +140,19 @@ class CentralUi(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.reverse_drill_enable, QtCore.SIGNAL("released()"), self.science.deactivate_drill)
 
         # motor readys
-        self.drive_publisher.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
-        self.drive_publisher.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
-        self.drive_publisher.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
-        self.drive_publisher.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
-        self.drive_publisher.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
-        self.drive_publisher.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
+        self.drive_controller.fl_signal_ok.connect(lambda lbl=self.ui.fl_ok: lbl_bg_norm(lbl))
+        self.drive_controller.fr_signal_ok.connect(lambda lbl=self.ui.fr_ok: lbl_bg_norm(lbl))
+        self.drive_controller.ml_signal_ok.connect(lambda lbl=self.ui.ml_ok: lbl_bg_norm(lbl))
+        self.drive_controller.mr_signal_ok.connect(lambda lbl=self.ui.mr_ok: lbl_bg_norm(lbl))
+        self.drive_controller.bl_signal_ok.connect(lambda lbl=self.ui.bl_ok: lbl_bg_norm(lbl))
+        self.drive_controller.br_signal_ok.connect(lambda lbl=self.ui.br_ok: lbl_bg_norm(lbl))
         
-        self.drive_publisher.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
-        self.drive_publisher.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
-        self.drive_publisher.ml_signal_bad.connect(lambda lbl=self.ui.ml_ok: lbl_bg_red(lbl))
-        self.drive_publisher.mr_signal_bad.connect(lambda lbl=self.ui.mr_ok: lbl_bg_red(lbl))
-        self.drive_publisher.bl_signal_bad.connect(lambda lbl=self.ui.bl_ok: lbl_bg_red(lbl))
-        self.drive_publisher.br_signal_bad.connect(lambda lbl=self.ui.br_ok: lbl_bg_red(lbl))
+        self.drive_controller.fl_signal_bad.connect(lambda lbl=self.ui.fl_ok: lbl_bg_red(lbl))
+        self.drive_controller.fr_signal_bad.connect(lambda lbl=self.ui.fr_ok: lbl_bg_red(lbl))
+        self.drive_controller.ml_signal_bad.connect(lambda lbl=self.ui.ml_ok: lbl_bg_red(lbl))
+        self.drive_controller.mr_signal_bad.connect(lambda lbl=self.ui.mr_ok: lbl_bg_red(lbl))
+        self.drive_controller.bl_signal_bad.connect(lambda lbl=self.ui.bl_ok: lbl_bg_red(lbl))
+        self.drive_controller.br_signal_bad.connect(lambda lbl=self.ui.br_ok: lbl_bg_red(lbl))
 
     def init_timers(self):
         # signal quality timer
@@ -181,13 +181,13 @@ class CentralUi(QtGui.QMainWindow):
 
     def set_motor_controller_mode(self, mode_index):
         if mode_index == 0:
-            self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.SlowSpeed)
+            self.drive_controller.set_motor_controller_mode(MotorControllerTypeMode.SlowSpeed)
         elif mode_index == 1:
-            self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.MediumSpeed)
+            self.drive_controller.set_motor_controller_mode(MotorControllerTypeMode.MediumSpeed)
         elif mode_index == 2:
-            self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.HighSpeed)
+            self.drive_controller.set_motor_controller_mode(MotorControllerTypeMode.HighSpeed)
         elif mode_index == 3:
-            self.drive_publisher.set_motor_controller_mode(MotorControllerTypeMode.OpenLoop)
+            self.drive_controller.set_motor_controller_mode(MotorControllerTypeMode.OpenLoop)
 
     def soil_checkbox_callback(self, open):
         if open:
@@ -256,19 +256,19 @@ class CentralUi(QtGui.QMainWindow):
 
     def set_point_steer(self, boolean):
         if boolean:
-            self.drive_publisher.set_steering_condition(SteeringCondition.Point)
+            self.drive_controller.set_steering_condition(SteeringCondition.Point)
 
     def set_ackreman(self, boolean):
         if boolean:
-            self.drive_publisher.set_steering_condition(SteeringCondition.Ackerman)
+            self.drive_controller.set_steering_condition(SteeringCondition.Ackerman)
 
     def set_skid(self, boolean):
         if boolean:
-            self.drive_publisher.set_steering_condition(SteeringCondition.Skid)
+            self.drive_controller.set_steering_condition(SteeringCondition.Skid)
 
     def set_translatory(self, boolean):
         if boolean:
-            self.drive_publisher.set_steering_condition(SteeringCondition.Translation)
+            self.drive_controller.set_steering_condition(SteeringCondition.Translation)
 
     def read_controller(self):
         self.controller.update()
@@ -311,8 +311,8 @@ class CentralUi(QtGui.QMainWindow):
             self.ui.end_eff.setChecked(True)
 
         if self.modeId == 0:
-            self.drive_publisher.set_enable(self.ui.ackMoving.isChecked())
-            self.drive_publisher.set_speed(self.controller.a2 * 5, self.controller.a1)
+            self.drive_controller.set_enable(self.ui.ackMoving.isChecked())
+            self.drive_controller.set_speed(self.controller.a2 * 5, self.controller.a1)
             # drive mode
 
         elif self.modeId == 1:
