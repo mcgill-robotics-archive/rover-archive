@@ -15,18 +15,19 @@ from hci.src.views.utilities import *
 
 
 class DrillStatus(QWidget):
-    openRockContainter = pyqtSignal()
-    closeRockContainter = pyqtSignal()
+    openRockContainter = pyqtSignal(name="openRockContainter")
+    closeRockContainter = pyqtSignal(name="closeRockContainter")
 
-    openSoilContainter = pyqtSignal()
-    closeSoilContainter = pyqtSignal()
+    openSoilContainter = pyqtSignal(name="openSoilContainter")
+    closeSoilContainter = pyqtSignal(name="closeSoilContainter")
 
     reverseDrill = pyqtSignal()
     forwardDrill = pyqtSignal()
     offDrill = pyqtSignal()
 
-    def __init__(self):
-        QWidget.__init__(self)
+    def __init__(self, parent=None):
+        super(DrillStatus, self).__init__(parent)
+
         hbox1 = QHBoxLayout()
         hbox1.setContentsMargins(0, 0, 0, 0)
         hbox2 = QHBoxLayout()
@@ -40,31 +41,31 @@ class DrillStatus(QWidget):
         vbox1 = QVBoxLayout()
         vbox1.setContentsMargins(0, 0, 0, 0)
 
-        label1 = QLabel()
+        label1 = QLabel(self)
         label1.setText("Limit Switch Up")
-        label2 = QLabel()
+        label2 = QLabel(self)
         label2.setText("Limit Switch Down")
-        self.ls_up_status = QLabel()
+        self.ls_up_status = QLabel(self)
         self.limit_switch_up_off()
-        self.ls_down_status = QLabel()
+        self.ls_down_status = QLabel(self)
         self.limit_switch_down_off()
 
-        label3 = QLabel()
+        label3 = QLabel(self)
         label3.setText("Drill status")
-        self.drill_status_label = QLabel()
+        self.drill_status_label = QLabel(self)
         self.drill_off()
 
-        line_2 = QtGui.QFrame()
+        line_2 = QtGui.QFrame(self)
         line_2.setFrameShape(QtGui.QFrame.HLine)
         line_2.setFrameShadow(QtGui.QFrame.Sunken)
 
-        self.rock_checkbox = QCheckBox()
+        self.rock_checkbox = QCheckBox(self)
         self.rock_checkbox.setText("Rock Container")
-        self.rock_status = QLabel()
+        self.rock_status = QLabel(self)
 
         self.soil_checkbox = QCheckBox()
         self.soil_checkbox.setText("Soil Container")
-        self.soil_status = QLabel()
+        self.soil_status = QLabel(self)
 
         self.closed_rock_container()
         self.closed_soil_container()
@@ -77,7 +78,7 @@ class DrillStatus(QWidget):
         self.drill_off_button.setText("Drill OFF")
         self.drill_off_button.click()
 
-        line_3 = QtGui.QFrame()
+        line_3 = QtGui.QFrame(self)
         line_3.setFrameShape(QtGui.QFrame.HLine)
         line_3.setFrameShadow(QtGui.QFrame.Sunken)
 
