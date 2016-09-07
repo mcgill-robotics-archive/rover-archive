@@ -1,6 +1,10 @@
+from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import sys
+
+from PyQt4.QtCore import QObject
+from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtGui import QGridLayout
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QLabel
@@ -11,6 +15,8 @@ from PyQt4.QtGui import QWidget
 
 
 class WaypointPad(QWidget):
+    createWaypoint = pyqtSignal(float, float)
+
     def __init__(self, parent=None):
         super(WaypointPad, self).__init__(parent)
 
@@ -94,9 +100,41 @@ class WaypointPad(QWidget):
         hbox2.addWidget(tab_widget)
         self.setLayout(hbox2)
 
+        QObject.connect(self.add_dms_button, QtCore.SIGNAL("clicked()"), self.create_dms_waypoint)
+        QObject.connect(self.add_dd_button, QtCore.SIGNAL("clicked()"), self.create_dd_waypoint)
 
+    def create_dms_waypoint(self):
+        longitude = self.lon_deg.value() + self.lon_min.value() / 60.0 + self.lon_sec.value() / 3600.0
+        latitude = self.lat_deg.value() + self.lat_min.value() / 60.0 + self.lat_sec.value() / 3600.0
+
+        if self.lat_sign.currentIndex() == 1:
+            latitude = - latitude
+
+        if self.lon_sign.currentIndex() == 1:
+            longitude = - longitude
+
+        self.createWaypoint.emit(longitude, latitude)
+        pass
+    
+    def create_dd_waypoint(self):
+        self.createWaypoint.emit(self.dd_lon.value(), self.dd_lat.value())
+        pass
+    
+    
 if __name__ == "__main__":
+
+    class Tester(QWidget):
+        def __init__(self):
+            super(Tester, self).__init__()
+            self.ui = WaypointPad(self)
+            self.ui.show()
+            self.ui.createWaypoint.connect(self.handle_new_point)
+
+        @pyqtSlot(float, float)
+        def handle_new_point(self, x, y):
+            print "X: {0}, Y: {1}".format(x, y)
+
     app = QtGui.QApplication(sys.argv)
-    ui = WaypointPad()
+    ui = Tester()
     ui.show()
     sys.exit(app.exec_())
