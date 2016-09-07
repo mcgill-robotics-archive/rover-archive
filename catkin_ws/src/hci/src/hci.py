@@ -377,12 +377,12 @@ class CentralUi(QtGui.QMainWindow):
             self.feed_topics_hires.append(param_value)
 
     def change_video_feed(self, index):
-        if index == 0:
-            self.ui.rot180.setChecked(True)
-            self.ui.flip_vertical.setChecked(True)
-        else:
-            self.ui.rot0.setChecked(True)
-            self.ui.flip_vertical.setChecked(False)
+        # if index == 0:
+        #     self.ui.rot180.setChecked(True)
+        #     self.ui.flip_vertical.setChecked(True)
+        # else:
+        #     self.ui.rot0.setChecked(True)
+        #     self.ui.flip_vertical.setChecked(False)
 
         next_topic = self.feed_topics[index]
 
