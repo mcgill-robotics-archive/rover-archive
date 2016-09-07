@@ -8,7 +8,7 @@ from PyQt4.QtGui import QLabel
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QWidget
 
-from hci.src.views.utilities import *
+from hci.src.utilities import *
 
 
 ## Wheel Status Structure
@@ -99,7 +99,6 @@ class WheelStatus(QWidget):
 
 if __name__ == "__main__":
     from PyQt4.QtCore import pyqtSignal
-
 
     class WheelDisplayTest(QWidget):
         signal = pyqtSignal(WheelStatusStruct, name="test_signal")

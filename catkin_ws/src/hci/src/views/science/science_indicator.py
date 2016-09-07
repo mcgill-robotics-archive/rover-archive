@@ -8,10 +8,11 @@ from PyQt4.QtCore import QObject
 from PyQt4.QtGui import QCheckBox
 from PyQt4.QtGui import QHBoxLayout
 from PyQt4.QtGui import QLabel
+from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QWidget
 
-from hci.src.views.utilities import *
+from hci.src.utilities import *
 
 
 class DrillStatus(QWidget):
@@ -20,6 +21,7 @@ class DrillStatus(QWidget):
 
     openSoilContainter = pyqtSignal(name="openSoilContainter")
     closeSoilContainter = pyqtSignal(name="closeSoilContainter")
+    getSensors = pyqtSignal()
 
     reverseDrill = pyqtSignal()
     forwardDrill = pyqtSignal()
@@ -82,6 +84,9 @@ class DrillStatus(QWidget):
         line_3.setFrameShape(QtGui.QFrame.HLine)
         line_3.setFrameShadow(QtGui.QFrame.Sunken)
 
+        self.sensor_button = QPushButton(self)
+        self.sensor_button.setText("Get Sensor Data")
+
         hbox1.addWidget(label1)
         hbox1.addWidget(self.ls_up_status)
         hbox1.addWidget(label2)
@@ -102,12 +107,13 @@ class DrillStatus(QWidget):
         vbox1.addItem(hbox4)
         vbox1.addWidget(line_3)
         vbox1.addItem(hbox5)
+        vbox1.addWidget(self.sensor_button)
         self.setLayout(vbox1)
 
         QObject.connect(self.drill_off_button, QtCore.SIGNAL("clicked()"), self.drill_button)
         QObject.connect(self.drill_forward_button, QtCore.SIGNAL("clicked()"), self.drill_button)
         QObject.connect(self.drill_reverse_button, QtCore.SIGNAL("clicked()"), self.drill_button)
-
+        QObject.connect(self.sensor_button, QtCore.SIGNAL("clicked()"), self.send_sensors)
     def drill_reverse(self):
         lbl_bg_red(self.drill_status_label, "Reverse")
         return
@@ -168,6 +174,8 @@ class DrillStatus(QWidget):
         else:
             self.offDrill.emit()
 
+    def send_sensors(self):
+        self.getSensors.emit()
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
