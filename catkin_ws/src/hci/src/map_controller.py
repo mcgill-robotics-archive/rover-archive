@@ -47,7 +47,7 @@ class MapController(QtCore.QObject):
     def setup_minimap(self):
 
         self.w1 = self.view.graphicsView.addViewBox()
-        self.w1.setAspectLocked(False)
+        self.w1.setAspectLocked(True)
         self.w1.enableAutoRange('xy', True)
         self.view.graphicsView.nextRow()
 
