@@ -100,6 +100,7 @@ void setup() {
     middleRight = new drive::Wheel(configMR, &nh);
 
     mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO, nh);
+    nh.loginfo("Drive controller ready");
 }
 
 void loop()
