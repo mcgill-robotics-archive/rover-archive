@@ -38,8 +38,8 @@
 
 #define FR_STEERING_PIN 3
 #define FL_STEERING_PIN 46 
-#define MR_SERVO 
-#define ML_SERVO 
+#define MR_SERVO NC
+#define ML_SERVO NC
 #define BR_STEERING_PIN 10
 #define BL_STEERING_PIN 44
 
@@ -61,8 +61,8 @@
 #define BL_DATA1_PIN 30
 #define BL_DATA2_PIN 29
 
-#define CAMERA_PAN_SERVO NC
-#define CAMERA_TILT_SERVO NC
+#define CAMERA_PAN_SERVO 12
+#define CAMERA_TILT_SERVO 11
 
 #define FR_READY_PIN 48
 #define FL_READY_PIN 36

@@ -10,17 +10,21 @@
 #include "Servo.h"
 
 
-namespace pan_tilt_control {
+namespace pan_tilt_control
+{
 
 /**
  * \brief Control both pan and tilt servos through a single interface.
  */
-class PanTiltControl {
+class PanTiltControl
+{
+
 private:
     const static int STOP_PAN_PW = 1500; // In microseconds, the pulsewidth required to stop the pan servo
-    int currentPanPosition = 0;
+    float currentPanPosition = 0;
     Servo panServo;
     Servo tiltServo;
+
 public:
     /**
      * \brief Public constructor.
@@ -28,7 +32,7 @@ public:
      * \param panPin The pin for the panning servo.
      * \param tiltPin The pin for the tilting servo.
      */
-    PanTiltControl(uint8_t panPin, uint8_t tiltPin);
+    PanTiltControl(uint8_t panPin, uint8_t tiltPin, ros::NodeHandle &nodeHandle);
     virtual ~PanTiltControl();
 
     /**
@@ -36,14 +40,14 @@ public:
      *
      * @param speed The speed at which to rotate the servo.
      */
-    void setPanSpeed(int speed);
+    void setPanSpeed(float speed);
 
     /**
      * \brief Sets the speed at which the servo rotates around the x axis.
      *
      * @param speed The speed at which to rotate the servo.
      */
-    void setTiltSpeed(int speed);
+    void setTiltSpeed(float speed);
 };
 
 }
