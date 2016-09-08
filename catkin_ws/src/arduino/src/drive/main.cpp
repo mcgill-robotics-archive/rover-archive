@@ -1,29 +1,11 @@
 #include <Arduino.h>
-#include "ros.h"
-
-#include "MotorConfig.h"
-#include "MotorController.h"
-#include "PanTiltControl.h"
-#include "Wheel.h"
-#include "SteeringWheel.h"
+#include "main.h"
 #include "ram/ram.h"
 #include "rover_common/MotorStatus.h"
 #include "rover_common/MotorControllerMode.h"
-#include "std_msgs/Bool.h"
-#include "drive_control/WheelCommand.h"
-#include "geometry_msgs/Twist.h"
-
-#define MAXON_PINS
-#define MAXON_CONTROLLERS
-
 #include "pins_drive.h"
 
 
-#define MOTOR_STATUS_UPDATE_RATE 100
-
-void driveCallback( const drive_control::WheelCommand& setPoints );
-void callbackMoving( const std_msgs::Bool& boolean);
-void panTiltCallback(const geometry_msgs::Twist& speeds);
 
 ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
@@ -41,56 +23,9 @@ motor::MotorConfig configFR;
 motor::MotorConfig configMR;
 motor::MotorConfig configBR;
 
-drive::SteeringWheel * leftFront;
-drive::SteeringWheel *leftBack;
-drive::SteeringWheel * rightFront;
-drive::SteeringWheel * rightBack;
-drive::Wheel * middleLeft;
-drive::Wheel * middleRight;
-
-pan_tilt_control::PanTiltControl * mastCameraController;
-
-unsigned long lastSend = 0;
-
-float radToDeg(float rad)
-{
-    return rad / PI * 180.0;
-}
-
-void driveCallback( const drive_control::WheelCommand& setPoints )
-{
-    leftFront->setSpeed(-setPoints.flv);
-    leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
-    leftBack->setSpeed(-setPoints.blv);
-    leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
-
-    rightFront->setSpeed(setPoints.frv);
-    rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
-    rightBack->setSpeed(setPoints.brv);
-    rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
-
-    middleLeft->setSpeed(-setPoints.mlv);
-    middleRight->setSpeed(setPoints.mrv);
-}
-
-void callbackMoving( const std_msgs::Bool& boolean)
-{
-    nh.logdebug("Entering moving");
-    leftFront->enable(boolean.data);
-    leftBack->enable(boolean.data);
-    middleLeft->enable(boolean.data);
-    rightBack->enable(boolean.data);
-    rightFront->enable(boolean.data);
-    middleRight->enable(boolean.data);
-}
-
-void panTiltCallback(const geometry_msgs::Twist& speeds) {
-    mastCameraController->setTiltSpeed(speeds.linear.y);
-    mastCameraController->setPanSpeed(speeds.linear.x);
-}
-
 void setup() {
     nh.initNode();
+
     nh.advertiseService(ramService);
     nh.subscribe(movingSubscriber);
     nh.subscribe(driveSubscriber);
@@ -164,9 +99,50 @@ void setup() {
     middleLeft = new drive::Wheel(configML, &nh);
     middleRight = new drive::Wheel(configMR, &nh);
 
-    mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO);
+    mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO, nh);
+}
 
-    delay(0);
+void loop()
+{
+    if ((millis() - lastSend > MOTOR_STATUS_UPDATE_RATE))
+    {
+        sendMotorStatus(motorStatusPublisher);
+        lastSend = millis();
+    }
+
+    nh.spinOnce();
+    delay(1);
+}
+
+void driveCallback( const drive_control::WheelCommand& setPoints )
+{
+    leftFront->setSpeed(-setPoints.flv);
+    leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
+    leftBack->setSpeed(-setPoints.blv);
+    leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
+
+    rightFront->setSpeed(setPoints.frv);
+    rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
+    rightBack->setSpeed(setPoints.brv);
+    rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
+
+    middleLeft->setSpeed(-setPoints.mlv);
+    middleRight->setSpeed(setPoints.mrv);
+}
+
+void callbackMoving( const std_msgs::Bool& boolean)
+{
+    leftFront->enable(boolean.data);
+    leftBack->enable(boolean.data);
+    middleLeft->enable(boolean.data);
+    rightBack->enable(boolean.data);
+    rightFront->enable(boolean.data);
+    middleRight->enable(boolean.data);
+}
+
+void panTiltCallback(const geometry_msgs::Twist& speeds) {
+    mastCameraController->setTiltSpeed(speeds.linear.y);
+    mastCameraController->setPanSpeed(speeds.linear.x);
 }
 
 void sendMotorStatus(ros::Publisher &publisher) {
@@ -180,15 +156,7 @@ void sendMotorStatus(ros::Publisher &publisher) {
     publisher.publish(&motorStatusMessage);
 }
 
-void loop()
+float radToDeg(float rad)
 {
-
-    if ((millis() - lastSend > MOTOR_STATUS_UPDATE_RATE))
-    {
-        sendMotorStatus(motorStatusPublisher);
-        lastSend = millis();
-    }
-
-    nh.spinOnce();
-    delay(1);
+    return rad / PI * 180.0;
 }
