@@ -11,6 +11,7 @@
         <param name="image_height" value="720" />
         <param name="pixel_format" value="mjpeg" />
         <param name="framerate" value="10" />
+        <param name="camera_frame_id" value="$(arg name)_frame"/>
 
         <!--remap from="camera/image_raw" to="image_raw" /-->
     </node>
