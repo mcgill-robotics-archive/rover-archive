@@ -6,6 +6,7 @@
 #define ROVER_ARDUINO_BAROMETER_H
 
 #include <Arduino.h>
+#include <Wire.h>
 #include <Adafruit_MPL3115A2/Adafruit_MPL3115A2.h>
 
 

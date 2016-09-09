@@ -6,7 +6,8 @@
 
 
 float Barometer::get_pressure() {
-    return mBarometer.getPressure();
+
+    return ((mBarometer.getPressure()/1000) + 100);
 }
 
 float Barometer::get_ambient_temperature() {
