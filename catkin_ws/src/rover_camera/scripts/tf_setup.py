@@ -15,13 +15,13 @@ class CamTfSetup(object):
     def run(self):
         while not rospy.is_shutdown():
             cam_left_tf_pos = (0, -0.40, 0)
-            cam_left_tf_ori = tf.transformations.quaternion_from_euler(pi, 0, -pi/2)
+            cam_left_tf_ori = tf.transformations.quaternion_from_euler(0, pi/2, -pi/2)
 
             cam_right_tf_pos = (0, 0.40, 0)
-            cam_right_tf_ori = tf.transformations.quaternion_from_euler(pi, 0, pi/2)
+            cam_right_tf_ori = tf.transformations.quaternion_from_euler(0, pi/2, pi/2)
 
             cam_front_tf_pos = (0.50, 00, 0)
-            cam_front_tf_ori =  tf.transformations.quaternion_from_euler(pi, 0, 0)
+            cam_front_tf_ori =  tf.transformations.quaternion_from_euler(0, pi/2, 0)
 
             self.br.sendTransform(cam_left_tf_pos, cam_left_tf_ori,  rospy.Time.now(), "left_haz_frame", "ahrs_orientation")
             self.br.sendTransform(cam_right_tf_pos, cam_right_tf_ori, rospy.Time.now(), "right_haz_frame", "ahrs_orientation")
