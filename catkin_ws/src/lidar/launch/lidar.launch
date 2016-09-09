@@ -6,9 +6,9 @@
 	        <param name="intensity" type="bool" value="true"/>
 	    </node>
 
-	    <node name="oscillations" pkg="lidar" type="Oscillate.py"/>
+	    <!-- <node name="oscillations" pkg="lidar" type="Oscillate.py"/> -->
 	</group>
 
-    <include file="$(find ahrs)/launch/ahrs.launch"/>
+    <!-- <include file="$(find ahrs)/launch/ahrs.launch"/> -->
 
 </launch>

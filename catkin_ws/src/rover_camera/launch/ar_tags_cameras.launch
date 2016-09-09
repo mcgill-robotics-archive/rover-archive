@@ -1,0 +1,67 @@
+<launch>
+
+    <arg name="marker_size" default="4.4" />
+    <arg name="max_new_marker_error" default="0.08" />
+    <arg name="max_track_error" default="0.2" />
+
+    <node name="tf_setup" pkg="rover_camera" type="tf_setup.py" output="screen"/>
+    <include file="$(find ahrs)/launch/ahrs.launch"/>
+    <include file="$(find lidar)/launch/lidar.launch"/>
+    <group ns="left">
+        <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+            <param name="video_device" value="/dev/logitech2"/>
+            <param name="image_width" value="1920" />
+            <param name="image_height" value="1080" />
+            <param name="pixel_format" value="mjpeg" />
+            <param name="framerate" value="10" />
+            <param name="camera_frame_id" value="left_haz_frame"/>
+            <param name="camera_name" value="left_camera"/>
+        </node>
+
+        <arg name="left_cam_image_topic" default="/left/camera/image_raw" />
+        <arg name="left_cam_info_topic" default="/left/camera/camera_info" />
+        <arg name="left_output_frame" default="/left_haz_frame" />
+
+        <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen"
+            args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg left_cam_image_topic) $(arg left_cam_info_topic) $(arg left_output_frame)"
+        />
+    </group>
+    <group ns="right">
+        <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+            <param name="video_device" value="/dev/logitech1"/>
+            <param name="image_width" value="1920" />
+            <param name="image_height" value="1080" />
+            <param name="pixel_format" value="mjpeg" />
+            <param name="framerate" value="10" />
+            <param name="camera_name" value="right_camera"/>
+            <param name="camera_frame_id" value="right_haz_frame"/>
+        </node>
+
+        <arg name="right_cam_image_topic" default="/right/camera/image_raw" />
+        <arg name="right_cam_info_topic" default="/right/camera/camera_info" />
+        <arg name="right_output_frame" default="/right_haz_frame" />
+
+        <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen"
+            args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg right_cam_image_topic) $(arg right_cam_info_topic) $(arg right_output_frame)"
+        />
+    </group>
+    <group ns="front">
+        <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen" >
+            <param name="video_device" value="/dev/logitech_arm"/>
+            <param name="image_width" value="1920" />
+            <param name="image_height" value="1080" />
+            <param name="pixel_format" value="mjpeg" />
+            <param name="framerate" value="10" />
+            <param name="camera_frame_id" value="front_haz_frame"/>
+            <param name="camera_name" value="front_camera"/>
+        </node>
+
+        <arg name="front_cam_image_topic" default="/front/camera/image_raw" />
+        <arg name="front_cam_info_topic" default="/front/camera/camera_info" />
+        <arg name="front_output_frame" default="/front_haz_frame" />
+
+        <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen"
+            args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg front_cam_image_topic) $(arg front_cam_info_topic) $(arg front_output_frame)"
+        />
+    </group>
+</launch>
