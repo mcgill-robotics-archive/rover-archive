@@ -5,7 +5,7 @@ project(lidar)
 find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   geometry_msgs
-  hokuyo_node
+  urg_node
   roscpp
   rospy
   std_msgs
