@@ -3,7 +3,7 @@
 import sys
 from PyQt4 import QtGui, QtCore
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtCore import QObject
 from PyQt4.QtGui import QCheckBox
 from PyQt4.QtGui import QHBoxLayout
@@ -12,20 +12,22 @@ from PyQt4.QtGui import QPushButton
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtGui import QWidget
 
-from hci.src.utilities import *
+
+from utilities import lbl_bg_red, lbl_bg_grn
 
 
 class DrillStatus(QWidget):
-    openRockContainter = pyqtSignal(name="openRockContainter")
-    closeRockContainter = pyqtSignal(name="closeRockContainter")
+    openRockContainter = pyqtSignal()
+    closeRockContainter = pyqtSignal()
 
-    openSoilContainter = pyqtSignal(name="openSoilContainter")
-    closeSoilContainter = pyqtSignal(name="closeSoilContainter")
-    getSensors = pyqtSignal()
+    openSoilContainter = pyqtSignal()
+    closeSoilContainter = pyqtSignal()
 
     reverseDrill = pyqtSignal()
     forwardDrill = pyqtSignal()
     offDrill = pyqtSignal()
+
+    getSensors = pyqtSignal()
 
     def __init__(self, parent=None):
         super(DrillStatus, self).__init__(parent)
@@ -114,6 +116,16 @@ class DrillStatus(QWidget):
         QObject.connect(self.drill_forward_button, QtCore.SIGNAL("clicked()"), self.drill_button)
         QObject.connect(self.drill_reverse_button, QtCore.SIGNAL("clicked()"), self.drill_button)
         QObject.connect(self.sensor_button, QtCore.SIGNAL("clicked()"), self.send_sensors)
+
+    @pyqtSlot(int)
+    def set_drill(self, speed=0):
+        if speed < 0:
+            self.drill_reverse()
+        elif speed > 0:
+            self.drill_forward()
+        else:
+            self.drill_off()
+
     def drill_reverse(self):
         lbl_bg_red(self.drill_status_label, "Reverse")
         return
@@ -125,6 +137,20 @@ class DrillStatus(QWidget):
     def drill_off(self):
         lbl_bg_grn(self.drill_status_label, "Off")
         return
+
+    @pyqtSlot(bool)
+    def set_up_limitswitch(self, on=False):
+        if on:
+            self.limit_switch_up_on()
+        else:
+            self.limit_switch_up_off()
+
+    @pyqtSlot(bool)
+    def set_down_limitswitch(self, on=False):
+        if on:
+            self.limit_switch_down_on()
+        else:
+            self.limit_switch_down_off()
 
     def limit_switch_up_on(self):
         lbl_bg_red(self.ls_up_status, "ON")
@@ -153,6 +179,20 @@ class DrillStatus(QWidget):
             self.openSoilContainter.emit()
         else:
             self.closeSoilContainter.emit()
+
+    @pyqtSlot(bool)
+    def set_soil_box(self, open=False):
+        if open:
+            self.opened_soil_container()
+        else:
+            self.closed_soil_container()
+
+    @pyqtSlot(bool)
+    def set_rock_box(self, open=False):
+        if open:
+            self.opened_rock_container()
+        else:
+            self.closed_rock_container()
 
     def opened_soil_container(self):
         lbl_bg_red(self.soil_status, "OPENED")
