@@ -12,7 +12,7 @@ from geometry_msgs.msg import Pose
 
 import sys
 
-from hci.src.utilities import format_euler_angle, format_dms
+from utilities import format_euler_angle, format_dms
 
 
 class PoseDisplay(QWidget):
