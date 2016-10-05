@@ -1,12 +1,11 @@
-from PyQt4 import QtGui
-
 import tf
-from PyQt4.QtCore import pyqtSignal, pyqtSlot
-from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QHBoxLayout
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QVBoxLayout
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
 
 from geometry_msgs.msg import Pose
 
@@ -99,7 +98,7 @@ class PoseDisplay(QWidget):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     ui = PoseDisplay()
     ui.show()
     sys.exit(app.exec_())

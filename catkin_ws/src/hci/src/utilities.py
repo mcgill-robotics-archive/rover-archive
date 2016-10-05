@@ -78,4 +78,4 @@ def format_dms(dec_deg):
 def format_euler_angle(angle):
     deg = math.degrees(angle)
     string = "%.2f" % deg
-    return string + unichr(176)
+    return string + chr(176)
