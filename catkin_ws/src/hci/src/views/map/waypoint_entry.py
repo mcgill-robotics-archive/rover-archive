@@ -38,6 +38,7 @@ class WaypointPad(QWidget):
         self.lon_deg = QtWidgets.QSpinBox(dms_tab)
         self.lon_min = QtWidgets.QSpinBox(dms_tab)
         self.lon_sec = QtWidgets.QDoubleSpinBox(dms_tab)
+        self.lon_sec.setDecimals(10)
 
         grid1.addWidget(self.lon_sign, 0, 0, 1, 1)
         grid1.addWidget(self.lon_deg, 0, 1, 1, 1)
@@ -52,6 +53,7 @@ class WaypointPad(QWidget):
         self.lat_deg = QtWidgets.QSpinBox(dms_tab)
         self.lat_min = QtWidgets.QSpinBox(dms_tab)
         self.lat_sec = QtWidgets.QDoubleSpinBox(dms_tab)
+        self.lat_sec.setDecimals(10)
 
         grid2.addWidget(self.lat_sign, 0, 0, 1, 1)
         grid2.addWidget(self.lat_deg, 0, 1, 1, 1)
@@ -76,6 +78,8 @@ class WaypointPad(QWidget):
         dd_lat_t = QLabel("Latitude (y)", dd_tab)
         self.dd_lat = QtWidgets.QDoubleSpinBox(dd_tab)
         self.dd_lon = QtWidgets.QDoubleSpinBox(dd_tab)
+        self.dd_lat.setDecimals(10)
+        self.dd_lon.setDecimals(10)
 
         self.add_dd_button = QPushButton("Add Waypoint", dd_tab)
 
