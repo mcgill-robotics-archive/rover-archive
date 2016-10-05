@@ -1,7 +1,7 @@
 <launch>
 
 	<group ns="lidar">
-	    <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" >
+	    <node name="urg_node" pkg="urg_node" type="urg_node" >
 	        <param name="port" type="string" value="/dev/lidar"/>
 	        <param name="intensity" type="bool" value="true"/>
 	    </node>
