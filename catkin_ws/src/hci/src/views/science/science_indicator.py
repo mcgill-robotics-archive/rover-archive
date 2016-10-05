@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets, QtCore
 
-from PyQt4.QtCore import pyqtSignal, pyqtSlot
-from PyQt4.QtCore import QObject
-from PyQt4.QtGui import QCheckBox
-from PyQt4.QtGui import QHBoxLayout
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QVBoxLayout
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
 
 
 from utilities import lbl_bg_red, lbl_bg_grn
@@ -59,9 +59,9 @@ class DrillStatus(QWidget):
         self.drill_status_label = QLabel(self)
         self.drill_off()
 
-        line_2 = QtGui.QFrame(self)
-        line_2.setFrameShape(QtGui.QFrame.HLine)
-        line_2.setFrameShadow(QtGui.QFrame.Sunken)
+        line_2 = QtWidgets.QFrame(self)
+        line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
 
         self.rock_checkbox = QCheckBox(self)
         self.rock_checkbox.setText("Rock Container")
@@ -74,17 +74,17 @@ class DrillStatus(QWidget):
         self.closed_rock_container()
         self.closed_soil_container()
 
-        self.drill_forward_button = QtGui.QRadioButton()
+        self.drill_forward_button = QtWidgets.QRadioButton()
         self.drill_forward_button.setText("Drill Forward")
-        self.drill_reverse_button = QtGui.QRadioButton()
+        self.drill_reverse_button = QtWidgets.QRadioButton()
         self.drill_reverse_button.setText("Drill Reverse")
-        self.drill_off_button = QtGui.QRadioButton()
+        self.drill_off_button = QtWidgets.QRadioButton()
         self.drill_off_button.setText("Drill OFF")
         self.drill_off_button.click()
 
-        line_3 = QtGui.QFrame(self)
-        line_3.setFrameShape(QtGui.QFrame.HLine)
-        line_3.setFrameShadow(QtGui.QFrame.Sunken)
+        line_3 = QtWidgets.QFrame(self)
+        line_3.setFrameShape(QtWidgets.QFrame.HLine)
+        line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
 
         self.sensor_button = QPushButton(self)
         self.sensor_button.setText("Get Sensor Data")
@@ -112,10 +112,10 @@ class DrillStatus(QWidget):
         vbox1.addWidget(self.sensor_button)
         self.setLayout(vbox1)
 
-        QObject.connect(self.drill_off_button, QtCore.SIGNAL("clicked()"), self.drill_button)
-        QObject.connect(self.drill_forward_button, QtCore.SIGNAL("clicked()"), self.drill_button)
-        QObject.connect(self.drill_reverse_button, QtCore.SIGNAL("clicked()"), self.drill_button)
-        QObject.connect(self.sensor_button, QtCore.SIGNAL("clicked()"), self.send_sensors)
+        self.drill_off_button.clicked.connect(self.drill_button)
+        self.drill_forward_button.clicked.connect(self.drill_button)
+        self.drill_reverse_button.clicked.connect(self.drill_button)
+        self.sensor_button.clicked.connect(self.send_sensors)
 
     @pyqtSlot(int)
     def set_drill(self, speed=0):
@@ -218,7 +218,7 @@ class DrillStatus(QWidget):
         self.getSensors.emit()
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ui = DrillStatus()
     ui.show()
     sys.exit(app.exec_())
