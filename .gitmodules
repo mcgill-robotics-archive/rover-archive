@@ -1,9 +1,0 @@
-[submodule "catkin_ws/src/rosserial"]
-	path = catkin_ws/src/rosserial
-    url=https://github.com/ros-drivers/rosserial.git 
-[submodule "catkin_ws/src/urg_c"]
-	path = catkin_ws/src/urg_c
-	url = git@github.com:ros-drivers/urg_c.git
-[submodule "catkin_ws/src/urg_node"]
-	path = catkin_ws/src/urg_node
-	url = git@github.com:ros-drivers/urg_node.git
