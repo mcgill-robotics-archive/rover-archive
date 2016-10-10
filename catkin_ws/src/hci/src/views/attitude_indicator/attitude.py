@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtCore import Qt
-from math import sqrt, atan, degrees
+from math import sqrt, atan
 
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
@@ -12,10 +12,8 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QPolygon
 from PyQt5.QtGui import QRegion
-from PyQt5.QtGui import QTextOption
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QWidget
-
 
 
 class QAttitude(QWidget):
@@ -34,6 +32,7 @@ class QAttitude(QWidget):
         self.setMinimumSize(self.m_sizeMin, self.m_sizeMin)
         self.setMaximumSize(self.m_sizeMax, self.m_sizeMax)
         self.resize(self.m_sizeMin, self.m_sizeMin)
+        self.setFocusPolicy(Qt.NoFocus)
 
         self.canvasReplot.connect(self.canvasReplot_slot)
 
