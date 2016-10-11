@@ -44,11 +44,13 @@ class QAttitude(QWidget):
         self.m_pitch = val
         self.m_pitch = max(self.m_pitch, -90)
         self.m_pitch = min(self.m_pitch, 90)
+        self.canvasReplot_slot()
 
     def setRoll(self, val):
         self.m_roll = val
         self.m_roll = max(self.m_roll, -180)
         self.m_roll = min(self.m_roll, 180)
+        self.canvasReplot_slot()
 
     def getPitch(self):
         return self.m_pitch

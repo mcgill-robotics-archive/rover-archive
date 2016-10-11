@@ -42,13 +42,15 @@ class QCompass(QWidget):
         self.m_yaw = val
         self.m_yaw = min(self.m_yaw, 360)
         self.m_yaw = max(self.m_yaw, -360)
+        self.canvasReplot_slot()
 
     def setAlt(self, val):
         self.m_alt = val
+        self.canvasReplot_slot()
 
     def setH(self, val):
         self.m_h = val
-
+        self.canvasReplot_slot()
 
     def getYaw(self):
         return self.m_yaw
@@ -89,6 +91,7 @@ class QCompass(QWidget):
         painter.drawEllipse(-self.m_size / 2, -self.m_size / 2,self. m_size, self.m_size)
 
         # draw yaw lines
+        painter.rotate(-self.m_yaw)  # could possibly move this before drawing NS arrow
 
         nyawLines = 36
         rotAng = 360.0 / nyawLines
@@ -139,8 +142,10 @@ class QCompass(QWidget):
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
             painter.rotate(-rotAng)
+        painter.rotate(self.m_yaw)
 
         #  draw S/N arrow
+
         arrowWidth = self.m_size / 5
 
         fx1 = 0
