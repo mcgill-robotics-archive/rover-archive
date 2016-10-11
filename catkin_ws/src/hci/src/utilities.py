@@ -2,6 +2,12 @@ import rospy
 import rosgraph
 import math
 
+import sys
+
+if sys.version_info >= (3,0):
+    deg_symb = chr(176)
+else:
+    deg_symb = unichr(176)
 
 ## Get the hostname of the ROS master
 #
@@ -67,7 +73,7 @@ def format_dms(dec_deg):
     mins_i = int(mins)
     sec = (mins - mins_i) * 60
 
-    return "%i%c %i' %.3f''" % (deg, chr(176), mins_i, sec)
+    return "%i%c %i' %.3f''" % (deg, deg_symb, mins_i, sec)
 
 ## Convert a radian angle to degrees
 #
@@ -78,4 +84,4 @@ def format_dms(dec_deg):
 def format_euler_angle(angle):
     deg = math.degrees(angle)
     string = "%.2f" % deg
-    return string + chr(176)
+    return string + deg_symb

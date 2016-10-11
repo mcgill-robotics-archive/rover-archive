@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-from PyQt4.QtGui import QWidget
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QWidget
 
 
 class JoystickMode(QWidget):

@@ -1,16 +1,12 @@
-#!/usr/bin/env python
-
 import sys
-from PyQt4 import QtGui, QtCore
-
-from PyQt4.QtCore import QObject
-from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QCheckBox
-from PyQt4.QtGui import QGridLayout
-from PyQt4.QtGui import QHBoxLayout
-from PyQt4.QtGui import QRadioButton
-from PyQt4.QtGui import QVBoxLayout
-from PyQt4.QtGui import QWidget
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QRadioButton
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
 
 
 class DriveSettings(object):
@@ -53,10 +49,10 @@ class SteeringMode(QWidget):
 
         self.setLayout(hbox1)
 
-        QObject.connect(self.enable, QtCore.SIGNAL("clicked()"), self.handle_enable)
-        QObject.connect(self.ackerman, QtCore.SIGNAL("clicked()"), self.handle_steerimg_mode)
-        QObject.connect(self.pointsteer, QtCore.SIGNAL("clicked()"), self.handle_steerimg_mode)
-        QObject.connect(self.translate, QtCore.SIGNAL("clicked()"), self.handle_steerimg_mode)
+        self.enable.clicked.connect(self.handle_enable)
+        self.ackerman.clicked.connect(self.handle_steerimg_mode)
+        self.pointsteer.clicked.connect(self.handle_steerimg_mode)
+        self.translate.clicked.connect(self.handle_steerimg_mode)
 
     def handle_enable(self):
         if self.enable.isChecked():
@@ -99,7 +95,6 @@ class SteeringMode(QWidget):
         self.driveSettingsChanged.emit(self.driveSettings)
 
 if __name__ == "__main__":
-    from PyQt4.QtCore import pyqtSlot
 
     class DriveWindowTest(QWidget):
         def __init__(self):
@@ -119,9 +114,9 @@ if __name__ == "__main__":
             else:
                 stering = "none"
 
-            print "Status: enable {0}, steering: {1}".format(drive_setting.motor_enable, stering)
+            print("Status: enable {0}, steering: {1}".format(drive_setting.motor_enable, stering))
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     ui = DriveWindowTest()
     ui.show()
     ui.ui.update_motor_enable(True)

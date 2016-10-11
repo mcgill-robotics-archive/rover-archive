@@ -1,19 +1,20 @@
-#!/usr/bin/env python
-
-import sys
-from PyQt4 import QtGui, QtCore
-
-from PyQt4.QtGui import QGridLayout
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QVBoxLayout
-from PyQt4.QtGui import QWidget
-
-from hci.src.utilities import *
 
 
 ## Wheel Status Structure
 #
 # Group the status of the wheels to make update easier
+import sys
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
+
+from utilities import lbl_bg_grn, lbl_bg_red
+
+
 class WheelStatusStruct(object):
     def __init__(self, fl=False, ml=False, bl=False, fr=False, mr=False, br=False):
         self.fl = fl
@@ -50,33 +51,33 @@ class WheelStatus(QWidget):
         label = QLabel(self)
         label.setText("Wheel Status")
 
-        self.fl_ok = QtGui.QLabel(self)
-        self.fl_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.fl_ok = QLabel(self)
+        self.fl_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.fl_ok, 0, 0, 1, 1)
 
-        self.mr_ok = QtGui.QLabel(self)
-        self.mr_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.mr_ok = QLabel(self)
+        self.mr_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.mr_ok, 1, 1, 1, 1)
 
-        self.fr_ok = QtGui.QLabel(self)
-        self.fr_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.fr_ok = QLabel(self)
+        self.fr_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.fr_ok, 0, 1, 1, 1)
 
-        self.ml_ok = QtGui.QLabel(self)
-        self.ml_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.ml_ok = QLabel(self)
+        self.ml_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.ml_ok, 1, 0, 1, 1)
 
-        self.bl_ok = QtGui.QLabel(self)
-        self.bl_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.bl_ok = QLabel(self)
+        self.bl_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.bl_ok, 2, 0, 1, 1)
 
-        self.br_ok = QtGui.QLabel(self)
-        self.br_ok.setAlignment(QtCore.Qt.AlignCenter)
+        self.br_ok = QLabel(self)
+        self.br_ok.setAlignment(Qt.AlignCenter)
         grid1.addWidget(self.br_ok, 2, 1, 1, 1)
 
-        line_2 = QtGui.QFrame(self)
-        line_2.setFrameShape(QtGui.QFrame.HLine)
-        line_2.setFrameShadow(QtGui.QFrame.Sunken)
+        line_2 = QFrame(self)
+        line_2.setFrameShape(QFrame.HLine)
+        line_2.setFrameShadow(QFrame.Sunken)
 
         vbox1.addWidget(label)
         vbox1.addWidget(line_2)
@@ -98,7 +99,7 @@ class WheelStatus(QWidget):
 
 
 if __name__ == "__main__":
-    from PyQt4.QtCore import pyqtSignal
+    from PyQt5.QtCore import pyqtSignal
 
     class WheelDisplayTest(QWidget):
         signal = pyqtSignal(WheelStatusStruct, name="test_signal")
@@ -109,7 +110,7 @@ if __name__ == "__main__":
             self.signal.connect(self.ui.update_motor_status)
 
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     ui = WheelDisplayTest()
     ui.show()
     ui.signal.emit(WheelStatusStruct(False, False, True))

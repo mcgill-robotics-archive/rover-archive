@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """ Human Computer Interaction. """
-
-from PyQt4 import QtGui
-
-import tf
-from PyQt4.QtGui import QHBoxLayout, QVBoxLayout
-from PyQt4.QtGui import QWidget
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QWidget
 from geometry_msgs.msg import Pose
 
 from views.map.waypoint_entry import WaypointPad
@@ -21,7 +19,7 @@ __version__ = "0.2.0"
 
 
 def run():
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = QWidget()
     steering = SteeringMode(window)
     drill = DrillStatus(window)
