@@ -11,6 +11,11 @@ echo "Pulling latest changes..."
 git pull
 echo
 
+# rosserial
+echo "Installing rosserial..."
+sudo apt-get install -y ros-kinetic-rosserial ros-kinetic-rosserial-python
+echo
+
 # urg_node
 echo "Installing urg_node..."
 sudo apt-get install -y ros-kinetic-urg-node
