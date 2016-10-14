@@ -11,14 +11,18 @@ speed = 0
 enable = True
 rpi = False
 
+
 def map(x, in_min, in_max, out_min, out_max):
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
 
 def map_angle(angle):
     return map(angle, 0, 180, 1000, 2000)
 
+
 def map_time(time):
-    return 5000000 + (100-time) * 100000
+    return 5000000 + (100 - time) * 100000
+
 
 def callback(config, level):
     global up, down, speed, enable
@@ -32,6 +36,7 @@ def callback(config, level):
         config.up_tilt_angle = down
     return config
 
+
 def oscillate(event):
     rospy.loginfo("Starting oscillations")
     global rpi
@@ -43,12 +48,12 @@ def oscillate(event):
         rpi = True
         pi = pigpio.pi()
         pi.set_mode(18, pigpio.OUTPUT)
-    except ImportError as e:
+    except ImportError:
         rospy.logerr("Could not load the pigpio module, will not oscillate")
 
     while not rospy.is_shutdown():
         time = rospy.Duration(0, map_time(speed))
-        if (rpi and enable) :
+        if (rpi and enable):
             for x in range(up, down):
                 pi.set_servo_pulsewidth(18, map_angle(x))
                 rospy.sleep(time)
@@ -60,7 +65,7 @@ def oscillate(event):
 
 
 if __name__ == "__main__":
-    rospy.init_node("lidar_tilt", anonymous = False)
+    rospy.init_node("lidar_tilt", anonymous=False)
     srv = Server(LidarTiltConfig, callback)
 
     rospy.Timer(rospy.Duration(1), oscillate, oneshot=True)
