@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from geometry_msgs.msg import Pose
 
+from views.attitude_indicator.attitude import QAttitude
+from views.attitude_indicator.compass import QCompass
 from views.map.waypoint_entry import WaypointPad
 from views.drive.drive_control import SteeringMode
 from views.science.science_indicator import DrillStatus
@@ -27,11 +29,17 @@ def run():
     pose = PoseDisplay(window)
     lay = QHBoxLayout()
     layV = QVBoxLayout()
+    hbox2 = QHBoxLayout()
+    compass = QCompass(window)
+    atti = QAttitude(window)
+    hbox2.addWidget(compass)
+    hbox2.addWidget(atti)
     lay.addWidget(waypoint)
     lay.addWidget(steering)
     lay.addWidget(drill)
     layV.addItem(lay)
     layV.addWidget(pose)
+    layV.addItem(hbox2)
     window.setLayout(layV)
     window.show()
 

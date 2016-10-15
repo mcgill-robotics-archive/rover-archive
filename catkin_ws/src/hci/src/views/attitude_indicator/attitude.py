@@ -225,4 +225,4 @@ if __name__ == "__main__":
     win = QAttitude()
     win.setData(0, 0)
     win.show()
-    exit(app.exec())
+    exit(app.exec_())
