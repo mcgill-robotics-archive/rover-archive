@@ -11,18 +11,11 @@ echo "Pulling latest changes..."
 git pull
 echo
 
-# rosserial
-echo "Installing rosserial..."
-sudo apt-get install -y ros-kinetic-rosserial ros-kinetic-rosserial-python
-echo
-
-# urg_node
-echo "Installing urg_node..."
-sudo apt-get install -y ros-kinetic-urg-node
-echo
-
 # convex_decompositon
 echo "Installing convex_decomposition..."
 sudo apt-get install -y ros-kinetic-convex-decomposition
 echo
+
+# ROS dependencies
+rosdep install --from-paths ./catkin_ws --ignore-src --skip-keys=rover_msgs
 
