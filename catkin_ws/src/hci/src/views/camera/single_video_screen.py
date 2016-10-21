@@ -37,6 +37,9 @@ class SingleVideoScreen(QWidget):
         self.angle_selector.turnAngle.connect(self.setAngle)
         self.topic_selector.currentIndexChanged.connect(self._topic_sel_calllback)
 
+    def get_active_topic(self):
+        return self.topic_selector.currentData()
+
     @pyqtSlot(int)
     def setAngle(self, angle):
         print(angle)
@@ -67,6 +70,11 @@ class SingleVideoScreen(QWidget):
     def add_feed_entry(self, string):
         if string is not None:
             self.topic_selector.addItem(string)
+
+    def set_feed_list(self, feed_list):
+        self.topic_selector.clear()
+        for i in feed_list:
+            self.topic_selector.addItem(i)
 
     def _topic_sel_calllback(self, index):
         if index < self.topic_selector.count():
