@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QImage
 from PyQt5.QtGui import QPixmap
@@ -15,6 +16,8 @@ from views.camera.angle_selection import AngleSelection
 
 
 class SingleVideoScreen(QWidget):
+    playTopic = pyqtSignal(str)
+
     def __init__(self, angle=0, parent=None):
         super(SingleVideoScreen, self).__init__(parent)
 
@@ -32,6 +35,7 @@ class SingleVideoScreen(QWidget):
         hbox.addWidget(self.angle_selector)
 
         self.angle_selector.turnAngle.connect(self.setAngle)
+        self.topic_selector.currentIndexChanged.connect(self._topic_sel_calllback)
 
     @pyqtSlot(int)
     def setAngle(self, angle):
@@ -59,6 +63,20 @@ class SingleVideoScreen(QWidget):
         self.topic_selector.setVisible(visible)
         self.angle_selector.setVisible(visible)
 
+    @pyqtSlot(str)
+    def add_feed_entry(self, string):
+        if string is not None:
+            self.topic_selector.addItem(string)
+
+    def _topic_sel_calllback(self, index):
+        if index < self.topic_selector.count():
+            topic = self.topic_selector.itemText(index)
+            self.playTopic.emit(topic)
+
+
+def cb(string):
+    print(string)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -66,4 +84,9 @@ if __name__ == "__main__":
     ui.show()
     image = QImage("/home/david/rover/3_Main_Inverted.png")
     ui.newSample(image)
+    ui.add_feed_entry("String")
+    ui.add_feed_entry("String2")
+    ui.add_feed_entry("String3")
+    ui.add_feed_entry("String4")
+    ui.playTopic.connect(cb)
     exit(app.exec_())
