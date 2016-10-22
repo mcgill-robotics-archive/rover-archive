@@ -18,7 +18,7 @@ class HCI(QMainWindow):
     def __init__(self, parent=None):
         super(HCI, self).__init__(parent)
         self.main_view = MainView(self)
-        self.main_controller = MainController(self)
+        self.main_controller = MainController(self.main_view, self)
         self.main_model = MainModel(self)
 
         self.setCentralWidget(self.main_view)

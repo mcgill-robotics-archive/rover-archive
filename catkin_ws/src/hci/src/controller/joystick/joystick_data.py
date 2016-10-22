@@ -1,4 +1,7 @@
-class JoystickData():
+from PyQt5.QtCore import QObject
+
+
+class JoystickData(QObject):
     b1 = False
     b2 = False
     b3 = False

@@ -8,7 +8,7 @@ from controller.joystick.joystick_data import JoystickData
 
 
 class JoystickAcquisition(QThread):
-    joystickDataUpdated=pyqtSignal(JoystickData)
+    joystickDataUpdated=pyqtSignal(object)
 
     def __init__(self, parent=None):
         super(JoystickAcquisition, self).__init__(parent)
@@ -32,7 +32,7 @@ class JoystickAcquisition(QThread):
     def update(self):
         for anEvent in pygame.event.get():
             try:
-                if anEvent.type == pygame.locals.JOYBUTTONDOWN:
+                if anEvent.type == pygame.JOYBUTTONDOWN:
                     self.data.b1 = self.controller.get_button(0)
                     self.data.b2 = self.controller.get_button(1)
                     self.data.b3 = self.controller.get_button(2)
@@ -45,7 +45,7 @@ class JoystickAcquisition(QThread):
                     self.data.b10 = self.controller.get_button(9)
                     self.data.b11 = self.controller.get_button(10)
                     self.data.b12 = self.controller.get_button(11)
-                elif anEvent.type == pygame.locals.JOYAXISMOTION:
+                elif anEvent.type == pygame.JOYAXISMOTION:
                     self.data.a1 = self.controller.get_axis(0)
                     self.data.a2 = self.controller.get_axis(1)
                     self.data.a3 = self.controller.get_axis(2)
@@ -66,7 +66,7 @@ class JoystickAcquisition(QThread):
                 pass
 
     def run(self):
-        while 1:
+        while 1:  # todo: replace with rospy status when ros is implemented
             # todo add hot swap capability maybe
             self.update()
             self.joystickDataUpdated.emit(self.data)
