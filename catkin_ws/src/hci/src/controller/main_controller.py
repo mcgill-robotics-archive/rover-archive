@@ -12,3 +12,7 @@ class MainController(QObject):
         self.joystick_master = JoystickController(joystick_widget, self)
         self.drive_controller = DriveController(self)
         self.joystick_master.addController("Drive", self.drive_controller)
+
+        self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
+        self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)
+        main_view.drive_view.controlsUpdated.connect(self.drive_controller.setDriveSetting)

@@ -1,10 +1,11 @@
 """run in dedicated thread"""
-import time
 import pygame
+import time
+
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import pyqtSignal
 
-from controller.joystick.joystick_data import JoystickData
+from model.joystick_data import JoystickData
 
 
 class JoystickAcquisition(QThread):
@@ -32,7 +33,7 @@ class JoystickAcquisition(QThread):
     def update(self):
         for anEvent in pygame.event.get():
             try:
-                if anEvent.type == pygame.JOYBUTTONDOWN:
+                if anEvent.type == pygame.JOYBUTTONDOWN or anEvent.type == pygame.JOYBUTTONUP:
                     self.data.b1 = self.controller.get_button(0)
                     self.data.b2 = self.controller.get_button(1)
                     self.data.b3 = self.controller.get_button(2)

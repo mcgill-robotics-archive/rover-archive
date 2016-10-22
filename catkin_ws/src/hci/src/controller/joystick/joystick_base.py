@@ -1,6 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSlot
-
-from controller.joystick.joystick_data import JoystickData
+from PyQt5.QtCore import QObject
 
 
 class JoystickBase(QObject):

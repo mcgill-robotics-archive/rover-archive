@@ -1,10 +1,8 @@
 import rospy
 from PyQt5.QtCore import QObject, pyqtSlot
-from PyQt5.QtWidgets import QWidget
 
 from controller.joystick.joystick_acquisition import JoystickAcquisition
 from controller.joystick.joystick_base import JoystickBase
-from controller.joystick.joystick_data import JoystickData
 
 
 class JoystickController(QObject):
@@ -16,7 +14,7 @@ class JoystickController(QObject):
         try:
             self.acquisition = JoystickAcquisition(self)
             self.acquisition.start()
-        finally:
+        except Exception:
             rospy.logerr("Starting joystick acquisition failed")
             pass
 
@@ -34,7 +32,7 @@ class JoystickController(QObject):
                 raise e
 
             if self.active_controller is not None:
-                self. self.acquisition.joystickDataUpdated.disconnect(self.active_controller.handle_joystick_data)
+                self.acquisition.joystickDataUpdated.disconnect(self.active_controller.handle_joystick_data)
 
             self.active_controller = new_controller
             self.acquisition.joystickDataUpdated.connect(self.active_controller.handle_joystick_data)

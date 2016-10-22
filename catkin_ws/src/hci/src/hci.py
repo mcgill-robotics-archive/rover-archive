@@ -3,6 +3,7 @@
 """ Human Computer Interaction. """
 import sys
 
+import rospy
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 
@@ -17,6 +18,9 @@ __version__ = "0.2.0"
 class HCI(QMainWindow):
     def __init__(self, parent=None):
         super(HCI, self).__init__(parent)
+
+        rospy.init_node("hci")
+
         self.main_view = MainView(self)
         self.main_controller = MainController(self.main_view, self)
         self.main_model = MainModel(self)

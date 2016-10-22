@@ -10,11 +10,12 @@ from PyQt5.QtWidgets import QWidget
 
 
 class DriveSettings(object):
-    def __init__(self, motor_enable = False, ackerman_steering = False, point_steering = False,translatory_steering = False):
+    def __init__(self, motor_enable=False, ackerman_steering=False, point_steering=False, translatory_steering=False):
         self.motor_enable = motor_enable
         self.ackerman_steering = ackerman_steering
         self.point_steering = point_steering
         self.translatory_steering = translatory_steering
+
 
 class SteeringMode(QWidget):
     driveSettingsChanged = pyqtSignal(DriveSettings, name="changeDriveSettings")
@@ -49,7 +50,7 @@ class SteeringMode(QWidget):
 
         self.setLayout(hbox1)
 
-        self.enable.clicked.connect(self.handle_enable)
+        self.enable.toggled.connect(self.handle_enable)
         self.ackerman.clicked.connect(self.handle_steerimg_mode)
         self.pointsteer.clicked.connect(self.handle_steerimg_mode)
         self.translate.clicked.connect(self.handle_steerimg_mode)
@@ -78,12 +79,12 @@ class SteeringMode(QWidget):
 
         self.driveSettingsChanged.emit(self.driveSettings)
 
-    def update_motor_enable(self, motor_enable = False):
+    def update_motor_enable(self, motor_enable=False):
         self.driveSettings.motor_enable = motor_enable
         self.enable.setChecked(motor_enable)
         self.driveSettingsChanged.emit(self.driveSettings)
 
-    def update_steering(self, ackerman_steering = False, point_steering = False,translatory_steering = False):
+    def update_steering(self, ackerman_steering=False, point_steering=False, translatory_steering=False):
         self.ackerman.setChecked(ackerman_steering)
         self.pointsteer.setChecked(point_steering)
         self.translate.setChecked(translatory_steering)
@@ -93,6 +94,13 @@ class SteeringMode(QWidget):
         self.driveSettings.translatory_steering = translatory_steering
 
         self.driveSettingsChanged.emit(self.driveSettings)
+
+    @pyqtSlot(DriveSettings)
+    def overrideStatus(self, status):
+        self.enable.setChecked(status.motor_enable)
+        # todo implement
+        pass
+
 
 if __name__ == "__main__":
 
@@ -115,6 +123,7 @@ if __name__ == "__main__":
                 stering = "none"
 
             print("Status: enable {0}, steering: {1}".format(drive_setting.motor_enable, stering))
+
 
     app = QApplication(sys.argv)
     ui = DriveWindowTest()
