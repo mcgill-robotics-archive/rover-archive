@@ -1,3 +1,8 @@
+"""!@brief Graphical widget to select and control steering configuration
+
+This modules includes the gui class and the Data Object passed by the signal
+"""
+
 import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication
@@ -10,7 +15,22 @@ from PyQt5.QtWidgets import QWidget
 
 
 class DriveSettings(object):
+    """!@brief Data class used by the signal in the SteeringMode class
+
+    Basically a dictionary, contains status variables for the three
+    steering configurations supported
+    """
+
     def __init__(self, motor_enable=False, ackerman_steering=False, point_steering=False, translatory_steering=False):
+        """!@brief Constructor initializes values
+
+        @param self Python object pointer
+        @param motor_enable Allow motors to turn
+        @param ackerman_steering Car like steering
+        @param point_steering No linear velocity
+        @param translatory_steering No angular velocity
+        """
+
         self.motor_enable = motor_enable
         self.ackerman_steering = ackerman_steering
         self.point_steering = point_steering
@@ -18,12 +38,31 @@ class DriveSettings(object):
 
 
 class SteeringMode(QWidget):
+    """!@brief Steering selection window declaration
+
+    Allow selection of the control mode and enabling the motors.
+    Interface to the rest of the world is done by signaling when a value is
+    changed using the driveSettingsChanged signal.
+    """
+
+    ## Signals a gui event changed the current control mode
     driveSettingsChanged = pyqtSignal(DriveSettings, name="changeDriveSettings")
 
     def __init__(self, parent=None):
+        """!@brief Constructor places widgets on screen and connects the
+        button signals.
+
+        Places radio buttons with each steering configuration available. When
+        clicked, the button triggers the signal with the proper updated
+        structure.
+
+        @param self Python object pointer
+        @param parent QWidget object hierarchy
+        """
+
         super(SteeringMode, self).__init__(parent)
 
-        self.driveSettings = DriveSettings()
+        self._driveSettings = DriveSettings()
 
         vbox1 = QVBoxLayout()
         vbox1.setContentsMargins(0, 0, 0, 0)
@@ -32,80 +71,121 @@ class SteeringMode(QWidget):
         grid1 = QGridLayout()
         grid1.setContentsMargins(0, 0, 0, 0)
 
-        self.ackerman = QRadioButton(self)
-        self.ackerman.setText("Ackerman Steering")
-        self.pointsteer = QRadioButton(self)
-        self.pointsteer.setText("Point Steering")
-        self.translate = QRadioButton(self)
-        self.translate.setText("Translation")
+        self._ackerman = QRadioButton(self)
+        self._ackerman.setText("Ackerman Steering")
+        self._pointsteer = QRadioButton(self)
+        self._pointsteer.setText("Point Steering")
+        self._translate = QRadioButton(self)
+        self._translate.setText("Translation")
 
-        self.enable = QCheckBox()
-        self.enable.setText("Enable Motors")
+        self._enable = QCheckBox()
+        self._enable.setText("Enable Motors")
 
-        vbox1.addWidget(self.ackerman)
-        vbox1.addWidget(self.pointsteer)
-        vbox1.addWidget(self.translate)
-        hbox1.addWidget(self.enable)
+        vbox1.addWidget(self._ackerman)
+        vbox1.addWidget(self._pointsteer)
+        vbox1.addWidget(self._translate)
+        hbox1.addWidget(self._enable)
         hbox1.addItem(vbox1)
 
         self.setLayout(hbox1)
 
-        self.enable.toggled.connect(self.handle_enable)
-        self.ackerman.clicked.connect(self.handle_steerimg_mode)
-        self.pointsteer.clicked.connect(self.handle_steerimg_mode)
-        self.translate.clicked.connect(self.handle_steerimg_mode)
+        self._enable.toggled.connect(self._handle_enable)
+        self._ackerman.clicked.connect(self._handle_steerimg_mode)
+        self._pointsteer.clicked.connect(self._handle_steerimg_mode)
+        self._translate.clicked.connect(self._handle_steerimg_mode)
 
-    def handle_enable(self):
-        if self.enable.isChecked():
-            self.driveSettings.motor_enable = True
+    def _handle_enable(self):
+        """!@brief Enable button callback
+
+        Update the status structure with the current status of the enable
+        checkbox and emit signal
+
+        @param self Python object pointer
+        """
+
+        if self._enable.isChecked():
+            self._driveSettings.motor_enable = True
         else:
-            self.driveSettings.motor_enable = False
+            self._driveSettings.motor_enable = False
 
-        self.driveSettingsChanged.emit(self.driveSettings)
+        self.driveSettingsChanged.emit(self._driveSettings)
 
-    def handle_steerimg_mode(self):
-        if self.ackerman.isChecked():
-            self.driveSettings.ackerman_steering = True
-            self.driveSettings.point_steering = False
-            self.driveSettings.translatory_steering = False
-        elif self.pointsteer.isChecked():
-            self.driveSettings.ackerman_steering = False
-            self.driveSettings.point_steering = True
-            self.driveSettings.translatory_steering = False
-        elif self.translate.isChecked():
-            self.driveSettings.ackerman_steering = False
-            self.driveSettings.point_steering = False
-            self.driveSettings.translatory_steering = True
+    def _handle_steerimg_mode(self):
+        """!@brief Radio buttons callback
 
-        self.driveSettingsChanged.emit(self.driveSettings)
+        Handle changes in radio buttons. Update the status structure and emit
+        signal.
+
+        @param self Python object pointer
+        """
+
+        if self._ackerman.isChecked():
+            self._driveSettings.ackerman_steering = True
+            self._driveSettings.point_steering = False
+            self._driveSettings.translatory_steering = False
+        elif self._pointsteer.isChecked():
+            self._driveSettings.ackerman_steering = False
+            self._driveSettings.point_steering = True
+            self._driveSettings.translatory_steering = False
+        elif self._translate.isChecked():
+            self._driveSettings.ackerman_steering = False
+            self._driveSettings.point_steering = False
+            self._driveSettings.translatory_steering = True
+
+        self.driveSettingsChanged.emit(self._driveSettings)
 
     def update_motor_enable(self, motor_enable=False):
-        self.driveSettings.motor_enable = motor_enable
-        self.enable.setChecked(motor_enable)
-        self.driveSettingsChanged.emit(self.driveSettings)
+        """!@brief External update of the checkbox.
+
+        @param self Python object pointer
+        @param motor_enable Enable status
+        """
+
+        self._driveSettings.motor_enable = motor_enable
+        self._enable.setChecked(motor_enable)
+        self.driveSettingsChanged.emit(self._driveSettings)
 
     def update_steering(self, ackerman_steering=False, point_steering=False, translatory_steering=False):
-        self.ackerman.setChecked(ackerman_steering)
-        self.pointsteer.setChecked(point_steering)
-        self.translate.setChecked(translatory_steering)
+        """!@brief External updates of the steering configuration buttons
 
-        self.driveSettings.ackerman_steering = ackerman_steering
-        self.driveSettings.point_steering = point_steering
-        self.driveSettings.translatory_steering = translatory_steering
+        @param self Python object pointer
+        @param ackerman_steering Car like steering
+        @param point_steering No linear velocity
+        @param translatory_steering No angular velocity
+        """
 
-        self.driveSettingsChanged.emit(self.driveSettings)
+        self._ackerman.setChecked(ackerman_steering)
+        self._pointsteer.setChecked(point_steering)
+        self._translate.setChecked(translatory_steering)
+
+        self._driveSettings.ackerman_steering = ackerman_steering
+        self._driveSettings.point_steering = point_steering
+        self._driveSettings.translatory_steering = translatory_steering
+
+        self.driveSettingsChanged.emit(self._driveSettings)
 
     @pyqtSlot(DriveSettings)
     def overrideStatus(self, status):
-        self.enable.setChecked(status.motor_enable)
-        # todo implement
-        pass
+        """!@brief Slot for updating the entire status structure.
+        @param self Python object pointer
+        @param status DriveSettings structure to replace
+        """
+
+        self._enable.setChecked(status.motor_enable)
 
 
 if __name__ == "__main__":
 
     class DriveWindowTest(QWidget):
+        """!@brief Test window that uses SteeringMode
+        """
+
         def __init__(self):
+            """!@brief Constructor shows window
+            @param self Python object pointer
+
+            """
+
             super(DriveWindowTest, self).__init__()
             self.ui = SteeringMode(self)
             self.ui.show()
@@ -113,6 +193,12 @@ if __name__ == "__main__":
 
         @pyqtSlot(DriveSettings)
         def print_status(self, drive_setting):
+            """!@brief Print status structure
+            @param self Python object pointer
+            @param drive_setting The struc to print
+
+            """
+
             if drive_setting.ackerman_steering:
                 stering = "ackerman"
             elif drive_setting.point_steering:
