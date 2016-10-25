@@ -1,4 +1,3 @@
-"""run in dedicated thread"""
 import pygame
 import time
 
@@ -9,9 +8,22 @@ from model.joystick_data import JoystickData
 
 
 class JoystickAcquisition(QThread):
+    """!@brief Acquire joystick data and signal with available data
+    """
     joystickDataUpdated=pyqtSignal(object)
 
     def __init__(self, parent=None):
+        """!@brief Constructor, will start acquisition if joystick found.
+
+        Find joystick to use, should only be one joystick connected.
+        Will span new thread and run acquisition in loop. Signal is emitted
+        with joystick data at every loop iteration. Loop runs at 100 Hz
+        frequency.
+
+        @param self Python object pointer
+        @param parent QWidget parent for object hierarchy
+        """
+
         super(JoystickAcquisition, self).__init__(parent)
         self.data = JoystickData()
 
@@ -31,6 +43,14 @@ class JoystickAcquisition(QThread):
             raise AssertionError("Joystick not initialized properly, make sure you have one connected")
 
     def update(self):
+        """!@brief Single cycle acquisition method
+
+        Update internal structure with values from joystick buttons and
+        axis values
+
+        @param self Python object pointer
+        """
+
         for anEvent in pygame.event.get():
             try:
                 if anEvent.type == pygame.JOYBUTTONDOWN or anEvent.type == pygame.JOYBUTTONUP:
@@ -67,6 +87,20 @@ class JoystickAcquisition(QThread):
                 pass
 
     def run(self):
+        """!@brief Function will be run when thread started.
+
+        In calling class:
+        @code{.py}
+        acquisition = JoystickAcquisition(self)
+        acquisition.start()
+        @endcode
+
+        This call will be forwarded to the run() function and start the main
+        acquisition loop and emit the signal with every iteration.
+
+        @param self Python object pointer
+        """
+
         while 1:  # todo: replace with rospy status when ros is implemented
             # todo add hot swap capability maybe
             self.update()
