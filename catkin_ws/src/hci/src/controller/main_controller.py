@@ -5,11 +5,28 @@ from controller.joystick.joystick_controller import JoystickController
 
 
 class MainController(QObject):
-    def __init__(self, main_view, parent=None):
-        super(MainController, self).__init__(parent)
-        joystick_widget = main_view.joystick_mode_widget
+    """!@brief Main controller for the application
 
-        self.joystick_master = JoystickController(joystick_widget, self)
+    Responsible for linking the different lower level controllers together
+    and to their views. This should be the main router for the signals and
+    slot mechanisms.
+    """
+
+    def __init__(self, main_view, parent=None):
+        """!@brief Constructor.
+
+        Initialize the module controllers and link signals
+
+        @param self Python object pointer
+        @param main_view MainView object previously instantiated to link signals
+        @param parent QObject Qt hierarchy parent
+        """
+
+        super(MainController, self).__init__(parent)
+
+        ## Joystick master controller, handles all joystick operations
+        self.joystick_master = JoystickController(main_view.joystick_mode_widget, self)
+        ## Drive controller, links to ROS  drive systems
         self.drive_controller = DriveController(self)
         self.joystick_master.addController("Drive", self.drive_controller)
 

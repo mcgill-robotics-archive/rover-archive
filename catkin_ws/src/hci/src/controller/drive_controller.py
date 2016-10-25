@@ -34,7 +34,7 @@ class DriveController(JoystickBase):
 
         super(DriveController, self).__init__(parent)
 
-        self._command_publisher=rospy.Publisher("/drive_command", DriveCommand, queue_size=1)
+        self._command_publisher = rospy.Publisher("/drive_command", DriveCommand, queue_size=1)
         self._status_subscriber = rospy.Subscriber('/motor_status', MotorStatus, self._motor_status, queue_size=1)
         self._settings = DriveSettings()
         self._command = Twist()
