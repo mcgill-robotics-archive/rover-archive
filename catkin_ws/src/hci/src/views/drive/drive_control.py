@@ -90,9 +90,9 @@ class SteeringMode(QWidget):
         self.setLayout(hbox1)
 
         self._enable.toggled.connect(self._handle_enable)
-        self._ackerman.clicked.connect(self._handle_steerimg_mode)
-        self._pointsteer.clicked.connect(self._handle_steerimg_mode)
-        self._translate.clicked.connect(self._handle_steerimg_mode)
+        self._ackerman.clicked.connect(self._handle_steering_mode)
+        self._pointsteer.clicked.connect(self._handle_steering_mode)
+        self._translate.clicked.connect(self._handle_steering_mode)
 
     def _handle_enable(self):
         """!@brief Enable button callback
@@ -106,7 +106,7 @@ class SteeringMode(QWidget):
         self._drive_settings.motor_enable = self._enable.isChecked()
         self.driveSettingsChanged.emit(self._drive_settings)
 
-    def _handle_steerimg_mode(self):
+    def _handle_steering_mode(self):
         """!@brief Radio buttons callback
 
         Handle changes in radio buttons. Update the status structure and emit

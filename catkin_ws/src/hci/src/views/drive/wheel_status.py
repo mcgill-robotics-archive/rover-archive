@@ -1,10 +1,12 @@
+"""!@brief Wheel status module is meant to display the current readiness
+of the wheel and specifically motor controllers
 
+The module includes the display class and the data structure used to
+update the display
+"""
 
-## Wheel Status Structure
-#
-# Group the status of the wheels to make update easier
 import sys
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtWidgets import QGridLayout
@@ -16,7 +18,20 @@ from utilities import lbl_bg_grn, lbl_bg_red
 
 
 class WheelStatusStruct(object):
+    """!@brief Group the status of the wheels to make update easier
+    """
     def __init__(self, fl=False, ml=False, bl=False, fr=False, mr=False, br=False):
+        """!@brief Constructor
+
+        @param self Python object pointer
+        @param fl front left status
+        @param ml middle left status
+        @param bl back left status
+        @param fr front right status
+        @param mr middle right status
+        @param br back right status
+        """
+
         self.fl = fl
         self.ml = ml
         self.bl = bl
@@ -25,21 +40,27 @@ class WheelStatusStruct(object):
         self.br = br
 
 
-## Helper function to automate the changing of background color based on boolean
-#
-# @param item qt object which will be changed
-# @param value boolean value, true to make status green, false to red
 def set_color_label(item, value):
+    """!@brief Helper function to automate the changing of background color
+    based on boolean
+
+    @param item qt object which will be changed
+    @param value boolean value, true to make status green, false to red
+    """
     if value:
         lbl_bg_grn(item, "OK")
     else:
         lbl_bg_red(item, "BAD")
 
 
-## Indicate the status of the wheels
-#
 class WheelStatus(QWidget):
+    """!@brief Indicate the status of the wheels
+    """
     def __init__(self, parent=None):
+        """!@brief Constructor, creates labels and sets layout
+        @param self Python object pointer
+        @param parent Qt parent
+        """
         super(WheelStatus, self).__init__(parent)
 
         vbox1 = QVBoxLayout()
@@ -51,29 +72,29 @@ class WheelStatus(QWidget):
         label = QLabel(self)
         label.setText("Wheel Status")
 
-        self.fl_ok = QLabel(self)
-        self.fl_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.fl_ok, 0, 0, 1, 1)
+        self._fl_ok = QLabel(self)
+        self._fl_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._fl_ok, 0, 0, 1, 1)
 
-        self.mr_ok = QLabel(self)
-        self.mr_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.mr_ok, 1, 1, 1, 1)
+        self._mr_ok = QLabel(self)
+        self._mr_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._mr_ok, 1, 1, 1, 1)
 
-        self.fr_ok = QLabel(self)
-        self.fr_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.fr_ok, 0, 1, 1, 1)
+        self._fr_ok = QLabel(self)
+        self._fr_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._fr_ok, 0, 1, 1, 1)
 
-        self.ml_ok = QLabel(self)
-        self.ml_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.ml_ok, 1, 0, 1, 1)
+        self._ml_ok = QLabel(self)
+        self._ml_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._ml_ok, 1, 0, 1, 1)
 
-        self.bl_ok = QLabel(self)
-        self.bl_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.bl_ok, 2, 0, 1, 1)
+        self._bl_ok = QLabel(self)
+        self._bl_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._bl_ok, 2, 0, 1, 1)
 
-        self.br_ok = QLabel(self)
-        self.br_ok.setAlignment(Qt.AlignCenter)
-        grid1.addWidget(self.br_ok, 2, 1, 1, 1)
+        self._br_ok = QLabel(self)
+        self._br_ok.setAlignment(Qt.AlignCenter)
+        grid1.addWidget(self._br_ok, 2, 1, 1, 1)
 
         line_2 = QFrame(self)
         line_2.setFrameShape(QFrame.HLine)
@@ -86,22 +107,27 @@ class WheelStatus(QWidget):
 
         self.update_motor_status(WheelStatusStruct())
 
-    ## Use status structure <code>WheelStatusStruct</code> to update each wheel background
-    #
-    # @param status <code>WheelStatusStruct</code> with the status of each wheel
+    @pyqtSlot(WheelStatusStruct)
     def update_motor_status(self, status):
-        set_color_label(self.fl_ok, status.fl)
-        set_color_label(self.ml_ok, status.ml)
-        set_color_label(self.bl_ok, status.bl)
-        set_color_label(self.fr_ok, status.fr)
-        set_color_label(self.mr_ok, status.mr)
-        set_color_label(self.br_ok, status.br)
+        """!@brief Use status structure <code>WheelStatusStruct</code> to update each wheel background
+
+        @param status <code>WheelStatusStruct</code> with the status of each wheel
+        @param self Python object pointer
+        """
+        set_color_label(self._fl_ok, status.fl)
+        set_color_label(self._ml_ok, status.ml)
+        set_color_label(self._bl_ok, status.bl)
+        set_color_label(self._fr_ok, status.fr)
+        set_color_label(self._mr_ok, status.mr)
+        set_color_label(self._br_ok, status.br)
 
 
 if __name__ == "__main__":
     from PyQt5.QtCore import pyqtSignal
 
     class WheelDisplayTest(QWidget):
+        """!@brief Test class that displays the WheelStatus window
+        """
         signal = pyqtSignal(WheelStatusStruct, name="test_signal")
 
         def __init__(self):
