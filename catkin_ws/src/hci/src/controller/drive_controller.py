@@ -12,44 +12,73 @@ from views.drive.wheel_status import WheelStatusStruct
 
 
 class DriveController(JoystickBase):
+    """!@brief Control drive related information and communications
+
+    General logic elements related to the drive modules, including the ROS
+    publisher and subscriber to the drive controller and motor controller
+    feedback nodes.
+    """
+
+    ## Emitted when a new values of wheel status is received
     wheelStatusUpdate = pyqtSignal(WheelStatusStruct)
+
+    ## Emitted to update the displayed steering configuration selection
     forceControlsUpdate = pyqtSignal(DriveSettings)
+
+    def __init__(self, parent=None):
+        """!@brief Constructor creates the publisher and subscriber
+
+        @param self Python object pointer
+        @param parent QObject parent in Qt hierarchy
+        """
+
+        super(DriveController, self).__init__(parent)
+
+        self._command_publisher=rospy.Publisher("/drive_command", DriveCommand, queue_size=1)
+        self._status_subscriber = rospy.Subscriber('/motor_status', MotorStatus, self._motor_status, queue_size=1)
+        self._settings = DriveSettings()
+        self._command = Twist()
 
     @pyqtSlot(JoystickData)
     def handle_joystick_data(self, data):
-        self.command.linear.x = data.a2
-        self.command.angular.z = data.a1
-        if self.settings.motor_enable != data.b1:
-            self.settings.motor_enable = data.b1
-            self.forceControlsUpdate.emit(self.settings)
+        """!@brief Implementation of the base class interface
 
-        self.publish()
-        pass
+        Receives the joystick data and updates the internal data structure.
+        Finally publish the control commands to the drive control node.
 
-    def __init__(self, parent=None):
-        super(DriveController, self).__init__(parent)
+        @param self Python object pointer
+        @param data JoystickData structure containing all data elements.
+        """
 
-        self.command_publisher=rospy.Publisher("/drive_command", DriveCommand, queue_size=1)
-        self.status_subscriber = rospy.Subscriber('/motor_status', MotorStatus, self.motor_status, queue_size=1)
-        self.settings = DriveSettings()
-        self.command = Twist()
+        self._command.linear.x = data.a2
+        self._command.angular.z = data.a1
+        if self._settings.motor_enable != data.b1:
+            self._settings.motor_enable = data.b1
+            self.forceControlsUpdate.emit(self._settings)
 
-    def motor_status(self, status):
+        self._publish()
+
+    def _motor_status(self, status):
         wheel_status = WheelStatusStruct(status.fl, status.ml, status.bl, status.fr, status.mr, status.br)
         self.wheelStatusUpdate.emit(wheel_status)
-        pass
 
     @pyqtSlot(DriveSettings)
     def setDriveSetting(self, settings):
-        self.settings = settings
+        """!@brief Slot to update the control setting for next messages
 
-    def publish(self):
+        @param self Python object pointer
+        @param settings DriveSettings object with control values
+        """
+
+        self._settings = settings
+
+    def _publish(self):
         msg = DriveCommand()
-        msg.motion_ackerman = self.settings.ackerman_steering
-        msg.motion_pointsteer = self.settings.point_steering
-        msg.motion_translatory = self.settings.translatory_steering
-        msg.motion_enable = self.settings.motor_enable
+        msg.motion_ackerman = self._settings.ackerman_steering
+        msg.motion_pointsteer = self._settings.point_steering
+        msg.motion_translatory = self._settings.translatory_steering
+        msg.motion_enable = self._settings.motor_enable
 
-        msg.velocity_command = self.command
+        msg.velocity_command = self._command
 
-        self.command_publisher.publish(msg)
+        self._command_publisher.publish(msg)
