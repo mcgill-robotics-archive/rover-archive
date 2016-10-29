@@ -1,3 +1,6 @@
+"""!@brief Textual display of the position and orientation of the robot
+
+"""
 import tf
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QFont
@@ -15,9 +18,20 @@ from utilities import format_euler_angle, format_dms
 
 
 class PoseDisplay(QWidget):
+    """!@brief GUI class to textually display an orientation and position
+
+    Samples come in as geometry_msgs/Pose messages directly.
+    """
+
+    ## Emit when the pose is changed
     poseUpdated = pyqtSignal(Pose)
 
     def __init__(self, parent=None):
+        """!@brief Constructor inits and places the objects
+
+        @param parent Qt object hierarchy
+        @param self Python object pointer
+        """
         super(PoseDisplay, self).__init__(parent)
 
         hbox1 = QHBoxLayout()
@@ -39,14 +53,14 @@ class PoseDisplay(QWidget):
         lat_t.setFixedWidth(90)
         lon_t.setFixedWidth(100)
 
-        self.latitude = QLabel(self)
-        self.longitude = QLabel(self)
+        self._latitude = QLabel(self)
+        self._longitude = QLabel(self)
 
         hbox1.addWidget(lat_t)
-        hbox1.addWidget(self.latitude)
+        hbox1.addWidget(self._latitude)
 
         hbox2.addWidget(lon_t)
-        hbox2.addWidget(self.longitude)
+        hbox2.addWidget(self._longitude)
 
         hbox3.addItem(hbox1)
         hbox3.addItem(hbox2)
@@ -61,16 +75,16 @@ class PoseDisplay(QWidget):
         rol_t.setFixedWidth(60)
         yaw_t.setFixedWidth(60)
 
-        self.pitch = QLabel(self)
-        self.roll = QLabel(self)
-        self.yaw = QLabel(self)
+        self._pitch = QLabel(self)
+        self._roll = QLabel(self)
+        self._yaw = QLabel(self)
 
         hbox4.addWidget(pit_t)
-        hbox4.addWidget(self.pitch)
+        hbox4.addWidget(self._pitch)
         hbox4.addWidget(rol_t)
-        hbox4.addWidget(self.roll)
+        hbox4.addWidget(self._roll)
         hbox4.addWidget(yaw_t)
-        hbox4.addWidget(self.yaw)
+        hbox4.addWidget(self._yaw)
 
         vbox1.addItem(hbox3)
         vbox1.addItem(hbox4)
@@ -80,6 +94,14 @@ class PoseDisplay(QWidget):
 
     @pyqtSlot(Pose)
     def update_pose(self, pose = Pose()):
+        """!@brief Slot to update the pose displayed
+
+        Extract quaternion and convert to euler for display.
+        Extract GPS position and display
+
+        @param pose The new pose to display
+        @param self Python object pointer
+        """
         quaternion = (
             pose.orientation.x,
             pose.orientation.y,
@@ -88,12 +110,12 @@ class PoseDisplay(QWidget):
         )
         euler = tf.transformations.euler_from_quaternion(quaternion)
 
-        self.latitude.setText(format_dms(pose.position.y))
-        self.longitude.setText(format_dms(pose.position.x))
+        self._latitude.setText(format_dms(pose.position.y))
+        self._longitude.setText(format_dms(pose.position.x))
 
-        self.roll.setText(format_euler_angle(euler[0]))
-        self.pitch.setText(format_euler_angle(euler[1]))
-        self.yaw.setText(format_euler_angle(euler[2]))
+        self._roll.setText(format_euler_angle(euler[0]))
+        self._pitch.setText(format_euler_angle(euler[1]))
+        self._yaw.setText(format_euler_angle(euler[2]))
         self.poseUpdated.emit(pose)
 
 

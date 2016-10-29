@@ -1,16 +1,14 @@
 import sys
-
 import time
 
 from PyQt5.QtCore import QThread
-from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
-
 from views.attitude_indicator.attitude import QAttitude
-from views.attitude_indicator.compass import QCompass
+
+from views.navigation.compass import QCompass
 
 
 class Thread(QThread):
