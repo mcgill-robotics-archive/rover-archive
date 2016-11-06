@@ -1,0 +1,14 @@
+<launch>
+  <!-- Launch basic world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find lidar_gazebo)/worlds/lidar.world"/>
+  </include>
+
+  <!-- Process the xacro model of the Lidar mount -->
+  <param name="robot_description" command="$(find xacro)/xacro.py 
+      $(find lidar_description)/urdf/lidar.urdf.xacro" />
+
+  <!-- Spawn the lidar mount urdf into world -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+      args="-param robot_description -urdf -model lidar" />
+</launch>
