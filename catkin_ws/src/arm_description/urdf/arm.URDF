@@ -1,0 +1,149 @@
+<robot
+  name="Assem">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-3.47331717172546E-17 0.003175 -1.6770626969229E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.147282476469233" />
+      <inertia
+        ixx="0.000285945904679027"
+        ixy="-5.68358559530477E-40"
+        ixz="1.90259613619369E-22"
+        iyy="0.000570902009748482"
+        iyz="-4.21956118508207E-38"
+        izz="0.000285945904679027" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="baseyaw">
+    <inertial>
+      <origin
+        xyz="-0.0299178318558735 0.0600845676443655 0.0432876218036552"
+        rpy="0 0 0" />
+      <mass
+        value="1.07263545984557" />
+      <inertia
+        ixx="0.00347213305218513"
+        ixy="-0.000405057923313279"
+        ixz="0.000867021859638602"
+        iyy="0.00645084411140683"
+        iyz="0.000285103823875023"
+        izz="0.00478851626481468" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/baseyaw.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/baseyaw.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="yaw1"
+    type="continuous">
+    <origin
+      xyz="0 0 0.00635"
+      rpy="1.5708 -6.0228E-17 -1.3896" />
+    <parent
+      link="base_link" />
+    <child
+      link="baseyaw" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="-4.85722573273506E-17 0.302944574181268 -0.0304009086699073"
+        rpy="0 0 0" />
+      <mass
+        value="1.36312424561291" />
+      <inertia
+        ixx="0.0444888871414972"
+        ixy="1.31838038382252E-05"
+        ixz="7.52650402073736E-05"
+        iyy="0.00728066537598694"
+        iyz="-0.00608114949610295"
+        izz="0.04742039382218" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_description/meshes/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pitch1"
+    type="continuous">
+    <origin
+      xyz="0 0.075095 0"
+      rpy="-0.70211 -3.6082E-16 0" />
+    <parent
+      link="baseyaw" />
+    <child
+      link="link1" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+</robot>
