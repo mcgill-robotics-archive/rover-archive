@@ -27,17 +27,17 @@ class QCompass(QWidget):
         """
         super(QWidget, self).__init__(parent)
 
-        self._sizeMin = 200
-        self._sizeMax = 600
+        self._size_min = 200
+        self._size_max = 600
         self._offset = 2
-        self._size = self._sizeMin - 2 * self._offset
+        self._size = self._size_min - 2 * self._offset
         self._yaw = 0.0
         self._alt = 0.0
         self._h = 0.0
 
-        self.setMinimumSize(self._sizeMin, self._sizeMin)
-        self.setMaximumSize(self._sizeMax, self._sizeMax)
-        self.resize(self._sizeMin, self._sizeMin)
+        self.setMinimumSize(self._size_min, self._size_min)
+        self.setMaximumSize(self._size_max, self._size_max)
+        self.resize(self._size_min, self._size_min)
         self.setFocusPolicy(Qt.NoFocus)
         self.canvasReplot.connect(self.canvasReplot_slot)
 
@@ -143,7 +143,7 @@ class QCompass(QWidget):
         painter.setPen(black_pen)
         painter.setBrush(bg_ground)
 
-        painter.drawEllipse(-self._size / 2, -self._size / 2, self. _size, self._size)
+        painter.drawEllipse(-self._size / 2, -self._size / 2, self._size, self._size)
 
         # draw yaw lines
         painter.rotate(-self._yaw)  # could possibly move this before drawing NS arrow
@@ -166,7 +166,7 @@ class QCompass(QWidget):
                 s = "W"
                 painter.setPen(black_pen)
                 painter.setFont(QFont("", font_size * 1.3))
-            
+
             elif i == 18:
                 s = "S"
                 painter.setPen(red_pen)
@@ -188,9 +188,9 @@ class QCompass(QWidget):
                 fy2 = fy1 + yaw_line_leng
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
-                fy2 = fy1 + yaw_line_leng+4
-                painter.drawText(QRectF(-50, fy2, 100, font_size+2), Qt.AlignCenter, s)
-            else :
+                fy2 = fy1 + yaw_line_leng + 4
+                painter.drawText(QRectF(-50, fy2, 100, font_size + 2), Qt.AlignCenter, s)
+            else:
                 fy2 = fy1 + yaw_line_leng / 2
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
@@ -212,7 +212,7 @@ class QCompass(QWidget):
 
         painter.setBrush(QBrush(Qt.blue))
 
-        points_n = [QPointF(fx1, fy1),QPointF(fx2, fy2),QPointF(fx3, fy3)]
+        points_n = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
         poly_n = QPolygon()
         for point in points_n:
             poly_n.append(point.toPoint())
@@ -268,10 +268,10 @@ class QCompass(QWidget):
         painter.drawRoundedRect(fx, fy, w, h, 6, 6)
         painter.setPen(blue_pen)
         text = "ALT: " + str(self._alt) + "m"
-        painter.drawText(QRectF(fx, fy+2, w, h/2), Qt.AlignCenter, text)
+        painter.drawText(QRectF(fx, fy + 2, w, h / 2), Qt.AlignCenter, text)
 
         text = "H: " + str(self._h) + "m"
-        painter.drawText(QRectF(fx, fy+h/2, w, h / 2), Qt.AlignCenter, text)
+        painter.drawText(QRectF(fx, fy + h / 2, w, h / 2), Qt.AlignCenter, text)
 
     def resizeEvent(self, QResizeEvent):
         """!@brief Resize Event

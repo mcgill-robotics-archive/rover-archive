@@ -20,7 +20,7 @@ class QAttitude(QWidget):
     """!@brief Virtual horizon widget that displays pitch and roll of robot"""
     canvasReplot = pyqtSignal(name="canvasReplot")
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """!@brief Constructor initializes member data and sets object properties
 
         @param self Python object pointer
@@ -29,16 +29,16 @@ class QAttitude(QWidget):
 
         super(QAttitude, self).__init__(parent)
 
-        self._sizeMin = 200
-        self._sizeMax = 600
+        self._size_min = 200
+        self._size_max = 600
         self._offset = 2
-        self._size = self._sizeMin - 2 * self._offset
+        self._size = self._size_min - 2 * self._offset
         self._roll = 0.0
         self._pitch = 0.0
 
-        self.setMinimumSize(self._sizeMin, self._sizeMin)
-        self.setMaximumSize(self._sizeMax, self._sizeMax)
-        self.resize(self._sizeMin, self._sizeMin)
+        self.setMinimumSize(self._size_min, self._size_min)
+        self.setMaximumSize(self._size_max, self._size_max)
+        self.resize(self._size_min, self._size_min)
         self.setFocusPolicy(Qt.NoFocus)
 
         self.canvasReplot.connect(self.canvasReplot_slot)
@@ -107,8 +107,8 @@ class QAttitude(QWidget):
         @param QPaintEvent Qt event
         """
         painter = QPainter(self)
-        bg_sky = QBrush(QColor(48,172,220))
-        bg_ground = QBrush(QColor(247,168,21))
+        bg_sky = QBrush(QColor(48, 172, 220))
+        bg_ground = QBrush(QColor(247, 168, 21))
 
         white_pen = QPen(Qt.white)
         black_pen = QPen(Qt.black)
@@ -251,9 +251,9 @@ class QAttitude(QWidget):
         fx3 = fx1 + roll_marker_size / 2
         fy3 = fy1 + roll_marker_size
 
-        points = [QPointF(fx1, fy1),QPointF(fx2, fy2),QPointF(fx3, fy3)]
+        points3 = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
         poly = QPolygon()
-        for po in points:
+        for po in points3:
             poly.append(po.toPoint())
         painter.drawPolygon(poly)
 
@@ -265,6 +265,7 @@ class QAttitude(QWidget):
         @param QResizeEvent Qt event
         """
         self._size = min(self.width(), self.height()) - 2 * self._offset
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
