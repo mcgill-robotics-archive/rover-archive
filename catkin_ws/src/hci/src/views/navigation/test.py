@@ -21,7 +21,7 @@ class Thread(QThread):
         while 1:
             for i in range(-30, 30):
                 self.newValue.emit(i)
-                time.sleep(0.01)
+                time.sleep(0.05)
                 # print(i)
 
 

@@ -1,3 +1,4 @@
+"""!@brief Virtual horizon widget"""
 import sys
 from math import sqrt, atan
 
@@ -11,104 +12,143 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QPolygon
-from PyQt5.QtGui import QRegion
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QWidget
 
 
 class QAttitude(QWidget):
+    """!@brief Virtual horizon widget that displays pitch and roll of robot"""
     canvasReplot = pyqtSignal(name="canvasReplot")
 
     def __init__(self, parent = None):
+        """!@brief Constructor initializes member data and sets object properties
+
+        @param self Python object pointer
+        @param parent QWidget parent in Qt hierarchy
+        """
+
         super(QAttitude, self).__init__(parent)
 
-        self.m_sizeMin = 200
-        self.m_sizeMax = 600
-        self.m_offset = 2
-        self.m_size = self.m_sizeMin - 2*self.m_offset
-        self.m_roll = 0.0
-        self.m_pitch = 0.0
+        self._sizeMin = 200
+        self._sizeMax = 600
+        self._offset = 2
+        self._size = self._sizeMin - 2 * self._offset
+        self._roll = 0.0
+        self._pitch = 0.0
 
-        self.setMinimumSize(self.m_sizeMin, self.m_sizeMin)
-        self.setMaximumSize(self.m_sizeMax, self.m_sizeMax)
-        self.resize(self.m_sizeMin, self.m_sizeMin)
+        self.setMinimumSize(self._sizeMin, self._sizeMin)
+        self.setMaximumSize(self._sizeMax, self._sizeMax)
+        self.resize(self._sizeMin, self._sizeMin)
         self.setFocusPolicy(Qt.NoFocus)
 
         self.canvasReplot.connect(self.canvasReplot_slot)
 
+    @pyqtSlot(int, int)
     def setData(self, p, r):
+        """!@brief Sets all member data
+
+        @param self Python object pointer
+        @param p The new pitch
+        @param r the new roll
+        """
         self.setPitch(p)
         self.setRoll(r)
 
+    @pyqtSlot(int)
     def setPitch(self, val):
-        self.m_pitch = val
-        self.m_pitch = max(self.m_pitch, -90)
-        self.m_pitch = min(self.m_pitch, 90)
+        """!@brief Set a new value for pitch.
+
+        This is a qt slot so it is thread safe when called using the
+        signal-slot mechanism.
+
+        @param self Python object pointer
+        @param val The new pitch value
+        """
+        self._pitch = val
+        self._pitch = max(self._pitch, -90)
+        self._pitch = min(self._pitch, 90)
         self.canvasReplot_slot()
 
+    @pyqtSlot(int)
     def setRoll(self, val):
-        self.m_roll = val
-        self.m_roll = max(self.m_roll, -180)
-        self.m_roll = min(self.m_roll, 180)
+        """!@brief Set a new value for roll.
+
+        This is a qt slot so it is thread safe when called using the
+        signal-slot mechanism.
+
+        @param self Python object pointer
+        @param val The new roll value
+        """
+        self._roll = val
+        self._roll = max(self._roll, -180)
+        self._roll = min(self._roll, 180)
         self.canvasReplot_slot()
 
     def getPitch(self):
-        return self.m_pitch
+        return self._pitch
 
     def getRoll(self):
-        return self.m_roll
+        return self._roll
 
-    @pyqtSlot(name="canvasReplot_slot")
+    @pyqtSlot()
     def canvasReplot_slot(self):
+        """!@brief Force a redraw
+
+        @param self Python object pointer
+        """
         self.update()
 
     def paintEvent(self, QPaintEvent):
+        """!@Draw the horizon widget
+
+        Paint event called by the Qt event handler
+
+        @param self Python object pointer
+        @param QPaintEvent Qt event
+        """
         painter = QPainter(self)
-        bgSky = QBrush(QColor(48,172,220))
-        bgGround = QBrush(QColor(247,168,21))
+        bg_sky = QBrush(QColor(48,172,220))
+        bg_ground = QBrush(QColor(247,168,21))
 
-        whitePen = QPen(Qt.white)
-        blackPen = QPen(Qt.black)
-        pitchPen = QPen(Qt.white)
-        pitchZero = QPen(Qt.green)
+        white_pen = QPen(Qt.white)
+        black_pen = QPen(Qt.black)
+        pitch_pen = QPen(Qt.white)
+        pitch_zero = QPen(Qt.green)
 
-        whitePen.setWidth(2)
-        blackPen.setWidth(2)
-        pitchZero.setWidth(3)
+        white_pen.setWidth(2)
+        black_pen.setWidth(2)
+        pitch_zero.setWidth(3)
 
         painter.setRenderHint(QPainter.Antialiasing)
         painter.translate(self.width() / 2, self.height() / 2)
-        painter.rotate(self.m_roll)
+        painter.rotate(self._roll)
 
         # FIXME: AHRS output left-hand values
-        pitch_tem = -self.m_pitch
+        pitch_tem = -self._pitch
 
         # draw background
-        y_min = self.m_size / 2 * -40.0 / 45.0
-        y_max = self.m_size / 2 * 40.0 / 45.0
+        y_min = self._size / 2 * -40.0 / 45.0
+        y_max = self._size / 2 * 40.0 / 45.0
 
-        y = self.m_size / 2 * pitch_tem / 45.0
+        y = self._size / 2 * pitch_tem / 45.0
         y = min(y, y_min)
         y = max(y, y_max)
 
-        x = sqrt(self.m_size * self.m_size / 4 - y * y)
+        x = sqrt(self._size * self._size / 4 - y * y)
         gr = atan(y / x)
 
-        painter.setPen(blackPen)
-        painter.setBrush(bgSky)
-        painter.drawChord(-self.m_size / 2, -self.m_size / 2, self.m_size, self.m_size, gr * 16, (180 - 2 * gr) * 16)
-        painter.setBrush(bgGround)
-        painter.drawChord(-self.m_size / 2, -self.m_size / 2, self.m_size, self.m_size, gr * 16, -(180 + 2 * gr) * 16)
-
-        maskRegion = QRegion(-self.m_size / 2, -self.m_size / 2, self.m_size, self.m_size, QRegion.Ellipse)
-        painter.setClipRegion(maskRegion)
+        painter.setPen(black_pen)
+        painter.setBrush(bg_sky)
+        painter.drawChord(-self._size / 2, -self._size / 2, self._size, self._size, gr * 16, (180 - 2 * gr) * 16)
+        painter.setBrush(bg_ground)
+        painter.drawChord(-self._size / 2, -self._size / 2, self._size, self._size, gr * 16, -(180 + 2 * gr) * 16)
 
         # draw pitch lines & marker
-        ll = self.m_size / 8
-        fontSize = 8
+        ll = self._size / 8
+        font_size = 12
 
-        pitchPen.setWidth(2)
-        painter.setFont(QFont("", fontSize))
+        pitch_pen.setWidth(2)
+        painter.setFont(QFont("", font_size))
 
         for i in range(-9, 9, 1):
             p = i * 10
@@ -120,41 +160,41 @@ class QAttitude(QWidget):
                 l = ll / 2
 
             if i == 0:
-                painter.setPen(pitchZero)
+                painter.setPen(pitch_zero)
                 l *= 1.8
             else:
-                painter.setPen(pitchPen)
+                painter.setPen(pitch_pen)
 
-            y = self.m_size / 2 * p / 45.0 - self.m_size / 2 * pitch_tem / 45.0
+            y = self._size / 2 * p / 45.0 - self._size / 2 * pitch_tem / 45.0
             x = l
 
             r = sqrt(x * x + y * y)
-            if r > self.m_size / 2:
+            if r > self._size / 2:
                 continue
 
             painter.drawLine(QPointF(-l, 1.0 * y), QPointF(l, 1.0 * y))
 
-            textWidth = 100
+            text_width = 100
 
             if i % 3 == 0 and i != 0:
-                painter.setPen(whitePen)
+                painter.setPen(white_pen)
 
-                x1 = -x - 2 - textWidth
-                y1 = y - fontSize / 2 - 1
-                painter.drawText(QRectF(x1, y1, textWidth, fontSize + 2), Qt.AlignRight | Qt.AlignVCenter, s)
+                x1 = -x - 2 - text_width
+                y1 = y - font_size / 2 - 1
+                painter.drawText(QRectF(x1, y1, text_width, font_size + 2), Qt.AlignRight | Qt.AlignVCenter, s)
 
         # draw markers
 
-        markerSize = self.m_size / 20
+        marker_size = self._size / 20
         painter.setBrush(Qt.red)
         painter.setPen(Qt.NoPen)
 
-        fx1 = markerSize
+        fx1 = marker_size
         fy1 = 0
-        fx2 = fx1 + markerSize
-        fy2 = -markerSize / 2
-        fx3 = fx1 + markerSize
-        fy3 = markerSize / 2
+        fx2 = fx1 + marker_size
+        fy2 = -marker_size / 2
+        fx3 = fx1 + marker_size
+        fy3 = marker_size / 2
 
         points = (QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3))
         poly = QPolygon()
@@ -169,47 +209,47 @@ class QAttitude(QWidget):
         painter.drawPolygon(poly2)
 
         # draw roll degree lines
-        nRollLines = 36
-        rotAng = 360.0 / nRollLines
-        rollLineLeng = self.m_size / 25
-        blackPen.setWidth(1)
-        painter.setPen(blackPen)
-        painter.setFont(QFont("", fontSize))
+        n_roll_lines = 36
+        rot_ang = 360.0 / n_roll_lines
+        roll_line_length = self._size / 25
+        black_pen.setWidth(1)
+        painter.setPen(black_pen)
+        painter.setFont(QFont("", font_size))
 
-        for i in range(0, nRollLines):
-            if (i < nRollLines / 2):
-                s = str(-i * rotAng)
+        for i in range(0, n_roll_lines):
+            if i < n_roll_lines / 2:
+                s = str(-i * rot_ang)
             else:
-                s = str(360 - i * rotAng)
+                s = str(360 - i * rot_ang)
 
             fx1 = 0
-            fy1 = -self.m_size / 2 + self.m_offset
+            fy1 = -self._size / 2 + self._offset
             fx2 = 0
 
-            if (i % 3 == 0):
-                fy2 = fy1 + rollLineLeng
+            if i % 3 == 0:
+                fy2 = fy1 + roll_line_length
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
-                fy2 = fy1 + rollLineLeng + 2
-                painter.drawText(QRectF(-50, fy2, 100, fontSize + 2), Qt.AlignCenter, s)
+                fy2 = fy1 + roll_line_length + 2
+                painter.drawText(QRectF(-50, fy2, 100, font_size + 2), Qt.AlignCenter, s)
 
             else:
-                fy2 = fy1 + rollLineLeng / 2
+                fy2 = fy1 + roll_line_length / 2
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
-            painter.rotate(rotAng)
+            painter.rotate(rot_ang)
 
         # draw roll marker
-        rollMarkerSize = self.m_size / 25
-        painter.rotate(-self.m_roll)
+        roll_marker_size = self._size / 25
+        painter.rotate(-self._roll)
         painter.setBrush(QBrush(Qt.black))
 
         fx1 = 0
-        fy1 = -self.m_size / 2 + self.m_offset
-        fx2 = fx1 - rollMarkerSize / 2
-        fy2 = fy1 + rollMarkerSize
-        fx3 = fx1 + rollMarkerSize / 2
-        fy3 = fy1 + rollMarkerSize
+        fy1 = -self._size / 2 + self._offset
+        fx2 = fx1 - roll_marker_size / 2
+        fy2 = fy1 + roll_marker_size
+        fx3 = fx1 + roll_marker_size / 2
+        fy3 = fy1 + roll_marker_size
 
         points = [QPointF(fx1, fy1),QPointF(fx2, fy2),QPointF(fx3, fy3)]
         poly = QPolygon()
@@ -218,7 +258,13 @@ class QAttitude(QWidget):
         painter.drawPolygon(poly)
 
     def resizeEvent(self, QResizeEvent):
-        self.m_size = min(self.width(), self.height()) - 2 * self.m_offset
+        """!@brief Resize Event
+
+        Constrain the size to a square form
+        @param self Python object pointer
+        @param QResizeEvent Qt event
+        """
+        self._size = min(self.width(), self.height()) - 2 * self._offset
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

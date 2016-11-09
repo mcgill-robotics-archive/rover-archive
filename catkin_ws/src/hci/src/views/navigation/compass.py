@@ -1,5 +1,7 @@
+"""!@brief Digital compass widget"""
+
 import sys
-from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QPointF, pyqtSlot
 from PyQt5.QtCore import QRectF
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -14,214 +16,271 @@ from PyQt5.QtWidgets import QWidget
 
 
 class QCompass(QWidget):
+    """!@brief Display a heading and altitude using a compass"""
     canvasReplot = pyqtSignal(name="canvasReplot")
 
     def __init__(self, parent=None):
+        """!@brief Constructor initializes member data and sets object properties
+
+        @param self Python object pointer
+        @param parent QWidget parent in Qt hierarchy
+        """
         super(QWidget, self).__init__(parent)
 
-        self.m_sizeMin = 200
-        self.m_sizeMax = 600
-        self.m_offset = 2
-        self.m_size = self.m_sizeMin - 2 * self.m_offset
-        self.m_yaw = 0.0
-        self.m_alt = 0.0
-        self.m_h = 0.0
+        self._sizeMin = 200
+        self._sizeMax = 600
+        self._offset = 2
+        self._size = self._sizeMin - 2 * self._offset
+        self._yaw = 0.0
+        self._alt = 0.0
+        self._h = 0.0
 
-        self.setMinimumSize(self.m_sizeMin, self.m_sizeMin)
-        self.setMaximumSize(self.m_sizeMax, self.m_sizeMax)
-        self.resize(self.m_sizeMin, self.m_sizeMin)
+        self.setMinimumSize(self._sizeMin, self._sizeMin)
+        self.setMaximumSize(self._sizeMax, self._sizeMax)
+        self.resize(self._sizeMin, self._sizeMin)
         self.setFocusPolicy(Qt.NoFocus)
         self.canvasReplot.connect(self.canvasReplot_slot)
 
+    @pyqtSlot(float, float, float)
     def setData(self, y, a, h):
+        """!@brief Sets all member data values
+
+        @param self Python object pointer
+        @param y The new yaw value
+        @param a The new altitude values
+        @param h The new h values
+        """
         self.setYaw(y)
         self.setH(h)
         self.setAlt(a)
 
+    @pyqtSlot(float)
     def setYaw(self, val):
-        self.m_yaw = val
-        self.m_yaw = min(self.m_yaw, 360)
-        self.m_yaw = max(self.m_yaw, -360)
+        """!@brief Set a new value for yaw.
+
+        This is a qt slot so it is thread safe when called using the
+        signal-slot mechanism.
+
+        @param self Python object pointer
+        @param val The new yaw value
+        """
+        self._yaw = val
+        self._yaw = min(self._yaw, 360)
+        self._yaw = max(self._yaw, -360)
         self.canvasReplot_slot()
 
+    @pyqtSlot(float)
     def setAlt(self, val):
-        self.m_alt = val
+        """!@brief Set a new value for altitude.
+
+        This is a qt slot so it is thread safe when called using the
+        signal-slot mechanism.
+
+        @param self Python object pointer
+        @param val The new altitude value
+        """
+        self._alt = val
         self.canvasReplot_slot()
 
+    @pyqtSlot(float)
     def setH(self, val):
-        self.m_h = val
+        """!@brief Set a new value for h.
+
+        This is a qt slot so it is thread safe when called using the
+        signal-slot mechanism.
+
+        @param self Python object pointer
+        @param val The h altitude value
+        """
+        self._h = val
         self.canvasReplot_slot()
 
     def getYaw(self):
-        return self.m_yaw
+        return self._yaw
 
     def getAlt(self):
-        return self.m_alt
+        return self._alt
 
     def getH(self):
-        return self.m_h
+        return self._h
 
+    @pyqtSlot()
     def canvasReplot_slot(self):
+        """!@brief Force a redraw
+
+        @param self Python object pointer
+        """
         self.update()
 
     def paintEvent(self, QPaintEvent):
+        """!@Draw the compass
+
+        Paint event called by the Qt event handler
+
+        @param self Python object pointer
+        @param QPaintEvent Qt event
+        """
         painter = QPainter(self)
-        bgGround = QBrush(QColor(48, 172, 220))
+        bg_ground = QBrush(QColor(48, 172, 220))
 
-        whitePen = QPen(Qt.white)
-        blackPen = QPen(Qt.black)
-        greenPen = QPen(Qt.green)
-        redPen = QPen(Qt.red)
-        bluePen = QPen(Qt.blue)
+        white_pen = QPen(Qt.white)
+        black_pen = QPen(Qt.black)
+        green_pen = QPen(Qt.green)
+        red_pen = QPen(Qt.red)
+        blue_pen = QPen(Qt.blue)
 
-        whitePen.setWidth(1)
-        blackPen.setWidth(2)
-        greenPen.setWidth(2)
-        redPen.setWidth(2)
-        bluePen.setWidth(2)
+        white_pen.setWidth(1)
+        black_pen.setWidth(2)
+        green_pen.setWidth(2)
+        red_pen.setWidth(2)
+        blue_pen.setWidth(2)
 
         painter.setRenderHint(QPainter.Antialiasing)
         painter.translate(self.width() / 2, self.height() / 2)
 
         # draw background
 
-        painter.setPen(blackPen)
-        painter.setBrush(bgGround)
+        painter.setPen(black_pen)
+        painter.setBrush(bg_ground)
 
-        painter.drawEllipse(-self.m_size / 2, -self.m_size / 2,self. m_size, self.m_size)
+        painter.drawEllipse(-self._size / 2, -self._size / 2, self. _size, self._size)
 
         # draw yaw lines
-        painter.rotate(-self.m_yaw)  # could possibly move this before drawing NS arrow
+        painter.rotate(-self._yaw)  # could possibly move this before drawing NS arrow
 
-        nyawLines = 36
-        rotAng = 360.0 / nyawLines
-        yawLineLeng = self.m_size / 25
-        fontSize = 8
+        nyaw_lines = 36
+        rot_ang = 360.0 / nyaw_lines
+        yaw_line_leng = self._size / 25
+        font_size = 12
 
-        blackPen.setWidth(1)
-        painter.setPen(blackPen)
+        black_pen.setWidth(1)
+        painter.setPen(black_pen)
 
-        s = ""
-
-        for i in range(0, nyawLines):
+        for i in range(0, nyaw_lines):
             if i == 0:
                 s = "N"
-                painter.setPen(bluePen)
-                painter.setFont(QFont("", fontSize * 1.3))
+                painter.setPen(blue_pen)
+                painter.setFont(QFont("", font_size * 1.3))
 
             elif i == 9:
                 s = "W"
-                painter.setPen(blackPen)
-                painter.setFont(QFont("", fontSize * 1.3))
+                painter.setPen(black_pen)
+                painter.setFont(QFont("", font_size * 1.3))
             
             elif i == 18:
                 s = "S"
-                painter.setPen(redPen)
-                painter.setFont(QFont("", fontSize * 1.3))
+                painter.setPen(red_pen)
+                painter.setFont(QFont("", font_size * 1.3))
             elif i == 27:
                 s = "E"
-                painter.setPen(blackPen)
-                painter.setFont(QFont("", fontSize * 1.3))
+                painter.setPen(black_pen)
+                painter.setFont(QFont("", font_size * 1.3))
             else:
-                s = str(i * rotAng)
-                painter.setPen(blackPen)
-                painter.setFont(QFont("", fontSize))
+                s = str(i * rot_ang)
+                painter.setPen(black_pen)
+                painter.setFont(QFont("", font_size))
 
             fx1 = 0
-            fy1 = -self.m_size / 2 + self.m_offset
+            fy1 = -self._size / 2 + self._offset
             fx2 = 0
 
             if i % 3 == 0:
-                fy2 = fy1 + yawLineLeng
+                fy2 = fy1 + yaw_line_leng
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
-                fy2 = fy1 + yawLineLeng+4
-                painter.drawText(QRectF(-50, fy2, 100, fontSize+2), Qt.AlignCenter, s)
+                fy2 = fy1 + yaw_line_leng+4
+                painter.drawText(QRectF(-50, fy2, 100, font_size+2), Qt.AlignCenter, s)
             else :
-                fy2 = fy1 + yawLineLeng / 2
+                fy2 = fy1 + yaw_line_leng / 2
                 painter.drawLine(QPointF(fx1, fy1), QPointF(fx2, fy2))
 
-            painter.rotate(-rotAng)
-        painter.rotate(self.m_yaw)
+            painter.rotate(-rot_ang)
+        painter.rotate(self._yaw)
 
         #  draw S/N arrow
 
-        arrowWidth = self.m_size / 5
+        arrow_width = self._size / 5
 
         fx1 = 0
-        fy1 = -self.m_size / 2 + self.m_offset + self.m_size / 25 + 15
-        fx2 = -arrowWidth / 2
+        fy1 = -self._size / 2 + self._offset + self._size / 25 + 15
+        fx2 = -arrow_width / 2
         fy2 = 0
-        fx3 = arrowWidth / 2
+        fx3 = arrow_width / 2
         fy3 = 0
 
         painter.setPen(Qt.NoPen)
 
         painter.setBrush(QBrush(Qt.blue))
 
-        pointsN = [QPointF(fx1, fy1),QPointF(fx2, fy2),QPointF(fx3, fy3)]
-        polyN = QPolygon()
-        for point in pointsN:
-            polyN.append(point.toPoint())
-        painter.drawPolygon(polyN)
+        points_n = [QPointF(fx1, fy1),QPointF(fx2, fy2),QPointF(fx3, fy3)]
+        poly_n = QPolygon()
+        for point in points_n:
+            poly_n.append(point.toPoint())
+        painter.drawPolygon(poly_n)
 
         fx1 = 0
-        fy1 = self.m_size / 2 - self.m_offset - self.m_size / 25 - 15
-        fx2 = -arrowWidth / 2
+        fy1 = self._size / 2 - self._offset - self._size / 25 - 15
+        fx2 = -arrow_width / 2
         fy2 = 0
-        fx3 = arrowWidth / 2
+        fx3 = arrow_width / 2
         fy3 = 0
 
         painter.setBrush(QBrush(Qt.red))
-        pointsS = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
-        polyS = QPolygon()
-        for point in pointsS:
-            polyS.append(point.toPoint())
-        painter.drawPolygon(polyS)
+        points_s = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
+        poly_s = QPolygon()
+        for point in points_s:
+            poly_s.append(point.toPoint())
+        painter.drawPolygon(poly_s)
 
         # draw yaw marker
 
-        yawMarkerSize = self.m_size / 12
+        yaw_marker_size = self._size / 12
 
-        painter.rotate(-self.m_yaw)  # could possibly move this before drawing NS arrow
+        painter.rotate(-self._yaw)  # could possibly move this before drawing NS arrow
         painter.setBrush(QBrush(QColor(0xFF, 0x00, 0x00, 0xE0)))
 
         fx1 = 0
-        fy1 = -self.m_size / 2 + self.m_offset
-        fx2 = fx1 - yawMarkerSize / 2
-        fy2 = fy1 + yawMarkerSize
-        fx3 = fx1 + yawMarkerSize / 2
-        fy3 = fy1 + yawMarkerSize
+        fy1 = -self._size / 2 + self._offset
+        fx2 = fx1 - yaw_marker_size / 2
+        fy2 = fy1 + yaw_marker_size
+        fx3 = fx1 + yaw_marker_size / 2
+        fy3 = fy1 + yaw_marker_size
 
-        pointsYaw = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
-        polyYaw = QPolygon()
-        for point in pointsYaw:
-            polyYaw.append(point.toPoint())
-        painter.drawPolygon(polyYaw)
+        points_yaw = [QPointF(fx1, fy1), QPointF(fx2, fy2), QPointF(fx3, fy3)]
+        poly_yaw = QPolygon()
+        for point in points_yaw:
+            poly_yaw.append(point.toPoint())
+        painter.drawPolygon(poly_yaw)
 
-        painter.rotate(self.m_yaw)
+        painter.rotate(self._yaw)
 
-        altFontSize = 13
+        alt_font_size = 13
         w = 130
-        h = 2 * (altFontSize + 8)
+        h = 2 * (alt_font_size + 8)
         fx = -w / 2
         fy = -h / 2
 
-        blackPen.setWidth(2)
-        painter.setPen(blackPen)
+        black_pen.setWidth(2)
+        painter.setPen(black_pen)
         painter.setBrush(QBrush(Qt.white))
-        painter.setFont(QFont("", altFontSize))
+        painter.setFont(QFont("", alt_font_size))
 
         painter.drawRoundedRect(fx, fy, w, h, 6, 6)
-        painter.setPen(bluePen)
-        text = "ALT: " + str(self.m_alt) + "m"
+        painter.setPen(blue_pen)
+        text = "ALT: " + str(self._alt) + "m"
         painter.drawText(QRectF(fx, fy+2, w, h/2), Qt.AlignCenter, text)
 
-        text = "H: " + str(self.m_h) + "m"
+        text = "H: " + str(self._h) + "m"
         painter.drawText(QRectF(fx, fy+h/2, w, h / 2), Qt.AlignCenter, text)
 
     def resizeEvent(self, QResizeEvent):
-        self.m_size = min(self.width(), self.height()) - 2 * self.m_offset
+        """!@brief Resize Event
+
+        Constrain the size to a square form
+        @param self Python object pointer
+        @param QResizeEvent Qt event
+        """
+        self._size = min(self.width(), self.height()) - 2 * self._offset
 
 
 if __name__ == "__main__":
