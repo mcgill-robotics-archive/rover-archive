@@ -6,7 +6,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
-from views.attitude_indicator.attitude import QAttitude
+from views.navigation.attitude import QAttitude
 
 from views.navigation.compass import QCompass
 
