@@ -1,6 +1,8 @@
+"""!@brief Joystick acquisition using pygame library.
+"""
 import pygame
 import time
-
+import rospy
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import pyqtSignal
 
@@ -19,6 +21,15 @@ class JoystickAcquisition(QThread):
         Will span new thread and run acquisition in loop. Signal is emitted
         with joystick data at every loop iteration. Loop runs at 100 Hz
         frequency.
+
+        In calling class:
+        @code{.py}
+        acquisition = JoystickAcquisition(self)
+        acquisition.start()
+        @endcode
+
+        This call will be forwarded to the run() function and start the main
+        acquisition loop and emit the signal with every iteration.
 
         @param self Python object pointer
         @param parent QWidget parent for object hierarchy
@@ -89,19 +100,12 @@ class JoystickAcquisition(QThread):
     def run(self):
         """!@brief Function will be run when thread started.
 
-        In calling class:
-        @code{.py}
-        acquisition = JoystickAcquisition(self)
-        acquisition.start()
-        @endcode
-
-        This call will be forwarded to the run() function and start the main
-        acquisition loop and emit the signal with every iteration.
+        Runs loop of acquisition and signal emission.
 
         @param self Python object pointer
         """
 
-        while 1:  # todo: replace with rospy status when ros is implemented
+        while not rospy.is_shutdown():
             # todo add hot swap capability maybe
             self.update()
             self.joystickDataUpdated.emit(self.data)

@@ -1,7 +1,15 @@
+"""!@brief Dictionary-type data structure for joystick button states."""
+
 from PyQt5.QtCore import QObject
 
 
 class JoystickData(QObject):
+    """!@brief Class to structure and pass around the button states
+
+    Should be used as a structure, does not follow any good encapsulation
+    practices, this is voluntary for simplicity and delegate interpretation
+    and parsing to the handler classes.
+    """
     b1 = False
     b2 = False
     b3 = False
@@ -28,4 +36,4 @@ class JoystickData(QObject):
     a4 = 0
 
     def __init__(self):
-        pass
+        QObject.__init__(self)

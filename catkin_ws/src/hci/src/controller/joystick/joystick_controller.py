@@ -1,3 +1,5 @@
+"""!@brief Joystick data dispatcher"""
+
 import rospy
 from PyQt5.QtCore import QObject, pyqtSlot
 
@@ -19,7 +21,7 @@ class JoystickController(QObject):
 
         @param self Python object pointer
         @param widget The view widget, should have a member
-        signal @code changeMode @endcode
+        signal @code void changeMode(string) @endcode
         """
 
         super(JoystickController, self).__init__(parent)

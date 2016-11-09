@@ -54,8 +54,8 @@ class JoystickMode(QWidget):
             This function will emit the changeMode signal with the proper
             button name when clicked
             """
-            name = button.text()
-            self.changeMode.emit(name)
+            name_text = button.text()
+            self.changeMode.emit(name_text)
 
         button.clicked.connect(button_callback)
 

@@ -1,3 +1,6 @@
+"""!@brief Simply class interface setting minimum requirements for controller
+classes"""
+
 from PyQt5.QtCore import QObject
 
 
