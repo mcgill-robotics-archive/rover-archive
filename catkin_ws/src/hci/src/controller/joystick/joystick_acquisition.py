@@ -12,7 +12,7 @@ from model.joystick_data import JoystickData
 class JoystickAcquisition(QThread):
     """!@brief Acquire joystick data and signal with available data
     """
-    joystickDataUpdated=pyqtSignal(object)
+    joystickDataUpdated = pyqtSignal(object)
 
     def __init__(self, parent=None):
         """!@brief Constructor, will start acquisition if joystick found.
@@ -62,9 +62,9 @@ class JoystickAcquisition(QThread):
         @param self Python object pointer
         """
 
-        for anEvent in pygame.event.get():
+        for an_event in pygame.event.get():
             try:
-                if anEvent.type == pygame.JOYBUTTONDOWN or anEvent.type == pygame.JOYBUTTONUP:
+                if an_event.type == pygame.JOYBUTTONDOWN or an_event.type == pygame.JOYBUTTONUP:
                     self.data.b1 = self.controller.get_button(0)
                     self.data.b2 = self.controller.get_button(1)
                     self.data.b3 = self.controller.get_button(2)
@@ -77,7 +77,7 @@ class JoystickAcquisition(QThread):
                     self.data.b10 = self.controller.get_button(9)
                     self.data.b11 = self.controller.get_button(10)
                     self.data.b12 = self.controller.get_button(11)
-                elif anEvent.type == pygame.JOYAXISMOTION:
+                elif an_event.type == pygame.JOYAXISMOTION:
                     self.data.a1 = self.controller.get_axis(0)
                     self.data.a2 = self.controller.get_axis(1)
                     self.data.a3 = self.controller.get_axis(2)

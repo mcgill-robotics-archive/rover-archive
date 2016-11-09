@@ -31,9 +31,8 @@ class JoystickController(QObject):
         try:
             self._acquisition = JoystickAcquisition(self)
             self._acquisition.start()
-        except Exception:
+        except AssertionError:
             rospy.logerr("Starting joystick acquisition failed")
-            pass
 
         self._mode_widget = widget
         self._mode_widget.changeMode.connect(self.setActiveJoystick)

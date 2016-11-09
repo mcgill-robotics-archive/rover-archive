@@ -45,7 +45,7 @@ class JoystickMode(QWidget):
         @param name String with the name of the mode, will be the display text
         on the button
         """
-        button=QPushButton(name, self)
+        button = QPushButton(name, self)
         self._layout.addWidget(button)
 
         def button_callback():
@@ -61,6 +61,7 @@ class JoystickMode(QWidget):
 
 
 def callback(string):
+    """!@brief Test callback"""
     print(string)
 
 if __name__ == "__main__":
