@@ -2,6 +2,7 @@ from PyQt5.QtCore import QObject
 
 from controller.drive_controller import DriveController
 from controller.joystick.joystick_controller import JoystickController
+from controller.navigation_controller import NavigationController
 
 
 class MainController(QObject):
@@ -30,6 +31,13 @@ class MainController(QObject):
         self.drive_controller = DriveController(self)
         self.joystick_master.addController("Drive", self.drive_controller)
 
+        ## Navigation controller, subscribes to the ahrs publisher
+        self.navigation_controller = NavigationController(self)
+
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)
         main_view.drive_view.controlsUpdated.connect(self.drive_controller.setDriveSetting)
+
+        self.navigation_controller.updatePitch.connect(main_view.navigation_view.handle_new_pitch)
+        self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
+        self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)

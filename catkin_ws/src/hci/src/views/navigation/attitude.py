@@ -43,7 +43,7 @@ class QAttitude(QWidget):
 
         self.canvasReplot.connect(self.canvasReplot_slot)
 
-    @pyqtSlot(int, int)
+    @pyqtSlot(float, float)
     def setData(self, p, r):
         """!@brief Sets all member data
 
@@ -54,7 +54,7 @@ class QAttitude(QWidget):
         self.setPitch(p)
         self.setRoll(r)
 
-    @pyqtSlot(int)
+    @pyqtSlot(float)
     def setPitch(self, val):
         """!@brief Set a new value for pitch.
 
@@ -69,7 +69,7 @@ class QAttitude(QWidget):
         self._pitch = min(self._pitch, 90)
         self.canvasReplot_slot()
 
-    @pyqtSlot(int)
+    @pyqtSlot(float)
     def setRoll(self, val):
         """!@brief Set a new value for roll.
 
