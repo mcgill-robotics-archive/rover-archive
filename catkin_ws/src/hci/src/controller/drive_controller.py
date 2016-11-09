@@ -49,11 +49,32 @@ class DriveController(JoystickBase):
         @param self Python object pointer
         @param data JoystickData structure containing all data elements.
         """
-
+        emit_signal = False
         self._command.linear.x = data.a2
         self._command.angular.z = data.a1
         if self._settings.motor_enable != data.b1:
             self._settings.motor_enable = data.b1
+            emit_signal = True
+
+        if data.b2:
+            self._settings.ackerman_steering = True
+            self._settings.point_steering = False
+            self._settings.translatory_steering = False
+            emit_signal = True
+
+        elif data.b3:
+            self._settings.ackerman_steering = False
+            self._settings.point_steering = True
+            self._settings.translatory_steering = False
+            emit_signal = True
+
+        elif data.b4:
+            self._settings.ackerman_steering = False
+            self._settings.point_steering = False
+            self._settings.translatory_steering = True
+            emit_signal = True
+
+        if emit_signal:
             self.forceControlsUpdate.emit(self._settings)
 
         self._publish()

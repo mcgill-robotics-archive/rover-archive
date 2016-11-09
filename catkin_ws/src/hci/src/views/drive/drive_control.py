@@ -168,6 +168,7 @@ class SteeringMode(QWidget):
         """
 
         self._enable.setChecked(status.motor_enable)
+        self.update_steering(status.ackerman_steering, status.point_steering, status.translatory_steering)
 
 
 if __name__ == "__main__":
