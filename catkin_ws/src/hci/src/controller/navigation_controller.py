@@ -1,3 +1,8 @@
+"""!@brief Main navigation controller
+
+Single point of entry for the navigation components.
+"""
+
 import math
 import rospy
 import tf
@@ -8,18 +13,38 @@ from geometry_msgs.msg import Pose
 
 
 class NavigationController(QObject):
+    """!@brief Main navigation controller object."""
+
+    ## Emitted when new pitch value should be updated
     updatePitch = pyqtSignal(float)
+
+    ## Emitted when new roll value should be updated
     updateRoll = pyqtSignal(float)
+
+    ## Emitted when new yaw value should be updated
     updateYaw = pyqtSignal(float)
+
+    ## Emitted when new attitude value should be updated
     updateAttitude = pyqtSignal(Pose)
 
     def __init__(self, parent=QObject):
+        """!@brief Constructor creates the ros subscriber and registers callback
+
+        @param self Python object pointer
+        @param parent Qt object hierarchy parent
+        """
         super(NavigationController, self).__init__(parent)
 
         self._attitude_subscriber = rospy.Subscriber("/ahrs_status", AhrsStdMsg, self._handle_ahrs_message)
 
     def _handle_ahrs_message(self, message):
-        print("New message")
+        """Ros callback function for ahrs values
+
+        Computes pitch, roll and yaw from pose and signals new values
+
+        @param self Python object pointer
+        @param message AhrsStdMsg status message
+        """
         pose = message.pose.pose
 
         quaternion = (
