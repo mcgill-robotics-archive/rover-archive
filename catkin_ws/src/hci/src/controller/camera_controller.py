@@ -1,5 +1,6 @@
 import rostopic
 from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QTimer
 from sensor_msgs.msg import CompressedImage, Image
 
 from controller.screen_controller import ScreenController
@@ -11,7 +12,10 @@ class CameraController(QObject):
         self.screen_list = []
         self.image_type = CompressedImage
 
-        # todo start timer/thread to refresh available topics list
+        refresh_timer = QTimer(self)
+        refresh_timer.setInterval(1000)
+        refresh_timer.timeout.connect(self.update_views_topic_list)
+        refresh_timer.start()
 
     def add_screen(self, screen_widget=None):
         topic = screen_widget.get_active_topic()
@@ -36,7 +40,9 @@ class CameraController(QObject):
             topics = []
         return topics
 
-    def update_views_topic_list(self, topics):
+    def update_views_topic_list(self):
+
+        topics = self.get_topics()
         try:
             for i in self.screen_list:
                 i.widget.set_feed_list(topics)

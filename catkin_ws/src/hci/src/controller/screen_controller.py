@@ -20,7 +20,7 @@ class ScreenController(QObject):
         if self.image_type == CompressedImage:
             self.last_image = QImage.fromData(image.data)
         elif self.image_type == Image:
-            #todo: convert uncompressed image to QImage
+            # todo: convert uncompressed image to QImage
             pass
 
         self.widget.new_sample(self.last_image)

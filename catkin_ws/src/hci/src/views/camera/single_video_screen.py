@@ -40,7 +40,7 @@ class SingleVideoScreen(QWidget):
         hbox.addWidget(self.angle_selector)
 
         self.angle_selector.turnAngle.connect(self.set_angle)
-        self.topic_selector.currentIndexChanged.connect(self._topic_sel_callback)
+        self.topic_selector.activated.connect(self._topic_sel_callback)
 
     def get_active_topic(self):
         return self.topic_selector.currentData()
