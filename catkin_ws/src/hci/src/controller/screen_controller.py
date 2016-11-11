@@ -7,14 +7,14 @@ from views.camera.single_video_screen import SingleVideoScreen
 
 
 class ScreenController(QObject):
-    def __init__(self, screenWidget=SingleVideoScreen(), topic="", imageType=CompressedImage, parent=None):
+    def __init__(self, screen_widget=SingleVideoScreen(), topic="", image_type=CompressedImage, parent=None):
         super(ScreenController, self).__init__(parent)
-        self.widget = screenWidget
+        self.widget = screen_widget
         self.widget.playTopic.connect(self.change_topic)
 
         self.registered_topic = topic
         self.last_image = QImage()
-        self.image_type = imageType
+        self.image_type = image_type
         self.subscriber = None
         self.subscribe()
 
@@ -25,11 +25,11 @@ class ScreenController(QObject):
             #todo: convert uncompressed image to QImage
             pass
 
-        self.widget.newSample(self.last_image)
+        self.widget.new_sample(self.last_image)
 
     @pyqtSlot(str)
     def change_topic(self, topic):
-        rospy.loginfo("Unregister $1, change to $2".format(self.registered_topic, topic))
+        rospy.loginfo("Unregister {0}, change to {1}".format(self.registered_topic, topic))
 
         if self.subscriber is not None:
             self.subscriber.unregister()
@@ -43,10 +43,10 @@ class ScreenController(QObject):
 
     def screenshot(self, filename):
         if not self.last_image.save(filename):
-            rospy.logwarn("Image save unsuccessfull, topic: %1, file: %2".format(self.registered_topic, filename))
+            rospy.logwarn("Image save unsuccessfull, topic: {0}, file: {1}".format(self.registered_topic, filename))
 
     def set_type(self, type):
         if type == Image:
             self.image_type = Image
         else:
-            self.image_type =  CompressedImage
+            self.image_type = CompressedImage

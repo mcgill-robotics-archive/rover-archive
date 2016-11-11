@@ -58,4 +58,3 @@ class AngleSelection(QWidget):
             angle = 0
 
         self.turnAngle.emit(angle)
-

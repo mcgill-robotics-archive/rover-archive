@@ -8,6 +8,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QComboBox
@@ -27,6 +28,10 @@ class SingleVideoScreen(QWidget):
         self.angle_selector = AngleSelection(angle, self)
         self.angle = angle
 
+        size_policy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.topic_selector.setSizePolicy(size_policy)
+        self.angle_selector.setSizePolicy(size_policy)
+
         hbox = QVBoxLayout()
         self.setLayout(hbox)
 
@@ -34,20 +39,20 @@ class SingleVideoScreen(QWidget):
         hbox.addWidget(self.topic_selector)
         hbox.addWidget(self.angle_selector)
 
-        self.angle_selector.turnAngle.connect(self.setAngle)
-        self.topic_selector.currentIndexChanged.connect(self._topic_sel_calllback)
+        self.angle_selector.turnAngle.connect(self.set_angle)
+        self.topic_selector.currentIndexChanged.connect(self._topic_sel_callback)
 
     def get_active_topic(self):
         return self.topic_selector.currentData()
 
     @pyqtSlot(int)
-    def setAngle(self, angle):
+    def set_angle(self, angle):
         print(angle)
         self.angle = angle
 
     @pyqtSlot(QImage)
-    def newSample(self, image):
-        if image == None or image.isNull():
+    def new_sample(self, image):
+        if image is None or image.isNull():
             self.imageDisplay.setText("No Image")
             return
 
@@ -62,7 +67,7 @@ class SingleVideoScreen(QWidget):
         self.imageDisplay.setPixmap(pixmap)
 
     @pyqtSlot(bool)
-    def setControlsVisible(self, visible):
+    def set_controls_visible(self, visible):
         self.topic_selector.setVisible(visible)
         self.angle_selector.setVisible(visible)
 
@@ -74,9 +79,9 @@ class SingleVideoScreen(QWidget):
     def set_feed_list(self, feed_list):
         self.topic_selector.clear()
         for i in feed_list:
-            self.topic_selector.addItem(i)
+            self.add_feed_entry(i)
 
-    def _topic_sel_calllback(self, index):
+    def _topic_sel_callback(self, index):
         if index < self.topic_selector.count():
             topic = self.topic_selector.itemText(index)
             self.playTopic.emit(topic)
@@ -91,7 +96,7 @@ if __name__ == "__main__":
     ui = SingleVideoScreen(180)
     ui.show()
     image = QImage("/home/david/rover/3_Main_Inverted.png")
-    ui.newSample(image)
+    ui.new_sample(image)
     ui.add_feed_entry("String")
     ui.add_feed_entry("String2")
     ui.add_feed_entry("String3")

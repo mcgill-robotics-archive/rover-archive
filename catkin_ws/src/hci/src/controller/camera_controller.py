@@ -12,19 +12,19 @@ class CameraController(QObject):
         self.screen_list = []
         self.image_type = CompressedImage
 
-    def addScreen(self, screenWidget=SingleVideoScreen()):
-        topic = screenWidget.get_active_topic()
-        if screenWidget is not None:
-            screen_controller = ScreenController(screenWidget, topic)
+    def add_screen(self, screen_widget=SingleVideoScreen()):
+        topic = screen_widget.get_active_topic()
+        if screen_widget is not None:
+            screen_controller = ScreenController(screen_widget, topic)
             self.screen_list.append(screen_controller)
             screen_controller.set_type(self.image_type)
             screen_controller.widget.set_feed_list(self.get_topics())
 
-    def set_topic_type(self, type=CompressedImage):
-        if type == Image:
+    def set_topic_type(self, image_type=CompressedImage):
+        if image_type == Image:
             self.image_type = Image
         else:
-            self.image_type =  CompressedImage
+            self.image_type = CompressedImage
 
     def get_topics(self):
         if self.image_type == CompressedImage:
@@ -39,7 +39,7 @@ class CameraController(QObject):
         try:
             for i in self.screen_list:
                 i.widget.set_feed_list(topics)
-                i.set_type(type)
+                i.set_type(self.image_type)
 
         except NameError:
             # topic is not defined, message type is invalid

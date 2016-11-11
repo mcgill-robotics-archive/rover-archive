@@ -15,8 +15,6 @@ class NavigationScreen(QWidget):
         self.left_wheel = SingleVideoScreen(270, self)
         self.right_wheel = SingleVideoScreen(90, self)
         self.bottom_cam = SingleVideoScreen(0, self)
-        self.left_wheel.setControlsVisible(False)
-        self.right_wheel.setControlsVisible(False)
 
         horizontal = QHBoxLayout()
         horizontal.addWidget(self.left_wheel)
@@ -27,9 +25,9 @@ class NavigationScreen(QWidget):
         self.setLayout(vertical)
 
         image = QImage("/home/david/rover/3_Main_Inverted.png")
-        self.left_wheel.newSample(image)
-        self.right_wheel.newSample(image)
-        self.bottom_cam.newSample(image)
+        self.left_wheel.new_sample(image)
+        self.right_wheel.new_sample(image)
+        self.bottom_cam.new_sample(image)
 
 
 if __name__ == "__main__":
