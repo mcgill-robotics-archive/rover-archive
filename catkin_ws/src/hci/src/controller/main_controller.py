@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QObject
 
+from controller.camera_controller import CameraController
 from controller.drive_controller import DriveController
 from controller.joystick.joystick_controller import JoystickController
 from controller.navigation_controller import NavigationController
@@ -34,6 +35,12 @@ class MainController(QObject):
 
         ## Navigation controller, subscribes to the ahrs publisher
         self.navigation_controller = NavigationController(self)
+
+        ## Camera controller
+        self.camera_controller = CameraController(self)
+        self.camera_controller.add_screen(main_view.nav_screen.left_wheel)
+        self.camera_controller.add_screen(main_view.nav_screen.right_wheel)
+        self.camera_controller.add_screen(main_view.nav_screen.bottom_cam)
 
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)

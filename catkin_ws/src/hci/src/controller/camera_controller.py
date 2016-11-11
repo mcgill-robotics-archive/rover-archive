@@ -3,7 +3,6 @@ from PyQt5.QtCore import QObject
 from sensor_msgs.msg import CompressedImage, Image
 
 from controller.screen_controller import ScreenController
-from views.camera.single_video_screen import SingleVideoScreen
 
 
 class CameraController(QObject):
@@ -12,7 +11,9 @@ class CameraController(QObject):
         self.screen_list = []
         self.image_type = CompressedImage
 
-    def add_screen(self, screen_widget=SingleVideoScreen()):
+        # todo start timer/thread to refresh available topics list
+
+    def add_screen(self, screen_widget=None):
         topic = screen_widget.get_active_topic()
         if screen_widget is not None:
             screen_controller = ScreenController(screen_widget, topic)

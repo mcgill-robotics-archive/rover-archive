@@ -3,11 +3,9 @@ from PyQt5.QtCore import QObject, pyqtSlot
 from PyQt5.QtGui import QImage
 from sensor_msgs.msg import CompressedImage, Image
 
-from views.camera.single_video_screen import SingleVideoScreen
-
 
 class ScreenController(QObject):
-    def __init__(self, screen_widget=SingleVideoScreen(), topic="", image_type=CompressedImage, parent=None):
+    def __init__(self, screen_widget=None, topic="", image_type=CompressedImage, parent=None):
         super(ScreenController, self).__init__(parent)
         self.widget = screen_widget
         self.widget.playTopic.connect(self.change_topic)
@@ -38,7 +36,7 @@ class ScreenController(QObject):
         self.subscribe()
 
     def subscribe(self):
-        if self.registered_topic is not "":
+        if self.registered_topic is not None and self.registered_topic is not "":
             self.subscriber = rospy.Subscriber(self.registered_topic, self.image_type, self.image_callback)
 
     def screenshot(self, filename):
