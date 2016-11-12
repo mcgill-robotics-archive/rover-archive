@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_msgs
   gazebo_plugins
   gazebo_ros
+  lidar_description
 )
 
 catkin_package(
