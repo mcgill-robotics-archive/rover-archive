@@ -473,5 +473,6 @@
       upper="0.0473958"
       effort="0"
       velocity="0" />
+   <mimic joint="slide_finger1"/>
   </joint>
 </robot>
