@@ -6,10 +6,14 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
-from views.navigation.attitude import QAttitude
 
-from views.navigation.compass import QCompass
-
+try:
+    from views.navigation.attitude import QAttitude
+    from views.navigation.compass import QCompass
+except ImportError:
+    from attitude import QAttitude
+    from compass import QCompass
+    
 
 class Thread(QThread):
     newValue = pyqtSignal(int, name="newValue")
