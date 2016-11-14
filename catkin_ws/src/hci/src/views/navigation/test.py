@@ -16,7 +16,7 @@ except ImportError:
     
 
 class Thread(QThread):
-    newValue = pyqtSignal(int, name="newValue")
+    newValue = pyqtSignal(float, name="newValue")
 
     def __init__(self, parent=None):
         super(Thread, self).__init__(parent)

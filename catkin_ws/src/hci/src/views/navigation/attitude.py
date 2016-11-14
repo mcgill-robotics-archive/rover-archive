@@ -2,6 +2,7 @@
 import sys
 from math import sqrt, atan
 
+import math
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QRectF
 from PyQt5.QtCore import Qt
@@ -130,15 +131,18 @@ class QAttitude(QWidget):
         y_min = self._size / 2 * -40.0 / 45.0
         y_max = self._size / 2 * 40.0 / 45.0
 
+        # determine height of the separation between ground and sky
         y = self._size / 2 * pitch_tem / 45.0
-        y = min(y, y_min)
-        y = max(y, y_max)
+        y = max(y, y_min)
+        y = min(y, y_max)
 
+        # figure out angle for arcs drawing ground and sky
         x = sqrt(self._size * self._size / 4 - y * y)
-        gr = atan(y / x)
+        gr = math.degrees(atan(y / x))
 
         painter.setPen(black_pen)
         painter.setBrush(bg_sky)
+        # angles are in 1/16 degrees
         painter.drawChord(-self._size / 2, -self._size / 2, self._size, self._size, gr * 16, (180 - 2 * gr) * 16)
         painter.setBrush(bg_ground)
         painter.drawChord(-self._size / 2, -self._size / 2, self._size, self._size, gr * 16, -(180 + 2 * gr) * 16)
