@@ -2,6 +2,7 @@
 devel/
 devel_isolated/
 install/
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -51,6 +52,7 @@ coverage.xml
 .mr.developer.cfg
 .project
 .pydevproject
+.catkin_tools/
 
 # Rope
 .ropeproject
@@ -67,3 +69,6 @@ catkin_ws/src/arduino/docs
 docs
 build_isolated/
 *.sublime*
+
+# MoveIt Specifics
+.rosinstall*
