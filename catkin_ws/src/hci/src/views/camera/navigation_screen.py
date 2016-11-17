@@ -1,6 +1,7 @@
+"""!@brief Group several screens for the navigation"""
+
 import sys
 
-from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
@@ -10,10 +11,21 @@ from views.camera.single_video_screen import SingleVideoScreen
 
 
 class NavigationScreen(QWidget):
+    """!@brief Multiple camera widget layered out for navigation tasks"""
+
     def __init__(self, parent=None):
+        """!@brief Constructor
+
+        @param self Python object pointer
+        @param parent The Qt parent object
+        """
         super(NavigationScreen, self).__init__(parent)
+
+        ## Left vertical image screen
         self.left_wheel = SingleVideoScreen(270, self)
+        ## Right vertical image screen
         self.right_wheel = SingleVideoScreen(90, self)
+        ## Bottom image screen
         self.bottom_cam = SingleVideoScreen(0, self)
 
         horizontal = QHBoxLayout()
@@ -23,11 +35,6 @@ class NavigationScreen(QWidget):
         vertical.addItem(horizontal)
         vertical.addWidget(self.bottom_cam)
         self.setLayout(vertical)
-
-        image = QImage("/home/david/rover/3_Main_Inverted.png")
-        self.left_wheel.new_sample(image)
-        self.right_wheel.new_sample(image)
-        self.bottom_cam.new_sample(image)
 
 
 if __name__ == "__main__":
