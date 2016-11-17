@@ -20,8 +20,11 @@ class ScreenController(QObject):
         if self.image_type == CompressedImage:
             self.last_image = QImage.fromData(image.data)
         elif self.image_type == Image:
-            # todo: convert uncompressed image to QImage
-            pass
+            if image.encoding == "mono8":
+                image_type = QImage.Format_Indexed8
+            else:
+                image_type = QImage.Format_RGB888
+            self.last_image = QImage(image.data, image.width, image.height, image_type)
 
         self.widget.new_sample(self.last_image)
 

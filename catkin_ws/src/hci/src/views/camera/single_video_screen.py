@@ -2,20 +2,17 @@
 
 Includes all the controls necessary to handle that video feed."""
 
-import sys
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QImage
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QTransform
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QComboBox
 
 from views.camera.angle_selection import AngleSelection
 
