@@ -10,3 +10,4 @@ controller_list:
   - name: fake_Grip_controller
     joints:
       - slide_finger1
+

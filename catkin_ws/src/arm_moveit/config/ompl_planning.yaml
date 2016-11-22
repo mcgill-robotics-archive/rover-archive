@@ -174,3 +174,4 @@ Grip:
     - SPARStwokConfigDefault
   projection_evaluator: joints(slide_finger1,slide_finger2)
   longest_valid_segment_fraction: 0.005
+

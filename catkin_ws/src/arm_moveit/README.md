@@ -8,3 +8,4 @@ To launch rviz with the arm model:
 ```bash
 roslaunch arm_moveit demo.launch
 ```
+
