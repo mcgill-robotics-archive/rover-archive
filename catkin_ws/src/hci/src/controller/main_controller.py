@@ -3,9 +3,11 @@ from PyQt5.QtCore import QObject
 from controller.drive_controller import DriveController
 from controller.joystick.joystick_controller import JoystickController
 from controller.navigation_controller import NavigationController
+from controller.pose_display_controller import PoseDisplayController
 
 
 class MainController(QObject):
+
     """!@brief Main controller for the application
 
     Responsible for linking the different lower level controllers together
@@ -41,3 +43,5 @@ class MainController(QObject):
         self.navigation_controller.updatePitch.connect(main_view.navigation_view.handle_new_pitch)
         self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
         self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)
+        self.pose_display_controller = PoseDisplayController(self)
+        self.pose_display_controller.poseStatusUpdate.connect(mainview.pose_display.update_pose)
