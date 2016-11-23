@@ -4,13 +4,14 @@ from PyQt5.QtCore import pyqtSlotfrom
 from PyQt5.QtCore import QObject
 from geometry_msgs.msg import Pose
 
+
 class PoseDisplayController(QObject):
     """!@brief Communicate the current orientation of the robot
     """
 
     poseStatusUpdate = pyqtSignal(Pose)
 
-    def __init__(self, parent=None)
+    def __init__(self, parent=None):
         """!@brief Constructor creates the publisher and subscriber
 
         @param self Python object pointer
@@ -19,7 +20,8 @@ class PoseDisplayController(QObject):
 
         super(PoseDisplayController, self).__init__(parent)
 
-        self._status_subscriber = rospy.Subscriber('/pose_status', Pose, self._pose_status, queue_size=1)
+        self._status_subscriber = rospy.Subscriber('/pose_status', Pose, self._pose_status,
+                                                   queue_size=1)
 
     def _pose_status(self, status):
         self.poseStatusUpdate.emit(status)

@@ -44,4 +44,4 @@ class MainController(QObject):
         self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
         self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)
         self.pose_display_controller = PoseDisplayController(self)
-        self.pose_display_controller.poseStatusUpdate.connect(mainview.pose_display.update_pose)
+        self.pose_display_controller.poseStatusUpdate.connect(main_view.pose_display.update_pose)

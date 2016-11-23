@@ -10,6 +10,7 @@ from views.navigation.navigation_view import NavigationView
 
 
 class MainView(QWidget):
+    """The main view module."""
 
     def __init__(self, parent=None):
         super(MainView, self).__init__(parent)
