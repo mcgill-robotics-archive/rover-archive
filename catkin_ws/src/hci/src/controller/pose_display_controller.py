@@ -1,6 +1,6 @@
 import rospy
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlotfrom
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QObject
 from geometry_msgs.msg import Pose
 
