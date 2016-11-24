@@ -3,6 +3,7 @@
 import rostopic
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QApplication
 from sensor_msgs.msg import CompressedImage, Image
 
 from controller.screen_controller import ScreenController
@@ -98,8 +99,8 @@ class CameraController(QObject):
 
         @param self Python object pointer
         """
-        topics = self.get_topics()
         try:
+            topics = self.get_topics()
             for i in self._screen_list:
                 i.widget.set_feed_list(topics)
                 i.set_type(self._image_type)
@@ -110,3 +111,5 @@ class CameraController(QObject):
         except TypeError:
             # elements in screen list of invalid type, wtf???
             pass
+        except rostopic.ROSTopicIOException:
+            QApplication.quit()
