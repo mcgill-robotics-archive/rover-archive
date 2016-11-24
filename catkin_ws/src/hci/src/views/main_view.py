@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
 from views.drive.drive_view import DriveView
-from views.map.pose_display import PoseDisplay
+from views.navigation.pose_display import PoseDisplay
 from views.drive.wheel_status import WheelStatus
 from views.joystick.joystick_mode import JoystickMode
 from views.navigation.navigation_view import NavigationView
@@ -28,8 +28,8 @@ class MainView(QWidget):
 
         self.setLayout(v1)
         self.pose_display = PoseDisplay(self)
-        self.layout.addWidget(self.joystick_mode_widget)
-        self.layout.addWidget(self.drive_view)
-        self.layout.addWidget(self.pose_display)
+        self.layout().addWidget(self.joystick_mode_widget)
+        self.layout().addWidget(self.drive_view)
+        self.layout().addWidget(self.pose_display)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.layout())
