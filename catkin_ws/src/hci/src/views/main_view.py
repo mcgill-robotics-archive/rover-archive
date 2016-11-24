@@ -20,16 +20,13 @@ class MainView(QWidget):
         self.joystick_mode_widget = JoystickMode(self)
         self.drive_view = DriveView(self)
         self.navigation_view = NavigationView(self)
+        self.pose_display = PoseDisplay(self)
 
         h1.addWidget(self.joystick_mode_widget)
         h1.addWidget(self.drive_view)
         v1.addItem(h1)
         v1.addWidget(self.navigation_view)
+        v1.addWidget(self.pose_display)
 
         self.setLayout(v1)
-        self.pose_display = PoseDisplay(self)
-        self.layout().addWidget(self.joystick_mode_widget)
-        self.layout().addWidget(self.drive_view)
-        self.layout().addWidget(self.pose_display)
 
-        self.setLayout(self.layout())
