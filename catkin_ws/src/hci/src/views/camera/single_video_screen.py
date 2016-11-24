@@ -88,8 +88,7 @@ class SingleVideoScreen(QWidget):
         else:
             image_rotated = image
 
-        pixmap = QPixmap()
-        pixmap = pixmap.fromImage(image_rotated)
+        pixmap = QPixmap.fromImage(image_rotated)
         self._image_display.setPixmap(pixmap)
 
     @pyqtSlot(bool)
