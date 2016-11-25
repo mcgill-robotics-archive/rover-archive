@@ -12,13 +12,12 @@ class ScreenController(QObject):
     Handles the recording of a screenshot for the frame
     """
 
-    def __init__(self, screen_widget=None, topic="", image_type=CompressedImage, parent=None):
+    def __init__(self, screen_widget=None, topic="", parent=None):
         """!@brief Constructor registers the associated widget and subscriber
 
         @param self Python object pointer
         @param screen_widget Pointer to SingleVideoScreen object to be managed
         by this controller
-        @param image_type The ros message type of the image to receive
         @param parent The Qt parent
         """
         super(ScreenController, self).__init__(parent)
@@ -27,7 +26,6 @@ class ScreenController(QObject):
 
         self.registered_topic = topic
         self.last_image = QImage()
-        self.image_type = image_type
         self.subscriber = None
         self._subscribe()
 
@@ -41,15 +39,7 @@ class ScreenController(QObject):
         @param image The ros message
 
         """
-        if self.image_type == CompressedImage:
-            self.last_image = QImage.fromData(image.data)
-        elif self.image_type == Image:
-            if image.encoding == "mono8":
-                image_type = QImage.Format_Indexed8
-            else:
-                image_type = QImage.Format_RGB888
-            self.last_image = QImage(image.data, image.width, image.height, image_type)
-
+        self.last_image = QImage.fromData(image.data)
         self.widget.new_sample(self.last_image)
 
     @pyqtSlot(str)
@@ -71,7 +61,7 @@ class ScreenController(QObject):
 
     def _subscribe(self):
         if self.registered_topic is not None and self.registered_topic is not "":
-            self.subscriber = rospy.Subscriber(self.registered_topic, self.image_type, self.image_callback)
+            self.subscriber = rospy.Subscriber(self.registered_topic, CompressedImage, self.image_callback)
 
     def screenshot(self, filename):
         """!@brief Save current frame to disk
@@ -81,9 +71,3 @@ class ScreenController(QObject):
         """
         if not self.last_image.save(filename):
             rospy.logwarn("Image save unsuccessful, topic: {0}, file: {1}".format(self.registered_topic, filename))
-
-    def set_type(self, image_type):
-        if image_type == Image:
-            self.image_type = Image
-        else:
-            self.image_type = CompressedImage

@@ -41,7 +41,6 @@ class CameraController(QObject):
         """
         super(CameraController, self).__init__(parent)
         self._screen_list = []
-        self._image_type = CompressedImage
 
         refresh_timer = QTimer(self)
         refresh_timer.setInterval(1000)
@@ -60,21 +59,7 @@ class CameraController(QObject):
         if screen_widget is not None:
             screen_controller = ScreenController(screen_widget, topic)
             self._screen_list.append(screen_controller)
-            screen_controller.set_type(self._image_type)
             screen_controller.widget.set_feed_list(self.get_topics())
-
-    def set_topic_type(self, image_type=CompressedImage):
-        """!@brief Change the type of image we subscribe to.
-
-        Selection between Compressed or Raw Images
-
-        @param self Python object pointer
-        @param image_type The message type of the image
-        """
-        if image_type == Image:
-            self._image_type = Image
-        else:
-            self._image_type = CompressedImage
 
     def get_topics(self):
         """!@brief Query the ros environment for the list of topics of the
@@ -85,12 +70,7 @@ class CameraController(QObject):
 
         @param self Python object pointer
         """
-        if self._image_type == CompressedImage:
-            topics = rostopic.find_by_type("sensor_msgs/CompressedImage")
-        elif self._image_type == Image:
-            topics = rostopic.find_by_type("sensor_msgs/Image")
-        else:
-            topics = []
+        topics = rostopic.find_by_type("sensor_msgs/CompressedImage")
         return topics
 
     def update_views_topic_list(self):
@@ -103,7 +83,6 @@ class CameraController(QObject):
             topics = self.get_topics()
             for i in self._screen_list:
                 i.widget.set_feed_list(topics)
-                i.set_type(self._image_type)
 
         except NameError:
             # topic is not defined, message type is invalid
