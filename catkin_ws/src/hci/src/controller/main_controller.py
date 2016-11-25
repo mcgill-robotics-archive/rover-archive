@@ -50,3 +50,4 @@ class MainController(QObject):
         self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
         self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)
         self.navigation_controller.updateAttitude.connect(main_view.pose_display.update_pose)
+        self.navigation_controller.updatePosition.connect(main_view.map.add_point)

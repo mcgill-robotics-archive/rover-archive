@@ -27,6 +27,9 @@ class NavigationController(QObject):
     ## Emitted when new attitude value should be updated
     updateAttitude = pyqtSignal(Pose)
 
+    ## Emmited with the new GPS position received
+    updatePosition = pyqtSignal(float, float)
+
     def __init__(self, parent=QObject):
         """!@brief Constructor creates the ros subscriber and registers callback
 
@@ -59,3 +62,4 @@ class NavigationController(QObject):
         self.updatePitch.emit(math.degrees(euler[1]))
         self.updateYaw.emit(math.degrees(euler[2]))
         self.updateAttitude.emit(pose)
+        self.updatePosition.emit(message.gps.latitude, message.gps.longitude)
