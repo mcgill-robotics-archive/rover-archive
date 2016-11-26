@@ -1,3 +1,4 @@
+"""!@brief Map module using Scatter Plot Items from pyqtgraph library"""
 import sys
 
 from PyQt5.QtCore import pyqtSlot
@@ -8,6 +9,7 @@ from pyqtgraph import GraphicsLayoutWidget, ScatterPlotItem
 
 
 class Coordinate(object):
+    """!@brief Simple structure like class to record coordinates"""
     def __init__(self, x, y):
         self._x = x
         self._y = y
@@ -20,13 +22,21 @@ class Coordinate(object):
 
 
 class Map(QWidget):
+    """!@brief Display widget with the Scatter Plot item and the control logic
+    to display points and waypoints"""
+
     def __init__(self, parent=None):
+        """!@brief Constructor layout graph in window and add first plot items
+
+        @param self Python object pointer
+        @param parent Qt hierarchy model
+        """
         super(Map, self).__init__(parent)
 
-        self.graph_layout = GraphicsLayoutWidget(self)
+        self._graph_layout = GraphicsLayoutWidget(self)
 
         layout = QHBoxLayout()
-        layout.addWidget(self.graph_layout)
+        layout.addWidget(self._graph_layout)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
@@ -36,7 +46,7 @@ class Map(QWidget):
         self._waypoint_list = []
         self._center_point = None
 
-        self._viewbox = self.graph_layout.addViewBox()
+        self._viewbox = self._graph_layout.addViewBox()
         self._viewbox.setAspectLocked(True)
         self._viewbox.enableAutoRange('xy', True)
         self._waypoint_plot = ScatterPlotItem(size=20, pen='b', symbol='t')
@@ -46,6 +56,14 @@ class Map(QWidget):
         self.add_waypoint(0, 0)
 
     def _add_point_set(self):
+        """!@brief Create a new plot item and add it to the window
+
+        ScatterPlotItems stores data in numpy array, which implements the
+        append function with a copy, this gets highly inefficient with large
+        data set, so we split the data in 1000 sample sets.
+
+        @param self Python object pointer
+        """
         plot_item = ScatterPlotItem(size=10, pen='w', pxMode=True)
         self._plot_items.append(plot_item)
         self._viewbox.addItem(plot_item)
@@ -53,6 +71,12 @@ class Map(QWidget):
 
     @pyqtSlot(float, float)
     def add_waypoint(self, x, y):
+        """!@brief Add a permanent waypoint marker to the window
+
+        @param x the x position
+        @param y the y position
+        @param self Python object pointer
+        """
         if self._center_point is None:
             self._waypoint_plot.addPoints([x], [y])
         else:
@@ -61,6 +85,12 @@ class Map(QWidget):
 
     @pyqtSlot(float, float)
     def add_point(self, x, y):
+        """!@brief Add a single data point to the plot
+
+        @param x the x position
+        @param y the y position
+        @param self Python object pointer
+        """
         if self._point_counter > 1000:
             self._add_point_set()
 
@@ -74,12 +104,17 @@ class Map(QWidget):
 
     @pyqtSlot()
     def clear_points(self):
+        """!@brief Remove the data points from the display
+
+        The waypoints remain as well as the initialisation value
+
+        @param self Python object pointer
+        """
         for item in self._plot_items:
             self._viewbox.removeItem(item)
             self._plot_items.remove(item)
 
         self._add_point_set()
-        self._center_point = None
 
 
 if __name__ == '__main__':
