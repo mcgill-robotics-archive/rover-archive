@@ -67,7 +67,6 @@ class Map(QWidget):
         plot_item = ScatterPlotItem(size=10, pen='w', pxMode=True)
         self._plot_items.append(plot_item)
         self._viewbox.addItem(plot_item)
-        pass
 
     @pyqtSlot(float, float)
     def add_waypoint(self, x, y):
