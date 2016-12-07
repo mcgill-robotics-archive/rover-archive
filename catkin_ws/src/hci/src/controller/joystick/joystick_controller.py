@@ -37,6 +37,9 @@ class JoystickController(QObject):
         self._mode_widget = widget
         self._mode_widget.changeMode.connect(self.setActiveJoystick)
 
+    def stop(self):
+        self._acquisition.terminate()
+
     @pyqtSlot(str)
     def setActiveJoystick(self, name):
         """!@brief Change which class receives joystick inputs.

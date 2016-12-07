@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
+from views.arm.arm_view import ArmView
 from views.camera.navigation_screen import NavigationScreen
 from views.drive.drive_view import DriveView
 from views.navigation.map import Map
@@ -25,10 +26,12 @@ class MainView(QWidget):
         self.pose_display = PoseDisplay(self)
         self.nav_screen = NavigationScreen(self)
         self.map = Map(self)
+        self.arm_view = ArmView(self)
 
         h1.addWidget(self.joystick_mode_widget)
         h1.addWidget(self.drive_view)
         v1.addItem(h1)
+        v1.addWidget(self.arm_view)
         v1.addWidget(self.navigation_view)
         v1.addWidget(self.pose_display)
 
