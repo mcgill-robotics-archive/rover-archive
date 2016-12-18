@@ -28,11 +28,14 @@ class JoystickController(QObject):
 
         self._available_controllers = {}
         self._active_controller = None
+        self.controller_Found = False
         try:
             self._acquisition = JoystickAcquisition(self)
             self._acquisition.start()
+            self.controller_Found = True
         except AssertionError:
             rospy.logerr("Starting joystick acquisition failed")
+            self.controller_Found = False
 
         self._mode_widget = widget
         self._mode_widget.changeMode.connect(self.setActiveJoystick)
@@ -54,6 +57,9 @@ class JoystickController(QObject):
 
         @throws KeyError is string not in map
         """
+        if not self.controller_Found:
+            rospy.logwarn("Joystick not connected. Ignoring command")
+            return
 
         print("Changing active joystick")
         if name is not None:
