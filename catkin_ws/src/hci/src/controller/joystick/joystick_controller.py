@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSlot
 
 from controller.joystick.joystick_acquisition import JoystickAcquisition
 from controller.joystick.joystick_base import JoystickBase
+from views.joystick.joystick_mock import JoystickMock
 
 
 class JoystickController(QObject):
@@ -35,13 +36,21 @@ class JoystickController(QObject):
             self.controller_Found = True
         except AssertionError:
             rospy.logerr("Starting joystick acquisition failed")
-            self.controller_Found = False
+            try:
+                self._acquisition = JoystickMock()
+                self._acquisition.show()
+                self.controller_Found = True
+            except AttributeError:
+                self.controller_Found = False
 
         self._mode_widget = widget
         self._mode_widget.changeMode.connect(self.setActiveJoystick)
 
     def stop(self):
-        self._acquisition.terminate()
+        try:
+            self._acquisition.terminate()
+        except AttributeError:
+            pass
 
     @pyqtSlot(str)
     def setActiveJoystick(self, name):
