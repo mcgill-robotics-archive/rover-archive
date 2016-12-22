@@ -1,8 +1,6 @@
+import sys
 from enum import Enum
 
-import sys
-
-from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QFrame
@@ -33,9 +31,9 @@ class DOF(Enum):
 
 class ArmView(QWidget):
 
-    controlJoint = pyqtSignal(int)
-    controlDOF = pyqtSignal(int)
-    controlMode = pyqtSignal(int)
+    controlJoint = pyqtSignal(Joint)
+    controlDOF = pyqtSignal(DOF)
+    controlMode = pyqtSignal(ArmControlMode)
 
     def __init__(self, parent=None):
         super(ArmView, self).__init__(parent)
@@ -141,7 +139,6 @@ class ArmView(QWidget):
         self.end_joint_button.setEnabled(not value)
 
     def _set_joint_controlled(self, joint):
-        print joint
         self.controlJoint.emit(joint)
         self.set_open_loop()
         if joint == Joint.BASE:
@@ -154,7 +151,6 @@ class ArmView(QWidget):
             self.end_joint_button.setChecked(True)
 
     def _set_dof_controlled(self, dof):
-        print dof
         self.controlDOF.emit(dof)
         self.set_closed_loop()
         if dof == DOF.POSITION:
