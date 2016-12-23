@@ -33,6 +33,7 @@ class MainController(QObject):
         ## Drive controller, links to ROS  drive systems
         self.drive_controller = DriveController(self)
         self.joystick_master.addController("Drive", self.drive_controller)
+        ## Arm controller, links to ROS arm systems
         self.arm_controller = ArmController(main_view.arm_view, self)
         self.joystick_master.addController("Arm", self.arm_controller)
         ## Navigation controller, subscribes to the ahrs publisher
