@@ -56,5 +56,7 @@ class MainController(QObject):
         self.navigation_controller.updateAttitude.connect(main_view.pose_display.update_pose)
         self.navigation_controller.updatePosition.connect(main_view.map.add_point)
 
+        main_view.map.coord_widget.createWaypoint.connect(main_view.map.add_waypoint)
+
     def __del__(self):
         self.joystick_master.stop()
