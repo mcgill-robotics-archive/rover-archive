@@ -3,9 +3,11 @@ import sys
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from pyqtgraph import GraphicsLayoutWidget, ScatterPlotItem
+
+from views.navigation.waypoint_entry import WaypointPad
 
 
 class Coordinate(object):
@@ -35,8 +37,12 @@ class Map(QWidget):
 
         self._graph_layout = GraphicsLayoutWidget(self)
 
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(self._graph_layout)
+
+        self.coord_widget = WaypointPad(self)
+        layout.addWidget(self.coord_widget)
+
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
