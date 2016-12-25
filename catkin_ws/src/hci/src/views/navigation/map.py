@@ -121,6 +121,22 @@ class Map(QWidget):
 
         self._add_point_set()
 
+    def dump_points(self):
+        # open file
+
+        fp = open("file.txt", mode='w')
+        # todo: build filename using dialog box
+
+        for set in self._plot_items:
+            set = self._waypoint_plot
+            points = set.points()
+            for point in points:
+                position = point.pos()
+
+                fp.write(str(position))
+                fp.write('\n')  # todo: format position properly, remember the centering offset
+        fp.close()
+        pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
