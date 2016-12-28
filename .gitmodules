@@ -17,3 +17,6 @@
 	path = moveit_ws/src/moveit
 	url = git@github.com:ros-planning/moveit.git
 	branch = kinetic-devel
+[submodule "catkin_ws/src/usb_cam"]
+	path = catkin_ws/src/usb_cam
+	url = https://github.com/bosch-ros-pkg/usb_cam
