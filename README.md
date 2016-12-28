@@ -23,11 +23,7 @@ Build Status
 
 Initial Setup
 ---
-Issue the following commands to get you up and running with the most up to date
-rover setup:
-```bash
-./init.sh
-```
+Simply follow the compsys setup and select Rover when prompted.
 
 API Documentation
 ---
