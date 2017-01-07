@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>arm_ros_control</name>
+  <version>0.0.1</version>
+  <description>The arm_ros_control package</description>
+
+  <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
+  <author email="adrien.sauvestre@mail.mcgill.ca">Adrien Sauvestre</author>
+
+  <license>GPLv2</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>ros_control</build_depend>
+  <build_depend>ros_controllers</build_depend>
+  <run_depend>ros_control</run_depend>
+  <run_depend>ros_controllers</run_depend>
+</package>

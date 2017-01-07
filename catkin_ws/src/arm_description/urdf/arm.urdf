@@ -1,5 +1,10 @@
 <robot
-  name="arm_description">
+  name="arm">
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/arm</robotNamespace>    
+    </plugin>
+  </gazebo>
   <link
     name="base_link">
     <inertial>
@@ -93,6 +98,15 @@
     <axis
       xyz="0 -1 0" />
   </joint>
+   <transmission name="base_yaw_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_yaw">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_yaw_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="link1">
     <inertial>
@@ -146,6 +160,15 @@
     <axis
       xyz="-1 0 0" />
   </joint>
+  <transmission name="base_pitch_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_pitch">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_pitch_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="diff1">
     <inertial>
@@ -199,6 +222,15 @@
     <axis
       xyz="1 0 0" />
   </joint>
+  <transmission name="pitch2_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="pitch2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="pitch2_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="link2">
     <inertial>
@@ -252,6 +284,15 @@
     <axis
       xyz="0 -1 0" />
   </joint>
+  <transmission name="roll1_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="roll1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="roll1_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="diff2">
     <inertial>
@@ -305,6 +346,15 @@
     <axis
       xyz="-1 0 0" />
   </joint>
+  <transmission name="pitch3_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="pitch3">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="pitch3_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="end_effector">
     <inertial>
@@ -358,6 +408,15 @@
     <axis
       xyz="0 -1 0" />
   </joint>
+  <transmission name="roll2_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="roll2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="roll2_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="finger1">
     <inertial>
@@ -413,9 +472,18 @@
     <limit
       lower="0.0"
       upper="0.0473958"
-      effort="0"
-      velocity="0" />
+      effort="1000000"
+      velocity="1000000" />
   </joint>
+  <transmission name="slide_finger1_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="slide_finger1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="slide_finger1_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
   <link
     name="finger2">
     <inertial>
@@ -471,8 +539,8 @@
     <limit
       lower="0.0"
       upper="0.0473958"
-      effort="0"
-      velocity="0" />
+      effort="1000000"
+      velocity="1000000"  />
    <mimic joint="slide_finger1"/>
   </joint>
 </robot>
