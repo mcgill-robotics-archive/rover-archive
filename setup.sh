@@ -40,6 +40,11 @@ echo "Installing convex_decomposition..."
 sudo apt-get install -y ros-kinetic-convex-decomposition
 echo
 
+# urg_node
+echo "Installing urg_node.."
+sudo apt-get install ros-kinetic-urg-node 
+echo
+
 # ROS dependency update
 echo "Installing ros dependencies for catkin workspace..."
 rosdep update
