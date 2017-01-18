@@ -4,32 +4,36 @@ arm:
     type: joint_state_controller/JointStateController
     publish_rate: 50  
 
-  # Effort Controllers ---------------------------------------
-  base_yaw_effort_controller:
-    type: effort_controllers/JointEffortController
+  # Position Controllers ---------------------------------------
+  base_yaw_position_controller:
+    type: effort_controllers/JointPositionController
     joint: base_yaw
-    pid: {p: 100.0, i: 0.01, d: 10.0}
-  base_pitch_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 200.0, i: 10.0, d: 30.0}
+  base_pitch_position_controller:
+    type: effort_controllers/JointPositionController
     joint: base_pitch
-    pid: {p: 100.0, i: 0.01, d: 10.0}  
-  pitch2_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 1200.0, i: 10.0, d: 50.0}
+  pitch2_position_controller:
+    type: effort_controllers/JointPositionController
     joint: pitch2
-    pid: {p: 100.0, i: 0.01, d: 10.0}  
-  roll1_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 800.0, i: 10.0, d: 30.0}
+  roll1_position_controller:
+    type: effort_controllers/JointPositionController
     joint: roll1
-    pid: {p: 100.0, i: 0.01, d: 10.0}  
-  pitch3_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 10.0, i: 2.0, d: 1.0}
+  pitch3_position_controller:
+    type: effort_controllers/JointPositionController
     joint: pitch3
-    pid: {p: 100.0, i: 0.01, d: 10.0}  
-  roll2_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 30.0, i: 2.7, d: 2.0}
+  roll2_position_controller:
+    type: effort_controllers/JointPositionController
     joint: roll2
-    pid: {p: 100.0, i: 0.01, d: 10.0}  
-  slide_finger1_effort_controller:
-    type: effort_controllers/JointEffortController
+    pid: {p: 1.0, i: 0.5, d: 1.0}
+  slide_finger1_position_controller:
+    type: effort_controllers/JointPositionController
     joint: slide_finger1
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 2.0, i: 0.5, d: 1.0}
+  slide_finger2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: slide_finger2
+    pid: {p: 2.0, i: 0.5, d: 1.0}

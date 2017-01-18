@@ -5,8 +5,8 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/arm" args="joint_state_controller base_yaw_effort_controller base_pitch_effort_controller 
-    pitch2_effort_controller roll1_effort_controller pitch3_effort_controller roll2_effort_controller slide_finger1_effort_controller"/>
+    output="screen" ns="/arm" args="joint_state_controller base_yaw_position_controller base_pitch_position_controller 
+    pitch2_position_controller roll1_position_controller pitch3_position_controller roll2_position_controller slide_finger1_position_controller slide_finger2_position_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"

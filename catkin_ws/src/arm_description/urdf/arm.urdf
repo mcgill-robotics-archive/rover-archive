@@ -5,6 +5,7 @@
       <robotNamespace>/arm</robotNamespace>    
     </plugin>
   </gazebo>
+  <link name="world"/>
   <link
     name="base_link">
     <inertial>
@@ -45,6 +46,17 @@
       </geometry>
     </collision>
   </link>
+  <joint
+    name="world_fix"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="world" />
+    <child
+      link="base_link" />
+  </joint>
   <link
     name="arm_base">
     <inertial>
@@ -97,6 +109,9 @@
       link="arm_base" />
     <axis
       xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
   </joint>
    <transmission name="base_yaw_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -159,6 +174,9 @@
       link="link1" />
     <axis
       xyz="-1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
   </joint>
   <transmission name="base_pitch_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -221,6 +239,9 @@
       link="diff1" />
     <axis
       xyz="1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
   </joint>
   <transmission name="pitch2_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -283,6 +304,9 @@
       link="link2" />
     <axis
       xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="0.5"  />
   </joint>
   <transmission name="roll1_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -345,6 +369,9 @@
       link="diff2" />
     <axis
       xyz="-1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
   </joint>
   <transmission name="pitch3_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -407,6 +434,9 @@
       link="end_effector" />
     <axis
       xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="0.5"  />
   </joint>
   <transmission name="roll2_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -472,8 +502,8 @@
     <limit
       lower="0.0"
       upper="0.0473958"
-      effort="1000000"
-      velocity="1000000" />
+      effort="200.0"
+      velocity="2.0" />
   </joint>
   <transmission name="slide_finger1_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -539,8 +569,16 @@
     <limit
       lower="0.0"
       upper="0.0473958"
-      effort="1000000"
-      velocity="1000000"  />
-   <mimic joint="slide_finger1"/>
+      effort="200.0"
+      velocity="2.0"  />
   </joint>
+  <transmission name="slide_finger2_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="slide_finger2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="slide_finger2_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
 </robot>

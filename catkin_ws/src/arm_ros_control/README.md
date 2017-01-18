@@ -22,11 +22,11 @@ rosrun rqt_gui rqt_gui
 
 Add a "Message Publisher" plugin (plugins > topics > message publisher)
 
-Add the following topic "/arm/[joint_name]_effort_controller/command" :
+Add the following topic "/arm/[joint_name]_position_controller/command" :
 
 eg.
 ```bash
-/arm/base_yaw_effort_controller/command
+/arm/base_yaw_position_controller/command
 ```
 
 Finally enable the publisher and set the data field to the desired value.
