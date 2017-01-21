@@ -30,6 +30,8 @@ class JoystickController(QObject):
         self._available_controllers = {}
         self._active_controller = None
         self.controller_Found = False
+        
+        # Start joystick acquisition. If it fails, default to the mock joystick.
         try:
             self._acquisition = JoystickAcquisition(self)
             self._acquisition.start()

@@ -30,9 +30,9 @@ class ArmController(JoystickBase):
         self.arm_view.controlDOF.connect(self.update_dof)
         self.arm_view.controlJoint.connect(self.update_joint)
 
-        self.p = 0
-        self.r = 0
-        self.y = 0
+        self.pitch = 0
+        self.roll = 0
+        self.yaw = 0
 
     @pyqtSlot(JoystickData)
     def handle_joystick_data(self, data):
@@ -41,6 +41,7 @@ class ArmController(JoystickBase):
         elif data.b7:
             self.arm_view.set_open_loop()
 
+        # Check the mode for open loop or closed loop.
         if self._mode == ArmControlMode.OPEN_LOOP:
             message = JointVelocities()
             if self._joint == Joint.BASE:
@@ -64,11 +65,11 @@ class ArmController(JoystickBase):
                 self.end_pose.position.z += data.a3
 
             elif self._dof == DOF.ORIENTATION:
-                self.p += data.a1
-                self.r += data.a2
-                self.y += data.a3
+                self.pitch += data.a1
+                self.roll += data.a2
+                self.yaw += data.a3
 
-                quaternion = tf.transformations.quaternion_from_euler(self.p, self.r, self.y)
+                quaternion = tf.transformations.quaternion_from_euler(self.roll, self.pitch, self.raw)
                 self.end_pose.orientation.x = quaternion[0]
                 self.end_pose.orientation.y = quaternion[1]
                 self.end_pose.orientation.z = quaternion[2]

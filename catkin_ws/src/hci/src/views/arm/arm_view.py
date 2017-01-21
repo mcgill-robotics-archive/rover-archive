@@ -57,6 +57,7 @@ class ArmView(QWidget):
         h1.addWidget(self.open_loop_button)
         h1.addWidget(self.closed_loop_button)
 
+        # Set up QFrame for the buttons used to control the joints. 
         joint_frame = QFrame(self)
         self.base_joint_button = QRadioButton("Base", joint_frame)
         self.diff1_joint_button = QRadioButton("Diff 1", joint_frame)
@@ -68,6 +69,7 @@ class ArmView(QWidget):
         g1.addWidget(self.end_joint_button, 1, 1)
         joint_frame.setLayout(g1)
 
+        # Set up QFrame for the buttons used for the position and orientation.
         dof_frame = QFrame(self)
         self.position_button = QRadioButton("Position", dof_frame)
         self.orientation_button = QRadioButton("Orientation", dof_frame)
