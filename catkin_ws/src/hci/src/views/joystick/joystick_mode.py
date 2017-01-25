@@ -46,6 +46,8 @@ class JoystickMode(QWidget):
         on the button
         """
         button = QPushButton(name, self)
+        button.setCheckable(True)
+        button.setAutoExclusive(True)
         self._layout.addWidget(button)
 
         def button_callback():

@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QObject
 
+from controller.arm_controller import ArmController
 from controller.camera_controller import CameraController
 from controller.drive_controller import DriveController
 from controller.joystick.joystick_controller import JoystickController
@@ -32,7 +33,8 @@ class MainController(QObject):
         ## Drive controller, links to ROS  drive systems
         self.drive_controller = DriveController(self)
         self.joystick_master.addController("Drive", self.drive_controller)
-
+        self.arm_controller = ArmController(main_view.arm_view, self)
+        self.joystick_master.addController("Arm", self.arm_controller)
         ## Navigation controller, subscribes to the ahrs publisher
         self.navigation_controller = NavigationController(self)
 
@@ -41,6 +43,7 @@ class MainController(QObject):
         self.camera_controller.add_screen(main_view.nav_screen.left_wheel)
         self.camera_controller.add_screen(main_view.nav_screen.right_wheel)
         self.camera_controller.add_screen(main_view.nav_screen.bottom_cam)
+
 
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)
@@ -51,3 +54,6 @@ class MainController(QObject):
         self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)
         self.navigation_controller.updateAttitude.connect(main_view.pose_display.update_pose)
         self.navigation_controller.updatePosition.connect(main_view.map.add_point)
+
+    def __del__(self):
+        self.joystick_master.stop()

@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSlot
 
 from controller.joystick.joystick_acquisition import JoystickAcquisition
 from controller.joystick.joystick_base import JoystickBase
+from views.joystick.joystick_mock import JoystickMock
 
 
 class JoystickController(QObject):
@@ -28,14 +29,30 @@ class JoystickController(QObject):
 
         self._available_controllers = {}
         self._active_controller = None
+        self.controller_Found = False
+        
+        # Start joystick acquisition. If it fails, default to the mock joystick.
         try:
             self._acquisition = JoystickAcquisition(self)
             self._acquisition.start()
+            self.controller_Found = True
         except AssertionError:
             rospy.logerr("Starting joystick acquisition failed")
+            try:
+                self._acquisition = JoystickMock()
+                self._acquisition.show()
+                self.controller_Found = True
+            except AttributeError:
+                self.controller_Found = False
 
         self._mode_widget = widget
         self._mode_widget.changeMode.connect(self.setActiveJoystick)
+
+    def stop(self):
+        try:
+            self._acquisition.terminate()
+        except AttributeError:
+            pass
 
     @pyqtSlot(str)
     def setActiveJoystick(self, name):
@@ -51,6 +68,9 @@ class JoystickController(QObject):
 
         @throws KeyError is string not in map
         """
+        if not self.controller_Found:
+            rospy.logwarn("Joystick not connected. Ignoring command")
+            return
 
         print("Changing active joystick")
         if name is not None:
