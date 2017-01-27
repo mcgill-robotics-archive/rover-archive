@@ -37,7 +37,7 @@ echo
 
 # Link udev rules
 echo "Setting up udev rules..."
-sudo ln -s `pwd`/11-rover-udev.rules /etc/udev/rules.d
+sudo ln -s `pwd`/11-rover-udev.rules /etc/udev/rules.d || echo "Aleady set."
 echo
 
 # convex_decompositon
