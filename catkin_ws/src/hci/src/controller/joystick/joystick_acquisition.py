@@ -5,6 +5,7 @@ import time
 import rospy
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QInputDialog
 
 from model.joystick_data import JoystickData
 
@@ -41,17 +42,8 @@ class JoystickAcquisition(QThread):
         pygame.init()
         pygame.joystick.init()
 
-        if pygame.joystick.get_count() == 1:
-            # confirm there is only one joystick, possible todo: allow device
-            # identification to be passed in constructor to have multiple
-            # controllers
-            self.controller = pygame.joystick.Joystick(0)
-            self.controller.init()
-        else:
-            self.controller = None
-
-        if self.controller is None:
-            raise AssertionError("Joystick not initialized properly, make sure you have one connected")
+        self.controller = None
+        self.init_controller()
 
     def update(self):
         """!@brief Single cycle acquisition method
@@ -107,6 +99,42 @@ class JoystickAcquisition(QThread):
 
         while not rospy.is_shutdown():
             # todo add hot swap capability maybe
-            self.update()
-            self.joystickDataUpdated.emit(self.data)
+
+            # check joystick is valid
+            try:
+                if not self.controller.get_init():
+                    self.init_controller()
+                else:
+                    self.update()
+                    self.joystickDataUpdated.emit(self.data)
+
+            except TypeError:
+                self.init_controller()
+
             time.sleep(0.01)
+
+    def init_controller(self):
+        if pygame.joystick.get_count() == 1:
+            # confirm there is only one joystick, possible todo: allow device
+            # identification to be passed in constructor to have multiple
+            # controllers
+            id_num = 0
+        else:
+            id_num = self.get_joystick_id()
+
+        if id_num >= 0:
+            self.controller = pygame.joystick.Joystick(0)
+            self.controller.init()
+
+    def get_joystick_id(self):
+        count = pygame.joystick.get_count()
+        name_list = []
+        for i in range(0, count):
+            name_list.append(pygame.joystick.Joystick(i).get_name())
+
+        selected = QInputDialog.getItem(self, "Joystick Selection", "Please select a joystick", name_list, 0)
+        print selected
+        if selected[1]:
+            return name_list.index(selected[0])
+        else:
+            return -1
