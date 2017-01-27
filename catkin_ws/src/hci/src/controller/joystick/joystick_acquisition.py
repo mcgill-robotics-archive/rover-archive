@@ -40,7 +40,6 @@ class JoystickAcquisition(QThread):
         self.data = JoystickData()
 
         pygame.init()
-        pygame.joystick.init()
 
         self.controller = None
         self.init_controller()
@@ -98,8 +97,6 @@ class JoystickAcquisition(QThread):
         """
 
         while not rospy.is_shutdown():
-            # todo add hot swap capability maybe
-
             # check joystick is valid
             try:
                 if not self.controller.get_init():
@@ -108,16 +105,17 @@ class JoystickAcquisition(QThread):
                     self.update()
                     self.joystickDataUpdated.emit(self.data)
 
-            except TypeError:
+            except AttributeError:
                 self.init_controller()
 
             time.sleep(0.01)
 
     def init_controller(self):
-        if pygame.joystick.get_count() == 1:
-            # confirm there is only one joystick, possible todo: allow device
-            # identification to be passed in constructor to have multiple
-            # controllers
+        pygame.joystick.init()
+
+        if pygame.joystick.get_count() == 0:
+            id_num = -1
+        elif pygame.joystick.get_count() == 1:
             id_num = 0
         else:
             id_num = self.get_joystick_id()
@@ -125,6 +123,8 @@ class JoystickAcquisition(QThread):
         if id_num >= 0:
             self.controller = pygame.joystick.Joystick(0)
             self.controller.init()
+        else:
+            pygame.joystick.quit()
 
     def get_joystick_id(self):
         count = pygame.joystick.get_count()
@@ -132,7 +132,7 @@ class JoystickAcquisition(QThread):
         for i in range(0, count):
             name_list.append(pygame.joystick.Joystick(i).get_name())
 
-        selected = QInputDialog.getItem(self, "Joystick Selection", "Please select a joystick", name_list, 0)
+        selected = QInputDialog.getItem(None, "Joystick Selection", "Please select a joystick", name_list, 0)
         print selected
         if selected[1]:
             return name_list.index(selected[0])
