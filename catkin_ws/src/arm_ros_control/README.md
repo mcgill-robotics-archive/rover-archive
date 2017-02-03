@@ -22,7 +22,13 @@ rosrun rqt_gui rqt_gui
 
 Add a "Message Publisher" plugin (plugins > topics > message publisher)
 
-Add the following topic "/arm/[joint_name]_position_controller/command" :
+To see which controllers are available, run the following command:
+
+```bash
+rostopic list | grep command
+```
+
+Choose one or multiple controllers and add them to rqt_gui.
 
 eg.
 ```bash
