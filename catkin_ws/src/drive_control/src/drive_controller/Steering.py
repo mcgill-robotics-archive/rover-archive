@@ -18,8 +18,8 @@ class Steering:
         # distance between longitudinal axis and wheels[m]
         self.D = rospy.get_param('control/wh_distance_fr', 1.08 / 2.0)
         self.B = rospy.get_param('control/wh_base', 0.68 / 2.0)
-        self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
-        self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
+        self.R = rospy.get_param('control/wh_radius', 0.1331)  #: wheel radius [m]
+        self.W = rospy.get_param('control/wh_width', 0.127)  #: wheel width [m]
 
         self.mid_wh_offset = rospy.get_param('control/middle_wh_offset', 0.106)
         # angle on the wheels for point steering
