@@ -1,0 +1,12 @@
+<launch>
+
+<group ns="encoder">
+<node ns="tiva0" name="encoder0" pkg="rosserial_python" type="serial_node.py" args="_port:=/dev/ttyACM0">
+</node>
+<node ns="tiva1" name="encoder1" pkg="rosserial_python" type="serial_node.py" args="_port:=/dev/ttyACM1">
+</node>
+<node ns="tiva2" name="encoder2" pkg="rosserial_python" type="serial_node.py" args="_port:=/dev/ttyACM1">
+</node>
+
+</group>
+</launch>
