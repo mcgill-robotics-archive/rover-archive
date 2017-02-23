@@ -4,4 +4,4 @@
 
 [submodule "catkin_ws/src/rosserial_tivac"]
 	path = catkin_ws/src/rosserial_tivac
-	url = https://github.com/vmatos/rosserial_tivac.git
+	url = https://github.com/vmatos/rosserial_tivac
