@@ -8,22 +8,23 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   roscpp
+  rover_common
 )
 
-add_message_files(
-  FILES
-  Magnetic_encoder.msg
-)
+#add_message_files(
+# FILES
+# Magnetic_encoder.msg
+#)
 
 # add_service_files(
 #   FILES
 #   MotorSetAngularVel.srv
 # )
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+# DEPENDENCIES
+# std_msgs
+#)
 
 catkin_package(
   CATKIN_DEPENDS message_runtime std_msgs
@@ -34,7 +35,7 @@ rosserial_generate_ros_lib(
   SCRIPT make_libraries_tiva
 )
 # Because we need to generate our custom messages before exporting our rosserial ros_lib
-add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 # encoder_cui
 rosserial_configure_client(
