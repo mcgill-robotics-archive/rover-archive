@@ -12,6 +12,7 @@
  *
  *********************************************************************/
 
+#include <ros.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -43,21 +44,20 @@ extern "C"
 #include <inc/hw_qei.h>
 }
 // ROS includes
-#include <ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/UInt32.h>
-#include <arm_tiva/Magnetic_encoder.h>
+#include <rover_common/Magnetic_encoder.h>
 
+#define UART1_BAUDRATE      115200  // UART baudrate in bps
 // ROS nodehandle
 ros::NodeHandle nh;
 
 // std_msgs::String str_msg;
 // ros::Publisher chatter("chatter", &str_msg);
-arm_tiva::Magnetic_encoder encoder_message;
+rover_common::Magnetic_encoder encoder_message;
 
 ros::Publisher encoder_magnetic("position", &encoder_message);
 
-#define UART1_BAUDRATE      115200  // UART baudrate in bps
 
 // function prototypes
 void init_timer(void);
@@ -72,7 +72,10 @@ void duty_cycle_2(void);
 
 // global variables
 uint32_t sys_clock;
-int32_t  start = 0, end = 0, length = 0;
+int32_t  start_0 = 0, end_0 = 0, length_0 = 0;
+int32_t  start_1 = 0, end_1 = 0, length_1 = 0;
+int32_t  start_2 = 0, end_2 = 0, length_2 = 0;
+
 uint32_t angle0, angle1, angle2;
 int encoder0_flag, encoder1_flag, encoder2_flag;
 
@@ -90,92 +93,73 @@ int main(void)
   // Enable the processor to respond to interrupts.
   IntMasterEnable();
 
-  init_UART();
-  init_pwm();
   init_timer();
+  IntEnable(INT_WTIMER0B);
+  IntPrioritySet(INT_WTIMER0B, 2);
+  
+  IntEnable(INT_WTIMER1B);
+  IntPrioritySet(INT_WTIMER1B, 1);
+  
+  IntEnable(INT_WTIMER2B);
+  IntPrioritySet(INT_WTIMER2B, 0);
 
-  TimerEnable(WTIMER0_BASE, TIMER_BOTH);
-  TimerEnable(WTIMER1_BASE, TIMER_BOTH);
-  TimerEnable(WTIMER2_BASE, TIMER_BOTH);
-
+  uint32_t counter = 0;
   nh.initNode();
   nh.advertise(encoder_magnetic);
   encoder_message.angle0 = 0;
   encoder_message.angle1 = 0;
   encoder_message.angle2 = 0;
   encoder_magnetic.publish(&encoder_message);
-  nh.spinOnce();
   nh.getHardware()->delay(30);
-
+  TimerDisable(WTIMER0_BASE, TIMER_BOTH);
+  TimerDisable(WTIMER1_BASE, TIMER_BOTH);
+  TimerDisable(WTIMER2_BASE, TIMER_BOTH);
+  
   while(1) {
-  encoder_message.angle0 = 0;
-  encoder_message.angle1 = 0;
-  encoder_message.angle2 = 0;
-  encoder_magnetic.publish(&encoder_message);
-  nh.spinOnce();
-  nh.getHardware()->delay(30);
+      counter = (counter+1)%3;
+      switch (counter){
+          case 0:
+              TimerEnable(WTIMER0_BASE, TIMER_BOTH);
+              TimerDisable(WTIMER2_BASE, TIMER_BOTH);
+              break;
+
+        case 1: 
+              TimerDisable(WTIMER0_BASE, TIMER_BOTH);
+              TimerEnable(WTIMER1_BASE, TIMER_BOTH);
+              break;
+        case 2:
+              TimerDisable(WTIMER1_BASE, TIMER_BOTH);
+              TimerEnable(WTIMER2_BASE, TIMER_BOTH);
+              break;
+      }
+      //encoder_message.angle0 = 0;
+      //encoder_message.angle1 = 0;
+      //encoder_message.angle2 = 0;
+      //encoder_magnetic.publish(&encoder_message);
+      //nh.spinOnce();
+      //nh.getHardware()->delay(30);
+
     if (encoder0_flag==1){
       duty_cycle_0();
-      nh.spinOnce();
       encoder_message.angle0 = angle0;
       encoder_magnetic.publish(&encoder_message);
     }
-    else if(encoder1_flag==1){
+    if(encoder1_flag==1){
       duty_cycle_1();
-      nh.spinOnce();
       encoder_message.angle1 = angle1;
       encoder_magnetic.publish(&encoder_message);
     }
-    else if(encoder2_flag== 1){
+    if(encoder2_flag== 1){
       duty_cycle_2();
-      nh.spinOnce();
       encoder_message.angle2 = angle2;
       encoder_magnetic.publish(&encoder_message);
     }
 
+    nh.spinOnce();
+    nh.getHardware()->delay(30);
   }
 }
 
-void init_UART(void)
-{
-  // Enable and configure UART0 for debugging printouts.
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-  GPIOPinConfigure(GPIO_PA0_U0RX);
-  GPIOPinConfigure(GPIO_PA1_U0TX);
-  GPIOPinTypeUART(GPIO_PORTA_BASE, (GPIO_PIN_0 | GPIO_PIN_1));
-  UARTStdioConfig(0, UART1_BAUDRATE, sys_clock);
-}
-
-void init_pwm(void)
-{
-  /*This function configures the rate of the clock provided to the PWM module as a ratio of the
-    processor clock. This clock is used by the PWM module to generate PWM signals; its rate
-    forms the basis for all PWM signals*/
-  //PWM clock rate is 80MHz/8 = 10 MHz
-  SysCtlPWMClockSet(SYSCTL_PWMDIV_8);
-
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM1);
-  while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM1)){}
-
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-  while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)){}
-
-  //PF3 is the PWM output
-  GPIOPinConfigure(GPIO_PF3_M1PWM7);
-  GPIOPinTypePWM(GPIO_PORTF_BASE, GPIO_PIN_3);
-
-  PWMGenConfigure(PWM1_BASE, PWM_GEN_3, PWM_GEN_MODE_UP_DOWN |
-                  PWM_GEN_MODE_NO_SYNC);
-
-  //PWM Period = 10000 PWM clock cycles = 10000*1/10M = 0.001 seconds
-  PWMGenPeriodSet(PWM1_BASE, PWM_GEN_3, 10000);
-
-  //PWM Pulse width is 500 clock cycles, 500/10000 = 0.05, 0.05*0.001 = 0.00005 seconds
-  PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, 500);
-  PWMOutputState(PWM1_BASE, PWM_OUT_7_BIT, true);
-  PWMGenEnable(PWM1_BASE, PWM_GEN_3);
-}
 
 void init_timer(void)
 {
@@ -247,50 +231,45 @@ void init_timer(void)
   TimerIntEnable(WTIMER1_BASE, TIMER_CAPB_EVENT);
 
   // Registers a interrupt function to be called when timer b hits a neg edge event
-  IntRegister(INT_WTIMER1B, interrupt_h_encoder_2);
+  IntRegister(INT_WTIMER2B, interrupt_h_encoder_2);
   // Makes sure the interrupt is cleared
   TimerIntClear(WTIMER2_BASE, TIMER_CAPB_EVENT);
   // Enable the indicated timer interrupt source.
   TimerIntEnable(WTIMER2_BASE, TIMER_CAPB_EVENT);
-
-  // The specified interrupt is enabled in the interrupt controller.
-  IntEnable(INT_WTIMER0B);
-  IntEnable(INT_WTIMER1B);
-  IntEnable(INT_WTIMER2B);
 }
 
 void
 interrupt_h_encoder_0(void){
   TimerIntClear(WTIMER0_BASE, TIMER_CAPB_EVENT);
-  start = TimerValueGet(WTIMER0_BASE, TIMER_A);
-  end = TimerValueGet(WTIMER0_BASE, TIMER_B);
-  encoder0_flag= 1;
+  start_0 = TimerValueGet(WTIMER0_BASE, TIMER_A);
+  end_0 = TimerValueGet(WTIMER0_BASE, TIMER_B);
+  encoder0_flag= start_0 < end_0 ? 1 : 0;
 }
 
 void
 interrupt_h_encoder_1(void){
   TimerIntClear(WTIMER1_BASE, TIMER_CAPB_EVENT);
-  start = TimerValueGet(WTIMER1_BASE, TIMER_A);
-  end = TimerValueGet(WTIMER1_BASE, TIMER_B);
-  encoder1_flag= 1;
+  start_1 = TimerValueGet(WTIMER1_BASE, TIMER_A);
+  end_1 = TimerValueGet(WTIMER1_BASE, TIMER_B);
+  encoder1_flag= start_1 <end_1 ? 1 : 0;
 }
 
 void
 interrupt_h_encoder_2(void){
   TimerIntClear(WTIMER2_BASE, TIMER_CAPB_EVENT);
-  start = TimerValueGet(WTIMER2_BASE, TIMER_A);
-  end = TimerValueGet(WTIMER2_BASE, TIMER_B);
-  encoder2_flag= 1;
+  start_2 = TimerValueGet(WTIMER2_BASE, TIMER_A);
+  end_2 = TimerValueGet(WTIMER2_BASE, TIMER_B);
+  encoder2_flag= start_2< end_2 ? 1 : 0;
 }
 
 //When negative edge is hit, record the values and find the difference, output to putty
 void duty_cycle_0(void)
 {
   encoder0_flag= 0;
-  length = end - start;
-  if (length<0){
+  length_0 = end_0 - start_0;
+  if (length_0<0){
     //UARTprintf("\nLENGTH0 = %d\n", length);
-    length= 4000+length;
+    length_0= 4000+length_0;
   }
   //notes: 10MHZ clock, duty cycle of 500 pwm clock cycles => length is always 0.00005 seconds
   //length = 4001 => 4001 sysclock ticks => 4000 * 1/80M = 0.5 E-4 , length read by timer matches PWM duty cycle
@@ -298,21 +277,16 @@ void duty_cycle_0(void)
 
   //since PWM period is 10000 PWM clock cycles, and length is given in system clock cycles
   //PWM subdiv = 8
-  angle0 = (360*length)/80000;
-  UARTprintf("\nSTART0 = %d\n", start);
-  UARTprintf("\nEND0 = %d\n", end);
-  UARTprintf("\nLENGTH0 = %d\n", length);
-  UARTprintf("\nANGLE0 = %d\n", angle0);
+  angle0 = (360*length_0)/40000;
 }
 
 void duty_cycle_1(void)
 {
   encoder1_flag=0;
 
-  length = end - start;
-  if (length<0){
-    UARTprintf("\nLENGTH1 = %d\n", length);
-    length= 4000+length;
+  length_1 = end_1 - start_1;
+  if (length_1<0){
+     length_1= 4000+length_1;
   }
   //notes: 10MHZ clock, duty cycle of 500 pwm clock cycles => length is always 0.00005 seconds
   //length = 4001 => 4001 sysclock ticks => 4000 * 1/80M = 0.5 E-4 , length read by timer matches PWM duty cycle
@@ -320,21 +294,16 @@ void duty_cycle_1(void)
 
   //since PWM period is 10000 PWM clock cycles, and length is given in system clock cycles
   //PWM subdiv = 8
-  angle1 = (360*length)/80000;
-  UARTprintf("\nSTART1 = %d\n", start);
-  UARTprintf("\nEND1 = %d\n", end);
-  UARTprintf("\nLENGTH1 = %d\n", length);
-  UARTprintf("\nANGLE1 = %d\n", angle1);
+  angle1 = (360*length_1)/40000;
 }
 
 void duty_cycle_2(void)
 {
   encoder2_flag=0;
 
-  length = end - start;
-  if (length<0){
-    UARTprintf("\nLENGTH2 = %d\n", length);
-    length= 4000+length;
+  length_2 = end_2 - start_2;
+  if (length_2<0){
+      length_2= 4000+length_2;
   }
   //notes: 10MHZ clock, duty cycle of 500 pwm clock cycles => length is always 0.00005 seconds
   //length = 4001 => 4001 sysclock ticks => 4000 * 1/80M = 0.5 E-4 , length read by timer matches PWM duty cycle
@@ -342,9 +311,5 @@ void duty_cycle_2(void)
 
   //since PWM period is 10000 PWM clock cycles, and length is given in system clock cycles
   //PWM subdiv = 8
-  angle2 = (360*length)/80000;
-  UARTprintf("\nSTART2 = %d\n", start);
-  UARTprintf("\nEND2 = %d\n", end);
-  UARTprintf("\nLENGTH2 = %d\n", length);
-  UARTprintf("\nANGLE2 = %d\n", angle2);
+  angle2 = (360*length_2)/40000;
 }
