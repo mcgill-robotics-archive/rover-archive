@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(encoder)
+project(encoder_cui)
 
 
 # Include rosserial libraries for TivaC
@@ -15,6 +15,6 @@ add_definitions(-DRX_BUFFER_SIZE=256)
 # Generate target for TivaC
 generate_tivac_firmware(
   # USB
-  SRCS encoder.cpp
+  SRCS encoder_cui.cpp
   BOARD tm4c123gxl
 )
