@@ -12,12 +12,14 @@ add_message_files(
   FILES
   MotorStatus.msg
   MotorControllerMode.msg
+  Magnetic_encoder.msg
 )
 
 add_service_files(
     FILES
     GetVoltageRead.srv
     ResetWatchDog.srv
+    MotorSetAngularVel.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
