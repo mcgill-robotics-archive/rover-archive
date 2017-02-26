@@ -48,8 +48,7 @@ ros::NodeHandle nh;
 // std_msgs::String str_msg;
 // ros::Publisher chatter("chatter", &str_msg);
 std_msgs::UInt32 data_msg;
-ros::Publisher encoder("encoder", &data_msg);
-char hello[13] = "Hi";
+ros::Publisher encoder_cui("position", &data_msg);
 
 volatile int32_t ui32QEIDirection;
 volatile int32_t ui32QEIVelocity;
@@ -102,7 +101,7 @@ int main(void)
   // ROS nodehandle initialization and topic registration
   nh.initNode();
   // nh.advertise(chatter);
-  nh.advertise(encoder);
+  nh.advertise(encoder_cui);
 
   while (1)
   {
@@ -119,18 +118,12 @@ int main(void)
 
 
     data_msg.data = ui32QEIPosition;
-    encoder.publish(&data_msg);
-    // str_msg.data = hello;
-
-    // chatter.publish(&str_msg);
+    encoder_cui.publish(&data_msg);
 
     // Handle all communications and callbacks.
     nh.spinOnce();
 
     // Delay for a bit.
     nh.getHardware()->delay(30);
-
-    // /*        Delay for certain amount of time.*/
-    // SysCtlDelay(30);
   }
 }

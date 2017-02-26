@@ -10,9 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-# add_message_files(
-#   # FILES Buttons.msg
-# )
+add_message_files(
+  FILES
+  Magnetic_encoder.msg
+)
 
 # add_service_files(
 #   FILES
@@ -35,21 +36,25 @@ rosserial_generate_ros_lib(
 # Because we need to generate our custom messages before exporting our rosserial ros_lib
 add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
-# add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-
-# add_dependencies(${PROJECT_NAME}_ros_lib ${catkin_EXPORTED_TARGETS})
-# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_generate_messages)
-# add_dependencies(arm_tiva_bin ${PROJECT_NAME}_generate_messages_cpp )
-
-# encoder
+# encoder_cui
 rosserial_configure_client(
-  DIRECTORY encoder
+  DIRECTORY encoder_cui
   TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
 )
-rosserial_add_client_target(encoder encoder.axf ALL)
-rosserial_add_client_target(encoder flash)
-rosserial_add_client_target(encoder size)
-rosserial_add_client_target(encoder dump)
+rosserial_add_client_target(encoder_cui encoder_cui.axf ALL)
+rosserial_add_client_target(encoder_cui flash)
+rosserial_add_client_target(encoder_cui size)
+rosserial_add_client_target(encoder_cui dump)
+
+# encoder_magnetic
+rosserial_configure_client(
+  DIRECTORY encoder_magnetic
+  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
+)
+rosserial_add_client_target(encoder_magnetic encoder_magnetic.axf ALL)
+rosserial_add_client_target(encoder_magnetic flash)
+rosserial_add_client_target(encoder_magnetic size)
+rosserial_add_client_target(encoder_magnetic dump)
 
 # motor
 rosserial_configure_client(
