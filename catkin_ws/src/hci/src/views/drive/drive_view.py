@@ -71,3 +71,7 @@ class DriveView(QWidget):
         """
 
         self.controlsUpdated.emit(controls)
+
+    @pyqtSlot(int)
+    def updateMotorEnable(self, enable):
+        self._control_view.update_motor_enable(enable)

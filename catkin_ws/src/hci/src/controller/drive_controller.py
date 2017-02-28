@@ -37,6 +37,7 @@ class DriveController(JoystickBase):
         self._command_publisher = rospy.Publisher("/drive_command", DriveCommand, queue_size=1)
         self._status_subscriber = rospy.Subscriber('/motor_status', MotorStatus, self._motor_status, queue_size=1)
         self._settings = DriveSettings()
+        self._settings.ackerman_steering = True
         self._command = Twist()
 
     @pyqtSlot(JoystickData)

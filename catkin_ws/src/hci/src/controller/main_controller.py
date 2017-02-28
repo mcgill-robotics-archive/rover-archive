@@ -44,6 +44,7 @@ class MainController(QObject):
         self.camera_controller.add_screen(main_view.nav_screen.right_wheel)
         self.camera_controller.add_screen(main_view.nav_screen.bottom_cam)
 
+        self.arm_controller.updateMotorEnable.connect(main_view.drive_view.updateMotorEnable)
 
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)

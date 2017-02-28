@@ -1,5 +1,6 @@
 import rospy
 import tf
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from geometry_msgs.msg import Pose, PoseStamped
 from tf.transformations import quaternion_multiply
@@ -11,17 +12,18 @@ from arm_control.msg import JointVelocities
 
 
 class ArmController(JoystickBase):
+    updateMotorEnable = pyqtSignal(int)
     def __init__(self, arm_view=None, parent=None):
         super(ArmController, self).__init__(parent)
         self.arm_view = arm_view
 
-        self._mode = ArmControlMode.CLOSED_LOOP
+        self._mode = ArmControlMode.OPEN_LOOP
         self._dof = DOF.ORIENTATION
         self._joint = Joint.BASE
-        self.arm_view.set_base_controlled()
         self.arm_view.set_orientation_controlled()
+        self.arm_view.set_base_controlled()
 
-        self.velocity_publisher = rospy.Publisher("joint_velocity", JointVelocities, queue_size=1)
+        self.velocity_publisher = rospy.Publisher("arm_velocities", JointVelocities, queue_size=1)
         self.position_publisher = rospy.Publisher("end_effector_pose", Pose, queue_size=1)
 
         self.end_pose = Pose()
@@ -33,9 +35,16 @@ class ArmController(JoystickBase):
         self.pitch = 0
         self.roll = 0
         self.yaw = 0
+        self.motor_enable = 0
 
     @pyqtSlot(JoystickData)
     def handle_joystick_data(self, data):
+
+        if self.motor_enable != data.b1:
+            self.motor_enable = data.b1
+            self.updateMotorEnable.emit(self.motor_enable)
+
+
         if data.b8:
             self.arm_view.set_closed_loop()
         elif data.b7:
@@ -45,20 +54,21 @@ class ArmController(JoystickBase):
         if self._mode == ArmControlMode.OPEN_LOOP:
             message = JointVelocities()
             if self._joint == Joint.BASE:
-                message.base_yaw = data.a3
-                message.base_pitch = data.a2
+                message.base_yaw = data.a3 * self.motor_enable * 100
+                message.base_pitch = data.a2 * self.motor_enable * 100
             elif self._joint == Joint.DIFF1:
-                message.diff_1_pitch = data.a2
-                message.diff_1_roll = data.a1
+                message.diff_1_pitch = data.a2 * self.motor_enable * 100
+                message.diff_1_roll = data.a1 * self.motor_enable * 100
+                # message.base_pitch = data.a2 * -100
             elif self._joint == Joint.DIFF2:
-                message.diff_2_pitch = data.a2
-                message.diff_2_roll = data.a1
+                message.diff_2_pitch = data.a2 * self.motor_enable * 100
+                message.diff_2_roll = data.a1 * self.motor_enable * 100
             elif self._joint == Joint.END:
-                message.end_effector = data.a2
+                message.end_effector = data.a2 * self.motor_enable * 100
 
             self.velocity_publisher.publish(message)
 
-        elif self._mode == ArmControlMode.CLOSED_LOOP:
+        elif self._mode == ArmControlMode.CLOSED_LOOP and self.motor_enable:
             if self._dof == DOF.POSITION:
                 self.end_pose.position.x += data.a1
                 self.end_pose.position.y += data.a2
@@ -69,7 +79,7 @@ class ArmController(JoystickBase):
                 self.roll += data.a2
                 self.yaw += data.a3
 
-                quaternion = tf.transformations.quaternion_from_euler(self.roll, self.pitch, self.raw)
+                quaternion = tf.transformations.quaternion_from_euler(self.roll, self.pitch, self.yaw)
                 self.end_pose.orientation.x = quaternion[0]
                 self.end_pose.orientation.y = quaternion[1]
                 self.end_pose.orientation.z = quaternion[2]
