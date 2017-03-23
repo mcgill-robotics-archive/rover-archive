@@ -35,6 +35,11 @@ echo "Pulling latest changes..."
 git pull && git submodule update --init --recursive
 echo
 
+# Link udev rules
+echo "Setting up udev rules..."
+sudo ln -s `pwd`/11-rover-udev.rules /etc/udev/rules.d || echo "Aleady set."
+echo
+
 # convex_decompositon
 echo "Installing convex_decomposition..."
 sudo apt-get install -y ros-kinetic-convex-decomposition

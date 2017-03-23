@@ -28,7 +28,7 @@ Simply follow the compsys setup and select Rover when prompted.
 API Documentation
 ---
 Jenkins generated doxygen documentation: 
-http://dev.mcgillrobotics.com:8080/job/rover\_all/doxygen/
+http://dev.mcgillrobotics.com:8080/job/rover_all/doxygen/
 
 Note on Building
 ---

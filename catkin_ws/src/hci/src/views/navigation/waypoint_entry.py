@@ -30,7 +30,7 @@ class WaypointPad(QWidget):
     createWaypoint = pyqtSignal(float, float)
 
     def __init__(self, parent=None):
-        """!@Constructor creates the ui and connects the handelers
+        """!@brief Constructor creates the ui and connects the handelers
 
         @param parent Qt hierarchical parent
         @param self Python object pointer

@@ -1,0 +1,12 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find arm_gazebo)/worlds/arm.world"/>
+    <arg name="paused" value="true"/>
+  </include>
+  
+  <!-- Put URDF on parameter server -->
+  <param name="robot_description" command="cat $(find arm_description)/urdf/arm.urdf" />
+
+  <!-- Spawn arm into Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model arm" />
+</launch>
