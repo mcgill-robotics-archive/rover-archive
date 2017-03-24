@@ -112,7 +112,7 @@ int main(void)
 
     drive_encoder_msg.taco_velocity = ui32QEIVelocity;
     drive_encoder_msg.direction = ui32QEIDirection;
-    
+
     encoder_cui.publish(&drive_encoder_msg);
 
     // Handle all communications and callbacks.
