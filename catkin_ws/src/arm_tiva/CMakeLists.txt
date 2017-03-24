@@ -31,14 +31,14 @@ rosserial_add_client_target(encoder_cui size)
 rosserial_add_client_target(encoder_cui dump)
 
 # encoder_magnetic
-rosserial_configure_client(
-  DIRECTORY encoder_magnetic
-  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
-)
-rosserial_add_client_target(encoder_magnetic encoder_magnetic.axf ALL)
-rosserial_add_client_target(encoder_magnetic flash)
-rosserial_add_client_target(encoder_magnetic size)
-rosserial_add_client_target(encoder_magnetic dump)
+#rosserial_configure_client(
+#  DIRECTORY encoder_magnetic
+#  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
+#)
+#rosserial_add_client_target(encoder_magnetic encoder_magnetic.axf ALL)
+#rosserial_add_client_target(encoder_magnetic flash)
+#rosserial_add_client_target(encoder_magnetic size)
+#rosserial_add_client_target(encoder_magnetic dump)
 
 # motor
 rosserial_configure_client(
@@ -50,12 +50,22 @@ rosserial_add_client_target(motor flash)
 rosserial_add_client_target(motor size)
 rosserial_add_client_target(motor dump)
 
-# drive encoders
+# drive encoders left
 rosserial_configure_client(
-  DIRECTORY drive_encoder
+  DIRECTORY drive_encoder_left
   TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
 )
-rosserial_add_client_target(drive_encoder drive_encoder.axf ALL)
-rosserial_add_client_target(drive_encoder flash)
-rosserial_add_client_target(drive_encoder size)
-rosserial_add_client_target(drive_encoder dump)
+rosserial_add_client_target(drive_encoder_left drive_encoder_left.axf ALL)
+rosserial_add_client_target(drive_encoder_left flash)
+rosserial_add_client_target(drive_encoder_left size)
+rosserial_add_client_target(drive_encoder_left dump)
+
+# drive encoders right
+rosserial_configure_client(
+  DIRECTORY drive_encoder_right
+  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
+)
+rosserial_add_client_target(drive_encoder_right drive_encoder_right.axf ALL)
+rosserial_add_client_target(drive_encoder_right flash)
+rosserial_add_client_target(drive_encoder_right size)
+rosserial_add_client_target(drive_encoder_right dump)

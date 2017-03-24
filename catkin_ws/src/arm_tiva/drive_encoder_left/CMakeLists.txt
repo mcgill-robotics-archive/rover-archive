@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(drive_encoder)
+project(drive_encoder_left)
 
 # Include rosserial libraries for TivaC
 include_directories(${ROS_LIB_DIR})
@@ -14,6 +14,7 @@ add_definitions(-DRX_BUFFER_SIZE=256)
 # Generate target for TivaC
 generate_tivac_firmware(
   # USB
-  SRCS drive_encoder.cpp
+  SRCS drive_encoder_left.cpp
   BOARD tm4c123gxl
+  DEVICE_SERIAL 0E21F1CF
 )
