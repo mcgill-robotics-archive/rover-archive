@@ -11,21 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   rover_common
 )
 
-#add_message_files(
-# FILES
-# Magnetic_encoder.msg
-#)
-
-# add_service_files(
-#   FILES
-#   MotorSetAngularVel.srv
-# )
-
-#generate_messages(
-# DEPENDENCIES
-# std_msgs
-#)
-
 catkin_package(
   CATKIN_DEPENDS message_runtime std_msgs
 )
@@ -34,8 +19,6 @@ rosserial_generate_ros_lib(
   PACKAGE rosserial_tivac
   SCRIPT make_libraries_tiva
 )
-# Because we need to generate our custom messages before exporting our rosserial ros_lib
-#add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 # encoder_cui
 rosserial_configure_client(
@@ -66,3 +49,13 @@ rosserial_add_client_target(motor motor.axf ALL)
 rosserial_add_client_target(motor flash)
 rosserial_add_client_target(motor size)
 rosserial_add_client_target(motor dump)
+
+# drive encoders
+rosserial_configure_client(
+  DIRECTORY drive_encoder
+  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
+)
+rosserial_add_client_target(drive_encoder drive_encoder.axf ALL)
+rosserial_add_client_target(drive_encoder flash)
+rosserial_add_client_target(drive_encoder size)
+rosserial_add_client_target(drive_encoder dump)
