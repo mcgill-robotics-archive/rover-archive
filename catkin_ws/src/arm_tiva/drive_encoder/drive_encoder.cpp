@@ -14,12 +14,11 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-
+#include <string>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <string>
 
 // TivaC specific includes
 extern "C"
@@ -47,9 +46,9 @@ extern "C"
 
 // ROS nodehandle
 ros::NodeHandle nh;
-
+char topic_name_buffer[10] = "n/a";
+char * topic_name_ptr[1] = {topic_name_buffer};
 rover_common::DriveEncoder drive_encoder_msg;
-ros::Publisher encoder_cui("velocity", &drive_encoder_msg);
 
 volatile int32_t ui32QEIDirection;
 volatile int32_t ui32QEIVelocity;
@@ -58,7 +57,7 @@ volatile uint32_t ui32QEIPosition;
 int main(void)
 {
   volatile uint32_t ui32SysClkFreq;
-  
+
   /* Set the clock to run at 120MHz.*/
   ui32SysClkFreq= SysCtlClockFreqSet((SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480), 120000000);
   /* Enable peripherals.*/
@@ -99,6 +98,17 @@ int main(void)
 
   // ROS nodehandle initialization and topic registration.
   nh.initNode();
+
+  bool param_topic_name_success = false;
+
+  while (!param_topic_name_success)
+  {
+    param_topic_name_success = nh.getParam("/serial_node/topic_name", topic_name_ptr);
+    nh.spinOnce();
+    nh.getHardware()->delay(10);
+  }
+
+  ros::Publisher encoder_cui(topic_name_buffer, &drive_encoder_msg);
   nh.advertise(encoder_cui);
 
   while (1)
