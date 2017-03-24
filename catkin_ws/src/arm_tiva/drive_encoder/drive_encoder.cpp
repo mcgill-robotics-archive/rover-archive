@@ -40,15 +40,15 @@ extern "C"
 
 // ROS includes
 #include <ros.h>
-#include <rover_common/MotorControllerMode.h>
-#include <rover_common/Magnetic_encoder.h>
-#include <rover_common/DriveEncoder.h>
+#include <std_msgs/Header.h>
+#include <rover_common/DriveEncoderStamped.h>
 
 // ROS nodehandle
 ros::NodeHandle nh;
 char topic_name_buffer[10] = "n/a";
 char * topic_name_ptr[1] = {topic_name_buffer};
-rover_common::DriveEncoder drive_encoder_msg;
+
+rover_common::DriveEncoderStamped drive_encoder_msg_stamped;
 
 volatile int32_t ui32QEIDirection;
 volatile int32_t ui32QEIVelocity;
@@ -108,7 +108,7 @@ int main(void)
     nh.getHardware()->delay(10);
   }
 
-  ros::Publisher encoder_cui(topic_name_buffer, &drive_encoder_msg);
+  ros::Publisher encoder_cui(topic_name_buffer, &drive_encoder_msg_stamped);
   nh.advertise(encoder_cui);
 
   while (1)
@@ -120,10 +120,12 @@ int main(void)
 
     ui32QEIPosition = QEIPositionGet(QEI0_BASE);
 
-    drive_encoder_msg.taco_velocity = ui32QEIVelocity;
-    drive_encoder_msg.direction = ui32QEIDirection;
+    drive_encoder_msg_stamped.drive_encoder.taco_velocity = ui32QEIVelocity;
+    drive_encoder_msg_stamped.drive_encoder.direction = ui32QEIDirection;
 
-    encoder_cui.publish(&drive_encoder_msg);
+    drive_encoder_msg_stamped.header.stamp = nh.now();
+
+    encoder_cui.publish(&drive_encoder_msg_stamped);
 
     // Handle all communications and callbacks.
     nh.spinOnce();

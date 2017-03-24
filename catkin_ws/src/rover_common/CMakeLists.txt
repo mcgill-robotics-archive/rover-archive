@@ -14,6 +14,7 @@ add_message_files(
   MotorControllerMode.msg
   Magnetic_encoder.msg
   DriveEncoder.msg
+  DriveEncoderStamped.msg
 )
 
 add_service_files(
