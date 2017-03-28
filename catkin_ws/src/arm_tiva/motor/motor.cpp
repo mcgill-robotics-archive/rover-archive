@@ -14,36 +14,33 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <string>
 
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <inttypes.h>
-
+#include <string>
 // TivaC specific includes
 extern "C"
 {
   #include <driverlib/sysctl.h>
   #include <driverlib/gpio.h>
-  // #include <driverlib/interrupt.h>
-  // #include <driverlib/fpu.h>
-  // #include <driverlib/debug.h>
   #include <driverlib/pwm.h>
   #include <driverlib/pin_map.h>
-  // #include <driverlib/qei.h>
-
   #include <inc/hw_memmap.h>
-  // #include <inc/hw_types.h>
-  // #include <inc/hw_gpio.h>
-  // #include <inc/hw_qei.h>
 }
 // ROS includes
 #include <ros.h>
+
 #include <std_msgs/String.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float64.h>
 
+
 // ROS nodehandle
+ros::NodeHandle nh;
+
 
 void initialize_pins() {
 
@@ -96,7 +93,7 @@ void initialize_pins() {
 
 void motor_run(int direction, double percentage)
 {
-  long PWMFrequencyHz= 250;
+  long PWMFrequencyHz= 20000;
   double PWMDutyCycleDivisor=(100.00/percentage);
 
   int periodConstant= SysCtlPWMClockGet()/PWMFrequencyHz;
@@ -134,47 +131,43 @@ void motor_run(int direction, double percentage)
       GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0, 0xFF);
       GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_1, 0x00);
     }
-    while(1){}
   }
-
   else{
-    // Illegal direction or percentage argument
+    GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0, 0x00);
+    GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_1, 0x00);
   }
-
-
-  // ROS_INFO("request: Direction=%d, Percentage=%f", req.direction, req.percentage);
-  // ROS_INFO("sending back response: [%s]", (res.success == 1) ? "True" : "False");
 }
 
 void motor_callback(const std_msgs::Float64& msg){
+  initialize_pins();  // Have to re-initialize pins in every loop because of ros nodehandler screwing up everything
   double percentage = (double) abs(msg.data);
-
-if (msg.data == 0){
-  motor_run(0,0);
- }
-if(msg.data > 0.0){
-  motor_run(1, percentage);
- }
- else{
-   motor_run(-1,percentage);
- }
+  std::string message = "Received motor command: " + std::to_string(percentage);
+  nh.loginfo(message.c_str());
+  if (msg.data == 0){
+    motor_run(0,0);
+  }
+  else if(msg.data > 0.0){
+    motor_run(1, percentage);
+  }
+  else{
+    motor_run(-1,percentage);
+  }
 }
 
-ros::NodeHandle nh;
-std_msgs::Float64 velocity_msg;
-ros::Subscriber<std_msgs::Float64> sub("motor_vel", &motor_callback);
 
 int main(int argc, char **argv)
 {
+
   initialize_pins();
+  nh.initNode();
 
+  ros::Subscriber<std_msgs::Float64> sub("motor_vel", &motor_callback);
+  nh.subscribe(sub);
 
-  // ros::init(argc, argv, "motor_vel_command");
-  // ros::ServiceServer service = nh.advertiseService("motor_set_angular_vel", motor_run);
-  // ROS_INFO("Ready to set motor angular velocity.");
-
-
-  nh.spinOnce();
+  while(1){
+    nh.getHardware()->delay(50);
+    nh.spinOnce();
+  }
 
   return 0;
 }

@@ -19,3 +19,4 @@ SUBSYSTEM=="hidraw", ATTRS{idProduct}=="c215", ATTRS{idVendor}=="046d", SYMLINK+
 
 ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", ATTRS{serial}=="0E21F1CF", GROUP="users", SYMLINK+="tiva_wheel_left", MODE="0660"
 ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", ATTRS{serial}=="0E21FB31", GROUP="users", SYMLINK+="tiva_wheel_right", MODE="0660"
+ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", ATTRS{serial}=="0E21E3F3", GROUP="users", SYMLINK+="tiva_generic", MODE="0660"
