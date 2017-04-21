@@ -2,16 +2,24 @@
 
 import cv2
 import numpy as np
+import time
 
 x_center, y_center = 0,0
 trackedBGR = [0,0,0]
 trackedHSV = [0,0,0]
+rectColor = [0,0,255]
+
+currentPos = [0,0,0,0] #current x,y,w,h
+previousPos = [0,0,0,0] #previous x,y,w,h
 
 minimumArea = 10
 maximumArea = 0
-x,y,w,h = 0,0,0,0
 bestContour = None
 currentArea = 0
+previousArea = 0
+stable = False
+markerLocked = False
+timerStart = time.time()
 
 
 cap = cv2.VideoCapture(0)
@@ -81,7 +89,7 @@ cv2.setMouseCallback('WebcamFeed',mouseCallBack)
 while(1):
     ret, frame = cap.read()
 
-    lower_bound = np.array([trackedHSV[0]-10,trackedHSV[1]-50,trackedHSV[2]-70])
+    lower_bound = np.array([trackedHSV[0]-5,trackedHSV[1]-50,trackedHSV[2]-70])
     upper_bound = np.array([trackedHSV[0]+10,trackedHSV[1]+50,trackedHSV[2]+70])
 
     #blur_img = cv2.medianBlur(frame,5)
@@ -92,27 +100,54 @@ while(1):
 
     #Get rid of background noise using erosion and fill in the holes using dilation
     element = cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
-    eroded = cv2.erode(mask,element, iterations=1)
+    eroded = cv2.erode(mask,element, iterations=0)
     dilated = cv2.dilate(eroded,element,iterations=6)
 
 
     # Identify the right feature on the dilated image
-    img3, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    img3, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     for contour in contours:
         currentArea = cv2.contourArea(contour)
-        x,y,w,h = cv2.boundingRect(contour)
+        currentPos = cv2.boundingRect(contour)
 
         #Compare position with the current display to avoid jumps
+        '''
         if bestContour is not None:
             x_base, y_base, w_base, h_base = cv2.boundingRect(bestContour) 
+        '''
+
+
+
 
         #add if condition
         if currentArea > maximumArea:
             bestContour = contour
             maximumArea = currentArea
 
+    if abs(currentPos[0]-previousPos[0])<50 and abs(currentPos[1]-previousPos[1])<50 and abs(currentArea-previousArea)<(currentArea*0.3) :
+        stable = True
+        rectColor = [0,0,255]
+    else:
+        stable = False
+        timerStart = time.time()
+
+    if stable and abs(time.time()-timerStart)>3:
+        markerLocked = True
+        rectColor = [255,0,0]
+    else:
+        markerLocked = False
+
+    previousPos = currentPos
+    previousArea = currentArea
+
+    print currentPos, currentArea
+    print stable, markerLocked
+
+    cv2.rectangle(frame, (currentPos[0],currentPos[1]),(currentPos[0]+currentPos[3],currentPos[1]+currentPos[3]), rectColor, 3)
+
     #Create a bounding box around the biggest object in color range
+    '''
     if bestContour is not None:
         
         if currentArea > minimumArea:
@@ -123,12 +158,18 @@ while(1):
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     cv2.putText(frame,'Position (%d,%d)' %(x,y),(10,50), font, 1,(255,255,255),2)
-    print 'Area: ', currentArea
+    #print 'Area: ', currentArea
 
-    cv2.imshow('WebcamFeed', frame)
+    '''
+
+    #print x,y,h,w, x_base, y_base, w_base, h_base
+    
     cv2.imshow('mask', mask)
     cv2.imshow('Eroded', eroded)
     cv2.imshow('Dilated', dilated)
+    cv2.imshow('WebcamFeed', frame)
+
+    cv2.moveWindow('Dilated', 700, 500)
         
     k = cv2.waitKey(20) & 0xFF
     if k == ord('q'):
