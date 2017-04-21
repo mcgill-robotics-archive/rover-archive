@@ -25,6 +25,7 @@ areaTImerON = False
 areaTimeout = False
 stopCommand = False
 camFOV = 80 #degrees
+offset = 0.0
 
 
 cap = cv2.VideoCapture(0)
@@ -151,14 +152,17 @@ while(1):
     previousPos = currentPos
     previousArea = currentArea
 
-    print currentPos, currentArea
-    print stable, markerLocked
+    #print currentPos, currentArea
+    #print stable, markerLocked
 
     if markerLocked:
         #Output marker angular position from the center of the feed
         #Center is 0 degrees, left is +ve, right is -ve
-
-    
+        offset = (frame.shape[1]/2.0-(currentPos[0]+currentPos[2]/2.0))/(frame.shape[1]/2.0)*(camFOV/2)
+        stopCommand = currentArea > 8000
+        print offset, stopCommand
+    else:
+        stopCommand = False
 
     #Label the main feed with current status
     '''
