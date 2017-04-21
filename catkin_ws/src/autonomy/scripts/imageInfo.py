@@ -20,6 +20,11 @@ previousArea = 0
 stable = False
 markerLocked = False
 timerStart = time.time()
+areaTimer = 0
+areaTImerON = False
+areaTimeout = False
+stopCommand = False
+camFOV = 80 #degrees
 
 
 cap = cv2.VideoCapture(0)
@@ -89,9 +94,11 @@ cv2.setMouseCallback('WebcamFeed',mouseCallBack)
 while(1):
     ret, frame = cap.read()
 
-    lower_bound = np.array([trackedHSV[0]-5,trackedHSV[1]-50,trackedHSV[2]-70])
+    #Establish lower and upper bound of colorspace region of interest
+    lower_bound = np.array([trackedHSV[0]-5,trackedHSV[1]-50,trackedHSV[2]-30])
     upper_bound = np.array([trackedHSV[0]+10,trackedHSV[1]+50,trackedHSV[2]+70])
 
+    # Noise filtering (median or Gaussian filter)
     #blur_img = cv2.medianBlur(frame,5)
     blur_img = cv2.GaussianBlur(frame,(5,5),5)
 
@@ -111,32 +118,35 @@ while(1):
         currentArea = cv2.contourArea(contour)
         currentPos = cv2.boundingRect(contour)
 
-        #Compare position with the current display to avoid jumps
-        '''
-        if bestContour is not None:
-            x_base, y_base, w_base, h_base = cv2.boundingRect(bestContour) 
-        '''
+    #Verify if area doesn't vary for more than 1 sec (means that we have a false positive)
+    if previousArea == currentArea:
+        if (not areaTimerON):
+            areaTimer = time.time()
+            areaTimerON = True
+        else:
+            areaTimeout = (time.time() - areaTimer) > 1
+    else:
+        areaTimeout = False
+        areaTimerON = False
 
-
-
-
-        #add if condition
-        if currentArea > maximumArea:
-            bestContour = contour
-            maximumArea = currentArea
-
-    if abs(currentPos[0]-previousPos[0])<50 and abs(currentPos[1]-previousPos[1])<50 and abs(currentArea-previousArea)<(currentArea*0.3) :
+    #Verify if our detection is stable & consistent
+    if abs(currentPos[0]-previousPos[0])<50 and abs(currentPos[1]-previousPos[1])<50 and abs(currentArea-previousArea)<(currentArea*0.3) and (not areaTimeout):
         stable = True
         rectColor = [0,0,255]
     else:
         stable = False
         timerStart = time.time()
 
+    # If detection is consistent for 3 seconds, confirm that the marker is detected
     if stable and abs(time.time()-timerStart)>3:
         markerLocked = True
         rectColor = [255,0,0]
     else:
         markerLocked = False
+
+    # Draws rectangle around detection (red means preliminary detection, blue means detection confirmed)
+    if stable:
+        cv2.rectangle(frame, (currentPos[0],currentPos[1]),(currentPos[0]+currentPos[3],currentPos[1]+currentPos[3]), rectColor, 3)
 
     previousPos = currentPos
     previousArea = currentArea
@@ -144,25 +154,17 @@ while(1):
     print currentPos, currentArea
     print stable, markerLocked
 
-    cv2.rectangle(frame, (currentPos[0],currentPos[1]),(currentPos[0]+currentPos[3],currentPos[1]+currentPos[3]), rectColor, 3)
+    if markerLocked:
+        #Output marker angular position from the center of the feed
+        #Center is 0 degrees, left is +ve, right is -ve
 
-    #Create a bounding box around the biggest object in color range
+    
+
+    #Label the main feed with current status
     '''
-    if bestContour is not None:
-        
-        if currentArea > minimumArea:
-            itemDetected = True
-        
-        x,y,w,h = cv2.boundingRect(bestContour)
-        cv2.rectangle(frame, (x,y),(x+w,y+h), (0,0,255), 3)
     font = cv2.FONT_HERSHEY_SIMPLEX
-
     cv2.putText(frame,'Position (%d,%d)' %(x,y),(10,50), font, 1,(255,255,255),2)
-    #print 'Area: ', currentArea
-
     '''
-
-    #print x,y,h,w, x_base, y_base, w_base, h_base
     
     cv2.imshow('mask', mask)
     cv2.imshow('Eroded', eroded)
