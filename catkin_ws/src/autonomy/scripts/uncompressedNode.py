@@ -32,7 +32,9 @@ def callback(data):
     msg.data = np.array(cv2.imencode('.jpg', frame)[1]).tostring()
 
     markedPub.publish(msg)
-    
+
+
+    #Lines below would instead be used if the published Image was uncompressed
     """
     try:
         markedPub.publish(bridge.cv2_to_imgmsg(frame, "bgr8"))
