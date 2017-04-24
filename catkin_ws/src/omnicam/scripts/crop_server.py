@@ -144,4 +144,5 @@ def callback(data):
 if __name__ == '__main__':
     service = rospy.Service("crop_control", ControlView, receive_view_command)
     rawGRAY = rospy.Subscriber("unwarp_BGR", Image, callback, queue_size=1)
+    #rawGRAY = rospy.Subscriber("usb_cam/image_raw", Image, callback, queue_size=1)
     rospy.spin()
