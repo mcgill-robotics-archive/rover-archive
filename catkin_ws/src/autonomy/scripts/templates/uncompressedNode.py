@@ -10,7 +10,13 @@ from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image, CompressedImage
 
 rospy.init_node("waypoint_navigator", anonymous=False)
-markedPub = rospy.Publisher("waypoint_feed", CompressedImage, queue_size=10)
+
+#Need an Image message and CompressedImage message of the same feed in
+#order to be able to display it on rqt or any other image viewer.
+#Topic names should follow a similar pattern to below:
+# /myImageTopicName  and /myImageTopicName/compressed
+uncompPub = rospy.Publisher("waypoint_feed/image_raw", Image, queue_size = 1)
+compPub = rospy.Publisher("waypoint_feed/image_raw/compressed", CompressedImage, queue_size=10)
 
 bridge = CvBridge()
 
@@ -23,25 +29,22 @@ def callback(data):
         print(e)
 
     #Add a rectangle to the openCV image
-    cv2.rectangle(frame,(0,0),(100,100),(0,0,255),1)
+    cv2.rectangle(frame,(0,0),(100,100),(0,0,255),4)
 
-    #Convert the openCV image to a ROS CompressedImage message
+    #CompressedImage message publisher
     msg = CompressedImage()
     msg.header.stamp = rospy.Time.now()
     msg.format = "jpeg"
     msg.data = np.array(cv2.imencode('.jpg', frame)[1]).tostring()
 
-    markedPub.publish(msg)
+    compPub.publish(msg)
 
 
-    #Lines below would instead be used if the published Image was uncompressed
-    """
+    #Image publisher (uncompressed)
     try:
-        markedPub.publish(bridge.cv2_to_imgmsg(frame, "bgr8"))
+        uncompPub.publish(bridge.cv2_to_imgmsg(frame, "bgr8"))
     except CvBridgeError as e:
         print(e)
-    """
-    
     
 
 if __name__ == '__main__':
