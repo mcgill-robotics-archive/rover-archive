@@ -4,35 +4,20 @@ import cv2
 import numpy as np
 import time
 
-x_center, y_center = 0,0
-trackedBGR = [0,0,0]
+
 trackedHSV = [0,0,0]
-rectColor = [0,0,255]
-
-currentPos = [0,0,0,0] #current x,y,w,h
 previousPos = [0,0,0,0] #previous x,y,w,h
-
-minimumArea = 10
-maximumArea = 0
-bestContour = None
-currentArea = 0
 previousArea = 0
-stable = False
-markerLocked = False
 timerStart = time.time()
-areaTimer = 0
-areaTImerON = False
-areaTimeout = False
-stopCommand = False
 camFOV = 80 #degrees
-offset = 0.0
-
 
 cap = cv2.VideoCapture(0)
+cap.set(3, 1280)
+cap.set(4, 720)
 
 # mouse callback function
 def mouseCallBack(event,x,y,flags,param):
-    global x_center, y_center, trackedHSV
+    global x_center, y_center
     if event == cv2.EVENT_LBUTTONDBLCLK:
         print "Clicked @   X = %r   Y = %r" %(x, y)
         x_center = x
@@ -44,7 +29,7 @@ def mouseCallBack(event,x,y,flags,param):
 def getColor(image):
     global x_center, y_center, trackedHSV, trackedBGR
 
-    # Reduce noise, median blur was better so far
+    # Reduce noise, median blur was the best so far
     #blur = cv2.blur(frame,(5,5))
     #blur = cv2.GaussianBlur(frame,(5,5),5)
     blur = cv2.medianBlur(image,5)
@@ -152,15 +137,12 @@ while(1):
     previousPos = currentPos
     previousArea = currentArea
 
-    #print currentPos, currentArea
-    #print stable, markerLocked
-
     if markerLocked:
         #Output marker angular position from the center of the feed
         #Center is 0 degrees, left is +ve, right is -ve
         offset = (frame.shape[1]/2.0-(currentPos[0]+currentPos[2]/2.0))/(frame.shape[1]/2.0)*(camFOV/2)
         stopCommand = currentArea > 8000
-        print offset, stopCommand
+        #print offset, stopCommand
     else:
         stopCommand = False
 
