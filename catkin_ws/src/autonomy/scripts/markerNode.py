@@ -7,7 +7,7 @@ import rospy
 import cv2
 import numpy as np
 import time
-from std_msgs.msg import String, Float32, Bool
+from std_msgs.msg import String, Float32, Bool, Float32MultiArray
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -20,9 +20,11 @@ class waypoint_identifier:
     self.acquired_pub = rospy.Publisher("marker_acquired",Bool,queue_size=1)
 
     self.bridge = CvBridge()
+    self.boundsHSV = rospy.Subscriber("hsvSpace", Float32MultiArray,self.setSpaceCallback,queue_size=1)
     self.image_sub = rospy.Subscriber("usb_cam/image_raw",Image,self.callback,queue_size=1)
+    
 
-    self.trackedHSV = [56.3,10.4,196.0]
+    #self.trackedHSV = [56.3,10.4,196.0]
     self.currentPos = [0,0,0,0] #current x,y,w,h
     self.previousPos = [0,0,0,0] #previous x,y,w,h
     self.previousArea = 0
@@ -30,6 +32,11 @@ class waypoint_identifier:
     self.areaTimerON = False
     self.timerStart = time.time()
     self.camFOV = 80 #degrees
+
+  def setSpaceCallback(self,data):
+    self.lower_bound = np.array(self.data[0],self.data[1],self.data[2])
+    self.upper_bound = np.array(self.data[3],self.data[4],self.data[5])
+
 
   def callback(self,data):
     
@@ -39,15 +46,16 @@ class waypoint_identifier:
       print(e)
 
     #Establish lower and upper bound of colorspace region of interest
-    lower_bound = np.array([self.trackedHSV[0]-5,self.trackedHSV[1]-50,self.trackedHSV[2]-30])
-    upper_bound = np.array([self.trackedHSV[0]+10,self.trackedHSV[1]+50,self.trackedHSV[2]+70])
+    #lower_bound = np.array([self.trackedHSV[0]-5,self.trackedHSV[1]-50,self.trackedHSV[2]-30])
+    #upper_bound = np.array([self.trackedHSV[0]+10,self.trackedHSV[1]+50,self.trackedHSV[2]+70])
+    
 
     # Noise filtering (median or Gaussian filter)
     #blur_img = cv2.medianBlur(frame,5)
     blur_img = cv2.GaussianBlur(frame,(5,5),5)
 
     hsv_img = cv2.cvtColor(blur_img, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv_img, lower_bound, upper_bound)
+    mask = cv2.inRange(hsv_img, self.lower_bound, self.upper_bound)
 
     #Get rid of background noise using erosion and fill in the holes using dilation
     element = cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
