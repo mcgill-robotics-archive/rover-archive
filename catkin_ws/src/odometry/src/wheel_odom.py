@@ -3,7 +3,6 @@
 """ROS node that takes wheel encoder values and broadcasts wheel odometry."""
 
 import rospy
-import message_filters
 from rover_common.msg import DriveEncoderStamped
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import TwistWithCovariance
@@ -70,8 +69,8 @@ class WheelOdom(object):
             turn_radius = (l / 2.0) * (lwv + rwv) / (rwv - lwv)
             yaw_angular_velocity = (rwv - lwv) / l
 
-            diff_velocity.linear = turn_radius * yaw_angular_velocity
-            diff_velocity.angular = yaw_angular_velocity
+            diff_velocity.linear.x = turn_radius * yaw_angular_velocity
+            diff_velocity.angular.z = yaw_angular_velocity
 
         return diff_velocity
 
@@ -79,21 +78,32 @@ class WheelOdom(object):
         """Calculate a twist message based on the given raw encoder values."""
         # Convert the raw data to physical velocities.
         left_wheel_speed = self.tacho_to_mps(left_wheel_enc.taco_velocity)
-        right_wheel_speed = self.tacho_to_mps(right_wheel_enc.tachos_velocity)
+        right_wheel_speed = self.tacho_to_mps(right_wheel_enc.taco_velocity)
 
-        left_wheel_dir = left_wheel_enc.direction
+        left_wheel_dir = left_wheel_enc.direction * -1
         right_wheel_dir = right_wheel_enc.direction
 
         # Linear velocity of the wheels.
         vel_lw = left_wheel_speed * left_wheel_dir
         vel_rw = right_wheel_speed * right_wheel_dir
-
         return self.differential_velocity_estimation(vel_lw, vel_rw)
 
-    def odometry_callback(self, enc_stamped_lw, enc_stamped_rw):
-        """ROS odometry subscriber callback."""
-        encoder_lw = enc_stamped_lw.drive_encoder
-        encoder_rw = enc_stamped_rw.driver_encoder
+    def run(self):
+        """Run the publisher in a loop."""
+        rate = rospy.Rate(50)  # 50 Hz, the encoders are running at 30 Hz
+        while not rospy.is_shutdown():
+            msgs_rec = self.messages_received
+            if msgs_rec["left"] and msgs_rec["right"]:
+                self.publish_odometry()
+            else:
+                rospy.logdebug("No messages yet received.")
+
+            rate.sleep()
+
+    def publish_odometry(self):
+        """Publish odometry."""
+        encoder_lw = self.encoder_values['left']
+        encoder_rw = self.encoder_values['right']
 
         # Compute the estimated rover velocity based on encoder readings.
         rover_velocity = self.raw_encoder_to_twist(encoder_lw, encoder_rw)
@@ -106,38 +116,44 @@ class WheelOdom(object):
         rover_velocity_stamped.twist = vel_with_cov
         rover_velocity_stamped.header.stamp = rospy.get_rostime()
 
+        self.velocity_publisher.publish(rover_velocity_stamped)
+
+    def encoder_callback(self, encoder_stamped, args):
+        self.encoder_values[args] = encoder_stamped.drive_encoder
+        self.messages_received[args] = True
+
     def __init__(self):
         """Initialize the wheel odometry node and subscriber callbacks."""
-        rospy.init_node('odometry')
+        rospy.init_node('odometry', log_level=rospy.DEBUG)
+        rospy.logdebug('Initialized nodes')
+
+        self.encoder_values = {}
+        self.messages_received = {"left": False, "right": False}
 
         # Topic names.
         lwt = 'left_wheel_encoder'
         rwt = 'right_wheel_encoder'
 
-        # Define subscribers.
-        l_enc_sub = message_filters.Subscriber(lwt, DriveEncoderStamped)
-        r_enc_sub = message_filters.Subscriber(rwt, DriveEncoderStamped)
+        rospy.Subscriber(lwt, DriveEncoderStamped,
+                         self.encoder_callback, ("left"))
+        rospy.Subscriber(rwt, DriveEncoderStamped,
+                         self.encoder_callback, ("right"))
 
-        # Synchronize subscribers.
-        ts = message_filters.TimeSynchronizer([l_enc_sub, r_enc_sub], 5)
-
-        # Register the odometry callback for synchronized subscribers.
-        ts.registerCallback(self.odometry_callback)
-
-        # TODO: Set up publishers. Test.
-        rospy.spin()
+        self.velocity_publisher = rospy.Publisher("/wheel_odom/velocity",
+                                                  TwistWithCovarianceStamped,
+                                                  queue_size=5)
 
     def tacho_to_mps(self, tachos_ps):
         """Take the tachos per second and converts it to meters per second."""
         tacho_disk_rotation_ratio = 2000  # Design parameter.
-        disk_shaft_rotation_ratio = 21  # Disk to shaft.
+        disk_shaft_rotation_ratio = 21    # Disk to shaft.
 
         # Based on circ of wheel with average wheel radius.
         # Max wheel dia: 10.5 in. Min wheel diam: 10.25 in
         # Average : 10.375 in
         shaft_to_meters_rotation_ratio = 0.827888
 
-        disk_rotations_ps = tachos_ps / tacho_disk_rotation_ratio
+        disk_rotations_ps = float(tachos_ps) / tacho_disk_rotation_ratio
         shaft_rotations_ps = disk_rotations_ps / disk_shaft_rotation_ratio
         meters_ps = shaft_rotations_ps / shaft_to_meters_rotation_ratio
 
@@ -145,4 +161,5 @@ class WheelOdom(object):
 
 
 if __name__ == "__main__":
-    WheelOdom()
+    x = WheelOdom()
+    x.run()
