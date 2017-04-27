@@ -5,13 +5,24 @@
 import rospy
 import message_filters
 from rover_common.msg import DriveEncoderStamped
-from geometry_msgs.msg import TwistStamped, Twist
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import TwistWithCovariance
+from geometry_msgs.msg import TwistWithCovarianceStamped
 
 
 class WheelOdom(object):
     """Compute wheel odometry based on encoder readings and physical ratios."""
 
     AXEL_DIAMETER = 1.405  # Meters.
+
+    COVARIANCE_MATRIX = [
+        1e-3, 0, 0, 0, 0, 0,  # We are estimating the forward velocity.
+        0, 1e-6, 0, 0, 0, 0,  # No instantaneous Y velocity b/c diff drive.
+        0, 0, 1e-6, 0, 0, 0,  # We cannot have a Z velocity.
+        0, 0, 0, 0, 0, 0,     # We can not estimate anything about roll.
+        0, 0, 0, 0, 0, 0,     # Nor about pitch.
+        0, 0, 0, 0, 0, 1e-3   # We are estimating the yaw of the rover.
+    ]
 
     def differential_velocity_estimation(self, lwv, rwv):
         """Calculate velocity based on wheel velocities."""
@@ -87,8 +98,12 @@ class WheelOdom(object):
         # Compute the estimated rover velocity based on encoder readings.
         rover_velocity = self.raw_encoder_to_twist(encoder_lw, encoder_rw)
 
-        rover_velocity_stamped = TwistStamped()
-        rover_velocity_stamped.twist = rover_velocity
+        vel_with_cov = TwistWithCovariance()
+        vel_with_cov.twist = rover_velocity
+        vel_with_cov.covariance = WheelOdom.COVARIANCE_MATRIX
+
+        rover_velocity_stamped = TwistWithCovarianceStamped()
+        rover_velocity_stamped.twist = vel_with_cov
         rover_velocity_stamped.header.stamp = rospy.get_rostime()
 
     def __init__(self):
