@@ -22,7 +22,7 @@ class waypoint_identifier:
     self.acquired_pub = rospy.Publisher("marker_acquired",Bool,queue_size=1)
 
     self.bridge = CvBridge()
-    self.boundsHSV = rospy.Subscriber("hsvSpace", hsvBounds, self.setSpaceCallback, queue_size=1)
+    self.boundsHSV = rospy.Subscriber("hsvBounds", hsvBounds, self.setSpaceCallback, queue_size=1)
     self.image_sub = rospy.Subscriber("usb_cam/image_raw", Image, self.callback, queue_size=1)
     
 
@@ -38,14 +38,17 @@ class waypoint_identifier:
     self.camFOV = 80 #degrees
 
   def setSpaceCallback(self,data):
-    print data.lower[0]
-    print data.upper[2]
+    print data.lower
+    print data.upper
+
+    self.lower_bound = np.array(data.lower)
+    self.upper_bound = np.array(data.upper)
     #self.lower_bound = np.array([data.lower[0],data.lower[1],data.lower[2]])
     #self.upper_bound = np.array([data.upper[0],data.upper[1],data.upper[2]])
 
 
   def callback(self,data):
-    
+   
     try:
       frame = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
