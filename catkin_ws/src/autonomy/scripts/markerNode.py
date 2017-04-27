@@ -7,7 +7,8 @@ import rospy
 import cv2
 import numpy as np
 import time
-from std_msgs.msg import String, Float32, Bool, Float32MultiArray
+from std_msgs.msg import String, Float32, Bool
+from autonomy.msg import hsvBounds
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -16,17 +17,20 @@ class waypoint_identifier:
 
   def __init__(self):
     self.image_pub = rospy.Publisher("marker_feed",Image,queue_size=1)
+    self.mask_pub = rospy.Publisher("mask_feed",Image,queue_size=1)
     self.angle_pub = rospy.Publisher("marker_angle",Float32,queue_size=1)
     self.acquired_pub = rospy.Publisher("marker_acquired",Bool,queue_size=1)
 
     self.bridge = CvBridge()
-    self.boundsHSV = rospy.Subscriber("hsvSpace", Float32MultiArray,self.setSpaceCallback,queue_size=1)
-    self.image_sub = rospy.Subscriber("usb_cam/image_raw",Image,self.callback,queue_size=1)
+    self.boundsHSV = rospy.Subscriber("hsvSpace", hsvBounds, self.setSpaceCallback, queue_size=1)
+    self.image_sub = rospy.Subscriber("usb_cam/image_raw", Image, self.callback, queue_size=1)
     
 
     #self.trackedHSV = [56.3,10.4,196.0]
     self.currentPos = [0,0,0,0] #current x,y,w,h
     self.previousPos = [0,0,0,0] #previous x,y,w,h
+    self.lower_bound = np.array([0.0,0.0,0.0])
+    self.upper_bound = np.array([0.0,0.0,0.0])
     self.previousArea = 0
     self.currentArea = 0
     self.areaTimerON = False
@@ -34,8 +38,10 @@ class waypoint_identifier:
     self.camFOV = 80 #degrees
 
   def setSpaceCallback(self,data):
-    self.lower_bound = np.array(self.data[0],self.data[1],self.data[2])
-    self.upper_bound = np.array(self.data[3],self.data[4],self.data[5])
+    print data.lower[0]
+    print data.upper[2]
+    #self.lower_bound = np.array([data.lower[0],data.lower[1],data.lower[2]])
+    #self.upper_bound = np.array([data.upper[0],data.upper[1],data.upper[2]])
 
 
   def callback(self,data):
@@ -117,6 +123,7 @@ class waypoint_identifier:
 
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(frame, "bgr8"))
+      #self.mask_pub.publish(self.bridge.cv2_to_imgmsg(mask, "bgr8"))
       self.angle_pub.publish(offset)
       self.acquired_pub.publish(markerLocked)
     except CvBridgeError as e:
