@@ -103,7 +103,7 @@ int main(void)
 
   while (!param_topic_name_success)
   {
-    param_topic_name_success = nh.getParam("/serial_node/topic_name", topic_name_ptr);
+    param_topic_name_success = nh.getParam("~topic_name", topic_name_ptr);
     nh.spinOnce();
     nh.getHardware()->delay(10);
   }
