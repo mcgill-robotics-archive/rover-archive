@@ -1,0 +1,4 @@
+int16 direction
+float64 percentage
+---
+bool success
