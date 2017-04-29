@@ -31,14 +31,14 @@ rosserial_add_client_target(encoder_cui size)
 rosserial_add_client_target(encoder_cui dump)
 
 # encoder_magnetic
-#rosserial_configure_client(
-#  DIRECTORY encoder_magnetic
-#  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
-#)
-#rosserial_add_client_target(encoder_magnetic encoder_magnetic.axf ALL)
-#rosserial_add_client_target(encoder_magnetic flash)
-#rosserial_add_client_target(encoder_magnetic size)
-#rosserial_add_client_target(encoder_magnetic dump)
+rosserial_configure_client(
+ DIRECTORY encoder_magnetic
+ TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
+)
+rosserial_add_client_target(encoder_magnetic encoder_magnetic.axf ALL)
+rosserial_add_client_target(encoder_magnetic flash)
+rosserial_add_client_target(encoder_magnetic size)
+rosserial_add_client_target(encoder_magnetic dump)
 
 # motor
 rosserial_configure_client(
