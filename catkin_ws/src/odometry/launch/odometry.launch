@@ -1,15 +1,22 @@
 <launch>
+  <arg name="bag_playback" default="false" />
+  <arg name="path" default="/" />
+  <arg name="file" default="meow" />
+
   <!-- Launch Unscented Kalman Filter through robot_localization. -->
   <node pkg="robot_localization" type="ukf_localization_node"
       name="odometry_node">
     <param name="frequency" value="100" />
 
-    <!-- Wheel odometry -->
-    <param name="twist0" value="wheel_encoder/velocity" />
+    <!-- Wheel odometry configuration. -->
+    <param name="twist0" value="wheel_odom/velocity" />
     <rosparam param="twist0_config">[false, false, false,
                                     false, false, false,
                                     true, true, true,
                                     false, false, true,
                                     false, false, false]</rosparam>
   </node>
+
+  <!-- Launch the wheel odometry calculation node. -->
+  <node pkg="odometry" type="wheel_odom.py" name="wheel_odom" />
 </launch>
