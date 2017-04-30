@@ -1,46 +1,53 @@
 #!/usr/bin/env python
 
-import cv2
-import numpy as np
-import time
-import rospy
 import roslib
+import numpy as np
 import sys
+import rospy
+import cv2
+from std_msgs.msg import String
+from sensor_msgs.msg import Image
+from autonomy.msg import HSVbounds
 from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import Image, CompressedImage
-
-rospy.init_node("marker_nav_setup", anonymous=False)
 
 
-bridge = CvBridge()
+class marker_setup:
 
-# mouse callback function
-def mouseCallBack(event,x,y,flags,param):
-    global x_center, y_center
+  def __init__(self):
+    #
+    
+    self.hsv_pub = rospy.Publisher("hsv_bounds",HSVbounds, queue_size = 10)
+    self.bridge = CvBridge()
+    self.image_sub = rospy.Subscriber("usb_cam/image_raw",Image,self.callback)
+    
+    self.x_center = 0
+    self.y_center = 0
+    self.trackedBGR = [0.0,0.0,0.0]
+    self.trackedHSV = [0.0,0.0,0.0]
+
+  def mouseCallBack(self,event,x,y,flags,param):
     if event == cv2.EVENT_LBUTTONDBLCLK:
         print "Clicked @   X = %r   Y = %r" %(x, y)
-        x_center = x
-        y_center = y
+        self.x_center = x
+        self.y_center = y
 
-        getColor(frame)
+        self.getColor(self.cv_image)
 
-
-def getColor(image):
-    global x_center, y_center, trackedHSV, trackedBGR
-
+  def getColor(self,image):
+    
     # Reduce noise, median blur was the best so far
     #blur = cv2.blur(frame,(5,5))
     #blur = cv2.GaussianBlur(frame,(5,5),5)
-    blur = cv2.medianBlur(image,5)
+    blur = cv2.medianBlur(self.cv_image,5)
 
-    trackedBGR = blur[y_center,x_center]
-    print "\nBGR values: B: %r   G: %r   R: %r " %(trackedBGR[0],trackedBGR[1],trackedBGR[2])
+    self.trackedBGR = blur[self.y_center,self.x_center]
+    print "\nBGR values: B: %r   G: %r   R: %r " %(self.trackedBGR[0],self.trackedBGR[1],self.trackedBGR[2])
 
-    trackedHSV = BGRtoHSV(trackedBGR)
+    self.trackedHSV = self.BGRtoHSV(self.trackedBGR)
 
-    print "\nHSV values: H: %r   S: %r   V: %r " %(trackedHSV[0],trackedHSV[1],trackedHSV[2])
+    print "\nHSV values: H: %r   S: %r   V: %r " %(self.trackedHSV[0],self.trackedHSV[1],self.trackedHSV[2])
 
-def BGRtoHSV(bgr_array):
+  def BGRtoHSV(self,bgr_array):
 
     h,s,v = 0,0,0
 
@@ -72,46 +79,40 @@ def BGRtoHSV(bgr_array):
     # S and V range from 0 to 255
     return [abs(h/2),s*255,v*255]
 
-#cv2.namedWindow('MarkerFeed')
-#cv2.setMouseCallback('MarkerFeed',mouseCallBack)
 
-def callback(data):
-    
-    #Convert ROS Image message to an openCV image
+  def callback(self,data):
+    #r = rospy.Rate(10) #10hz
     try:
-        frame = bridge.imgmsg_to_cv2(data, "bgr8")
+      self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
-        print(e)
+      print(e)
 
-    #Add a rectangle to the openCV image
-    cv2.imshow('MarkerFeed', frame)
+    hsvSpace = HSVbounds()
+    hsvSpace.lower = [self.trackedHSV[0]-5,self.trackedHSV[1]-50,self.trackedHSV[2]-30]
+    hsvSpace.upper = [self.trackedHSV[0]+10,self.trackedHSV[1]+50,self.trackedHSV[2]+70]
 
-    """
-    #Convert the openCV image to a ROS CompressedImage message
-    msg = CompressedImage()
-    msg.header.stamp = rospy.Time.now()
-    msg.format = "jpeg"
-    msg.data = np.array(cv2.imencode('.jpg', frame)[1]).tostring()
+    cv2.namedWindow('Marker Setup Feed')
+    cv2.imshow("Marker Setup Feed", self.cv_image)
+    cv2.setMouseCallback('Marker Setup Feed',self.mouseCallBack)
+    cv2.waitKey(3)
 
-    markedPub.publish(msg)
+    #while not rospy.is_shutdown():
+    self.hsv_pub.publish(hsvSpace)
+      #r.sleep()
 
+    #try:
+    #  self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+    #except CvBridgeError as e:
+    #  print(e)
 
-    #Lines below would instead be used if the published Image was uncompressed
-    
-    try:
-        markedPub.publish(bridge.cv2_to_imgmsg(frame, "bgr8"))
-    except CvBridgeError as e:
-        print(e)
-    """
-    
-    
+def main(args):
+  rospy.init_node('marker_nav_setup', anonymous=False)
+  ms = marker_setup()
+  try:
+    rospy.spin()
+  except KeyboardInterrupt:
+    print("Shutting down")
+  cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    incomingFeed = rospy.Subscriber("usb_cam/image_raw", Image, callback, queue_size=10)
- 
-    """
-    except KeyboardInterrupt:
-        print("Shutting down")
-        cv2.destroyAllWindows()
-    """
-    rospy.spin()
+    main(sys.argv)
