@@ -7,7 +7,7 @@ import rospy
 import cv2
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-from autonomy.msg import hsvBounds
+from autonomy.msg import HSVbounds
 from cv_bridge import CvBridge, CvBridgeError
 
 
@@ -16,7 +16,7 @@ class marker_setup:
   def __init__(self):
     #
     
-    self.hsv_pub = rospy.Publisher("hsvBounds",hsvBounds, queue_size = 10)
+    self.hsv_pub = rospy.Publisher("hsv_bounds",HSVbounds, queue_size = 10)
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("usb_cam/image_raw",Image,self.callback)
     
@@ -87,13 +87,13 @@ class marker_setup:
     except CvBridgeError as e:
       print(e)
 
-    hsvSpace = hsvBounds()
+    hsvSpace = HSVbounds()
     hsvSpace.lower = [self.trackedHSV[0]-5,self.trackedHSV[1]-50,self.trackedHSV[2]-30]
     hsvSpace.upper = [self.trackedHSV[0]+10,self.trackedHSV[1]+50,self.trackedHSV[2]+70]
 
-    cv2.namedWindow('MarkerFeed')
-    cv2.imshow("MarkerFeed", self.cv_image)
-    cv2.setMouseCallback('MarkerFeed',self.mouseCallBack)
+    cv2.namedWindow('Marker Setup Feed')
+    cv2.imshow("Marker Setup Feed", self.cv_image)
+    cv2.setMouseCallback('Marker Setup Feed',self.mouseCallBack)
     cv2.waitKey(3)
 
     #while not rospy.is_shutdown():

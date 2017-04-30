@@ -7,8 +7,9 @@ import rospy
 import cv2
 import numpy as np
 import time
+import math
 from std_msgs.msg import String, Float32, Bool
-from autonomy.msg import hsvBounds
+from autonomy.msg import HSVbounds, MarkerRecognition
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -16,13 +17,14 @@ from cv_bridge import CvBridge, CvBridgeError
 class waypoint_identifier:
 
   def __init__(self):
-    self.image_pub = rospy.Publisher("marker_feed",Image,queue_size=1)
-    self.mask_pub = rospy.Publisher("mask_feed",Image,queue_size=1)
-    self.angle_pub = rospy.Publisher("marker_angle",Float32,queue_size=1)
-    self.acquired_pub = rospy.Publisher("marker_acquired",Bool,queue_size=1)
+    self.image_pub = rospy.Publisher("marker/image_feed",Image,queue_size=1)
+    self.mask_pub = rospy.Publisher("marker/mask_feed",Image,queue_size=1)
+    self.recognition_pub = rospy.Publisher("marker/recognition", MarkerRecognition, queue_size = 1)
+    #self.angle_pub = rospy.Publisher("marker_angle",Float32,queue_size=1)
+    #self.acquired_pub = rospy.Publisher("marker_acquired",Bool,queue_size=1)
 
     self.bridge = CvBridge()
-    self.boundsHSV = rospy.Subscriber("hsvBounds", hsvBounds, self.setSpaceCallback, queue_size=1)
+    self.boundsHSV = rospy.Subscriber("hsv_bounds", HSVbounds, self.setSpaceCallback, queue_size=1)
     self.image_sub = rospy.Subscriber("usb_cam/image_raw", Image, self.callback, queue_size=1)
     
 
@@ -58,6 +60,7 @@ class waypoint_identifier:
     #lower_bound = np.array([self.trackedHSV[0]-5,self.trackedHSV[1]-50,self.trackedHSV[2]-30])
     #upper_bound = np.array([self.trackedHSV[0]+10,self.trackedHSV[1]+50,self.trackedHSV[2]+70])
     
+    recognition = MarkerRecognition()
 
     # Noise filtering (median or Gaussian filter)
     #blur_img = cv2.medianBlur(frame,5)
@@ -113,22 +116,27 @@ class waypoint_identifier:
     self.previousArea = self.currentArea
 
     if markerLocked:
-        #Output marker angular position from the center of the feed
-        #Center is 0 degrees, left is +ve, right is -ve
-        offset = (frame.shape[1]/2.0-(self.currentPos[0]+self.currentPos[2]/2.0))/(frame.shape[1]/2.0)*(self.camFOV/2)
+        #Output marker angular position from the center of the feed (in rad)
+        #Center is 0 rad, left is +ve, right is -ve
+        offset = 2*math.pi*((frame.shape[1]/2.0-(self.currentPos[0]+self.currentPos[2]/2.0))/(frame.shape[1]/2.0)*(self.camFOV/2))/360.0
         stopCommand = self.currentArea > 8000
         print offset, stopCommand
     else:
         stopCommand = False
         offset = 0.0
 
+    recognition.locked = markerLocked
+    recognition.inRange = stopCommand
+    recognition.orientation = offset
+
     cv2.waitKey(3)
 
     try:
       self.image_pub.publish(self.bridge.cv2_to_imgmsg(frame, "bgr8"))
-      #self.mask_pub.publish(self.bridge.cv2_to_imgmsg(mask, "bgr8"))
-      self.angle_pub.publish(offset)
-      self.acquired_pub.publish(markerLocked)
+      self.mask_pub.publish(self.bridge.cv2_to_imgmsg(mask, "mono8"))
+      self.recognition_pub.publish(recognition)
+      #self.angle_pub.publish(offset)
+      #self.acquired_pub.publish(markerLocked)
     except CvBridgeError as e:
       print(e)
 
