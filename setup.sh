@@ -54,7 +54,7 @@ echo
 echo "Installing ros dependencies for catkin workspace..."
 rosdep update
 rosdep install --from-paths ./catkin_ws --ignore-src --skip-keys=rover_msgs \
-    --rosdistro kinetic
+    --skip-keys=ros_lib --rosdistro kinetic
 echo
 
 # Set up MoveIt!
