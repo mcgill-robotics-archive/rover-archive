@@ -79,7 +79,7 @@ class JoystickAcquisition(QThread):
                     self.data.b12 = self.controller.get_button(11)
                 elif an_event.type == pygame.JOYAXISMOTION:
                     self.data.a1 = self.controller.get_axis(0)
-                    self.data.a2 = self.controller.get_axis(1)
+                    self.data.a2 = -1 * self.controller.get_axis(1)
                     self.data.a3 = self.controller.get_axis(2)
                     self.data.a4 = self.controller.get_axis(3)
                 else:
