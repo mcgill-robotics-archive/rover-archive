@@ -3,6 +3,7 @@ McGill Robotics Rover Project
 
 This repository contains the ROS workspace used for the Mars Rover Project.
 
+
 Build Status
 ------------
 
@@ -21,9 +22,56 @@ Build Status
 | `dev`    | [![dev]][dev url]       |
 | `all`    | [![all]][all url]       |
 
+
 Initial Setup
 ---
 Simply follow the compsys setup and select Rover when prompted.
+
+Running the Rover
+---
+On your computer in the root of the rover repository:
+```bash
+./scripts/control
+```
+
+Next, in a separate terminal or tmux window, ssh into the rover:
+```bash
+ssh robotics@rover
+```
+
+Now you need to tell the rover where ROS_MASTER is:
+```bash
+export ROS_MASTER_URI=http://<your-computer's-name>:11311
+```
+
+At this point, as a sanity check, you should be able to see the rostopics
+from the base station, i.e. `rostopic list` should show the topics from control.
+
+Finally, we need to run the Arduinos on the rover:
+```bash
+roslaunch arduino drive.launch
+```
+
+Note that if it is your first time connecting, you need to do a few extra steps:
+
+- Add the rover to your computer's hosts: add 
+```bash
+192.168.3.252 rover
+```
+to your `/etc/hosts` file. You will now be able to ssh into the rover with
+```bash
+ssh robotics@rover
+```
+- Now, ssh into the rover, and on the rover, add your ip and user pair to
+the rover's host file. You can see your ip by issuing `ip addr show` (on your
+computer). You can see your username by issuing `whoami`, again, on your own
+computer. Now on the rover, add the following line to `/etc/hosts`:
+```bash
+<your-computer-ip> <your-computer-name>
+```
+
+These extra steps should allow you to export rosmaster and connect
+from the rover to your computer!
 
 API Documentation
 ---
