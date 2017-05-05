@@ -37,31 +37,30 @@ class AhrsTfBroadcaster:
         pass
 
     def handle_ahrs_msg(self, message):
-        if self.first :
+        if self.first:
             rospy.loginfo("Received first message, tf are ready")
-
-        # self.br.sendTransform((
-        #     message.pose.pose.position.x,
-        #     message.pose.pose.position.y,
-        #     message.pose.pose.position.z),
-        #     (0, 0, 0, 1), rospy.Time.now(), "ahrs_position", "world")
 
         quat = (
             message.pose.pose.orientation.x,
             message.pose.pose.orientation.y,
             message.pose.pose.orientation.z,
             message.pose.pose.orientation.w)
+        
+        euler = tf.transformations.euler_from_quaternion(quat)
+        euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
 
-        multiply = quaternion_multiply((1, 0, 0, 0), quat)
+        self.br.sendTransform((0, 0, 0),
+                              tf.transformations.quaternion_from_euler(
+                              *euler_fixed), rospy.Time.now(),
+                              "ahrs_position", "world")
 
-        self.br.sendTransform((0, 0, 0), multiply,
-                              rospy.Time.now(), "ahrs_orientation", "ahrs_position")
+        orientation_adjustment = (1, 0, 0, 0)
+
+        self.br.sendTransform((0, 0, 0), orientation_adjustment,
+                              rospy.Time.now(), "ahrs_orientation",
+                              "ahrs_position")
 
         self.last_tf = message.pose.pose.position
-
-        # self.br.sendTransform(self.center_position, (0, 0, 0, 1),
-        #                       rospy.Time.now(), "center", "world")
-        self.br.sendTransform((0, 0, 0), (0, 0, 0, 1), rospy.Time.now(), "laser", "ahrs_orientation")
 
 
 if __name__ == "__main__":
