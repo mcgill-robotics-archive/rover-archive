@@ -16,6 +16,8 @@ class waypoint_identifier:
     def __init__(self):
         self.image_pub = rospy.Publisher("marker/image_feed", Image, queue_size=1)
         self.mask_pub = rospy.Publisher("marker/mask_feed", Image, queue_size=1)
+        self.eroded_pub = rospy.Publisher("marker/eroded_feed", Image, queue_size=1)
+        self.dilated_pub = rospy.Publisher("marker/dilated_feed", Image, queue_size=1)
         self.recognition_pub = rospy.Publisher("marker/recognition", MarkerRecognition, queue_size=1)
 
         self.bridge = CvBridge()
@@ -53,7 +55,7 @@ class waypoint_identifier:
 
         #Get rid of background noise using erosion and fill in the holes using dilation
         element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-        eroded = cv2.erode(mask, element, iterations=0)
+        eroded = cv2.erode(mask, element, iterations=2)
         dilated = cv2.dilate(eroded, element, iterations=6)
 
         # Identify the right feature on the dilated image
@@ -115,6 +117,8 @@ class waypoint_identifier:
         try:
             self.image_pub.publish(self.bridge.cv2_to_imgmsg(frame, "bgr8"))
             self.mask_pub.publish(self.bridge.cv2_to_imgmsg(mask, "mono8"))
+            self.eroded_pub.publish(self.bridge.cv2_to_imgmsg(eroded, "mono8"))
+            self.dilated_pub.publish(self.bridge.cv2_to_imgmsg(dilated, "mono8"))
             self.recognition_pub.publish(recognition)
         except CvBridgeError as e:
             print(e)

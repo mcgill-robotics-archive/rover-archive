@@ -82,7 +82,7 @@ class marker_setup:
             print(e)
 
         hsvSpace = HSVbounds()
-        hsvSpace.lower = [self.trackedHSV[0]-5, self.trackedHSV[1]-50, self.trackedHSV[2]-30]
+        hsvSpace.lower = [self.trackedHSV[0]-5, self.trackedHSV[1]-50, self.trackedHSV[2]-70]
         hsvSpace.upper = [self.trackedHSV[0]+10, self.trackedHSV[1]+50, self.trackedHSV[2]+70]
 
         cv2.namedWindow('Marker Setup Feed')
