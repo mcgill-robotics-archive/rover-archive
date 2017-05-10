@@ -90,6 +90,8 @@ int main(int argc, char ** argv)
         msg.pose.pose.position.y = ahrsStatus.position[1];
         msg.pose.pose.position.z = ahrsStatus.position[2];
 
+        msg.gpsHeading.data = ahrsStatus.gpsHeading;
+
         ahrsPublisher.publish(msg);
         loopRate.sleep();
     }
