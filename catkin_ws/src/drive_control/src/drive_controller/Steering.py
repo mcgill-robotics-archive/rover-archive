@@ -163,9 +163,8 @@ class Steering:
 
             self.output_command.blv = self.output_command.flv
             self.output_command.brv = self.output_command.frv
+        self.output_command.blv *= -1
         self.output_command.brv *= -1
-        self.output_command.mrv *= -1
-        self.output_command.frv *= -1
 
     def pointTurn(self, wBody):
         """

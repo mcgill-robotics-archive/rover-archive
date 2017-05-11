@@ -5,3 +5,6 @@
 [submodule "catkin_ws/src/rosserial_tivac"]
 	path = catkin_ws/src/rosserial_tivac
 	url = https://github.com/vmatos/rosserial_tivac
+[submodule "catkin_ws/src/rover_tiva"]
+	path = catkin_ws/src/rover_tiva
+	url = git@github.com:mcgill-robotics/rover_tiva.git
