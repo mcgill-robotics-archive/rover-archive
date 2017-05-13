@@ -40,16 +40,6 @@ rosserial_add_client_target(encoder_magnetic flash)
 rosserial_add_client_target(encoder_magnetic size)
 rosserial_add_client_target(encoder_magnetic dump)
 
-# motor
-rosserial_configure_client(
-  DIRECTORY motor
-  TOOLCHAIN_FILE ${ROSSERIAL_TIVAC_TOOLCHAIN}
-)
-rosserial_add_client_target(motor motor.axf ALL)
-rosserial_add_client_target(motor flash)
-rosserial_add_client_target(motor size)
-rosserial_add_client_target(motor dump)
-
 # drive encoders left
 rosserial_configure_client(
   DIRECTORY drive_encoder_left
