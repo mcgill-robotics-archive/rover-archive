@@ -36,6 +36,6 @@ class MainView(QWidget):
         v1.addWidget(self.pose_display)
 
         h2.addWidget(self.nav_screen)
-        h2.addWidget(self.map)
+        # h2.addWidget(self.map)
         h2.addItem(v1)
         self.setLayout(h2)
