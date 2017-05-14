@@ -1,0 +1,8 @@
+#!/usr/bin/zsh
+
+if [[ -f ~/rover/catkin_ws/launch/test_setup.launch ]]; then
+    roslaunch ~/rover/catkin_ws/launch/test_setup.launch
+else
+    echo "Error, test launch file not found"
+    exit 1
+fi
