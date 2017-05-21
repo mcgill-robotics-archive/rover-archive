@@ -11,17 +11,14 @@ Build Status
 [master]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_master
 [master url]: http://dev.mcgillrobotics.com:8080/job/rover_master
 
-[dev]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_dev_kinetic
-[dev url]: http://dev.mcgillrobotics.com:8080/job/rover_dev_kinetic
+[dev]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_dev
+[dev url]: http://dev.mcgillrobotics.com:8080/job/rover_dev
 
-[all]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_kinetic
-[all url]: http://dev.mcgillrobotics.com:8080/job/rover_kinetic
 
 | Branch   | Status                  |
 |:--------:|:-----------------------:|
 | `master` | [![master]][master url] |
 | `dev`    | [![dev]][dev url]       |
-| `all`    | [![all]][all url]       |
 
 
 Initial Setup
