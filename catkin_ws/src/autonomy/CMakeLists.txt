@@ -38,10 +38,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
 find_package(catkin REQUIRED COMPONENTS 
-	roscpp
-	rospy
-	std_msgs
-	message_generation
+  roscpp
+  rospy
+  std_msgs
+  message_generation
 )
 ##   * uncomment the add_*_files sections below as needed
 ##     and list every .msg/.srv/.action file to be processed
@@ -50,9 +50,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 add_message_files(
-   FILES
-   HSVbounds.msg
-   MarkerRecognition.msg
+  FILES
+  HSVbounds.msg
+  MarkerRecognition.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -71,8 +71,8 @@ add_message_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-   DEPENDENCIES
-   std_msgs  # Or other packages containing msgs
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
 )
 
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
