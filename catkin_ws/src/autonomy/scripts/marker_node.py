@@ -129,8 +129,8 @@ class WaypointIdentifier:
             #Output marker angular position from the center of the feed (in rad)
             #Center is 0 rad, left is +ve, right is -ve
             offset = 2*math.pi*(
-                (frame.shape[1]/2.0-(self.current_pos[0]+
-                                     self.current_pos[2]/2.0))/
+                (frame.shape[1]/2.0 - (self.current_pos[0] +
+                                       self.current_pos[2]/2.0)) /
                 (frame.shape[1]/2.0)*(self.camera_fov/2))/360.0
             stop_command = self.current_area > 8000
             print offset, stop_command
