@@ -42,12 +42,12 @@ echo
 
 # convex_decompositon
 echo "Installing convex_decomposition..."
-sudo apt-get install -y ros-kinetic-convex-decomposition
+sudo apt-get install -qq ros-kinetic-convex-decomposition
 echo
 
 # urg_node
 echo "Installing urg_node.."
-sudo apt-get install ros-kinetic-urg-node 
+sudo apt-get install -qq ros-kinetic-urg-node 
 echo
 
 # ROS dependency update
@@ -59,7 +59,19 @@ echo
 
 # Set up MoveIt!
 echo "Installing MoveIt! from repositories..."
-sudo apt-get install ros-kinetic-moveit
+sudo apt-get install -qq ros-kinetic-moveit
 echo
+
+echo "Installing gcc-arm-none-eabi..."
+sudo apt-get install -qq gcc-arm-none-eabi ros-kinetic-rosserial-tivac
+echo
+
+
+if [[ ! -f /usr/bin/lm4flash ]]; then
+    echo "Set up lm4flash..."
+    sudo cp tools/lm4flash /usr/bin/
+    echo "Done!"
+    echo
+fi
 
 echo "All done with Rover setup!"
