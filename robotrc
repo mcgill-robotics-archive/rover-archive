@@ -1,2 +1,2 @@
-export TIVA_WARE_PATH=../tivaware
+export TIVA_WARE_PATH=${ROBOTIC_PATH}/tivaware
 export TIVA_FLASH_EXECUTABLE=lm4flash 
