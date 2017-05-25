@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 # Initialize rover repository into working state
 
@@ -86,14 +86,16 @@ if [[ ! -d ../tiva ]]; then
     cd tiva/catkin_ws/src
     git clone git@github.com:mcgill-robotics/rover_tiva
     cd rover_tiva
-    sudo ln -s ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules /etc/udev/rules.d/71-rover-tiva.rules
+    sudo ln -s \
+    ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules \
+    /etc/udev/rules.d/71-rover-tiva.rules
     cd ${ROBOTIC_PATH}/rover
     echo
 fi
 
-if [[ ! -f /usr/bin/lm4flash ]]; then
+if [[ ! -f /usr/local/bin/lm4flash ]]; then
     echo "Setting up lm4flash..."
-    sudo cp tools/lm4flash /usr/bin/
+    sudo cp tools/lm4flash /usr/local/bin/
     echo
 fi
 
