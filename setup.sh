@@ -73,6 +73,7 @@ if [[ ! -d ../tivaware ]]; then
     cd tivaware
     make clean
     make
+    cd rover
     echo done
 fi
 
