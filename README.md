@@ -76,10 +76,3 @@ API Documentation
 ---
 Jenkins generated doxygen documentation: 
 http://dev.mcgillrobotics.com:8080/job/rover_all/doxygen/
-
-Note on Building
----
-We use `catkin_make` to build our main workspace (`catkin_ws`). However we use
-`catkin build` to build our MoveIt workspace (`moveit_ws`).
-The `init.sh` script builds both the workspaces for you (if you decide to
-setup your MoveIt! workspace).
