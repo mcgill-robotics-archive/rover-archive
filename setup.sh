@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 #
 # Initialize rover repository into working state
 
@@ -36,8 +36,10 @@ git pull && git submodule update --init --recursive
 echo
 
 # Link udev rules
-echo "Setting up udev rules..."
-sudo ln -s `pwd`/11-rover-udev.rules /etc/udev/rules.d || echo "Aleady set."
+if [[ ! -h /etc/udev/rules.d/11-rover-udev.rules ]]; then
+    echo "Setting up udev rules..."
+    sudo ln -s ${ROBOTIC_PATH}/rover/11-rover-udev.rules /etc/udev/rules.d
+fi
 echo
 
 # convex_decompositon
@@ -73,14 +75,25 @@ if [[ ! -d ../tivaware ]]; then
     cd tivaware
     make clean
     make
-    cd rover
-    echo done
+    cd ../rover
+    echo
+fi
+
+if [[ ! -d ../tiva ]]; then
+    echo "Setting up tiva catkin_ws..."
+    cd ..
+    mkdir -p tiva/catkin_ws/src
+    cd tiva/catkin_ws/src
+    git clone git@github.com:mcgill-robotics/rover_tiva
+    cd rover_tiva
+    sudo ln -s ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules /etc/udev/rules.d/71-rover-tiva.rules
+    cd ${ROBOTIC_PATH}/rover
+    echo
 fi
 
 if [[ ! -f /usr/bin/lm4flash ]]; then
     echo "Setting up lm4flash..."
     sudo cp tools/lm4flash /usr/bin/
-    echo "Done!"
     echo
 fi
 
