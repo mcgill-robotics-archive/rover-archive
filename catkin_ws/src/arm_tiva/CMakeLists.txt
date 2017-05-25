@@ -20,6 +20,8 @@ rosserial_generate_ros_lib(
   SCRIPT make_libraries_tiva
 )
 
+add_dependencies(arm_tiva_ros_lib rover_common_generate_messages)
+
 # encoder_cui
 rosserial_configure_client(
   DIRECTORY encoder_cui
