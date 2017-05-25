@@ -86,9 +86,11 @@ if [[ ! -d ../tiva ]]; then
     cd tiva/catkin_ws/src
     git clone git@github.com:mcgill-robotics/rover_tiva
     cd rover_tiva
-    sudo ln -s \
-    ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules \
-    /etc/udev/rules.d/71-rover-tiva.rules
+    if [[ ! -h /etc/udev/rules.d/71-rover-tiva.rules ]]; then
+        sudo ln -s \
+        ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules \
+        /etc/udev/rules.d/71-rover-tiva.rules
+    fi
     cd ${ROBOTIC_PATH}/rover
     echo
 fi
