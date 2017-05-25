@@ -12,7 +12,7 @@ add_message_files(
   FILES
   MotorStatus.msg
   MotorControllerMode.msg
-  Magnetic_encoder.msg
+  MagneticEncoder.msg
   DriveEncoder.msg
   DriveEncoderStamped.msg
 )

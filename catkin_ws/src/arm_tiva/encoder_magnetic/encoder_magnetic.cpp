@@ -46,7 +46,7 @@ extern "C"
 // ROS includes
 #include <std_msgs/String.h>
 #include <std_msgs/UInt32.h>
-#include <rover_common/Magnetic_encoder.h>
+#include <rover_common/MagneticEncoder.h>
 
 #define UART1_BAUDRATE      115200  // UART baudrate in bps
 // ROS nodehandle
@@ -54,7 +54,7 @@ ros::NodeHandle nh;
 
 // std_msgs::String str_msg;
 // ros::Publisher chatter("chatter", &str_msg);
-rover_common::Magnetic_encoder encoder_message;
+rover_common::MagneticEncoder encoder_message;
 
 ros::Publisher encoder_magnetic("position", &encoder_message);
 
