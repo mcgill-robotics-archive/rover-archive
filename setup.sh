@@ -63,12 +63,21 @@ sudo apt-get install -qq ros-kinetic-moveit
 echo
 
 echo "Installing gcc-arm-none-eabi..."
-sudo apt-get install -qq gcc-arm-none-eabi ros-kinetic-rosserial-tivac
+sudo apt-get install -qq ros-kinetic-rosserial-tivac gcc-arm-none-eabi
 echo
 
+if [[ ! -d ../tivaware ]]; then
+    echo "Setting up tivaware..."
+    cd ..
+    git clone git@github.com:mcgill-robotics/tivaware
+    cd tivaware
+    make clean
+    make
+    echo done
+fi
 
 if [[ ! -f /usr/bin/lm4flash ]]; then
-    echo "Set up lm4flash..."
+    echo "Setting up lm4flash..."
     sudo cp tools/lm4flash /usr/bin/
     echo "Done!"
     echo
