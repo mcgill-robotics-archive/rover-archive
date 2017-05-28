@@ -52,7 +52,7 @@ class AhrsTfBroadcaster:
         self.br.sendTransform((0, 0, 0),
                               tf.transformations.quaternion_from_euler(
                               *euler_fixed), rospy.Time.now(),
-                              "ahrs_position", "world")
+                              "ahrs_position", "base_link")
 
         orientation_adjustment = (1, 0, 0, 0)
 
