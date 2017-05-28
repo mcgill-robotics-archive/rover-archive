@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
-from geometry_msgs.msg import PoseStamped, Quaternion
+from geometry_msgs.msg import PoseWithCovariance, Quaternion
+from geometry_msgs.msg import PoseWithCovarianceStamped
 from ahrs.msg import AhrsStdMsg, Ig500nGPS 
 from std_msgs.msg import Header
 from numpy import pi
@@ -34,14 +35,22 @@ def ahrs_callback(msg):
         else :
             rospy.loginfo_throttle(1, "Current Heading: {0:.2f} degree".format(
                     msg.gpsHeading.data / 100000.0))
-            robot_pose = PoseStamped(header=Header(frame_id=frame_id, 
-                    stamp=rospy.Time.now()))
             heading = msg.gpsHeading.data * pi / 180 / 100000
             q = tf.transformations.quaternion_from_euler(0, 0, heading)
-            robot_pose.pose.orientation.x = q[0]
-            robot_pose.pose.orientation.y = q[1]
-            robot_pose.pose.orientation.z = q[2]
-            robot_pose.pose.orientation.w = q[3]
+            robot_pose = PoseWithCovarianceStamped()
+            robot_pose.header = Header(
+                    frame_id=frame_id, stamp=rospy.Time.now())
+            robot_pose.pose.pose.orientation.x = q[0]
+            robot_pose.pose.pose.orientation.y = q[1]
+            robot_pose.pose.pose.orientation.z = q[2]
+            robot_pose.pose.pose.orientation.w = q[3]
+            robot_pose.pose.covariance = [
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0.01]
             pub.publish(robot_pose)
 
 if __name__ == '__main__':
@@ -51,6 +60,6 @@ if __name__ == '__main__':
     frame_id = rospy.get_param("~frame_id", "base_link")
     sub = rospy.Subscriber('/ahrs/ahrs_status', AhrsStdMsg,
             ahrs_callback, queue_size=1)
-    pub = rospy.Publisher('~gps_heading', PoseStamped, queue_size=1) 
+    pub = rospy.Publisher('~gps_heading', PoseWithCovarianceStamped, queue_size=1) 
     
     rospy.spin()
