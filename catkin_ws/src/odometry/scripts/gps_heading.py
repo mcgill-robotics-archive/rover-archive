@@ -46,10 +46,10 @@ def ahrs_callback(msg):
 
 if __name__ == '__main__':
     # Init the ROS node
-    rospy.init_node('~gps_heading')
+    rospy.init_node('gps_heading')
     rospy.loginfo("GPS Heading node started")
     frame_id = rospy.get_param("~frame_id", "base_link")
-    sub = rospy.Subscriber('~ahrs', AhrsStdMsg,
+    sub = rospy.Subscriber('/ahrs/ahrs_status', AhrsStdMsg,
             ahrs_callback, queue_size=1)
     pub = rospy.Publisher('~gps_heading', PoseStamped, queue_size=1) 
     
