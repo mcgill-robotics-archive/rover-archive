@@ -28,6 +28,11 @@ typedef struct _AhrsStatus {
     /// Height above sea level in mm
     int32_t gpsAltitude;
 
+    /// Horizontal accuracy in mm
+    uint32_t gpsHoriAccuracy;
+    /// Vertical accuracy in mm
+    uint32_t gpsVertAccuracy;
+ 
     /// 3d velocity cm/s in north east down coordinate
     int32_t gpsVelocity[3];
 
