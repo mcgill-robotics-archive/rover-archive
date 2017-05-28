@@ -57,11 +57,13 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        ahrs_orientation:
+        ahrs/adjusted_orrientation:
           Value: true
-        ahrs_position:
-          Value: false
-        world:
+        ahrs/ahrs_origin:
+          Value: true
+        ahrs/true_orientation:
+          Value: true
+        base_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -69,16 +71,17 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          ahrs_position:
-            ahrs_orientation:
-              {}
+        base_link:
+          ahrs/ahrs_origin:
+            ahrs/adjusted_orrientation:
+              ahrs/true_orientation:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
