@@ -1,6 +1,6 @@
 import rospy
 import tf
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from geometry_msgs.msg import Pose, PoseStamped
 from tf.transformations import quaternion_multiply
 
@@ -11,6 +11,8 @@ from arm_control.msg import JointVelocities
 
 
 class ArmController(JoystickBase):
+    enableMotors = pyqtSignal(int)
+
     def __init__(self, arm_view=None, parent=None):
         super(ArmController, self).__init__(parent)
 
@@ -46,46 +48,44 @@ class ArmController(JoystickBase):
         @param data
         @param self Python object pointer
         """
-        if data.b8:
-            self.arm_view.set_closed_loop()
-        elif data.b7:
-            self.arm_view.set_open_loop()
 
-        # Check the mode for open loop or closed loop.
-        if self._mode == ArmControlMode.OPEN_LOOP:
-            message = JointVelocities()
-            if self._joint == Joint.BASE:
-                message.base_yaw = data.a3
-                message.base_pitch = data.a2
-            elif self._joint == Joint.DIFF1:
-                message.diff_1_pitch = data.a2
-                message.diff_1_roll = data.a1
-            elif self._joint == Joint.DIFF2:
-                message.diff_2_pitch = data.a2
-                message.diff_2_roll = data.a1
-            elif self._joint == Joint.END:
-                message.end_effector = data.a2
+        self.enableMotors.emit(data.b1)
+        if data.b1:
+            # Check the mode for open loop or closed loop.
+            if self._mode == ArmControlMode.OPEN_LOOP:
+                message = JointVelocities()
+                if self._joint == Joint.BASE:
+                    message.base_yaw = data.a3
+                    message.base_pitch = data.a2
+                elif self._joint == Joint.DIFF1:
+                    message.diff_1_pitch = data.a2
+                    message.diff_1_roll = data.a1
+                elif self._joint == Joint.DIFF2:
+                    message.diff_2_pitch = data.a2
+                    message.diff_2_roll = data.a1
+                elif self._joint == Joint.END:
+                    message.end_effector = data.a2
 
-            self.velocity_publisher.publish(message)
+                self.velocity_publisher.publish(message)
 
-        elif self._mode == ArmControlMode.CLOSED_LOOP:
-            if self._dof == DOF.POSITION:
-                self._end_pose.position.x += data.a1
-                self._end_pose.position.y += data.a2
-                self._end_pose.position.z += data.a3
+            elif self._mode == ArmControlMode.CLOSED_LOOP:
+                if self._dof == DOF.POSITION:
+                    self._end_pose.position.x += data.a1
+                    self._end_pose.position.y += data.a2
+                    self._end_pose.position.z += data.a3
 
-            elif self._dof == DOF.ORIENTATION:
-                self._pitch += data.a1
-                self._roll += data.a2
-                self._yaw += data.a3
+                elif self._dof == DOF.ORIENTATION:
+                    self._pitch += data.a1
+                    self._roll += data.a2
+                    self._yaw += data.a3
 
-                quaternion = tf.transformations.quaternion_from_euler(self._roll, self._pitch, self._yaw)
-                self._end_pose.orientation.x = quaternion[0]
-                self._end_pose.orientation.y = quaternion[1]
-                self._end_pose.orientation.z = quaternion[2]
-                self._end_pose.orientation.w = quaternion[3]
+                    quaternion = tf.transformations.quaternion_from_euler(self._roll, self._pitch, self._yaw)
+                    self._end_pose.orientation.x = quaternion[0]
+                    self._end_pose.orientation.y = quaternion[1]
+                    self._end_pose.orientation.z = quaternion[2]
+                    self._end_pose.orientation.w = quaternion[3]
 
-            self.position_publisher.publish(self._end_pose)
+                self.position_publisher.publish(self._end_pose)
 
     def _update_control_mode(self, mode):
         print mode

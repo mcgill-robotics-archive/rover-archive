@@ -44,6 +44,9 @@ class DriveView(QWidget):
 
         self._control_view.driveSettingsChanged.connect(self._forwardControls)
 
+    @pyqtSlot(int)
+    def show_motor_enable(self, motor_enable):
+        self._control_view.showEnableMotor(motor_enable)
 
     @pyqtSlot(WheelStatusStruct)
     def updateMotorStatus(self, status):
