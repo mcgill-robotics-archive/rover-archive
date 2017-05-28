@@ -9,6 +9,7 @@ from views.navigation.map import Map
 from views.navigation.pose_display import PoseDisplay
 from views.joystick.joystick_mode import JoystickMode
 from views.navigation.navigation_view import NavigationView
+from views.autonomous.autonomous_mode_selection import AutonomousModeSelection
 
 
 class MainView(QWidget):
@@ -20,16 +21,19 @@ class MainView(QWidget):
         h2 = QHBoxLayout()
         v1 = QVBoxLayout()
 
+        self.nav_mode = AutonomousModeSelection(self)
         self.joystick_mode_widget = JoystickMode(self)
         self.drive_view = DriveView(self)
         self.navigation_view = NavigationView(self)
         self.pose_display = PoseDisplay(self)
         self.nav_screen = NavigationScreen(self)
-        self.map = Map(self)
+        # self.map = Map(self)
         self.arm_view = ArmView(self)
+
 
         h1.addWidget(self.joystick_mode_widget)
         h1.addWidget(self.drive_view)
+        v1.addWidget(self.nav_mode)
         v1.addItem(h1)
         v1.addWidget(self.arm_view)
         v1.addWidget(self.navigation_view)
