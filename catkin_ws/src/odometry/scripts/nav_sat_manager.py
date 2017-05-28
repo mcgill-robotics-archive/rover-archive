@@ -2,7 +2,7 @@
 import rospy
 from ahrs.msg import AhrsStdMsg
 from sensor_msgs.msg import NavSatFix
-from sensor_msgs.msg import Imu
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 
 class NavSatMsgManager:
@@ -10,30 +10,32 @@ class NavSatMsgManager:
         rospy.init_node('navsat_manager')
 
         self.imu_received = False
-        self.current_imu = Imu()
 
         self.navsat_pub = rospy.Publisher('ahrs_raw_gps', NavSatFix,
                                           queue_size=10)
-        self.imu_pub = rospy.Publisher('ahrs_raw_imu', Imu,
-                                       queue_size=10)
+
+        self.ahrs_pose_pub = rospy.Publisher("ahrs/imu_pose",
+                                             PoseWithCovarianceStamped,
+                                             queue_size=1)
 
         rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self.ahrs_callback)
 
+    def pub_ahrs_pose(self, orientation):
+        ahrs_pose = PoseWithCovarianceStamped()
+        ahrs_pose.header.stamp = rospy.Time.now()
+        ahrs_pose.header.frame_id = "base_link"
+        ahrs_pose.pose.pose.orientation = orientation
+        ahrs_pose.pose.covariance = [0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 1e-6, 0, 0,
+                                     0, 0, 0, 0, 1e-6, 0,
+                                     0, 0, 0, 0, 0, 1e-6]
+        self.ahrs_pose_pub.publish(ahrs_pose)
+
     def ahrs_callback(self, data):
+        self.pub_ahrs_pose(data.pose.pose.orientation)
         # Get the Pose data from the AhrsStdMsg (i.e. the IMU data).
-        ahrs_imu_data = Imu()
-        ahrs_imu_data.orientation = data.pose.pose.orientation
-        ahrs_imu_data.orientation_covariance = [
-            10e-5, 0, 0,
-            0, 10e-5, 0,
-            0, 0, 10e-5
-        ]
-
-        ahrs_imu_data.header.frame_id = "ahrs_imu_frame"
-        ahrs_imu_data.header.stamp = rospy.get_rostime()
-        self.current_imu = ahrs_imu_data
-        self.imu_received = True
-
         # Create the NavSatFix message, then populate the gps data
         # navsatmsg = NavSatFix()
         # navsatmsg.latitude = data.gps.latitude
@@ -48,10 +50,10 @@ class NavSatMsgManager:
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             if self.imu_received:
-                self.imu_pub.publish(self.current_imu)
-                rate.sleep()
+                pass
+            rate.sleep()
 
 
 if __name__ == '__main__':
-    navSatManager = NavSatMsgManager()
-    navSatManager.run()
+    nav_sat_manager = NavSatMsgManager()
+    nav_sat_manager.run()

@@ -17,12 +17,12 @@ class WheelOdom(object):
     ODOM_ERR_FACTOR = 17.24
 
     COVARIANCE_MATRIX = [
-        1e-3, 0, 0, 0, 0, 0,  # We are estimating the forward velocity.
-        0, 1e-6, 0, 0, 0, 0,  # No instantaneous Y velocity b/c diff drive.
-        0, 0, 1e-6, 0, 0, 0,  # We cannot have a Z velocity.
+        1e-6, 0, 0, 0, 0, 0,  # We are estimating the forward velocity.
+        0, 1e-9, 0, 0, 0, 0,  # No instantaneous Y velocity b/c diff drive.
+        0, 0, 1e-9, 0, 0, 0,  # We cannot have a Z velocity.
         0, 0, 0, 0, 0, 0,     # We can not estimate anything about roll.
         0, 0, 0, 0, 0, 0,     # Nor about pitch.
-        0, 0, 0, 0, 0, 1e-6   # We are estimating the yaw of the rover.
+        0, 0, 0, 0, 0, 0   # We are estimating the yaw of the rover.
     ]
 
     def differential_velocity_estimation(self, lwv, rwv):
