@@ -26,6 +26,7 @@ AhrsIg500n::AhrsIg500n(const char * deviceName, uint32 baudRate) {
                                      SBG_OUTPUT_POSITION |
                                      SBG_OUTPUT_VELOCITY |
                                      SBG_OUTPUT_DEVICE_STATUS |
+                                     SBG_OUTPUT_GPS_ACCURACY | 
                                      SBG_OUTPUT_GPS_TRUE_HEADING |
                                      SBG_OUTPUT_QUATERNION);
 
@@ -110,6 +111,9 @@ void AhrsIg500n::continuousCallback(SbgProtocolHandleInt *handler, SbgOutput *pO
     mStatus.gpsAltitude = pOutput->gpsAltitude;
     mStatus.gpsLatitude = pOutput->gpsLatitude;
     mStatus.gpsLongitude = pOutput->gpsLongitude;
+
+    mStatus.gpsHoriAccuracy = pOutput->gpsHorAccuracy;
+    mStatus.gpsVertAccuracy = pOutput->gpsVertAccuracy;
 
     mStatus.gpsTrueHeading = pOutput->gpsTrueHeading;
     mStatus.gpsHeading = pOutput->gpsHeading;
