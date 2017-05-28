@@ -49,6 +49,7 @@ class MainController(QObject):
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)
         main_view.drive_view.controlsUpdated.connect(self.drive_controller.setDriveSetting)
+        self.arm_controller.enableMotors.connect(main_view.drive_view.show_motor_enable)
 
         self.navigation_controller.updatePitch.connect(main_view.navigation_view.handle_new_pitch)
         self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
