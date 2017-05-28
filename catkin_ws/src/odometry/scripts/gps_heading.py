@@ -26,15 +26,15 @@ def ahrs_callback(msg):
     # Create new message and header
     
     if msg.gps.FIX_3D :
-        rospy.loginfo_throttle(60, "GPS 3D Fixed!")
+        rospy.loginfo_throttle(60, "gps_heading: GPS 3D Fixed!")
         if heading_count < DISCARD_COUNT :
             heading_count += 1
             rospy.loginfo_throttle(1, 
-                    'Discarding first few messages: {0:.2%} Complete'.format(
-                            heading_count / DISCARD_COUNT))
+                    'gps_heading: Discarding first few messages:' +
+                    '{0:.2%} Complete'.format(heading_count / DISCARD_COUNT))
         else :
-            rospy.loginfo_throttle(1, "Current Heading: {0:.2f} degree".format(
-                    msg.gpsHeading.data / 100000.0))
+            rospy.loginfo_throttle(1, 'gps_heading: Current Heading:' + 
+            '{0:.2f} degree' .format( msg.gpsHeading.data / 100000.0))
             heading = msg.gpsHeading.data * pi / 180 / 100000
             q = tf.transformations.quaternion_from_euler(0, 0, heading)
             robot_pose = PoseWithCovarianceStamped()
