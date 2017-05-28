@@ -49,15 +49,17 @@ class MainController(QObject):
         self.drive_controller.wheelStatusUpdate.connect(main_view.drive_view.updateMotorStatus)
         self.drive_controller.forceControlsUpdate.connect(main_view.drive_view.displayDriveSettings)
         main_view.drive_view.controlsUpdated.connect(self.drive_controller.setDriveSetting)
+        main_view.nav_mode.activateHCIMode.connect(self.drive_controller.activateHCIMode)
+        main_view.nav_mode.activateAutonomousMode.connect(self.drive_controller.activateAutonomousMode)
         self.arm_controller.enableMotors.connect(main_view.drive_view.show_motor_enable)
 
         self.navigation_controller.updatePitch.connect(main_view.navigation_view.handle_new_pitch)
         self.navigation_controller.updateRoll.connect(main_view.navigation_view.handle_new_roll)
         self.navigation_controller.updateYaw.connect(main_view.navigation_view.handle_new_yaw)
         self.navigation_controller.updateAttitude.connect(main_view.pose_display.update_pose)
-        self.navigation_controller.updatePosition.connect(main_view.map.add_point)
+        # self.navigation_controller.updatePosition.connect(main_view.map.add_point)
 
-        main_view.map.coord_widget.createWaypoint.connect(main_view.map.add_waypoint)
+        # main_view.map.coord_widget.createWaypoint.connect(main_view.map.add_waypoint)
 
     def __del__(self):
         self.joystick_master.stop()
