@@ -81,11 +81,13 @@ int main(int argc, char ** argv)
         msg.pose.pose.orientation.y = ahrsStatus.quaternion[2];
         msg.pose.pose.orientation.z = ahrsStatus.quaternion[3];
 
+        msg.attitude_accuracy = ahrsStatus.attitudeAccuracy;
+       
         msg.pose.pose.position.x = ahrsStatus.position[0];
         msg.pose.pose.position.y = ahrsStatus.position[1];
         msg.pose.pose.position.z = ahrsStatus.position[2];
 
-        msg.attitude_accuracy = ahrsStatus.attitudeAccuracy;
+        msg.position_accuracy = ahrsStatus.positionAccuracy;
         
         msg.gyroscopes.x = ahrsStatus.gyroscopes[0];
         msg.gyroscopes.y = ahrsStatus.gyroscopes[1];
