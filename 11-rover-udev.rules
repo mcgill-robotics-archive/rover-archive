@@ -7,6 +7,9 @@ SUBSYSTEMS=="usb", ATTRS{serial}=="9533335393635110A0D0",ATTRS{idVendor}=="2341"
 SUBSYSTEMS=="usb", ATTRS{serial}=="55431313438351F001D0",ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="0042", SYMLINK+="mega_science", MODE="0666"
 
 SUBSYSTEM=="video4linux", ATTRS{idProduct}=="082b",ATTRS{idVendor}=="046d", SYMLINK+="hazcam%n", MODE="0666"
+SUBSYSTEM=="video4linux", ATTRS{serial}=="82A412FF", ATTRS{idProduct}=="082d", ATTRS{idVendor}=="046d", SYMLINK+="front_cam", MODE="0666"
+SUBSYSTEM=="video4linux", ATTRS{serial}=="200901010001", ATTRS{idProduct}=="708c", ATTRS{idVendor}=="0458", SYMLINK+="cam_ultra_wide", MODE="0666"
+SUBSYSTEM=="video4linux", ATTRS{idProduct}=="075d", ATTRS{idVendor}=="045e", SYMLINK+="pan_tilt_cam", MODE="0666"
 
 SUBSYSTEM=="hidraw", ATTRS{idProduct}=="c215", ATTRS{idVendor}=="046d", SYMLINK+="joysctick", MODE="0666"
 
