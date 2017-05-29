@@ -1,8 +1,4 @@
 <launch>
-  <arg name="bag_playback" default="false" />
-  <arg name="path" default="/" />
-  <arg name="file" default="meow" />
-
   <!-- Launch Unscented Kalman Filter through robot_localization.
        This node is for local state estimation.
   -->
