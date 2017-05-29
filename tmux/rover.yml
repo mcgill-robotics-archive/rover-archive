@@ -40,3 +40,10 @@ windows:
         - roslaunch dcdc_nuc dcdc_nuc.launch --wait
         - roslaunch ahrs ahrs.launch --wait
         - roslaunch rover_tiva arm.launch --wait
+  - cameras:
+      layout: tiled
+      panes:
+        - roslaunch rover_camera arm.launch --wait
+        - roslaunch rover_camera wideAngle.launch --wait
+        - arr=( $(ls /dev/hazcam*) ) && roslaunch rover_camera haz.launch \
+            dev1:=${arr[1]} dev2:=${arr[2]}
