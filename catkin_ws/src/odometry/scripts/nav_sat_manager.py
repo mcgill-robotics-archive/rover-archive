@@ -11,7 +11,7 @@ class NavSatMsgManager:
 
         self.imu_received = False
 
-        self.ahrs_navsat_pub = rospy.Publisher('ahrs/raw_gps', NavSatFix,
+        self.ahrs_navsat_pub = rospy.Publisher('~raw_gps', NavSatFix,
                                           queue_size=10)
 
         self.ahrs_pose_pub = rospy.Publisher("~imu_pose",
