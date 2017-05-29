@@ -101,4 +101,7 @@ if [[ ! -f /usr/local/bin/lm4flash ]]; then
     echo
 fi
 
+if [[ ! -f ${HOME}/.tmuxinator/rover.yml ]]; then
+    ln -s ${ROBOTIC_PATH}/rover/tmux/rover.yml ${HOME}/.tmuxinator/
+fi
 echo "All done with Rover setup!"
