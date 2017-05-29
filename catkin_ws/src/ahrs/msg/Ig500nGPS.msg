@@ -18,4 +18,4 @@ uint8 fix_type
 
 bool validUTC # Valid UTC (Leap Seconds already known)
 
-int32 heading # 2D heading in degrees (1e-5)
+float64 heading # 2D heading in degrees

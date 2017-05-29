@@ -68,12 +68,12 @@ int main(int argc, char ** argv)
         msg.gps.velocity.linear.y = ahrsStatus.gpsVelocity[1] / 100.0;
         msg.gps.velocity.linear.z = ahrsStatus.gpsVelocity[2] / 100.0;
 
-        msg.gps.vertical_accuracy = ahrsStatus.gpsVertAccuracy / 100.0;
-        msg.gps.horizontal_accuracy = ahrsStatus.gpsHoriAccuracy / 100.0;
+        msg.gps.vertical_accuracy = ahrsStatus.gpsVertAccuracy / 1000.0;
+        msg.gps.horizontal_accuracy = ahrsStatus.gpsHoriAccuracy / 1000.0;
         msg.gps.speed_accuracy = ahrsStatus.gpsSpeedAccuracy / 10.0;
         msg.gps.heading_accuracy = ahrsStatus.gpsHeadingAccuracy / 100000.0;
 
-        msg.gps.heading = ahrsStatus.gpsHeading;
+        msg.gps.heading = ahrsStatus.gpsHeading / 100000.0;
 
         msg.pose.header = header;
         msg.pose.pose.orientation.w = ahrsStatus.quaternion[0];
