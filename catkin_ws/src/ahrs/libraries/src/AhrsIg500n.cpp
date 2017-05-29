@@ -4,6 +4,7 @@
 
 #include "AhrsIg500n.h"
 #include "stdio.h"
+#include <cstring>
 
 using namespace lineranger::ahrs;
 
@@ -28,7 +29,11 @@ AhrsIg500n::AhrsIg500n(const char * deviceName, uint32 baudRate) {
                                      SBG_OUTPUT_DEVICE_STATUS |
                                      SBG_OUTPUT_GPS_ACCURACY | 
                                      SBG_OUTPUT_GPS_TRUE_HEADING |
-                                     SBG_OUTPUT_QUATERNION);
+                                     SBG_OUTPUT_QUATERNION |
+                                     SBG_OUTPUT_GYROSCOPES |
+                                     SBG_OUTPUT_ACCELEROMETERS |
+                                     SBG_OUTPUT_ATTITUDE_ACCURACY
+                                     );
 
     if (mError != SBG_NO_ERROR) {
         sbgComErrorToString(mError, mErrorMsg);
@@ -114,22 +119,21 @@ void AhrsIg500n::continuousCallback(SbgProtocolHandleInt *handler, SbgOutput *pO
 
     mStatus.gpsHoriAccuracy = pOutput->gpsHorAccuracy;
     mStatus.gpsVertAccuracy = pOutput->gpsVertAccuracy;
-
+    mStatus.gpsSpeedAccuracy = pOutput->gpsSpeedAccuracy;
+    mStatus.gpsHeadingAccuracy = pOutput->gpsHeadingAccuracy;
     mStatus.gpsTrueHeading = pOutput->gpsTrueHeading;
     mStatus.gpsHeading = pOutput->gpsHeading;
 
-    for (int i = 0; i < 3; i++)
-    {
-        mStatus.velocity[i] = pOutput->velocity[i];
-        mStatus.position[i] = pOutput->position[i];
-        mStatus.gpsVelocity[i] = pOutput->gpsVelocity[i];
-        mStatus.quaternion[i] = pOutput->stateQuat[i];
-    }
-    mStatus.quaternion[3] = pOutput->stateQuat[3];
+    memcpy(mStatus.accelerometers, pOutput->accelerometers, sizeof(pOutput->accelerometers));
+    memcpy(mStatus.gyroscopes, pOutput->gyroscopes, sizeof(pOutput->gyroscopes));
+    memcpy(mStatus.velocity, pOutput->velocity, sizeof(pOutput->velocity));
+    memcpy(mStatus.position, pOutput->position, sizeof(pOutput->position));
+    memcpy(mStatus.gpsVelocity, pOutput->gpsVelocity, sizeof(pOutput->gpsVelocity));
+    memcpy(mStatus.quaternion, pOutput->stateQuat, sizeof(pOutput->stateQuat));
 
     mStatus.gpsFlags = pOutput->gpsFlags;
     mStatus.gpsNbSat = pOutput->gpsNbSats;
     mStatus.deviceStatus = pOutput->deviceStatus;
+    mStatus.attitudeAccuracy = pOutput->attitudeAccuracy;
 
-    //std::cout << pOutput->gpsAltitude << ", " << pOutput->gpsLatitude << ", " << pOutput->gpsLongitude <<std::endl;
 }

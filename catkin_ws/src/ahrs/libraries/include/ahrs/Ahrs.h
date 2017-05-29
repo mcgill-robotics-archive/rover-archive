@@ -20,8 +20,12 @@ typedef struct _AhrsStatus {
  
     /// Angle representation in quaternions
     float quaternion[4];   
+    /// Calibrated version of the 3 gyroscopes, gX, gY, gZ
+    float gyroscopes[3];
+    /// Calibrated version of the 3 accelerometers, aX, aY, aZ
+    float accelerometers[3]; 
     
-    /// Longitude in degrees (1e-7)
+       /// Longitude in degrees (1e-7)
     int32_t gpsLongitude;
     /// Latitude in degrees (1e-7)
     int32_t gpsLatitude;
@@ -32,6 +36,14 @@ typedef struct _AhrsStatus {
     uint32_t gpsHoriAccuracy;
     /// Vertical accuracy in mm
     uint32_t gpsVertAccuracy;
+    /// Speed accuracy in cm/s
+    uint32_t gpsSpeedAccuracy;
+    /// Heading accuracy in degrees (1e-5)
+    uint32_t gpsHeadingAccuracy;
+   
+    ///Attitude accuracy in rad estimated by the Kalman Filter
+    float attitudeAccuracy;
+
  
     /// 3d velocity cm/s in north east down coordinate
     int32_t gpsVelocity[3];

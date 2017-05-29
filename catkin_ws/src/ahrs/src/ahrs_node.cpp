@@ -9,6 +9,7 @@
 #include "ros/ros.h"
 #include <geometry_msgs/Quaternion.h>
 #include <std_msgs/Header.h>
+#include <cstring>
 
 void mySigintHandler(int sig)
 {
@@ -51,19 +52,17 @@ int main(int argc, char ** argv)
     {
         ahrsStatus = ahrs->getStatus();
 
+        // Format headers
         std_msgs::Header header;
-
         header.frame_id = "ahrs";
         msg.pose.header = header;
-        msg.gpsVelocity.header = header;
         msg.filteredVelocity.header = header;
+
 
         msg.gps.longitude = ahrsStatus.gpsLongitude / 10000000.0;
         msg.gps.altitude = ahrsStatus.gpsAltitude / 1000.0;
         msg.gps.latitude = ahrsStatus.gpsLatitude / 10000000.0;
-        msg.gps.vertAccuracy = ahrsStatus.gpsVertAccuracy;
-        msg.gps.horiAccuracy = ahrsStatus.gpsHoriAccuracy;
-
+        
         int fix = ahrsStatus.gpsFlags & 0b11;
         msg.gps.FIX_3D = (fix == SBG_GPS_3D_FIX);
         msg.gps.FIX_2D = (fix == SBG_GPS_2D_FIX);
@@ -74,10 +73,14 @@ int main(int argc, char ** argv)
         msg.gps.validWKN = (ahrsStatus.gpsFlags && SBG_GPS_VALID_WKN) >> 3;
         msg.gps.validUTC = (ahrsStatus.gpsFlags && SBG_GPS_VALID_UTC) >> 4;
 
+        msg.gps.velocity.linear.x = ahrsStatus.gpsVelocity[0];
+        msg.gps.velocity.linear.y = ahrsStatus.gpsVelocity[1];
+        msg.gps.velocity.linear.z = ahrsStatus.gpsVelocity[2];
 
-        msg.gpsVelocity.twist.linear.x = ahrsStatus.gpsVelocity[0];
-        msg.gpsVelocity.twist.linear.y = ahrsStatus.gpsVelocity[1];
-        msg.gpsVelocity.twist.linear.z = ahrsStatus.gpsVelocity[2];
+        msg.gps.vertAccuracy = ahrsStatus.gpsVertAccuracy;
+        msg.gps.horiAccuracy = ahrsStatus.gpsHoriAccuracy;
+        msg.gps.speedAccuracy = ahrsStatus.gpsSpeedAccuracy / 10.0;
+        msg.gps.headingAccuracy = ahrsStatus.gpsHeadingAccuracy / 100000.0;
 
         msg.filteredVelocity.twist.linear.x = ahrsStatus.velocity[0];
         msg.filteredVelocity.twist.linear.y = ahrsStatus.velocity[1];
@@ -93,6 +96,18 @@ int main(int argc, char ** argv)
         msg.pose.pose.position.z = ahrsStatus.position[2];
 
         msg.gpsHeading.data = ahrsStatus.gpsHeading;
+        
+        msg.gyroscopes.x = ahrsStatus.gyroscopes[0];
+        msg.gyroscopes.y = ahrsStatus.gyroscopes[1];
+        msg.gyroscopes.z = ahrsStatus.gyroscopes[2];
+
+        msg.accelerometers.x = ahrsStatus.accelerometers[0];
+        msg.accelerometers.y = ahrsStatus.accelerometers[1];
+        msg.accelerometers.z = ahrsStatus.accelerometers[2];
+
+        // memcpy(msg.accelerometers, ahrsStatus.accelerometers, sizeof(ahrsStatus.accelerometers));
+        // memcpy(msg.gyroscopes, ahrsStatus.gyroscopes, sizeof(ahrsStatus.gyroscopes));
+        msg.attitudeAccuracy = ahrsStatus.attitudeAccuracy;
 
         ahrsPublisher.publish(msg);
         loopRate.sleep();
