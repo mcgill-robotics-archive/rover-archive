@@ -9,8 +9,7 @@ name: MAIN
 pre: export SHELL=/bin/zsh && export PATH=/usr/local/sbin/:/usr/local/bin/:/usr/sbin:${PATH}
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-# pre_window: rbenv shell 2.0.0-p247
-
+# pre_window: 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
 
@@ -45,5 +44,4 @@ windows:
       panes:
         - roslaunch rover_camera arm.launch --wait
         - roslaunch rover_camera wideAngle.launch --wait
-        - arr=( $(ls /dev/hazcam*) ) && roslaunch rover_camera haz.launch \
-            dev1:=${arr[1]} dev2:=${arr[2]}
+        - arr=( $(ls /dev/hazcam*) ) && roslaunch rover_camera haz.launch dev1:=${arr[1]} dev2:=${arr[2]} --wait
