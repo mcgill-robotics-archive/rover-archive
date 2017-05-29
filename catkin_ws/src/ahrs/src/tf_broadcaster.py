@@ -45,7 +45,7 @@ class AhrsTfBroadcaster:
             message.pose.pose.orientation.y,
             message.pose.pose.orientation.z,
             message.pose.pose.orientation.w)
-        
+
         euler = tf.transformations.euler_from_quaternion(quat)
         euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
 
@@ -54,10 +54,21 @@ class AhrsTfBroadcaster:
                               *euler_fixed), rospy.Time.now(),
                               "ahrs_position", "base_link")
 
-        orientation_adjustment = (1, 0, 0, 0)
+        # This adjustment makes the local frame for the ahrs conform with
+        # the (forward, left, up) standard for local robot coordinate frames.
+        # The AHRS is by default (forward, right, down).
+        local_orientation_adjustment = (1, 0, 0, 0)
 
-        self.br.sendTransform((0, 0, 0), orientation_adjustment,
-                              rospy.Time.now(), "ahrs_orientation",
+        self.br.sendTransform((0, 0, 0), local_orientation_adjustment,
+                              rospy.Time.now(), "local_ahrs_orientation",
+                              "ahrs_position")
+
+        # This adjustment makes the global frame for the ahrs conform with the
+        # east, north, up standard for global robot coordinate frames.
+        # The AHRS is by default (north, east, down).
+        global_orientation_adjustment = (0, 0.707, -0.707, 0)
+        self.br.sendTransform((0, 0, 0), global_orientation_adjustment,
+                              rospy.Time.now(), "global_ahrs_orientation",
                               "ahrs_position")
 
         self.last_tf = message.pose.pose.position
