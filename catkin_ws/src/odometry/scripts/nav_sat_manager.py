@@ -34,29 +34,29 @@ class NavSatMsgManager:
         self.ahrs_pose_pub.publish(ahrs_pose)
 
     def pub_ahrs_navsat(self, data):
-        ahrs_navsat = NavSatFix()
+        navsat = NavSatFix()
         
-        ahrs_navsat.header.stamp = rospy.Time.now()
-        ahrs_navsat.header.frame_id = "base_link"
+        navsat.header.stamp = rospy.Time.now()
+        navsat.header.frame_id = "base_link"
         
-        ahrs_navsat.latitude = data.gps.latitude
-        ahrs_navsat.longitude = data.gps.longitude
-        ahrs_navsat.altitude = data.gps.altitude
+        navsat.latitude = data.gps.latitude
+        navsat.longitude = data.gps.longitude
+        navsat.altitude = data.gps.altitude
 
-        ahrs_navsat.position_covariance[0]= data.gps.horiAccuracy ** 2
-        ahrs_navsat.position_covariance[4]= data.gps.horiAccuracy ** 2
-        ahrs_navsat.position_covariance[8]= data.gps.vertAccuracy ** 2
-        ahrs_navsat.position_covariance_type = \
-                ahrs_navsat.COVARIANCE_TYPE_APPROXIMATED
+        navsat.position_covariance[0]= (data.gps.horiAccuracy / 1000.0) ** 2
+        navsat.position_covariance[4]= (data.gps.horiAccuracy / 1000.0) ** 2
+        navsat.position_covariance[8]= (data.gps.vertAccuracy / 1000.0) ** 2
+        navsat.position_covariance_type = \
+                navsat.COVARIANCE_TYPE_APPROXIMATED
         
         if data.gps.FIX_3D:
-            ahrs_navsat.status.status = ahrs_navsat.status.STATUS_GBAS_FIX
+            navsat.status.status = navsat.status.STATUS_GBAS_FIX
         else:
-            ahrs_navsat.status.status = ahrs_navsat.status.STATUS_NO_FIX
+            navsat.status.status = navsat.status.STATUS_NO_FIX
         
-        ahrs_navsat.status.service = ahrs_navsat.status.SERVICE_GPS
+        navsat.status.service = navsat.status.SERVICE_GPS
         
-        self.ahrs_navsat_pub.publish(ahrs_navsat)
+        self.ahrs_navsat_pub.publish(navsat)
 
     def ahrs_callback(self, data):
         self.pub_ahrs_pose(data.pose.pose.orientation)
