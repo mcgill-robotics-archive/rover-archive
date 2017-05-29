@@ -8,3 +8,6 @@
 [submodule "catkin_ws/src/rover_tiva"]
 	path = catkin_ws/src/rover_tiva
 	url = git@github.com:mcgill-robotics/rover_tiva.git
+[submodule "catkin_ws/src/dcdc_nuc"]
+	path = catkin_ws/src/dcdc_nuc
+	url = git@github.com:mcgill-robotics/ros-dcdc-nuc

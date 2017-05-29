@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find rover_camera)/launch/usb.launch">
+        <arg name="name" value="pan_tilt" />
+        <arg name="device" value="/dev/pan_tilt_cam" />
+    </include>
+</launch>
