@@ -2,19 +2,20 @@ float64 latitude # degrees
 float64 longitude # degrees
 float64 altitude # meters
 
-int32 vertAccuracy # mm
-int32 horiAccuracy # mm
-float64 speedAccuracy # m/s
-float64 headingAccuracy # degrees
+float64 vertical_accuracy # meters
+float64 horizontal_accuracy # meters
+float64 speed_accuracy # meters / seconds 
+float64 heading_accuracy # degrees
 
-geometry_msgs/Twist velocity # North, East, Down velocity in cm/s (NED coordinate system)
+geometry_msgs/Twist velocity # North, East, Down velocity in meters / seconds 
+                             # (NED coordinate system)
 
-bool NO_FIX # The GPS receiver does not have a fix at all
-bool FIX_2D # The GPS receiver has a 2D fix only
-bool FIX_3D # Full 3D fix reception on the GPS receiver
-bool TIME_FIX_ONLY # The GPS receiver has a time only fix
+uint8 FIX_TYPE_NO_FIX   = 0 # The GPS receiver does not have a fix at all
+uint8 FIX_TYPE_FIX_TIME = 1 # The GPS receiver has a time only fix
+uint8 FIX_TYPE_FIX_2D   = 2 # The GPS receiver has a 2D fix only
+uint8 FIX_TYPE_FIX_3D   = 3 # Full 3D fix reception on the GPS receiver
+uint8 fix_type 
 
-bool validTOW # Valid Time of Week
-bool validWKN # Valid week number
 bool validUTC # Valid UTC (Leap Seconds already known)
 
+int32 heading # 2D heading in degrees (1e-5)
