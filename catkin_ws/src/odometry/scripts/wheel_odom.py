@@ -141,7 +141,7 @@ class WheelOdom(object):
         rospy.Subscriber(rwt, DriveEncoderStamped,
                          self.encoder_callback, ("right"))
 
-        self.velocity_publisher = rospy.Publisher("/wheel_odom/velocity",
+        self.velocity_publisher = rospy.Publisher("~wheel_velocity",
                                                   TwistWithCovarianceStamped,
                                                   queue_size=5)
 
