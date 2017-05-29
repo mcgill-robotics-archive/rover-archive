@@ -56,6 +56,8 @@ void AhrsVirtual::update()
     mStatus.gpsAltitude = rand() /(RAND_MAX/(5000));
     mStatus.gpsLatitude = -90 * 10000 + rand() /(RAND_MAX/(180 * 10000));
     mStatus.gpsLongitude = -180 * 10000 + rand() /(RAND_MAX/(360 * 10000));
+    mStatus.gpsVertAccuracy = -180 * 10000 + rand() /(RAND_MAX/(360 * 10000));
+    mStatus.gpsHoriAccuracy = -180 * 10000 + rand() /(RAND_MAX/(360 * 10000));
 
     mStatus.velocity[0] = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(100)));
     mStatus.velocity[1] = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(100)));

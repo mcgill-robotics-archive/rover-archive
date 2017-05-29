@@ -2,6 +2,9 @@ float64 latitude # degrees
 float64 longitude # degrees
 float64 altitude # meters
 
+int32 vertAccuracy # mm
+int32 horiAccuracy # mm
+
 uint8 nbSats
 
 bool NO_FIX # The GPS receiver does not have a fix at all

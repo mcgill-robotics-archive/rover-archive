@@ -109,4 +109,4 @@ class JoystickAcquisition(QThread):
             # todo add hot swap capability maybe
             self.update()
             self.joystickDataUpdated.emit(self.data)
-            time.sleep(0.01)
+            time.sleep(0.03)

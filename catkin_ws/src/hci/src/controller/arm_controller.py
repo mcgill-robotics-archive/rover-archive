@@ -1,6 +1,6 @@
 import rospy
 import tf
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from geometry_msgs.msg import Pose, PoseStamped
 from tf.transformations import quaternion_multiply
 
@@ -11,17 +11,19 @@ from arm_control.msg import JointVelocities
 
 
 class ArmController(JoystickBase):
+    enableMotors = pyqtSignal(int)
+
     def __init__(self, arm_view=None, parent=None):
         super(ArmController, self).__init__(parent)
 
         ## Internal pointer to linked view element
         self.arm_view = arm_view
 
-        self._mode = ArmControlMode.CLOSED_LOOP
+        self._mode = ArmControlMode.OPEN_LOOP
         self._dof = DOF.ORIENTATION
         self._joint = Joint.BASE
-        self.arm_view.set_base_controlled()
         self.arm_view.set_orientation_controlled()
+        self.arm_view.set_base_controlled()
 
         ## ROS publisher for velocity control
         self.velocity_publisher = rospy.Publisher("joint_velocity", JointVelocities, queue_size=1)
@@ -46,25 +48,33 @@ class ArmController(JoystickBase):
         @param data
         @param self Python object pointer
         """
-        if data.b8:
-            self.arm_view.set_closed_loop()
-        elif data.b7:
-            self.arm_view.set_open_loop()
+        self.enableMotors.emit(data.b1)
 
-        # Check the mode for open loop or closed loop.
         if self._mode == ArmControlMode.OPEN_LOOP:
+            if data.b7:
+                # change to base motor
+                self.arm_view.set_base_controlled()
+                pass
+            elif data.b8:
+                self.arm_view.set_diff2_controlled()
+            elif data.b9:
+                self.arm_view.set_diff1_controlled()
+            elif data.b10:
+                self.arm_view.set_end_controlled()
+
             message = JointVelocities()
-            if self._joint == Joint.BASE:
-                message.base_yaw = data.a3
-                message.base_pitch = data.a2
-            elif self._joint == Joint.DIFF1:
-                message.diff_1_pitch = data.a2
-                message.diff_1_roll = data.a1
-            elif self._joint == Joint.DIFF2:
-                message.diff_2_pitch = data.a2
-                message.diff_2_roll = data.a1
-            elif self._joint == Joint.END:
-                message.end_effector = data.a2
+            if data.b1:
+                if self._joint == Joint.BASE:
+                    message.base_yaw = data.a3
+                    message.base_pitch = data.a2
+                elif self._joint == Joint.DIFF1:
+                    message.diff_1_pitch = data.a2
+                    message.diff_1_roll = data.a1
+                elif self._joint == Joint.DIFF2:
+                    message.diff_2_pitch = data.a2
+                    message.diff_2_roll = data.a1
+                elif self._joint == Joint.END:
+                    message.end_effector = data.a2
 
             self.velocity_publisher.publish(message)
 

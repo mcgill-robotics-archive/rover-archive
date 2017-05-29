@@ -61,6 +61,8 @@ int main(int argc, char ** argv)
         msg.gps.longitude = ahrsStatus.gpsLongitude / 10000000.0;
         msg.gps.altitude = ahrsStatus.gpsAltitude / 1000.0;
         msg.gps.latitude = ahrsStatus.gpsLatitude / 10000000.0;
+        msg.gps.vertAccuracy = ahrsStatus.gpsVertAccuracy;
+        msg.gps.horiAccuracy = ahrsStatus.gpsHoriAccuracy;
 
         int fix = ahrsStatus.gpsFlags & 0b11;
         msg.gps.FIX_3D = (fix == SBG_GPS_3D_FIX);
