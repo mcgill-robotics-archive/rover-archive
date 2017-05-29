@@ -1,8 +1,4 @@
 <launch>
-  <arg name="bag_playback" default="false" />
-  <arg name="path" default="/" />
-  <arg name="file" default="meow" />
-
   <!-- Launch Unscented Kalman Filter through robot_localization.
        This node is for local state estimation.
   -->
@@ -11,14 +7,14 @@
     <param name="frequency" value="100" />
 
     <!-- Wheel odometry configuration. -->
-    <param name="twist0" value="wheel_odom/velocity" />
+    <param name="twist0" value="~wheel_velocity" />
     <rosparam param="twist0_config">[false, false, false,
                                     false, false, false,
                                     true, true, true,
                                     false, false, true,
                                     false, false, false]</rosparam>
 
-    <param name="pose0" value="ahrs/imu_pose" />
+    <param name="pose0" value="~imu_pose" />
     <rosparam param="pose0_config">[false, false, false,
                                    true, true, true,
                                    false, false, false,
