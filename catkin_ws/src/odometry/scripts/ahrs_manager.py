@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 import rospy
 from ahrs.msg import AhrsStdMsg
+from std_msgs.msg import Header
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
 
 class NavSatMsgManager:
     def __init__(self):
-        rospy.init_node('navsat_manager')
+        rospy.init_node('ahrs_manager')
+        rospy.loginfo("Starting AHRS manager node...")
+        
+        self.frame_id = rospy.get_param("frame_id", "base_link")
 
-        self.imu_received = False
-
-        self.ahrs_navsat_pub = rospy.Publisher('~raw_gps', NavSatFix,
+        self.ahrs_navsat_pub = rospy.Publisher('~gps_fix', NavSatFix,
                                           queue_size=10)
 
-        self.ahrs_pose_pub = rospy.Publisher("~imu_pose",
+        self.ahrs_pose_pub = rospy.Publisher("~imu_data",
                                              PoseWithCovarianceStamped,
                                              queue_size=1)
 
@@ -22,8 +24,6 @@ class NavSatMsgManager:
 
     def pub_ahrs_pose(self, orientation):
         ahrs_pose = PoseWithCovarianceStamped()
-        ahrs_pose.header.stamp = rospy.Time.now()
-        ahrs_pose.header.frame_id = "base_link"
         ahrs_pose.pose.pose.orientation = orientation
         ahrs_pose.pose.covariance = [0, 0, 0, 0, 0, 0,
                                      0, 0, 0, 0, 0, 0,
@@ -59,6 +59,7 @@ class NavSatMsgManager:
         self.ahrs_navsat_pub.publish(navsat)
 
     def ahrs_callback(self, data):
+        self.header = Header(stamp=rospy.Time.now(), frame_id=self.frame_id)
         self.pub_ahrs_pose(data.pose.pose.orientation)
         
         if data.gps.validUTC:
