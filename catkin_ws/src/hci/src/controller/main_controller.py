@@ -77,7 +77,11 @@ class MainController(QObject):
         self.science_controller.carriageEncoderUpdate.connect(main_view.science_info.update_carriage_position)
         self.science_controller.drillEncoderUpdate.connect(main_view.science_info.update_drill_position)
         self.science_controller.drillSpeedUpdate.connect(main_view.science_info.update_drill_speed)
+        self.science_controller.probeSpeedUpdate.connect(main_view.science_info.update_probe_speed)
         self.science_controller.carriagePositionUpdate.connect(main_view.science_info.update_carriage_speed)
+        self.science_controller.humidityUpdate.connect(main_view.science_info.update_humidity)
+        self.science_controller.temperatureUpdate.connect(main_view.science_info.update_temperature)
+        self.science_controller.windUpdate.connect(main_view.science_info.update_wind)
 
     def __del__(self):
         self.joystick_master.stop()
