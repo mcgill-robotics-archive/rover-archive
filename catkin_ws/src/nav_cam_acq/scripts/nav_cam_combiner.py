@@ -8,16 +8,15 @@ from sensor_msgs.msg import CompressedImage
 
 def combine(left_frame, right_frame):
 
-    comb_img = CompressedImage()
-
     left_cv_image = cv2.imdecode(np.fromstring(left_frame.data, np.uint8), cv2.IMREAD_COLOR)
     right_cv_image = cv2.imdecode(np.fromstring(right_frame.data, np.uint8), cv2.IMREAD_COLOR)
 
-    combined_image = np.zeros((left_cv_image.shape[0], left_cv_image.shape[1]+right_cv_image.shape[1], 3), np.uint8)
+    combined_image = np.zeros((left_cv_image.shape[0]+right_cv_image.shape[0], left_cv_image.shape[1], 3), np.uint8)
 
     combined_image[0:left_cv_image.shape[0], 0:left_cv_image.shape[1]] = left_cv_image
-    combined_image[0:right_cv_image.shape[0], left_cv_image.shape[1]:combined_image.shape[1]] = right_cv_image
+    combined_image[left_cv_image.shape[0]:combined_image.shape[0], 0:combined_image.shape[1]] = right_cv_image
 
+    comb_img = CompressedImage()
     comb_img.data = np.array(cv2.imencode(".jpg", combined_image)[1]).tostring()
     comb_img.header = left_frame.header
     comb_img.format = "jpeg"
