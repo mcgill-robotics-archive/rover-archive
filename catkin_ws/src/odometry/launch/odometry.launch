@@ -14,14 +14,12 @@
 
 
     <!-- Wheel odometry configuration. -->
-    <!--
-    <param name="twist0" value="~wheel_velocity" />
+    <param name="twist0" value="/wheel_odom/wheel_velocity" />
     <rosparam param="twist0_config">[false, false, false,
                                     false, false, false,
                                     true, true, true,
                                     false, false, true,
                                     false, false, false]</rosparam>
-    -->
 
     <param name="pose0" value="/ahrs_manager/pose" />
     <rosparam param="pose0_config">[false, false, false,
@@ -42,14 +40,12 @@
     <remap from="/odometry/filtered" to="/odometry/filtered/global" />
 
     <!-- Wheel odometry configuration. -->
-    <!--
-    <param name="twist0" value="/odometry/wheel_velocity" />
+    <param name="twist0" value="/wheel_odom/wheel_velocity" />
     <rosparam param="twist0_config">[false, false, false,
                                     false, false, false,
                                     true, true, true,
                                     false, false, true,
                                     false, false, false]</rosparam>
-    -->
 
     <param name="pose0" value="/ahrs_manager/pose" />
     <rosparam param="pose0_config">[false, false, false,

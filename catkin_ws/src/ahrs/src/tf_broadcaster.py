@@ -4,6 +4,7 @@ import rospy
 
 from tf.transformations import quaternion_multiply
 import tf
+import math
 from ahrs.msg import AhrsStdMsg
 from ahrs.srv import *
 
@@ -66,7 +67,8 @@ class AhrsTfBroadcaster:
         # This adjustment makes the global frame for the ahrs conform with the
         # east, north, up standard for global robot coordinate frames.
         # The AHRS is by default (north, east, down).
-        global_orientation_adjustment = (0, 0.707, -0.707, 0)
+        sqrt2_2 = math.sqrt(2) / 2.0
+        global_orientation_adjustment = (0, sqrt2_2, -sqrt2_2, 0)
         self.br.sendTransform((0, 0, 0), global_orientation_adjustment,
                               rospy.Time.now(), "global_ahrs_orientation",
                               "ahrs_position")

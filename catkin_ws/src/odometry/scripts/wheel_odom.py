@@ -133,8 +133,8 @@ class WheelOdom(object):
         self.messages_received = {"left": False, "right": False}
 
         # Topic names.
-        lwt = 'left_wheel_encoder'
-        rwt = 'right_wheel_encoder'
+        lwt = 'encoder_left'
+        rwt = 'encoder_right'
 
         rospy.Subscriber(lwt, DriveEncoderStamped,
                          self.encoder_callback, ("left"))
