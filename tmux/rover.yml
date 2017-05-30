@@ -39,6 +39,7 @@ windows:
         - roslaunch dcdc_nuc dcdc_nuc.launch --wait
         - roslaunch ahrs ahrs.launch --wait
         - roslaunch rover_tiva arm.launch --wait
+        - roslaunch drive_control drive_control.launch --wait
   - cameras:
       layout: tiled
       panes:

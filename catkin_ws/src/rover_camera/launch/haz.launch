@@ -1,12 +1,12 @@
 <launch>
 <arg name="dev1" />
 <arg name="dev2" />
-    <include file="$(find rover_camera)/launch/usb.launch">
+    <include file="$(find nav_cam_acq)/launch/base_hazcam.launch">
         <arg name="name" value="hazcam1" />
-        <arg name="device" value="$(arg dev1)" />
+        <arg name="device_id" value="$(arg dev1)" />
     </include>
-    <include file="$(find rover_camera)/launch/usb.launch">
+    <include file="$(find nav_cam_acq)/launch/base_hazcam.launch">
         <arg name="name" value="hazcam2" />
-        <arg name="device" value="$(arg dev2)" />
+        <arg name="device_id" value="$(arg dev2)" />
     </include>
 </launch>
