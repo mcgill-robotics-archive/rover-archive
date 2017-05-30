@@ -1,0 +1,8 @@
+<launch>
+
+<node name="camera" pkg="nav_cam_acq" type="nav_cam_combiner.py" output="screen">
+    <param name="nav_cam_left" value="/hazcam1/camera/compressed" />
+    <param name="nav_cam_right" value="/hazcam2/camera/compressed" />
+</node>
+
+</launch>
