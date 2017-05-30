@@ -31,7 +31,7 @@ if __name__ == '__main__':
     rospy.init_node('navcam_acquisitioner', anonymous=False)
     # img_pub = rospy.Publisher("camera", Image, queue_size=10)
     comp_pub = rospy.Publisher("camera/compressed", CompressedImage, queue_size=10)
-    device_id = rospy.get_param("device_id", 0)
+    device_id = rospy.get_param("~device_id", 0)
     capture = cv2.VideoCapture(device_id)
 
     rate = rospy.Rate(10)
@@ -42,3 +42,4 @@ if __name__ == '__main__':
         comp_pub.publish(compressed)
 
         rate.sleep()
+
