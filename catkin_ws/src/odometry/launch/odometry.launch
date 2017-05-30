@@ -1,10 +1,16 @@
 <launch>
-  <!-- Launch Unscented Kalman Filter through robot_localization.
-       This node is for local state estimation.
+  <!-------------------------
+    Robot localization nodes.
+  -------------------------->
+  <!--
+    Launch Unscented Kalman Filter through robot_localization.
+    This node is for local state estimation.
   -->
   <node pkg="robot_localization" type="ukf_localization_node"
       name="local_odometry_node">
+    <param name="world_frame" value="odom" />
     <param name="frequency" value="100" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/local" />
 
     <!-- Wheel odometry configuration. -->
     <param name="twist0" value="~wheel_velocity" />
@@ -22,11 +28,77 @@
                                    false, false, false]</rosparam>
   </node>
 
+  <!--
+    Launch Unscented Kalman Filter through robot_localization.
+    This node is for global state estimation.
+  -->
+  <node pkg="robot_localization" type="ukf_localization_node"
+      name="local_odometry_node">
+    <param name="world_frame" value="map" />
+    <param name="frequency" value="100" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/global" />
+
+    <!-- Wheel odometry configuration. -->
+    <param name="twist0" value="~wheel_velocity" />
+    <rosparam param="twist0_config">[false, false, false,
+                                    false, false, false,
+                                    true, true, true,
+                                    false, false, true,
+                                    false, false, false]</rosparam>
+
+    <param name="pose0" value="~imu_pose" />
+    <rosparam param="pose0_config">[false, false, false,
+                                   false, false, true,
+                                   false, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+    <param name="pose0_differential" value="true" />
+
+    <!-- NavSat GPS input. -->
+    <param name="odom0" value="/odometry/filtered/global" />
+    <rosparam param="odom0_config">[true, true, true,
+                                    false, false, false,
+                                    false, false, false,
+                                    false, false, false,
+                                    false, false, false]</rosparam>
+
+    <!-- IMU input. -->
+    <param name="imu0" value="~imu" />
+    <rosparam param="imu0_config">[false, false, false,
+                                   true, true, true,
+                                   false, false, false,
+                                   true, true, true,
+                                   true, true, true]</rosparam>
+  </node>
+
+  <!-- The navsat transform node fuses GPS data to produce an odom message. -->
+  <node pkg="robot_localization" type="navsat_transform_node"
+      name="navsat_transform_node" respawn="true">
+    <param name="magnetic_declination_radians" value="0.0872" />
+    <rosparam param="datum">[38.33, -111.01, 0.0, map, base_link]</rosparam>
+    <remap from="/imu/data" to="~imu" />
+    <remap from="/gps/fix" to="~gps" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/global" />
+  </node>
+
+
+  <!-------------------------------------------------------------------------
+    The rest of this launch file is for launching required nodes that are not
+    necessarily robot_localization nodes.
+  -------------------------------------------------------------------------->
+
   <!-- Launch the wheel odometry calculation node. -->
   <node pkg="odometry" type="wheel_odom.py" name="wheel_odom" />
 
   <!-- Launch the AHRS aquisition launch file. -->
   <include file="$(find ahrs)/launch/ahrs.launch" />
-  <!-- Launcg the nav_sat_manager. -->
-  <node pkg="odometry" type="nav_sat_manager.py" name="nav_sat_manager"></node>
+
+  <!--
+    This manages the conversion of all AHRS data into usefull messages for
+    input to the state estimation nodes.
+  -->
+  <node pkg="odometry" type="ahrs_manager.py" name="ahrs_manager">
+    <param name="ahrs_local_frame" value="local_ahrs_orientation" />
+    <param name="ahrs_global_frame" value="global_ahrs_orientation" />
+  </node>
 </launch>

@@ -1,9 +1,7 @@
 <launch>
     <group ns="ahrs">
         <node name="ahrs_node" pkg="ahrs" type="ahrs_node" respawn="false" />
-        <node name="tf_boradcaster" pkg="ahrs" type="tf_broadcaster.py" respawn="false">
-          <param name="ahrs_local_frame" value="local_ahrs_orientation" />
-          <param name="ahrs_global_frame" value="global_ahrs_orientation" />
+        <node name="tf_broadcaster" pkg="ahrs" type="tf_broadcaster.py" respawn="false">
         </node>
     </group>
 </launch>
