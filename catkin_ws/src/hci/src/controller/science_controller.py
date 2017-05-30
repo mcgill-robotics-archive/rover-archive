@@ -14,11 +14,11 @@ class ScienceController(JoystickBase):
     def __init__(self, parent=None):
         super(ScienceController, self).__init__(parent)
 
-        self.drill_pub = rospy.Publisher("/science/motor_drill", Int32, queue_size=1)
-        self.probe_pub = rospy.Publisher("/science/probe", Int32, queue_size=1)
-        self.carri_pub = rospy.Publisher("/science/motor_carriage", Int32, queue_size=1)
-        self.inc1_sub = rospy.Subscriber("/science/inc_carriage", Int32, self.inc1_cb)
-        self.inc2_sub = rospy.Subscriber("/science/inc_drill", Int32, self.inc2_cb)
+        self.drill_pub = rospy.Publisher("/sampling/motor_drill", Int32, queue_size=1)
+        self.probe_pub = rospy.Publisher("/sampling/probe", Int32, queue_size=1)
+        self.carri_pub = rospy.Publisher("/sampling/motor_carriage", Int32, queue_size=1)
+        self.inc1_sub = rospy.Subscriber("/sampling/inc_carriage", Int32, self.inc1_cb)
+        self.inc2_sub = rospy.Subscriber("/sampling/inc_drill", Int32, self.inc2_cb)
 
         self.carriage_message = Int32()
         self.drill_message = Int32()
