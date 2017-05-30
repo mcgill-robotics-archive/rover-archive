@@ -2,9 +2,11 @@ from PyQt5.QtCore import QObject
 
 from controller.arm_controller import ArmController
 from controller.camera_controller import CameraController
+from controller.dcdc_controller import DCDC_Controller
 from controller.drive_controller import DriveController
 from controller.joystick.joystick_controller import JoystickController
 from controller.navigation_controller import NavigationController
+from controller.science_controller import ScienceController
 
 
 class MainController(QObject):
@@ -39,6 +41,9 @@ class MainController(QObject):
         ## Navigation controller, subscribes to the ahrs publisher
         self.navigation_controller = NavigationController(self)
 
+        self.science_controller = ScienceController(self)
+        self.joystick_master.addController("Science", self.science_controller)
+
         ## Camera controller
         self.camera_controller = CameraController(self)
         self.camera_controller.add_screen(main_view.nav_screen.left_wheel)
@@ -60,6 +65,19 @@ class MainController(QObject):
         # self.navigation_controller.updatePosition.connect(main_view.map.add_point)
 
         # main_view.map.coord_widget.createWaypoint.connect(main_view.map.add_waypoint)
+
+        nuc_controller = DCDC_Controller(self)
+        nuc_controller.updateIv.connect(main_view.power_info.update_iv)
+        nuc_controller.updateIc.connect(main_view.power_info.update_ic)
+        nuc_controller.updateOv.connect(main_view.power_info.update_ov)
+        nuc_controller.updateOc.connect(main_view.power_info.update_oc)
+        nuc_controller.updateOp.connect(main_view.power_info.update_op)
+        nuc_controller.updateTemp.connect(main_view.power_info.update_temp)
+
+        self.science_controller.carriageEncoderUpdate.connect(main_view.science_info.update_carriage_position)
+        self.science_controller.drillEncoderUpdate.connect(main_view.science_info.update_drill_position)
+        self.science_controller.drillSpeedUpdate.connect(main_view.science_info.update_drill_speed)
+        self.science_controller.carriagePositionUpdate.connect(main_view.science_info.update_carriage_speed)
 
     def __del__(self):
         self.joystick_master.stop()
