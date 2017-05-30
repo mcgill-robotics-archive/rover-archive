@@ -20,7 +20,7 @@ class HCI(QMainWindow):
     def __init__(self, parent=None):
         super(HCI, self).__init__(parent)
 
-        rospy.init_node("hci")
+        rospy.init_node("hci", anonymous=True)
 
         self.main_view = MainView(self)
         self.main_controller = MainController(self.main_view, self)

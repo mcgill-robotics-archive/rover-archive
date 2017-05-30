@@ -6,11 +6,10 @@ name: MAIN
 # socket_name: foo
 
 # Runs before everything. Use it to start daemons etc.
-pre: export SHELL=/bin/zsh && export PATH=/usr/local/sbin/:/usr/local/bin/:/usr/sbin:${PATH}:/sbin:/usr/games:/usr/local/games && rosworkon rover
+pre: export SHELL=/bin/zsh && export PATH=/usr/local/sbin/:/usr/local/bin/:/usr/sbin:${PATH}
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-# pre_window: rbenv shell 2.0.0-p247
-
+# pre_window: 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
 
@@ -31,9 +30,18 @@ attach: true
 
 windows:
   - core:
-      layout: tiled
       panes:
         - roscore
-        - roslaunch ${ROBOTIC_PATH}/rover/catkin_ws/launch/control_station.launch user:=david --wait
-        - rosrun dcdc_nuc dcdc_nuc_node
-        - sleep 5 && rosrun rqt_runtime_monitor rqt_runtime_monitor
+  - launch:   
+      layout: tiled
+      panes:
+        - roslaunch arduino drive.launch --wait
+        - roslaunch dcdc_nuc dcdc_nuc.launch --wait
+        - roslaunch ahrs ahrs.launch --wait
+        - roslaunch rover_tiva arm.launch --wait
+  - cameras:
+      layout: tiled
+      panes:
+        - roslaunch rover_camera arm.launch --wait
+        - roslaunch rover_camera wideAngle.launch --wait
+        - arr=( $(ls /dev/hazcam*) ) && roslaunch rover_camera haz.launch dev1:=${arr[1]} dev2:=${arr[2]} --wait

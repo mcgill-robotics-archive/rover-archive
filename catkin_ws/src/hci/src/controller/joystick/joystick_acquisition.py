@@ -84,14 +84,11 @@ class JoystickAcquisition(QThread):
                     self.data.a4 = self.controller.get_axis(3)
                 else:
                     self.data.hat = self.controller.get_hat(0)
-                    if self.data.hat == (-1, 0):
-                        self.data.hat_left = True
-                    elif self.data.hat == (0, 1):
-                        self.data.hat_top = True
-                    elif self.data.hat == (0, -1):
-                        self.data.hat_down = True
-                    elif self.data.hat == (1, 0):
-                        self.data.hat_right = True
+
+                    self.data.hat_left = (self.data.hat == (-1, 0))
+                    self.data.hat_top = (self.data.hat == (0, 1))
+                    self.data.hat_down = (self.data.hat == (0, -1))
+                    self.data.hat_right = (self.data.hat == (1, 0))
             except pygame.error:
                 pass
             finally:
