@@ -32,11 +32,15 @@ class ScienceController(JoystickBase):
         self.probe_message = Int32()
 
     def handle_joystick_data(self, data):
-        if data.b3:
+        if data.b1:
             self.carriage_message.data = data.a2 * -4000
 
-        if data.b4:
-            self.probe_message.data = data.a2 * -4000
+        if data.b3:
+            self.probe_message.data = 80
+        elif data.b4:
+            self.probe_message.data = 20
+        else:
+            self.probe_message.data = 0
 
         if data.hat_top:
             self.carriage_message.data += 1
