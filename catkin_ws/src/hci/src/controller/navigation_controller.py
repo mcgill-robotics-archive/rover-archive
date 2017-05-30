@@ -38,7 +38,7 @@ class NavigationController(QObject):
         """
         super(NavigationController, self).__init__(parent)
 
-        self._attitude_subscriber = rospy.Subscriber("/ahrs_status", AhrsStdMsg, self._handle_ahrs_message)
+        self._attitude_subscriber = rospy.Subscriber("/ahrs/ahrs_status", AhrsStdMsg, self._handle_ahrs_message)
 
     def _handle_ahrs_message(self, message):
         """Ros callback function for ahrs values

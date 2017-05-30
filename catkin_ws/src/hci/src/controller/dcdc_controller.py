@@ -15,12 +15,12 @@ class DCDC_Controller(QObject):
     def __init__(self, parent=None):
         super(DCDC_Controller, self).__init__(parent)
 
-        iv_sub = rospy.Subscriber("/dcdc_psu/input_voltage", Float64, self.new_iv)
-        ic_sub = rospy.Subscriber("/dcdc_psu/input_current", Float64, self.new_ic)
-        ov_sub = rospy.Subscriber("/dcdc_psu/output_voltage", Float64, self.new_ov)
-        oc_sub = rospy.Subscriber("/dcdc_psu/output_current", Float64, self.new_oc)
-        op_sub = rospy.Subscriber("/dcdc_psu/output_power", Float64, self.new_op)
-        te_sub = rospy.Subscriber("/dcdc_psu/temperature", Float64, self.new_temp)
+        iv_sub = rospy.Subscriber("/dcdc_nuc/input_voltage", Float64, self.new_iv)
+        ic_sub = rospy.Subscriber("/dcdc_nuc/input_current", Float64, self.new_ic)
+        ov_sub = rospy.Subscriber("/dcdc_nuc/output_voltage", Float64, self.new_ov)
+        oc_sub = rospy.Subscriber("/dcdc_nuc/output_current", Float64, self.new_oc)
+        op_sub = rospy.Subscriber("/dcdc_nuc/output_power", Float64, self.new_op)
+        te_sub = rospy.Subscriber("/dcdc_nuc/temperature", Float64, self.new_temp)
 
     def new_iv(self, value):
         self.updateIv.emit(value.data)
