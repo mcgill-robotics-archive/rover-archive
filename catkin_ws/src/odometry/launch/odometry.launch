@@ -1,7 +1,7 @@
 <launch>
-  <!-------------------------
-    Robot localization nodes.
-  -------------------------->
+  <!--~~~~~~~~~~~~~~~~~~~~~
+  Robot localization nodes.
+  ~~~~~~~~~~~~~~~~~~~~~~-->
   <!--
     Launch Unscented Kalman Filter through robot_localization.
     This node is for local state estimation.
@@ -33,7 +33,7 @@
     This node is for global state estimation.
   -->
   <node pkg="robot_localization" type="ukf_localization_node"
-      name="local_odometry_node">
+      name="global_odometry_node">
     <param name="world_frame" value="map" />
     <param name="frequency" value="100" />
     <remap from="/odometry/filtered" to="/odometry/filtered/global" />
@@ -82,10 +82,10 @@
   </node>
 
 
-  <!-------------------------------------------------------------------------
+  <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     The rest of this launch file is for launching required nodes that are not
     necessarily robot_localization nodes.
-  -------------------------------------------------------------------------->
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
   <!-- Launch the wheel odometry calculation node. -->
   <node pkg="odometry" type="wheel_odom.py" name="wheel_odom" />
