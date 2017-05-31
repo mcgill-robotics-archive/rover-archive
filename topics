@@ -1,0 +1,44 @@
+[ahrs]
+shortcut: h
+description: AHRS
+topics: /ahrs/ahrs_status
+
+[camera]
+shotchut: c
+topics: /wide_angle/image_color/compressed
+        /camera_arm/image_color/compressed
+
+[diagnostics]
+shortcut: d
+description: diagnostic messages
+topics: /diagnostics
+
+[odometry]
+shortcut: o
+description: odometry data
+topics: /encoder_right
+        /encoder_left
+
+[drive]
+shortcut: r
+topics: /drive_command
+        /motor_status
+        /wheel_command
+
+[tf]
+shortcut: t
+description: transformation data
+topics: /tf
+        /tf_static
+
+[power]
+shortcut: w
+description: computer power supply diagnostics
+topics: /dcdc_nuc/ignition_voltage
+        /dcdc_nuc/input_current
+        /dcdc_nuc/input_voltage
+        /dcdc_nuc/output_current
+        /dcdc_nuc/output_power
+        /dcdc_nuc/output_voltage
+        /dcdc_nuc/temperature
+        /dcdc_nuc/thump_voltage
