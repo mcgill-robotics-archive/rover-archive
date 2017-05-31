@@ -10,6 +10,7 @@ project(autonomy)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -75,11 +76,6 @@ generate_messages(
   std_msgs  # Or other packages containing msgs
 )
 
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-catkin_package(
-  CATKIN_DEPENDS message_runtime
-)
-
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
@@ -95,10 +91,10 @@ catkin_package(
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
+generate_dynamic_reconfigure_options(
+  cfg/hsv_param.cfg
 #   cfg/DynReconf2.cfg
-# )
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -113,8 +109,10 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES autonomy
 #  CATKIN_DEPENDS roscpp rospy
+  CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
+
 
 ###########
 ## Build ##

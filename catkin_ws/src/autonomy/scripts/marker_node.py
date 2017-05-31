@@ -9,8 +9,10 @@ import rospy
 import cv2
 import numpy as np
 from autonomy.msg import HSVbounds, MarkerRecognition
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
+from autonomy.cfg import hsv_param_Config
+from dynamic_reconfigure.server import Server
 
 
 class WaypointIdentifier:
@@ -18,19 +20,29 @@ class WaypointIdentifier:
     def __init__(self):
         self.image_pub = rospy.Publisher("marker/image_feed", Image,
                                          queue_size=1)
+        self.image_pub_comp = rospy.Publisher("marker/image_feed/compressed", CompressedImage,
+                                         queue_size=1)
 
         self.mask_pub = rospy.Publisher("marker/mask_feed", Image,
+                                        queue_size=1)
+        self.mask_pub_comp = rospy.Publisher("marker/mask_feed/compressed", CompressedImage,
                                         queue_size=1)
 
         self.eroded_pub = rospy.Publisher("marker/eroded_feed", Image,
                                           queue_size=1)
+        self.eroded_pub_comp = rospy.Publisher("marker/eroded_feed/compressed", CompressedImage,
+                                          queue_size=1)
 
         self.dilated_pub = rospy.Publisher("marker/dilated_feed", Image,
+                                           queue_size=1)
+        self.dilated_pub_comp = rospy.Publisher("marker/dilated_feed/compressed", CompressedImage,
                                            queue_size=1)
 
         self.recognition_pub = rospy.Publisher("marker/recognition",
                                                MarkerRecognition,
                                                queue_size=1)
+        self.srv = Server(hsv_param_Config, self.param_callback)
+
 
         self.bridge = CvBridge()
         self.hsv_bounds = rospy.Subscriber("hsv_bounds", HSVbounds,
@@ -51,6 +63,12 @@ class WaypointIdentifier:
         self.area_timer_on = False
         self.timer_start = time.time()
         self.camera_fov = 80  # camera field of view (degrees)
+
+    def param_callback(self, config, level):
+        self.lower_bound = np.array([config.h_low, config.s_low, config.v_low])
+        self.upper_bound = np.array([config.h_high, config.s_high, config.v_high])
+
+        return config
 
     def hsv_bound_callback(self, data):
         """Set lower and upper bound for HSVs to look for."""
@@ -144,11 +162,46 @@ class WaypointIdentifier:
 
         cv2.waitKey(3)
 
+        # Resize all feeds before publishing
+
+        frame = cv2.resize(frame, (frame.shape[1]/3, frame.shape[0]/3))
+        mask = cv2.resize(mask, (mask.shape[1]/3, mask.shape[0]/3))
+        eroded = cv2.resize(eroded, (eroded.shape[1]/3, eroded.shape[0]/3))
+        dilated = cv2.resize(dilated, (dilated.shape[1]/3, dilated.shape[0]/3))
+
+        # Create CompressedImage feeds for HCI
+
+        comp_frame = CompressedImage()
+        comp_mask = CompressedImage()
+        comp_eroded = CompressedImage()
+        comp_dilated = CompressedImage()
+
+        comp_frame.data = np.array(cv2.imencode(".jpg", frame)[1]).tostring()
+        comp_mask.data = np.array(cv2.imencode(".jpg", mask)[1]).tostring()
+        comp_eroded.data = np.array(cv2.imencode(".jpg", eroded)[1]).tostring()
+        comp_dilated.data = np.array(cv2.imencode(".jpg", dilated)[1]).tostring()
+
+        comp_frame.header.stamp = rospy.Time.now()
+        comp_mask.header.stamp = rospy.Time.now()
+        comp_eroded.header.stamp = rospy.Time.now()
+        comp_dilated.header.stamp = rospy.Time.now()
+
+        comp_frame.format = "jpeg"
+        comp_mask.format = "jpeg"
+        comp_eroded.format = "jpeg"
+        comp_dilated.format = "jpeg"
+
         try:
             self.image_pub.publish(self.bridge.cv2_to_imgmsg(frame, "bgr8"))
             self.mask_pub.publish(self.bridge.cv2_to_imgmsg(mask, "mono8"))
             self.eroded_pub.publish(self.bridge.cv2_to_imgmsg(eroded, "mono8"))
             self.dilated_pub.publish(self.bridge.cv2_to_imgmsg(dilated, "mono8"))
+
+            self.image_pub_comp.publish(comp_frame)
+            self.mask_pub_comp.publish(comp_mask)
+            self.eroded_pub_comp.publish(comp_eroded)
+            self.dilated_pub_comp.publish(comp_dilated)
+
             self.recognition_pub.publish(recognition)
         except CvBridgeError as err:
             print(err)
