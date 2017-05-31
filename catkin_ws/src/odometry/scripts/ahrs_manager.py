@@ -4,7 +4,7 @@ import rospy
 from ahrs.msg import AhrsStdMsg
 from std_msgs.msg import Header
 from sensor_msgs.msg import NavSatFix, Imu
-from geometry_msgs.msg import PoseWithCovarianceStamped, Vector3
+from geometry_msgs.msg import PoseWithCovarianceStamped, Vector3, Quaternion
 import tf
 from numpy import pi
 
@@ -18,7 +18,7 @@ class NavSatMsgManager:
         rospy.loginfo("Starting AHRS manager node...")
         self.pose_discarded = 0.0
         self.POSE_DISCARD_COUNT = 200.0
-        self.ahrs_local_frame = rospy.get_param("ahrs_local_frame", "base_link")
+        self.ahrs_local_frame = "odom"
         self.ahrs_global_frame = rospy.get_param("ahrs_global_frame",
                                                  "base_link")
 
@@ -90,7 +90,19 @@ class NavSatMsgManager:
         pose_msg = PoseWithCovarianceStamped()
         pose_msg.header = self.header_local
         pose_msg.pose.pose.position = data.pose.pose.position
-        pose_msg.pose.pose.orientation = data.pose.pose.orientation
+        quat = (
+            data.pose.pose.orientation.x,
+            data.pose.pose.orientation.y,
+            data.pose.pose.orientation.z,
+            data.pose.pose.orientation.w)
+
+        euler = tf.transformations.euler_from_quaternion(quat)
+        euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
+
+        quat_fixed = tf.transformations.quaternion_from_euler(*euler_fixed)
+
+        pose_msg.pose.pose.orientation = Quaternion(*list(quat_fixed))
+        
         pose_msg.pose.covariance[0] = data.position_accuracy ** 2
         pose_msg.pose.covariance[7] = data.position_accuracy ** 2
         pose_msg.pose.covariance[14] = data.position_accuracy ** 2

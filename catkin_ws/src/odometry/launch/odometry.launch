@@ -9,7 +9,8 @@
   <node pkg="robot_localization" type="ukf_localization_node"
       name="local_odometry_node">
     <param name="world_frame" value="odom" />
-    <param name="frequency" value="100" />
+    <param name="frequency" value="10" />
+    <param name="two_d_mode" value="true" />
     <remap from="/odometry/filtered" to="/odometry/filtered/local" />
 
 
@@ -37,6 +38,7 @@
       name="global_odometry_node">
     <param name="world_frame" value="map" />
     <param name="frequency" value="100" />
+    <param name="two_d_mode" value="true" />
     <remap from="/odometry/filtered" to="/odometry/filtered/global" />
 
     <!-- Wheel odometry configuration. -->
@@ -87,6 +89,9 @@
     The rest of this launch file is for launching required nodes that are not
     necessarily robot_localization nodes.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+  <!-- Launch the wheel encoder firmware node. -->
+  <node pkg="rosserial_python" type="serial_node.py" name="drive_encoders"
+      args="/dev/drive_middle" output="screen" respawn="true" />
 
   <!-- Launch the wheel odometry calculation node. -->
   <node pkg="odometry" type="wheel_odom.py" name="wheel_odom" />

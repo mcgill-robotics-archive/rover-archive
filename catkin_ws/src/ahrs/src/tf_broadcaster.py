@@ -50,9 +50,8 @@ class AhrsTfBroadcaster:
         euler = tf.transformations.euler_from_quaternion(quat)
         euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
 
-        self.br.sendTransform((0, 0, 0),
-                              tf.transformations.quaternion_from_euler(
-                              *euler_fixed), rospy.Time.now(),
+        self.br.sendTransform((0.5, 0, 0.4), (0, 0, 0, 1),
+                              rospy.Time.now(),
                               "ahrs_position", "base_link")
 
         # This adjustment makes the local frame for the ahrs conform with
