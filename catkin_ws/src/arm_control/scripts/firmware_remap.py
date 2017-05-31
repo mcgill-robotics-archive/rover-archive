@@ -12,7 +12,8 @@ ARM_SIGNS = {
     "elbow_left": 1,
     "elbow_right": -1,
     "wrist_left": 1,
-    "wrist_right": -1
+    "wrist_right": -1,
+    "claw": 1
 }
 
 ARM_BASE_DRIVE_RATIO = 2000
@@ -23,7 +24,8 @@ ARM_RATIO = {
     "elbow_pitch": ARM_BASE_DRIVE_RATIO,
     "elbow_roll": ARM_BASE_DRIVE_RATIO * 1.5,
     "wrist_pitch": ARM_BASE_DRIVE_RATIO * 1.5,
-    "wrist_roll": ARM_BASE_DRIVE_RATIO * 1.5
+    "wrist_roll": ARM_BASE_DRIVE_RATIO * 1.5,
+    "claw": ARM_BASE_DRIVE_RATIO
 }
 
 class ArmRemapper(object):
@@ -68,8 +70,8 @@ class ArmRemapper(object):
                 self._elbow_diff2_pub.publish(motor_value)
 
                 # Wrist Diff Right Side
-		scaled_d2_pitch = vel.diff_2_pitch * ARM_RATIO["wrist_pitch"]
-		scaled_d2_roll = vel.diff_2_roll * ARM_RATIO["wrist_roll"]
+                scaled_d2_pitch = vel.diff_2_pitch * ARM_RATIO["wrist_pitch"]
+                scaled_d2_roll = vel.diff_2_roll * ARM_RATIO["wrist_roll"]
                 wrist_right = scaled_d2_pitch + scaled_d2_roll
                 motor_value.data = wrist_right * ARM_SIGNS["wrist_right"]
 
@@ -80,6 +82,12 @@ class ArmRemapper(object):
                 motor_value.data = wrist_left * ARM_SIGNS["wrist_left"]
 
                 self._wrist_diff2_pub.publish(motor_value)
+
+                # Claw
+                signed_claw = ARM_SIGNS["claw"] * vel.end_effector
+                motor_value.data = signed_claw * ARM_RATIO["claw"]
+
+                self._claw_pub.publish(motor_value)
 
             rate.sleep()
 
@@ -109,6 +117,9 @@ class ArmRemapper(object):
                                                 queue_size=1)
 
         self._wrist_diff2_pub = rospy.Publisher("motor_wrist_b", Int32,
+                                                queue_size=1)
+        
+        self._claw_pub = rospy.Publisher("motor_wrist_claw", Int32,
                                                 queue_size=1)
 
 

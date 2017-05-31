@@ -209,7 +209,7 @@ class WaypointIdentifier:
 
 def main(_):
     """Handle node and identifier initialization."""
-    rospy.init_node('marker_navigator', anonymous=True)
+    rospy.init_node('marker_navigator', anonymous=False)
     WaypointIdentifier()
     try:
         rospy.spin()
