@@ -32,7 +32,8 @@ AhrsIg500n::AhrsIg500n(const char * deviceName, uint32 baudRate) {
                                      SBG_OUTPUT_QUATERNION |
                                      SBG_OUTPUT_GYROSCOPES |
                                      SBG_OUTPUT_ACCELEROMETERS |
-                                     SBG_OUTPUT_ATTITUDE_ACCURACY
+                                     SBG_OUTPUT_ATTITUDE_ACCURACY |
+                                     SBG_OUTPUT_NAV_ACCURACY
                                      );
 
     if (mError != SBG_NO_ERROR) {
@@ -135,5 +136,5 @@ void AhrsIg500n::continuousCallback(SbgProtocolHandleInt *handler, SbgOutput *pO
     mStatus.gpsNbSat = pOutput->gpsNbSats;
     mStatus.deviceStatus = pOutput->deviceStatus;
     mStatus.attitudeAccuracy = pOutput->attitudeAccuracy;
-
+    mStatus.positionAccuracy = pOutput->positionAccuracy;
 }

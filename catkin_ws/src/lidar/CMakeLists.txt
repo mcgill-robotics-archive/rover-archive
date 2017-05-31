@@ -4,5 +4,5 @@ project(lidar)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
   urg_node
-  tf2
+  tf2_ros
 )

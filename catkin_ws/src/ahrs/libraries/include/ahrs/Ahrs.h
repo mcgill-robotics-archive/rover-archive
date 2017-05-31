@@ -60,6 +60,8 @@ typedef struct _AhrsStatus {
 
     /// position in NED coordinates in (degrees, degrees, meters)
     double position[3];
+
+    double positionAccuracy;
     /// 3d velocity in device coordinate and in m/s
     float velocity[3];
 
