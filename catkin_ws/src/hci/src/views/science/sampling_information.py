@@ -57,11 +57,6 @@ class SamplingInformation(QWidget):
         line_2.setFrameShadow(QFrame.Sunken)
         v1.addWidget(line_2)
 
-
-        line_1 = QFrame(self)
-        line_1.setFrameShape(QFrame.HLine)
-        line_1.setFrameShadow(QFrame.Sunken)
-
         title_lbl = QLabel("Sensor Values", self)
         title_lbl.setFont(title_font)
         v1.addWidget(title_lbl)
@@ -81,7 +76,6 @@ class SamplingInformation(QWidget):
         h1.addWidget(temp_lbl)
         h1.addWidget(self.temp_ind)
         v1.addItem(h1)
-        v1.addWidget(line_1)
         self.setLayout(v1)
 
     @pyqtSlot(int)

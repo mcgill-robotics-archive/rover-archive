@@ -4,6 +4,7 @@ from controller.arm_controller import ArmController
 from controller.camera_controller import CameraController
 from controller.dcdc_controller import DCDC_Controller
 from controller.drive_controller import DriveController
+from controller.hsv_controller import HSV_Controller
 from controller.joystick.joystick_controller import JoystickController
 from controller.navigation_controller import NavigationController
 from controller.science_controller import ScienceController
@@ -40,6 +41,9 @@ class MainController(QObject):
         self.joystick_master.addController("Arm", self.arm_controller)
         ## Navigation controller, subscribes to the ahrs publisher
         self.navigation_controller = NavigationController(self)
+
+        self.hsv_control = HSV_Controller(self)
+        main_view.hsv_values.updateParams.connect(self.hsv_control.sendNewConfig)
 
         self.science_controller = ScienceController(self)
         self.joystick_master.addController("Science", self.science_controller)

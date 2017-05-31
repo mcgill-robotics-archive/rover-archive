@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
@@ -10,6 +11,7 @@ from views.navigation.pose_display import PoseDisplay
 from views.joystick.joystick_mode import JoystickMode
 from views.navigation.navigation_view import NavigationView
 from views.science.sampling_information import SamplingInformation
+from views.various.HSV_entry import HSVEntry
 from views.various.autonomous_mode_selection import AutonomousModeSelection
 from views.various.dcdc_view import DCDC_Information
 
@@ -33,15 +35,20 @@ class MainView(QWidget):
         self.arm_view = ArmView(self)
         self.power_info = DCDC_Information(self)
         self.science_info = SamplingInformation(self)
+        self.hsv_values = HSVEntry(self)
 
         v2.addWidget(self.nav_mode)
         v2.addWidget(self.joystick_mode_widget)
         h1.addItem(v2)
         h1.addWidget(self.drive_view)
 
+        tab_widget = QTabWidget(self)
+        tab_widget.addTab(self.science_info, "Science")
+        tab_widget.addTab(self.hsv_values, "Waypoint Filter")
+
         v1.addItem(h1)
         v1.addWidget(self.arm_view)
-        v1.addWidget(self.science_info)
+        v1.addWidget(tab_widget)
         v1.addWidget(self.navigation_view)
         v1.addWidget(self.pose_display)
         v1.addWidget(self.power_info)
