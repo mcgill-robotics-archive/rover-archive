@@ -74,7 +74,7 @@ class WaypointIdentifier:
 
         # Get rid of background noise using erosion and fill in using dilation
         element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-        eroded = cv2.erode(mask, element, iterations=2)
+        eroded = cv2.erode(mask, element, iterations=3)
         dilated = cv2.dilate(eroded, element, iterations=6)
 
         # Identify the right feature on the dilated image
