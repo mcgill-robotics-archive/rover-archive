@@ -1,4 +1,7 @@
 <launch>
-    <rosparam command="load" file="$(find hci)/config/joystick_profile.yaml"/>
-    <node pkg="hci" type="hci.py" name="hci" />
+    <arg name="map" default="false"/>
+    <node pkg="hci" type="hci.py" name="hci" >
+        <param name="map_enable" value="$(arg map)" />
+    </node>
+
 </launch>

@@ -124,6 +124,8 @@ class WaypointPad(QWidget):
         self._add_dms_button.clicked.connect(self._create_dms_waypoint)
         self._add_dd_button.clicked.connect(self._create_dd_waypoint)
 
+        self.setMaximumHeight(141)
+
     def _create_dms_waypoint(self):
         """!@brief Handle creation of new points from DMS entry
 

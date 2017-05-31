@@ -38,7 +38,6 @@ class PoseDisplay(QWidget):
         hbox2 = QHBoxLayout()
         hbox3 = QHBoxLayout()
         hbox4 = QHBoxLayout()
-        hbox5 = QHBoxLayout()
         vbox1 = QVBoxLayout()
 
         title_font = QFont()

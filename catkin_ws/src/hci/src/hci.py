@@ -21,9 +21,9 @@ class HCI(QMainWindow):
         super(HCI, self).__init__(parent)
 
         rospy.init_node("hci", anonymous=True)
-
-        self.main_view = MainView(self)
-        self.main_controller = MainController(self.main_view, self)
+        map_enable = rospy.get_param("~map_enable", False)
+        self.main_view = MainView(map_enable, self)
+        self.main_controller = MainController(self.main_view, map_enable, self)
         self.main_model = MainModel(self)
 
         self.setCentralWidget(self.main_view)
