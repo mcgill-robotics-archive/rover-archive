@@ -86,10 +86,11 @@ class ArmRemapper(object):
     def __init__(self):
         """Initialize the ROS node and Subscribe to JointVelocities."""
         rospy.init_node("arm_control_remapper")
+        rospy.loginfo("Started arm topic remaper")
 
         self._joint_velocity_received = False
 
-        rospy.Subscriber("david/joint_velocity", JointVelocities,
+        rospy.Subscriber("joint_velocity", JointVelocities,
                          self.update_state)
 
         self._shoulder_pitch_pub = rospy.Publisher("motor_shoulder_a", Int32,

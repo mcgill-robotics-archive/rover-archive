@@ -40,6 +40,7 @@ windows:
         - roslaunch ahrs ahrs.launch --wait
         - roslaunch rover_tiva arm.launch --wait
         - roslaunch drive_control drive_control.launch --wait
+        - roslaunch arm_control tiva_topic_remap.launch --wait
   - cameras:
       layout: tiled
       panes:
