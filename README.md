@@ -48,27 +48,35 @@ computer. Now on the rover, add the following line to `/etc/hosts`:
 ```
 
 ## Recurring Steps
-On your computer in the root of the rover repository:
-```bash
-./scripts/control
-```
+### Step 1 - Launching the Rover
+This has become fairly streamlined. In order to launch the rover, simply
+ssh into the rover and then launch tmuxinator:
 
-Next, in a separate terminal or tmux window, ssh into the rover:
 ```bash
 ssh robotics@rover
 ```
-
-Now you need to tell the rover where ROS_MASTER is:
 ```bash
-export ROS_MASTER_URI=http://<your-computer's-name>:11311
+tmuxinator start rover
 ```
 
-At this point, as a sanity check, you should be able to see the rostopics
-from the base station, i.e. `rostopic list` should show the topics from control.
+In order to control the rover from your own computer, you need to tell your
+computer where ROS\_MASTER is then you simply launch HCI.
 
-Finally, we need to run the Arduinos on the rover:
+
+On your own machine:
 ```bash
-roslaunch arduino drive.launch
+export ROS_MASTER_URI=http://rover:11311
+```
+
+
+At this point, as a sanity check, you should be able to see the rostopics
+from the ground station, i.e. `rostopic list` should show the topics from
+control.
+
+
+Finally, we need to launch the control station:
+```bash
+roslaunch hci hci.launch
 ```
 
 

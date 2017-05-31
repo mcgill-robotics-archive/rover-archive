@@ -1,5 +1,0 @@
-#!/usr/bin/zsh
-
-arr=( $(ls /dev/hazcam*) )
-roslaunch rover_camera haz.launch dev1:=$arr[1] dev2:=$arr[2]
-

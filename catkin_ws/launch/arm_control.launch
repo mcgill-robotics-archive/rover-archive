@@ -1,7 +1,0 @@
-<launch>
-<arg name="user"/>
-    <include file="$(find hci)/launch/duo.launch">
-        <arg name="user" value="$(arg user)"/>
-    </include>
-    
-</launch>
