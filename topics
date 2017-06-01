@@ -4,7 +4,8 @@ description: AHRS
 topics: /ahrs/ahrs_status
 
 [camera]
-shotchut: c
+shortcut: c
+description: camera
 topics: /wide_angle/image_color/compressed
         /camera_arm/image_color/compressed
 
@@ -21,6 +22,7 @@ topics: /encoder_right
 
 [drive]
 shortcut: r
+description: drive
 topics: /drive_command
         /motor_status
         /wheel_command
