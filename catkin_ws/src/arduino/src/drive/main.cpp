@@ -104,11 +104,16 @@ void setup() {
 }
 
 void loop()
-{
-    if ((millis() - lastSend > MOTOR_STATUS_UPDATE_RATE))
+{   
+    unsigned long time_now = millis();
+    if (time_now - lastCommandReceived > MOTOR_COMMAND_TIMEOUT)
+    { 
+        stopMotor();
+        lastCommandReceived = time_now;
+    else if ((time_now - lastSend > MOTOR_STATUS_UPDATE_RATE))
     {
         sendMotorStatus(motorStatusPublisher);
-        lastSend = millis();
+        lastSend = time_now;
     }
 
     nh.spinOnce();
@@ -129,6 +134,7 @@ void driveCallback( const drive_control::WheelCommand& setPoints )
 
     middleLeft->setSpeed(-setPoints.mlv);
     middleRight->setSpeed(setPoints.mrv);
+    lastCommandReceived = millis();
 }
 
 void callbackMoving( const std_msgs::Bool& boolean)
@@ -157,6 +163,16 @@ void sendMotorStatus(ros::Publisher &publisher) {
     publisher.publish(&motorStatusMessage);
 }
 
+void stopMotor()
+{
+    leftFront->setSpeed(0.0);
+    leftBack->setSpeed(0.0);
+    rightFront->setSpeed(0.0);
+    rightBack->setSpeed(0.0);
+    middleLeft->setSpeed(0.0);
+    middleRight->setSpeed(0.0);
+    lastCommandReceived = millis();
+}
 float radToDeg(float rad)
 {
     return rad / PI * 180.0;
