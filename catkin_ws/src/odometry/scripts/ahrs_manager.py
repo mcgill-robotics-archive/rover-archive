@@ -49,6 +49,7 @@ class NavSatMsgManager:
                 '{0:.2f} degree' .format(data.gps.heading))
 
                 heading = data.gps.heading * pi / 180.0
+                heading_accuracy = data.gps.heading_accuracy * pi / 180.0
 
                 q = data.pose.pose.orientation
                 euler = tf.transformations.euler_from_quaternion(
@@ -66,7 +67,7 @@ class NavSatMsgManager:
                 msg.orientation.w = q[3]
                 msg.orientation_covariance[0] = data.attitude_accuracy ** 2
                 msg.orientation_covariance[4] = data.attitude_accuracy ** 2
-                msg.orientation_covariance[8] = data.attitude_accuracy ** 2
+                msg.orientation_covariance[8] = heading_accuracy ** 2
 
                 msg.angular_velocity.x = data.gyroscopes.x
                 msg.angular_velocity.y = data.gyroscopes.y
