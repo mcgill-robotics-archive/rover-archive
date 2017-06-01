@@ -84,3 +84,12 @@ API Documentation
 ---
 Jenkins generated doxygen documentation: 
 http://dev.mcgillrobotics.com:8080/job/rover_all/doxygen/
+
+Bagging using topics file
+---
+
+You can bag a specific set of topics (our common configuration is in the topics
+file). You use the following (based on compsysy setup)
+```bash
+bag record <shortcuts>
+```
