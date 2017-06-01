@@ -14,8 +14,10 @@ from geometry_msgs.msg import Pose
 
 import sys
 
-from utilities import format_euler_angle, format_dms
+from utilities import format_euler_angle, format_dms, lbl_bg_red, lbl_bg_norm
 
+SAFE_ROLL = 20
+SAFE_PITCH = 25
 
 class PoseDisplay(QWidget):
     """!@brief GUI class to textually display an orientation and position
@@ -112,8 +114,16 @@ class PoseDisplay(QWidget):
         self._latitude.setText(format_dms(pose.position.y))
         self._longitude.setText(format_dms(pose.position.x))
 
-        self._roll.setText(format_euler_angle(euler[0]))
-        self._pitch.setText(format_euler_angle(euler[1]))
+        if abs(euler[0]) > SAFE_ROLL:
+            lbl_bg_red(self._roll, format_euler_angle(euler[0]))
+        else:
+            lbl_bg_norm(self._roll, format_euler_angle(euler[0]))
+
+        if abs(euler[1]) > SAFE_PITCH:
+            lbl_bg_red(self._pitch, format_euler_angle(euler[1]))
+        else:
+            lbl_bg_norm(self._pitch, format_euler_angle(euler[1]))
+
         self._yaw.setText(format_euler_angle(euler[2]))
         self.poseUpdated.emit(pose)
 

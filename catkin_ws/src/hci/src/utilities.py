@@ -41,6 +41,12 @@ def lbl_bg_norm(thing):
     thing.setText("Ok")
 
 
+def lbl_bg_norm(thing, text):
+    """sets a style sheet to the @param thing resulting in a green background"""
+    thing.setStyleSheet('background-color:#F2F1F0')
+    thing.setText(text)
+
+
 ## Change the background of an object to red
 #
 # @param thing An object implementing the QWidget Interface. This function uses
