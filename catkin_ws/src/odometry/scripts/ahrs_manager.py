@@ -144,8 +144,7 @@ class NavSatMsgManager:
                                     frame_id=self.ahrs_global_frame)
         self.pub_ahrs_pose(data)
         self.pub_ahrs_imu(data)
-        if data.gps.validUTC:
-            self.pub_ahrs_navsat(data)
+        self.pub_ahrs_navsat(data)
 
 if __name__ == '__main__':
     nav_sat_manager = NavSatMsgManager()
