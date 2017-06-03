@@ -65,7 +65,7 @@ class ArmController(JoystickBase):
             message = JointVelocities()
             if data.b1:
                 if self._joint == Joint.BASE:
-                    message.base_yaw = data.a3
+                    message.base_yaw = data.a1
                     message.base_pitch = data.a2
                 elif self._joint == Joint.DIFF1:
                     message.diff_1_pitch = data.a2
@@ -74,7 +74,7 @@ class ArmController(JoystickBase):
                     message.diff_2_pitch = data.a2
                     message.diff_2_roll = data.a1
                 elif self._joint == Joint.END:
-                    message.end_effector = data.a2
+                    message.end_effector = -data.a2
 
             self.velocity_publisher.publish(message)
 

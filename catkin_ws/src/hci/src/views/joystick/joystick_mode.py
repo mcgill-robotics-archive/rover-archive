@@ -5,6 +5,7 @@
 import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QGridLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QWidget
@@ -31,8 +32,8 @@ class JoystickMode(QWidget):
         """
         super(JoystickMode, self).__init__(parent)
 
-        self._button_list = []
-        self._layout = QHBoxLayout()
+        self._button_list = 0
+        self._layout = QGridLayout()
         self.setLayout(self._layout)
 
     @pyqtSlot(str)
@@ -48,7 +49,8 @@ class JoystickMode(QWidget):
         button = QPushButton(name, self)
         button.setCheckable(True)
         button.setAutoExclusive(True)
-        self._layout.addWidget(button)
+        self._layout.addWidget(button, self._button_list / 2, self._button_list % 2)
+        self._button_list += 1
 
         def button_callback():
             """!@brief Callback function created for every new button.

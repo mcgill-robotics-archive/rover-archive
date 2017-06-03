@@ -7,6 +7,7 @@ from controller.drive_controller import DriveController
 from controller.hsv_controller import HSV_Controller
 from controller.joystick.joystick_controller import JoystickController
 from controller.navigation_controller import NavigationController
+from controller.pan_tilt_controller import PanTiltController
 from controller.science_controller import ScienceController
 
 
@@ -47,6 +48,8 @@ class MainController(QObject):
 
         self.science_controller = ScienceController(self)
         self.joystick_master.addController("Science", self.science_controller)
+        self.pan_cam = PanTiltController(self)
+        self.joystick_master.addController("Pan Tilt", self.pan_cam)
 
         ## Camera controller
         self.camera_controller = CameraController(self)
