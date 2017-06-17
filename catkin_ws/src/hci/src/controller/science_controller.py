@@ -18,9 +18,9 @@ class ScienceController(JoystickBase):
     def __init__(self, parent=None):
         super(ScienceController, self).__init__(parent)
 
-        self.drill_pub = rospy.Publisher("/sampling/motor_drill", Int32, queue_size=1)
-        self.probe_pub = rospy.Publisher("/sampling/probe", Int32, queue_size=1)
-        self.carri_pub = rospy.Publisher("/sampling/motor_carriage", Int32, queue_size=1)
+        self.drill_pub = rospy.Publisher("motor_drill", Int32, queue_size=1)
+        self.probe_pub = rospy.Publisher("probe", Int32, queue_size=1)
+        self.carri_pub = rospy.Publisher("motor_carriage", Int32, queue_size=1)
         self.inc1_sub = rospy.Subscriber("/sampling/inc_carriage", Int32, self.inc1_cb)
         self.inc2_sub = rospy.Subscriber("/sampling/inc_drill", Int32, self.inc2_cb)
         self.temp_sub = rospy.Subscriber("/probe_temperature", Int32, self.temp_cb)
@@ -36,7 +36,7 @@ class ScienceController(JoystickBase):
             self.carriage_message.data = data.a2 * -4000
 
         if data.b3:
-            self.probe_message.data = 80
+            self.probe_message.data = 60
         elif data.b4:
             self.probe_message.data = 20
         else:
