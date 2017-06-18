@@ -1,0 +1,11 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+file(GLOB SOURCES *.cpp)
+
+add_executable(camera_viewer ${SOURCES})
+
+target_link_libraries(camera_viewer
+        Qt5::Widgets
+        ${RIMSTREAMER_LIBRARIES}
+        ${QTGSTREAMER_LIBRARIES}
+        ${QTGSTREAMER_UI_LIBRARIES})

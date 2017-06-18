@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(hci_cpp)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
+include(Findrimstreamer)
+
+add_compile_options(-std=c++11)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  sensor_msgs
+  std_msgs
+)
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5GStreamer 1.2.0 REQUIRED)
+find_package(rimstreamer REQUIRED)
+
+include_directories(${QTGSTREAMER_INCLUDES})
+include_directories(${RIMSTREAMER_INCLUDE_DIRS})
+link_directories(${RIMSTREAMER_LIBRARIES})
+
+add_subdirectory(src)

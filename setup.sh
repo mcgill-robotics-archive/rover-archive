@@ -118,9 +118,11 @@ if [[ ! -d build ]]; then
 fi
 echo "Compiling qt-gstreamer"
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
-make
-sudo make install
+cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
+make && make install
+# sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/imports/QtGstreamer /usr/lib/x86_64-linux-gnu/qt5/imports/
+sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
+sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/gstreamer-1.0/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0/
 
 # install rimsreamer, or the modified equivallent
 cd ${ROBOTIC_PATH}/rover/rimstreamer
@@ -130,7 +132,6 @@ fi
 echo "Compiling rimstreamer"
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer/build/install
-make
-make install
+make && make install
 
 echo "All done with Rover setup!"
