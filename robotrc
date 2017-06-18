@@ -9,3 +9,9 @@ if [[ -f /usr/bin/lm4flash ]]; then
 fi
 
 alias startrover='tmuxinator start rover' 
+
+QGST_PATH=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install
+RIMSTREAMER_PATH=${ROBOTIC_PATH}/rover/rimstreamer/build/install
+export PATH=$PATH:$QGST_PATH/include:$QGST_PATH/lib
+export PATH=$PATH:$RIMSTREAMER_PATH/include:$RIMSTREAMER_PATH/lib
+

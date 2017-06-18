@@ -104,4 +104,33 @@ fi
 if [[ ! -f ${HOME}/.tmuxinator/rover.yml ]]; then
     ln -s ${ROBOTIC_PATH}/rover/tmux/rover.yml ${HOME}/.tmuxinator/
 fi
+
+# install dependencies for gstreamer
+echo "Installing camera streaming dependencies"
+sudo apt install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev
+sudo apt install -qq qtbase5-dev qt5-qmake
+
+# install qt-gstreamer
+cd ${ROBOTIC_PATH}/rover/qt-gstreamer
+
+if [[ ! -d build ]]; then
+    mkdir build
+fi
+echo "Compiling qt-gstreamer"
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
+make
+sudo make install
+
+# install rimsreamer, or the modified equivallent
+cd ${ROBOTIC_PATH}/rover/rimstreamer
+if [[ ! -d build ]]; then
+    mkdir build
+fi
+echo "Compiling rimstreamer"
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer/build/install
+make
+make install
+
 echo "All done with Rover setup!"
