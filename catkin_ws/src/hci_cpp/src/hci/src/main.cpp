@@ -3,12 +3,12 @@
 //
 
 #include <QApplication>
-#include <view/AttitudeView.h>
+#include <view/MainView.h>
 
 int main(int argc, char ** argv)
 {
     QApplication app(argc, argv);
-    AttitudeView display;
+    MainView display;
     display.show();
     return app.exec();
 }

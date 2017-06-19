@@ -6,8 +6,6 @@
 #include <QDebug>
 #include "PoseDisplay.h"
 
-static const float pi = 3.141592;
-
 QString displayAngle(float angle)
 {
     QString str;
@@ -17,8 +15,7 @@ QString displayAngle(float angle)
     return str;
 }
 
-PoseDisplay::PoseDisplay(QWidget *parent):
-    QWidget(parent)
+PoseDisplay::PoseDisplay(QWidget *parent) : QWidget(parent)
 {
     QFont titleFont;
     titleFont.setPointSize(15);
@@ -92,11 +89,13 @@ void PoseDisplay::setYaw(float value) {
 }
 
 void PoseDisplay::setLongitude(float value) {
+    // TODO: Format this string beautifully
     QString str;
     pLatitude->setText(str.setNum(value, 'f', 10));
 }
 
 void PoseDisplay::setLatitude(float value) {
+    // TODO: Format this string beautifully
     QString str;
     pLatitude->setText(str.setNum(value, 'f', 10));
 
