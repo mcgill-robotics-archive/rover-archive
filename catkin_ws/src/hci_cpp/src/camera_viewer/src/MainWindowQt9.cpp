@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QButtonGroup>
 #include <QCloseEvent>
+#include <qFlightInstruments/QAttitude.h>
 
 namespace rimstreamer
 {
@@ -18,6 +19,7 @@ MainWindowQt9::MainWindowQt9(const QString& feed1Name, GstVideoFeedPtr feed1,
         const QString& feed2Name, GstVideoFeedPtr feed2)
 {
     setWindowTitle("Demo 9");
+    QADI* adi = new QADI(this);
 
     mVideoFeed1 = feed1;
     mVideoFeed2 = feed2;
@@ -36,6 +38,7 @@ MainWindowQt9::MainWindowQt9(const QString& feed1Name, GstVideoFeedPtr feed1,
     QGridLayout* viewButtonLayout = new QGridLayout(viewButtonPanel);
     viewButtonLayout->addWidget(mSingleViewButton);
     viewButtonLayout->addWidget(mDualViewButton);
+    viewButtonLayout->addWidget(adi);
 
     QButtonGroup* viewButtonGroup = new QButtonGroup(viewButtonPanel);
     viewButtonGroup->addButton(mSingleViewButton);
@@ -56,11 +59,6 @@ MainWindowQt9::MainWindowQt9(const QString& feed1Name, GstVideoFeedPtr feed1,
     mainLayout->addWidget(viewButtonPanel);
 
     setCentralWidget(mainPanel);
-}
-
-MainWindowQt9::~MainWindowQt9()
-{
-    // TODO Auto-generated destructor stub
 }
 
 bool MainWindowQt9::canQuit()

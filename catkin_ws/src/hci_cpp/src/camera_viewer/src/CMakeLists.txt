@@ -6,6 +6,7 @@ add_executable(camera_viewer ${SOURCES})
 
 target_link_libraries(camera_viewer
         Qt5::Widgets
+        qFlightInstruments
         ${RIMSTREAMER_LIBRARIES}
         ${QTGSTREAMER_LIBRARIES}
         ${QTGSTREAMER_UI_LIBRARIES})

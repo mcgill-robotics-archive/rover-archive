@@ -1,5 +1,3 @@
-message("${CMAKE_CURRENT_SOURCE_DIR}")
-
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 

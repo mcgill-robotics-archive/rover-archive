@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     rimstreamer::GstVideoFeedPtr catFeed(new rimstreamer::NyanVideoFeed(rimstreamer::CAT));
     rimstreamer::GstVideoFeedPtr dogFeed(new rimstreamer::NyanVideoFeed(rimstreamer::DOG));
 
-    rimstreamer::MainWindowQt9 win("Cat", catFeed, "Dog", dogFeed);
+    rimstreamer::MainWindowQt9 win("Cat Video", catFeed, "Dog Video", dogFeed);
 
     win.show();
     return app.exec();

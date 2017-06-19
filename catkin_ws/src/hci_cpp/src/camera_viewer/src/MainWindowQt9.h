@@ -25,7 +25,7 @@ Q_OBJECT
 public:
     MainWindowQt9(const QString& feed1Name, GstVideoFeedPtr feed1,
             const QString& feed2Name, GstVideoFeedPtr feed2);
-    virtual ~MainWindowQt9();
+    virtual ~MainWindowQt9() {};
 
 protected:
     void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
