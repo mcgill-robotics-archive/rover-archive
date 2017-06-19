@@ -13,9 +13,19 @@ file(GLOB VIEW_HEADERS view/[^.]*.h)
 file(GLOB MODEL_SOURCES model/[^.]*.cpp)
 file(GLOB MODEL_HEADERS model/[^.]*.h)
 
+file(GLOB QRC_SOURCES resources/[^.]*.qrc)
+qt5_add_resources(GENERATED_RESOURCES ${QRC_SOURCES})
 
 
-add_executable(hci ${HCI_SOURCES} ${HCI_HEADERS} ${VIEW_SOURCES} ${VIEW_HEADERS} ${MODEL_SOURCES} ${MODEL_HEADERS})
+add_executable(hci
+        ${HCI_SOURCES}
+        ${HCI_HEADERS}
+        ${VIEW_SOURCES}
+        ${VIEW_HEADERS}
+        ${MODEL_SOURCES}
+        ${MODEL_HEADERS}
+        ${GENERATED_RESOURCES})
+
 target_link_libraries(hci
         Qt5::Widgets
         ${RIMSTREAMER_LIBRARIES}

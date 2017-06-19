@@ -8,6 +8,8 @@
 int main(int argc, char ** argv)
 {
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/rover3.jpg"));
+
     MainView display;
     display.show();
     return app.exec();
