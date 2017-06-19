@@ -10,9 +10,12 @@ file(GLOB HCI_HEADERS [^.]*.h)
 file(GLOB VIEW_SOURCES view/[^.]*.cpp)
 file(GLOB VIEW_HEADERS view/[^.]*.h)
 
+file(GLOB MODEL_SOURCES model/[^.]*.cpp)
+file(GLOB MODEL_HEADERS model/[^.]*.h)
 
 
-add_executable(hci ${HCI_SOURCES} ${HCI_HEADERS} ${VIEW_SOURCES} ${VIEW_HEADERS})
+
+add_executable(hci ${HCI_SOURCES} ${HCI_HEADERS} ${VIEW_SOURCES} ${VIEW_HEADERS} ${MODEL_SOURCES} ${MODEL_HEADERS})
 target_link_libraries(hci
         Qt5::Widgets
         ${RIMSTREAMER_LIBRARIES}

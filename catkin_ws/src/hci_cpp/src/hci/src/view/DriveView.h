@@ -7,6 +7,9 @@
 #define HCI_CPP_DRIVEVIEW_H
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QLabel>
+#include <model/DriveData.h>
+#include <QtWidgets/QPushButton>
 
 
 class DriveView : public QWidget {
@@ -16,7 +19,28 @@ public:
 
     virtual ~DriveView() {};
 
+signals:
+    void steeringModeChanged(const SteeringMode& mode);
+
 public slots:
+    void updateDriveStatus(const DriveStatusData& statusData);
+    void updateSteeringMode(const SteeringMode& mode);
+
+private:
+    QLabel* pFLStatus;
+    QLabel* pFRStatus;
+    QLabel* pMLStatus;
+    QLabel* pMRStatus;
+    QLabel* pBLStatus;
+    QLabel* pBRStatus;
+
+    QPushButton* pEnableAckermann;
+    QPushButton* pEnablePoint;
+    QPushButton* pEnableTranslate;
+    QLabel* pActiveSetteringMode;
+
+private slots:
+    void onModeButtonClick(const QAbstractButton *button);
 };
 
 
