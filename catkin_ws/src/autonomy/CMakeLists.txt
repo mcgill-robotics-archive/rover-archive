@@ -76,11 +76,6 @@ generate_messages(
   std_msgs  # Or other packages containing msgs
 )
 
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-catkin_package(
-  CATKIN_DEPENDS message_runtime
-)
-
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################

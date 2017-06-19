@@ -8,8 +8,8 @@
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
-  <author email="olivier@todo.todo">Olivier Lamarre</maintainer>
-  <author email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
+  <author email="olivier@todo.todo">Olivier Lamarre</author>
+  <author email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</author>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
