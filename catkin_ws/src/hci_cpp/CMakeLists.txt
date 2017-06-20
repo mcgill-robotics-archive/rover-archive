@@ -7,13 +7,14 @@ include(Findrimstreamer)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
-  std_msgs
-)
+        roscpp
+        sensor_msgs
+        std_msgs
+        drive_control
+        )
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
+        ${catkin_INCLUDE_DIRS}
 )
 
 find_package(Qt5Widgets REQUIRED)

@@ -13,6 +13,9 @@ file(GLOB VIEW_HEADERS view/[^.]*.h)
 file(GLOB MODEL_SOURCES model/[^.]*.cpp)
 file(GLOB MODEL_HEADERS model/[^.]*.h)
 
+file(GLOB CONTROLLER_SOURCES controller/[^.]*.cpp)
+file(GLOB CONTROLLER_HEADERS controller/[^.]*.h)
+
 file(GLOB QRC_SOURCES resources/[^.]*.qrc)
 qt5_add_resources(GENERATED_RESOURCES ${QRC_SOURCES})
 
@@ -24,9 +27,12 @@ add_executable(hci
         ${VIEW_HEADERS}
         ${MODEL_SOURCES}
         ${MODEL_HEADERS}
+        ${CONTROLLER_SOURCES}
+        ${CONTROLLER_HEADERS}
         ${GENERATED_RESOURCES})
 
 target_link_libraries(hci
         Qt5::Widgets
         ${RIMSTREAMER_LIBRARIES}
+        ${catkin_LIBRARIES}
         qFlightInstruments)

@@ -4,13 +4,18 @@
 
 #include <QApplication>
 #include <view/MainView.h>
+#include <controller/MainController.h>
 
 int main(int argc, char ** argv)
 {
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/rover3.jpg"));
 
-    MainView display;
-    display.show();
+    ros::init(argc, argv, "hci");
+    ros::NodeHandle nh;
+    ros::NodeHandle pnh("~");
+
+    MainController ctrl(nh, pnh);
+
     return app.exec();
 }
