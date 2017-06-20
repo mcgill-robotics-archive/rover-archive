@@ -5,12 +5,12 @@
 #ifndef ROVER_ARDUINO_RAM_H
 #define ROVER_ARDUINO_RAM_H
 
-#include <arduino/ram.h>
+#include <arduino/Ram.h>
 
 
 class RAM {
 public:
     static int freeRam ();
-    static void freeRamCallback(const arduino::ram::Request & request, arduino::ram::Response & response);
+    static void freeRamCallback(const arduino::Ram::Request & request, arduino::Ram::Response & response);
 };
 #endif //ROVER_ARDUINO_RAM_H

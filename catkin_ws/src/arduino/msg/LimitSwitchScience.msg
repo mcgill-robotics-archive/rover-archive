@@ -1,2 +1,0 @@
-bool limit_switch_up
-bool limit_switch_down

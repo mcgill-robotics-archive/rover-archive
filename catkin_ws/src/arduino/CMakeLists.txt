@@ -12,6 +12,8 @@ elseif(UNIX)
 endif()
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  roscpp
+  rospy
   rover_common
   rosserial_arduino
   rosserial_client
@@ -20,17 +22,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-add_message_files(
+add_service_files(DIRECTORY srv
     FILES
-    LimitSwitchClaw.msg
-    LimitSwitchScience.msg
-)
-
-add_service_files(
-    FILES
-    ram.srv
-    sensor.srv
-    drill.srv
+    Ram.srv
     ResetArduino.srv
 )
 generate_messages(
@@ -39,13 +33,15 @@ generate_messages(
 )
 
 catkin_package(
-    CATKIN_DEPENDS message_runtime   std_msgs
+    CATKIN_DEPENDS message_runtime std_msgs
 )
 
 rosserial_generate_ros_lib(
     PACKAGE rosserial_arduino
     SCRIPT make_libraries.py
 )
+
+add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 rosserial_configure_client(
     DIRECTORY src
@@ -54,9 +50,3 @@ rosserial_configure_client(
 
 rosserial_add_client_target(src drive ALL)
 # rosserial_add_client_target(drive drive-upload)
-
-rosserial_add_client_target(src arm ALL)
-# rosserial_add_client_target(arm arm-upload)
-
-rosserial_add_client_target(src science ALL)
-rosserial_add_client_target(src science-upload)
