@@ -25,6 +25,7 @@ public:
 public slots:
     void updateSteeringMode(const SteeringMode& mode);
     void addJoystickMode(QString modeTitle);
+    void setMotorEnable(bool enable);
 
 signals:
     void steeringModeChanged(const SteeringMode& mode);
@@ -36,6 +37,7 @@ private:
     AttitudeView* attitudeView;
     PowerSupplyInformation* powerSupplyInformation;
     DriveView* driveView;
+    QLabel* pMotorEnableStatus;
 
 };
 

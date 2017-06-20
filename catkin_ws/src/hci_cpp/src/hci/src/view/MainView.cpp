@@ -3,9 +3,22 @@
 //
 
 #include "MainView.h"
+#include "utilities.h"
 
 MainView::MainView(QWidget *parent) : QWidget(parent) {
     QVBoxLayout * vbox = new QVBoxLayout;
+
+    // Motor Enable information:
+    {
+        QLabel *enableTitle = new QLabel("Motor Condition:", this);
+        pMotorEnableStatus = new QLabel(this);
+        pMotorEnableStatus->setAlignment(Qt::AlignCenter);
+        QHBoxLayout *hbox = new QHBoxLayout;
+        hbox->addWidget(enableTitle);
+        hbox->addWidget(pMotorEnableStatus);
+        vbox->addItem(hbox);
+        setMotorEnable(false);
+    }
 
     attitudeView = new AttitudeView(this);
     powerSupplyInformation = new PowerSupplyInformation(this);
@@ -47,4 +60,12 @@ void MainView::updateSteeringMode(const SteeringMode &mode) {
 
 void MainView::addJoystickMode(QString modeTitle) {
     joystickView->addMode(modeTitle);
+}
+
+void MainView::setMotorEnable(bool enable) {
+    if (enable) {
+        setOkBG(pMotorEnableStatus, "Enabled");
+    } else {
+        setBadBG(pMotorEnableStatus, "Disabled");
+    }
 }

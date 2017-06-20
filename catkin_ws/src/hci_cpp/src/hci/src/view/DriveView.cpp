@@ -6,18 +6,7 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QButtonGroup>
 #include "DriveView.h"
-
-void setBadBG(QLabel* widget)
-{
-    widget->setStyleSheet("background-color:#ff0000");
-    widget->setText("Bad");
-}
-
-void setOkBG(QLabel* widget)
-{
-    widget->setStyleSheet("background-color:#33CC33");
-    widget->setText("Ok");
-}
+#include "utilities.h"
 
 DriveView::DriveView(QWidget *parent) : QWidget(parent) {
     QVBoxLayout* vbox1 = new QVBoxLayout;
