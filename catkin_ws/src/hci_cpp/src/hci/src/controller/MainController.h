@@ -11,6 +11,7 @@
 #include <view/MainView.h>
 #include "DriveController.h"
 #include "JoystickController.h"
+#include "DCDCController.h"
 
 
 class MainController : public QObject {
@@ -27,7 +28,7 @@ private:
 
     DriveController mDriveController;
     JoystickController mJoystickController;
-
+    DCDCController dcdcController;
 };
 
 

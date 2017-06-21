@@ -71,3 +71,27 @@ JoystickView *MainView::getJoystickView()
 void MainView::updateDriveStatus(const DriveStatusData &statusData) {
     driveView->updateDriveStatus(statusData);
 }
+
+void MainView::setInputVoltage(double value) {
+    powerSupplyInformation->setInputVoltage(value);
+}
+
+void MainView::setInputCurrent(double value) {
+    powerSupplyInformation->setInputCurrent(value);
+}
+
+void MainView::setOutputVoltage(double value) {
+    powerSupplyInformation->setOutputVoltage(value);
+}
+
+void MainView::setOutputCurrent(double value) {
+    powerSupplyInformation->setOutputCurrent(value);
+}
+
+void MainView::setOutputPower(double value) {
+    powerSupplyInformation->setOutputPower(value);
+}
+
+void MainView::setTemperature(double value) {
+    powerSupplyInformation->setTemperature(value);
+}

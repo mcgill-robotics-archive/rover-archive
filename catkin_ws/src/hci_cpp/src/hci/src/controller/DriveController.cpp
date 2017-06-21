@@ -63,6 +63,9 @@ void DriveController::process()
 {
     ROS_INFO("Starting drive controller thread");
     ros::Subscriber wheelStatusSub = mNodeHandle.subscribe("/motor_status", 1, &DriveController::wheelStatusROSCallback, this);
-    ros::spin();
+    while(mNodeHandle.ok())
+    {
+        ros::spinOnce();
+    }
     ROS_WARN("DriveController::process finishing");
 }

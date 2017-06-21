@@ -27,7 +27,12 @@ public:
 public slots:
     void updateSteeringMode(const SteeringMode& mode);
     void updateDriveStatus(const DriveStatusData& statusData);
-
+    void setInputVoltage(double value);
+    void setInputCurrent(double value);
+    void setOutputVoltage(double value);
+    void setOutputCurrent(double value);
+    void setOutputPower(double value);
+    void setTemperature(double value);
     void setMotorEnable(bool enable);
 
 signals:
