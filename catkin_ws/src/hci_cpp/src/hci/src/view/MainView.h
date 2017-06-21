@@ -22,9 +22,12 @@ public:
     MainView(QWidget* parent=0);
     virtual ~MainView() {};
 
+    JoystickView* getJoystickView();;
+
 public slots:
     void updateSteeringMode(const SteeringMode& mode);
-    void addJoystickMode(QString modeTitle);
+    void updateDriveStatus(const DriveStatusData& statusData);
+
     void setMotorEnable(bool enable);
 
 signals:

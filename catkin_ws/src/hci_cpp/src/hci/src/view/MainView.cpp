@@ -37,9 +37,6 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::steeringModeChanged);
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::updateSteeringMode);
     connect(joystickView, &JoystickView::modeChanged, this, &MainView::joystickModeChanged);
-
-    addJoystickMode("test mode");
-    addJoystickMode("test mode1");
 }
 
 void MainView::addLine(QVBoxLayout *layout) {
@@ -58,14 +55,19 @@ void MainView::updateSteeringMode(const SteeringMode &mode) {
     qDebug() << "MainView.cpp: " << modeText;
 }
 
-void MainView::addJoystickMode(QString modeTitle) {
-    joystickView->addMode(modeTitle);
-}
-
 void MainView::setMotorEnable(bool enable) {
     if (enable) {
         setOkBG(pMotorEnableStatus, "Enabled");
     } else {
         setBadBG(pMotorEnableStatus, "Disabled");
     }
+}
+
+JoystickView *MainView::getJoystickView()
+{
+    return joystickView;
+}
+
+void MainView::updateDriveStatus(const DriveStatusData &statusData) {
+    driveView->updateDriveStatus(statusData);
 }

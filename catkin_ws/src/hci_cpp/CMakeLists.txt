@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
         sensor_msgs
         std_msgs
         drive_control
+        rover_common
         )
 
 include_directories(

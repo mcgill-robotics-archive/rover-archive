@@ -10,6 +10,7 @@
 #include <ros/ros.h>
 #include <view/MainView.h>
 #include "DriveController.h"
+#include "JoystickController.h"
 
 
 class MainController : public QObject {
@@ -21,9 +22,12 @@ public:
 private:
     ros::NodeHandle& mNH;
     ros::NodeHandle& mPrivateNH;
-    DriveController mDriveController;
 
     MainView mMainView;
+
+    DriveController mDriveController;
+    JoystickController mJoystickController;
+
 };
 
 

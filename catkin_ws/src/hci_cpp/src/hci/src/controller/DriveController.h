@@ -10,9 +10,10 @@
 #include <ros/ros.h>
 #include <model/DriveData.h>
 #include "JoystickInterface.h"
+#include <rover_common/MotorStatus.h>
 
 
-class DriveController : public QObject, JoystickInterface {
+class DriveController : public JoystickInterface {
 Q_OBJECT
 public:
     DriveController(ros::NodeHandle& nh);
@@ -25,9 +26,12 @@ public slots:
     void updateSteeringMode(SteeringMode mode);
     void enableMotors(bool enable);
 
+    void process();
+
 signals:
     void steeringModeUpdated(SteeringMode mode);
     void motorEnableChanged(bool enable);
+    void wheelStatusUpdated(DriveStatusData status);
 
 private:
     ros::NodeHandle& mNodeHandle;
@@ -36,9 +40,12 @@ private:
     // Status data to be published
     SteeringMode mSteeringMode;
     bool mMotorEnabled;
+    float mLinearVel;
+    float mAngularVel;
 
 private slots:
     void publish();
+    void wheelStatusROSCallback(const rover_common::MotorStatus& message);
 };
 
 

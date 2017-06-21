@@ -5,6 +5,7 @@
 
 #include "DriveController.h"
 #include <drive_control/DriveCommand.h>
+#include <QDebug>
 
 DriveController::DriveController(ros::NodeHandle& nh) : mNodeHandle(nh){
     mCommandPublisher = mNodeHandle.advertise<drive_control::DriveCommand>("drive_command", 100);
@@ -30,7 +31,7 @@ void DriveController::enableMotors(bool enable) {
 }
 
 void DriveController::handleJoystickData(JoystickData &data) {
-    // TODO: This class will eventually need to implement an abstract interface to receive joystick data when activated
+    // TODO: This class will eventually need to implement the abstract method and handle joystick data
 }
 
 void DriveController::publish() {
@@ -41,8 +42,27 @@ void DriveController::publish() {
     message.motion_translatory = (uint8_t) (mSteeringMode == TRANSLATE);
     message.motion_skid = (uint8_t) (false);
     message.motion_swerve = (uint8_t) (false);
-
-    // TODO: populate velocity command
+    message.velocity_command.linear.x = mLinearVel;
+    message.velocity_command.angular.z = mAngularVel;
 
     mCommandPublisher.publish(message) ;
+}
+
+void DriveController::wheelStatusROSCallback(const rover_common::MotorStatus &message) {
+    struct DriveStatusData data;
+    data.flGood = message.fl;
+    data.frGood = message.fr;
+    data.mlGood = message.ml;
+    data.mrGood = message.mr;
+    data.blGood = message.bl;
+    data.brGood = message.br;
+    emit wheelStatusUpdated(data);
+}
+
+void DriveController::process()
+{
+    ROS_INFO("Starting drive controller thread");
+    ros::Subscriber wheelStatusSub = mNodeHandle.subscribe("/motor_status", 1, &DriveController::wheelStatusROSCallback, this);
+    ros::spin();
+    ROS_WARN("DriveController::process finishing");
 }
