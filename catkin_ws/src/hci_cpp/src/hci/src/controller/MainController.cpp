@@ -17,20 +17,24 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     mJoystickController.registerController(&mDriveController, "Drive");
 
     // Since ROS subscriber information is coming from different threads, we
-    // need to register the data type with the QT backend
+    // need to register the data types defined in the application with the
+    // QT backend. This does not apply to ros message types
+    // (i.e. std_msgs::Float64 does not require this)
     qRegisterMetaType<DriveStatusData>("DriveStatusData");
 
 
     // Move ROS Controllers to new threads to enable subscriber spins
-    QThread* driveControllerThread = new QThread;                                                       // Create thread object
-    mDriveController.moveToThread(driveControllerThread);                                               // Assign QObject to thread
-    connect(driveControllerThread, &QThread::started, &mDriveController, &DriveController::process);    // Connect intializing method
-    driveControllerThread->start();                                                                     // Start thread
+    {
+        QThread *driveControllerThread = new QThread;                                                       // Create thread object
+        mDriveController.moveToThread(driveControllerThread);                                               // Assign QObject to thread
+        connect(driveControllerThread, &QThread::started, &mDriveController, &DriveController::process);    // Connect intializing method
+        driveControllerThread->start();                                                                     // Start thread
 
-    QThread* dcdcControllerThread = new QThread;
-    dcdcController.moveToThread(dcdcControllerThread);
-    connect(dcdcControllerThread, &QThread::started, &dcdcController, &DCDCController::process);
-    dcdcControllerThread->start();
+        QThread *dcdcControllerThread = new QThread;
+        dcdcController.moveToThread(dcdcControllerThread);
+        connect(dcdcControllerThread, &QThread::started, &dcdcController, &DCDCController::process);
+        dcdcControllerThread->start();
+    }
 
     // Connect all the stuff
     connect(&mDriveController, &DriveController::steeringModeUpdated, &mMainView, &MainView::updateSteeringMode);

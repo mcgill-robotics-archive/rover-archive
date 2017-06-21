@@ -12,10 +12,21 @@
 #include "JoystickInterface.h"
 #include <rover_common/MotorStatus.h>
 
-
+/**
+ * @brief Class responsible for publishing drive commands and subscribing
+ * to drive related status information from the rover.
+ *
+ * Class also implements the joystick data parsing and builds the message
+ * to be published to the ros environment.
+ */
 class DriveController : public JoystickInterface {
 Q_OBJECT
 public:
+
+    /**
+     * @brief Constructor
+     * @param nh Reference to the node handle to use for publishing and subscribing
+     */
     DriveController(ros::NodeHandle& nh);
 
     virtual ~DriveController() {};
@@ -23,9 +34,19 @@ public:
     virtual void handleJoystickData(JoystickData& data);
 
 public slots:
+    /**
+     * @brief Update the steering information for publisher
+     *
+     * @param mode New mode to publish with
+     */
     void updateSteeringMode(SteeringMode mode);
-    void enableMotors(bool enable);
 
+
+    /**
+     * @brief Thread start entry point
+     *
+     * See DCDCConverter class for more details
+     */
     void process();
 
 signals:
@@ -44,6 +65,8 @@ private:
     float mAngularVel;
 
 private slots:
+    void enableMotors(bool enable);
+    void setVelocityCommand(float linear, float angular);
     void publish();
     void wheelStatusROSCallback(const rover_common::MotorStatus& message);
 };

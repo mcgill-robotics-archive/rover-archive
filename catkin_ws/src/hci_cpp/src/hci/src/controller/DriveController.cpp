@@ -69,3 +69,8 @@ void DriveController::process()
     }
     ROS_WARN("DriveController::process finishing");
 }
+
+void DriveController::setVelocityCommand(float linear, float angular) {
+    mLinearVel = linear;
+    mAngularVel = angular;
+}
