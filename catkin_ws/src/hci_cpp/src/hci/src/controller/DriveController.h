@@ -45,7 +45,7 @@ public slots:
     /**
      * @brief Thread start entry point
      *
-     * See DCDCConverter class for more details
+     * See DCDCController::process class for more details
      */
     void process();
 

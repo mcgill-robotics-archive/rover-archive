@@ -12,7 +12,7 @@
 #include "JoystickAcquisition.h"
 
 /**
- * !@brief Main controller class for joystick applications
+ * @brief Main controller class for joystick applications
  * Owner of the joystick acquisition class and controls the dispatch of the
  * joystick data. Class wishing to receive joystick data must register
  * themselves to this class in order to eventually be activated.
@@ -22,7 +22,7 @@ class JoystickController : public QObject {
 public:
 
     /**
-     * !@brief Constructor. Initializes acquisition and connects the view
+     * @brief Constructor. Initializes acquisition and connects the view
      * components to the appropriate slots
      *
      * @param joystickWidget Initialized JoystickWidget that will display the
@@ -33,7 +33,7 @@ public:
     virtual ~JoystickController() {};
 
     /**
-     * !@brief Registers a new controller for joystick capability
+     * @brief Registers a new controller for joystick capability
      *
      * Add a class to the list of control mode on the linked widget and add
      * it to the map of available joystick classes.
@@ -46,7 +46,7 @@ public:
     void registerController(JoystickInterface *controller, QString name);
 
     /**
-     * !@brief Change which class receives joystick inputs.
+     * @brief Change which class receives joystick inputs.
      *
      * Disconnect previously active class and connect joystick acquisition to
      * this class. The available classes are placed in a map, string keyed,
@@ -60,7 +60,7 @@ public:
 signals:
 
     /**
-     * !@brief Signal emitted when a change of active controller has occurred
+     * @brief Signal emitted when a change of active controller has occurred
      * @param name The string used as key to find the newly activated controller
      */
     void activeControllerChanged(QString name);

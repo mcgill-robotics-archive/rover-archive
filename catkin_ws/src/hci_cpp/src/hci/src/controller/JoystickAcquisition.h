@@ -10,7 +10,7 @@
 #include <model/JoystickData.h>
 
 /**
- * !@brief Temporary class stub to show POC for joystick acquisition and controller handling
+ * @brief Temporary class stub to show POC for joystick acquisition and controller handling
  *
  * This class is responsible for interfacing with the hardware joystick and
  * acquire the axis and button data. When new data is acquired, emit the

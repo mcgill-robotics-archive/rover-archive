@@ -10,7 +10,7 @@
 #include <model/JoystickData.h>
 
 /**
- * !@brief Abstract interface class must implement to be eligible to receive
+ * @brief Abstract interface class must implement to be eligible to receive
  * joystick input
  *
  * A class implementing this interface can be registered with a JoystickController
@@ -20,7 +20,7 @@ class JoystickInterface : public QObject {
 
 public slots:
     /**
-     * !@brief Function receiving the joystick data when the controller is active
+     * @brief Function receiving the joystick data when the controller is active
      *
      * The JoystickController will connect this instance to the joystick acquisition
      * usgin this function as the slot for the signal with the joystick data.
