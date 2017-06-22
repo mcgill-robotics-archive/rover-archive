@@ -1,0 +1,12 @@
+<launch>
+
+<arg name="device_id" />
+<arg name="name" />
+<group ns="$(arg name)" >
+
+    <node name="camera" pkg="nav_cam_acq" type="shit_cam_acquisitioner.py" output="screen">
+        <param name="device_id" value="$(arg device_id)" />
+    </node>
+
+</group>
+</launch>

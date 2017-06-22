@@ -16,8 +16,8 @@ class Steering:
         self.output_command = WheelOutputData()
 
         # distance between longitudinal axis and wheels[m]
-        self.D = rospy.get_param('control/wh_distance_fr', 1.1684 / 2.0)
-        self.B = rospy.get_param('control/wh_base', 0.66)
+        self.D = rospy.get_param('control/wh_distance_fr', 1.08 / 2.0)
+        self.B = rospy.get_param('control/wh_base', 0.68 / 2.0)
         self.R = rospy.get_param('control/wh_radius', 0.1143)  #: wheel radius [m]
         self.W = rospy.get_param('control/wh_width', 0.15)  #: wheel width [m]
 
@@ -163,6 +163,8 @@ class Steering:
 
             self.output_command.blv = self.output_command.flv
             self.output_command.brv = self.output_command.frv
+        self.output_command.blv *= -1
+        self.output_command.brv *= -1
 
     def pointTurn(self, wBody):
         """

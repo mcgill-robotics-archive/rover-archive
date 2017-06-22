@@ -21,13 +21,14 @@ class DriveControl:
 
         self.is_moving = False
         self.rotation = 0
+        self.last_message = 0
 
     def update_value_settings(self, msg):
         self.general_command[0] = msg.velocity_command.linear.x
         self.general_command[1] = msg.velocity_command.angular.z
 
         self.is_moving = msg.motion_enable
-
+        self.last_message = rospy.get_time()
         if msg.motion_ackerman:
             self.steering.steer(self.general_command[0], self.general_command[1])
 
@@ -53,8 +54,13 @@ class DriveControl:
             bool_msg = Bool()
             bool_msg.data = self.is_moving
             message = self.steering.output_command.create_message()
-            self.command_publisher.publish(message)
-            self.moving_publisher.publish(bool_msg)
+        
+            if abs(self.last_message - rospy.get_time()) > 2:
+                message = WheelCommand()
+                self.command_publisher.publish(message)
+            else:
+                self.command_publisher.publish(message)
+                self.moving_publisher.publish(bool_msg)
 
             r.sleep()
         pass

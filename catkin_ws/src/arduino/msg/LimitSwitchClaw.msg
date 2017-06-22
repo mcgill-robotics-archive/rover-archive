@@ -1,2 +1,0 @@
-bool open
-bool close

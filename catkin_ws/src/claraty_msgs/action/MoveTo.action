@@ -1,0 +1,7 @@
+# Goal
+geometry_msgs/PoseStamped goal
+---
+# Result 
+---
+# Feedback
+claraty_msgs/LocomotorState state

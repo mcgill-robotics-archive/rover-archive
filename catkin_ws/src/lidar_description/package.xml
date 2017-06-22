@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package>
+  <name>lidar_description</name>
+  <version>0.0.1</version>
+  <description>The lidar_description package</description>
+
+  <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
+  <author email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</author>
+
+  <license>GPLv2</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

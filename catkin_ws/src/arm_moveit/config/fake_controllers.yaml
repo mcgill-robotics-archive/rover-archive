@@ -1,0 +1,13 @@
+controller_list:
+  - name: fake_Arm_controller
+    joints:
+      - base_yaw
+      - base_pitch
+      - pitch2
+      - roll1
+      - pitch3
+      - roll2
+  - name: fake_Grip_controller
+    joints:
+      - slide_finger1
+
