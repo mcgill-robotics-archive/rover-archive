@@ -9,10 +9,10 @@ Build Status
 ------------
 
 [master]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_master
-[master url]: http://dev.mcgillrobotics.com:8080/job/rover_master
+[master url]: http://dev.mcgillrobotics.com/view/ROVER/job/rover_master/2/badge/icon
 
 [dev]: http://dev.mcgillrobotics.com:8080/buildStatus/icon?job=rover_dev
-[dev url]: http://dev.mcgillrobotics.com:8080/job/rover_dev
+[dev url]: http://dev.mcgillrobotics.com/view/ROVER/job/rover_dev/41/badge/icon
 
 
 | Branch   | Status                  |
