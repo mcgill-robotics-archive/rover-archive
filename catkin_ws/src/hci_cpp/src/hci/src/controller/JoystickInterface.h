@@ -27,7 +27,7 @@ public slots:
      *
      * @param data The newest joystick data
      */
-    virtual void handleJoystickData(JoystickData& data) = 0;
+    virtual void handleJoystickData(JoystickData data) = 0;
 };
 
 #endif //HCI_CPP_JOYSTICKINTERFACE_H

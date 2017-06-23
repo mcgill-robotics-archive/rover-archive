@@ -5,17 +5,21 @@
 
 #include "DriveController.h"
 #include <drive_control/DriveCommand.h>
-#include <QDebug>
+#include <QtCore/QTimer>
 
 DriveController::DriveController(ros::NodeHandle& nh) : mNodeHandle(nh){
     mCommandPublisher = mNodeHandle.advertise<drive_control::DriveCommand>("drive_command", 100);
-
-    // TODO: Start timer loop to publish current status
 }
 
 void DriveController::updateSteeringMode(SteeringMode mode) {
     if (mSteeringMode != mode)
     {
+        std::string modeText;
+        if (mode == ACKERMANN) modeText = ("ACKERMAN");
+        if (mode == POINT) modeText = ("POINT");
+        if (mode == TRANSLATE) modeText = ("TRANSLATE");
+        ROS_INFO("DriveController.cpp: Steering mode changed to %s", modeText.c_str());
+
         mSteeringMode = mode;
         emit steeringModeUpdated(mSteeringMode);
     }
@@ -26,12 +30,24 @@ void DriveController::enableMotors(bool enable) {
     {
         mMotorEnabled = enable;
         emit motorEnableChanged(mMotorEnabled);
+        ROS_INFO("DriveController.cpp: Motor enable status changed to %s", (enable ? "true":"false"));
     }
-
 }
 
-void DriveController::handleJoystickData(JoystickData &data) {
-    // TODO: This class will eventually need to implement the abstract method and handle joystick data
+void DriveController::handleJoystickData(JoystickData data) {
+    ROS_DEBUG("DriveController.cpp: Handling new joystick data");
+    enableMotors(data.buttons[0]);
+
+    // Set velocity depending if trigger is pressed.
+    mLinearVel = data.buttons[0] ? data.a2 : 0;
+    mAngularVel = data.buttons[0] ? data.a1 : 0;
+
+    if (data.buttons[1])
+        updateSteeringMode(ACKERMANN);
+    else if (data.buttons[2])
+        updateSteeringMode(POINT);
+    else if (data.buttons[3])
+        updateSteeringMode(TRANSLATE);
 }
 
 void DriveController::publish() {
@@ -63,14 +79,13 @@ void DriveController::process()
 {
     ROS_INFO("Starting drive controller thread");
     ros::Subscriber wheelStatusSub = mNodeHandle.subscribe("/motor_status", 1, &DriveController::wheelStatusROSCallback, this);
+    ros::Rate rate(10);
+
     while(mNodeHandle.ok())
     {
+        publish();
         ros::spinOnce();
+        rate.sleep();
     }
     ROS_WARN("DriveController::process finishing");
-}
-
-void DriveController::setVelocityCommand(float linear, float angular) {
-    mLinearVel = linear;
-    mAngularVel = angular;
 }

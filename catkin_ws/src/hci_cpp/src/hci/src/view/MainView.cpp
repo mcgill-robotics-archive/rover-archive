@@ -2,6 +2,7 @@
 // Created by david on 18/06/17.
 //
 
+#include <ros/ros.h>
 #include "MainView.h"
 #include "utilities.h"
 
@@ -17,7 +18,6 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
         hbox->addWidget(enableTitle);
         hbox->addWidget(pMotorEnableStatus);
         vbox->addItem(hbox);
-        setMotorEnable(false);
     }
 
     attitudeView = new AttitudeView(this);
@@ -47,12 +47,7 @@ void MainView::addLine(QVBoxLayout *layout) {
 }
 
 void MainView::updateSteeringMode(const SteeringMode &mode) {
-    // TODO: Delete at some point, this is useless, but fun
-    QString modeText;
-    if (mode == ACKERMANN) modeText = QString("ACKERMAN");
-    if (mode == POINT) modeText = QString("POINT");
-    if (mode == TRANSLATE) modeText = QString("TRANSLATE");
-    qDebug() << "MainView.cpp: " << modeText;
+    driveView->updateSteeringMode(mode);
 }
 
 void MainView::setMotorEnable(bool enable) {

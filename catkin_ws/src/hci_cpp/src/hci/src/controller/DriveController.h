@@ -31,7 +31,7 @@ public:
 
     virtual ~DriveController() {};
 
-    virtual void handleJoystickData(JoystickData& data);
+    virtual void handleJoystickData(JoystickData data);
 
 public slots:
     /**
@@ -50,8 +50,11 @@ public slots:
     void process();
 
 signals:
+    /// Indicated the steering mode has changed
     void steeringModeUpdated(SteeringMode mode);
+    /// Emitted when th motor enable status has changed
     void motorEnableChanged(bool enable);
+    /// Emitted when new wheel status information is available
     void wheelStatusUpdated(DriveStatusData status);
 
 private:
@@ -66,7 +69,7 @@ private:
 
 private slots:
     void enableMotors(bool enable);
-    void setVelocityCommand(float linear, float angular);
+
     void publish();
     void wheelStatusROSCallback(const rover_common::MotorStatus& message);
 };

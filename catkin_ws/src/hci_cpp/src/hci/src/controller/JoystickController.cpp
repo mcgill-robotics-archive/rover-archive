@@ -5,8 +5,11 @@
 
 #include "JoystickController.h"
 #include <QDebug>
+#include <ros/ros.h>
+
 JoystickController::JoystickController(JoystickView *joystickWidget) : mJoystickView(joystickWidget) {
     mJoystickAcquisition = new JoystickAcquisition;
+    mJoystickAcquisition->show();
 }
 
 void JoystickController::registerController(JoystickInterface *controller, QString name) {
@@ -22,21 +25,29 @@ void JoystickController::registerController(JoystickInterface *controller, QStri
 }
 
 void JoystickController::setActiveController(QString name) {
-    if (mControllerHash.contains(name) && mActiveController != mControllerHash[name])
-    {
-        // disconnect old controller
-        disconnect(mJoystickAcquisition, &JoystickAcquisition::joystickDataUpdated,
-                   mControllerHash[name], &JoystickInterface::handleJoystickData);
+    if (mControllerHash.contains(name)) {
+        if (mActiveController != mControllerHash[name]) {
+            ROS_INFO("JoystickCintroller.cpp: Requested controller %s", name.toStdString().c_str());
+            // disconnect old controller
+            disconnect(mJoystickAcquisition, &JoystickAcquisition::joystickDataUpdated,
+                       this, &JoystickController::joystickDataSlot);
 
-        // connect new controller
-        mActiveController = mControllerHash[name];
-        connect(mJoystickAcquisition, &JoystickAcquisition::joystickDataUpdated,
-                mActiveController, &JoystickInterface::handleJoystickData);
+            // connect new controller
+            mActiveController = mControllerHash[name];
+            connect(mJoystickAcquisition, &JoystickAcquisition::joystickDataUpdated,
+                    this, &JoystickController::joystickDataSlot);
 
-        emit activeControllerChanged(name);
+            emit activeControllerChanged(name);
+        } else{
+            ROS_INFO("JoystickController.cpp: Requesting same controller, ignoring");
+        }
     }
     else
     {
-        qDebug() << "The requested joystick does not exist";
+        ROS_WARN("JoystickController.cpp: The requested joystick interface does not exist");
     }
+}
+
+void JoystickController::joystickDataSlot(JoystickData data) {
+    mActiveController->handleJoystickData(data);
 }

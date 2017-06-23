@@ -12,13 +12,14 @@
 #include "DriveController.h"
 #include "JoystickController.h"
 #include "DCDCController.h"
+#include "ArmController.h"
 
 
 class MainController : public QObject {
     Q_OBJECT
 public:
     MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh);
-    virtual ~MainController() {};
+    virtual ~MainController();
 
 private:
     ros::NodeHandle& mNH;
@@ -27,8 +28,11 @@ private:
     MainView mMainView;
 
     DriveController mDriveController;
+    ArmController mArmController;
     JoystickController mJoystickController;
     DCDCController dcdcController;
+
+    QList<QThread*> mThreadList;
 };
 
 

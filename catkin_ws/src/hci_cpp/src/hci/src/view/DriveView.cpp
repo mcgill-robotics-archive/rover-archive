@@ -84,8 +84,6 @@ DriveView::DriveView(QWidget *parent) : QWidget(parent) {
         vbox1->addItem(statusGrid);
     }
 
-
-    connect(this, &DriveView::steeringModeChanged, this, &DriveView::updateSteeringMode);
     this->setLayout(vbox1);
 }
 

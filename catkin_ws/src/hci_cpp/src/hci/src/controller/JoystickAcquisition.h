@@ -7,6 +7,8 @@
 #define HCI_CPP_JOYSTICKACQUISITION_H
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QSlider>
+#include <QtWidgets/QPushButton>
 #include <model/JoystickData.h>
 
 /**
@@ -25,7 +27,29 @@ public:
 
     virtual ~JoystickAcquisition() {};
 signals:
-    void joystickDataUpdated(JoystickData& data);
+    void joystickDataUpdated(JoystickData data);
+
+private:
+    QSlider* a1;
+    QSlider* a2;
+    QSlider* a3;
+    QSlider* a4;
+
+    QPushButton* b1;
+    QPushButton* b2;
+    QPushButton* b3;
+    QPushButton* b4;
+    QPushButton* b5;
+    QPushButton* b6;
+    QPushButton* b7;
+    QPushButton* b8;
+    QPushButton* b9;
+    QPushButton* b10;
+    QPushButton* b11;
+    QPushButton* b12;
+
+private slots:
+    void updateCommand();
 };
 
 

@@ -69,8 +69,10 @@ private:
     JoystickView* mJoystickView;
     QHash<QString, JoystickInterface*> mControllerHash;
     JoystickInterface* mActiveController;
-
     JoystickAcquisition* mJoystickAcquisition;
+
+private slots:
+    void joystickDataSlot(JoystickData data);
 };
 
 
