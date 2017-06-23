@@ -25,6 +25,9 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     qRegisterMetaType<DriveStatusData>("DriveStatusData");
     qRegisterMetaType<SteeringMode>("SteeringMode");
     qRegisterMetaType<JoystickData>("JoystickData");
+    qRegisterMetaType<ArmMode>("ArmMode");
+    qRegisterMetaType<ArmJoint>("ArmJoint");
+    qRegisterMetaType<ArmClosedLoopMode>("ArmClosedLoopMode");
 
 
     // Move ROS Controllers to new threads to enable subscriber spins

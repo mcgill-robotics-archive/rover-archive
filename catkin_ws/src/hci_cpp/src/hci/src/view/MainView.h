@@ -13,6 +13,7 @@
 #include "AttitudeView.h"
 #include "PowerSupplyInformation.h"
 #include "DriveView.h"
+#include "ArmView.h"
 
 class MainView : public QWidget{
 
@@ -46,6 +47,7 @@ private:
     PowerSupplyInformation* powerSupplyInformation;
     DriveView* driveView;
     QLabel* pMotorEnableStatus;
+    ArmView* armView;
 
 };
 

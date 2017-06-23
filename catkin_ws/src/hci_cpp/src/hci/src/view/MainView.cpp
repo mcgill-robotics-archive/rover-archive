@@ -24,10 +24,13 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     powerSupplyInformation = new PowerSupplyInformation(this);
     driveView = new DriveView(this);
     joystickView = new JoystickView(this);
+    armView = new ArmView(this);
 
     vbox->addWidget(driveView);
     addLine(vbox);
     vbox->addWidget(joystickView);
+    addLine(vbox);
+    vbox->addWidget(armView);
     addLine(vbox);
     vbox->addWidget(attitudeView);
     addLine(vbox);
