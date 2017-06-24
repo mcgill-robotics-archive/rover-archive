@@ -25,6 +25,21 @@ Initial Setup
 ---
 Simply follow the compsys setup and select Rover when prompted.
 
+Building and Linting
+---
+We use catkin_tools to build our system. From the `catkin_ws` directory:
+
+**Build using**
+```bash
+catkin build
+```
+**Lint**
+```bash
+catkin lint --explain src
+```
+
+Note that linting is for now only covering things like dependencies and build issues.
+
 Running the Rover
 ---
 ### First time connection
