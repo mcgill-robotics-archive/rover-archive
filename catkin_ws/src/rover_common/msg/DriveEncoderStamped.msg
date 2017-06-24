@@ -1,2 +1,2 @@
-Header header
-DriveEncoder drive_encoder
+std_msgs/Header header
+rover_common/DriveEncoder drive_encoder
