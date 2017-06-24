@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(arm_moveit)
 
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  arm_description
+)
 
 catkin_package()
 

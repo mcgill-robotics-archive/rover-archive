@@ -4,10 +4,10 @@ project(omnicam)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED
-    std_msgs
-    message_generation
-    )
+find_package(catkin REQUIRED COMPONENTS
+  std_msgs
+  message_generation
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -100,7 +100,9 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES omnicam
-#  CATKIN_DEPENDS other_catkin_pkg
+  CATKIN_DEPENDS
+  message_runtime
+  std_msgs
 #  DEPENDS system_lib
 )
 
@@ -181,3 +183,6 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+catkin_install_python(PROGRAMS scripts/unwrap.py scripts/crop_server.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   message_generation
+  message_runtime
   roscpp
   tf
 )
@@ -36,7 +37,7 @@ generate_messages(
   std_msgs
 )
 
-catkin_package()
+catkin_package(CATKIN_DEPENDS message_runtime std_msgs geometry_msgs sensor_msgs)
 
 ###########
 ## Build ##
@@ -73,9 +74,12 @@ if(NOT APPLE)
     #############
 
     ## Mark executables and/or libraries for installation
-    install(TARGETS ahrs_node 
+    install(TARGETS ahrs_node
       ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
       LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
       RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     )
+
+    catkin_install_python(PROGRAMS src/tf_broadcaster.py
+                          DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endif()

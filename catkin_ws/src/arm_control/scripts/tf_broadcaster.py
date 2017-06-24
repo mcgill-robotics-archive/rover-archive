@@ -48,4 +48,3 @@ class ArmTf(object):
 
 if __name__ == "__main__" :
     tf = ArmTf()
-    

@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   rospy
   std_msgs
+  roscpp
 )
 
 add_message_files(
@@ -36,6 +37,14 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
-  CATKIN_DEPENDS   message_runtime rospy 
+  CATKIN_DEPENDS
+  message_runtime
+  rospy
+  std_msgs
+  geometry_msgs
 )
 
+catkin_install_python(
+  PROGRAMS scripts/tf_broadcaster.py scripts/firmware_remap.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

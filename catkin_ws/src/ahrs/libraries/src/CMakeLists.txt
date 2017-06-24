@@ -20,3 +20,9 @@ add_library(ahrs_lib STATIC
             ${Boost_SYSTEM_LIBRARIES})
 
 target_link_libraries(ahrs_lib sbgCom common)
+
+install(TARGETS common ahrs_lib
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

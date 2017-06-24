@@ -12,5 +12,16 @@ find_package(catkin REQUIRED COMPONENTS
   # rover_msgs
   sensor_msgs
   std_msgs
+  rover_common
+  ahrs
 )
 
+catkin_package(
+  CATKIN_DEPENDS
+  std_msgs
+  geometry_msgs
+  sensor_msgs
+)
+
+catkin_install_python(PROGRAMS src/hci.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

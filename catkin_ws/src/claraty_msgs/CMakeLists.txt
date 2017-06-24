@@ -53,6 +53,11 @@ generate_messages(
 ## catkin specific configuration ##
 ###################################
 catkin_package(
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS
+  message_runtime
+  nav_msgs
+  std_msgs
+  actionlib_msgs
+  sensor_msgs
+  geometry_msgs
 )
-

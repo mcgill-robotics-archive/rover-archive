@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The odometry package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
@@ -38,6 +38,7 @@
   <build_depend>rospy</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>robot_localization</build_depend>
+  <build_depend>message_runtime</build_depend>
 
   <run_depend>geometry_msgs</run_depend>
   <run_depend>rospy</run_depend>

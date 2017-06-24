@@ -24,6 +24,16 @@ find_package(catkin REQUIRED COMPONENTS
 
 
 catkin_package(
-    CATKIN_DEPENDS  std_msgs geometry_msgs
+  CATKIN_DEPENDS
+  std_msgs
+  geometry_msgs
+  message_runtime
 )
 
+catkin_install_python(
+  PROGRAMS
+  scripts/tf_setup.py
+  scripts/feedSwitcher.py
+  scripts/reduce_fps.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
+  CATKIN_DEPENDS
+  std_msgs
 )
 
 include_directories(
@@ -19,3 +21,9 @@ include_directories(
 
 add_executable(state_publisher src/state_publisher.cpp)
 target_link_libraries(state_publisher ${catkin_LIBRARIES})
+
+install(TARGETS state_publisher
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

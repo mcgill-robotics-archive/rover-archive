@@ -5,4 +5,7 @@ project(lidar)
 find_package(catkin REQUIRED COMPONENTS
   urg_node
   tf2_ros
+  tf2
 )
+
+catkin_package()

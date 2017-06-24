@@ -120,7 +120,14 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES odometry
-#  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy std_msgs tf
+  CATKIN_DEPENDS
+  nav_msgs
+  tf2_geometry_msgs
+  geographic_msgs
+  std_msgs
+  sensor_msgs
+  geometry_msgs
+  diagnostic_msgs
 #  CATKIN_DEPENDS diagnostic_msgs diagnostic_updater geographic_msgs geometry_msgs message_filters message_generation message_runtime nav_msgs roscpp roslint sensor_msgs std_msgs tf2 tf2_geometry_msgs tf2_ros
 #  DEPENDS system_lib
 )
@@ -182,3 +189,5 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+catkin_install_python(PROGRAMS scripts/ahrs_manager.py scripts/wheel_odom.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
