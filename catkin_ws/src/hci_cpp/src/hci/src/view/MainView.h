@@ -35,10 +35,16 @@ public slots:
     void setOutputPower(double value);
     void setTemperature(double value);
     void setMotorEnable(bool enable);
+    void setArmMode(ArmMode mode);
+    void changeArmJoint(ArmJoint joint);
+    void changeCloseLoopMode(ArmClosedLoopMode mode);
 
 signals:
     void steeringModeChanged(const SteeringMode& mode);
     void joystickModeChanged(QString modeText);
+    void closeLoopModeChanged(ArmClosedLoopMode mode);
+    void armJointChanged(ArmJoint joint);
+    void armModeChanged(ArmMode mode);
 
 private:
     void addLine(QVBoxLayout* layout);

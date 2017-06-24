@@ -6,6 +6,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QButtonGroup>
 #include "ArmView.h"
+#include <QDebug>
 
 ArmView::ArmView(QWidget *parent) : QWidget(parent) {
     QHBoxLayout* h1 = new QHBoxLayout;

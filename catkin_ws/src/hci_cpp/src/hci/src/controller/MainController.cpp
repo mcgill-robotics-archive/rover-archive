@@ -10,7 +10,7 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         mPrivateNH(pnh),
         mMainView(),
         mDriveController(nh),
-        mArmController(),
+        mArmController(nh),
         mJoystickController(mMainView.getJoystickView()),
         dcdcController(nh)
 {
@@ -29,7 +29,6 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     qRegisterMetaType<ArmJoint>("ArmJoint");
     qRegisterMetaType<ArmClosedLoopMode>("ArmClosedLoopMode");
 
-
     // Move ROS Controllers to new threads to enable subscriber spins
     {
         QThread *driveControllerThread = new QThread;                                                       // Create thread object
@@ -43,6 +42,12 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         dcdcController.moveToThread(dcdcControllerThread);
         connect(dcdcControllerThread, &QThread::started, &dcdcController, &DCDCController::process);
         dcdcControllerThread->start();
+
+        QThread *armControllerThread = new QThread;
+        mThreadList.append(armControllerThread);
+        mArmController.moveToThread(armControllerThread);
+        connect(armControllerThread, &QThread::started, &mArmController, &ArmController::process);
+        armControllerThread->start();
     }
 
     // Connect all the stuff
@@ -50,6 +55,13 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     connect(&mDriveController, &DriveController::wheelStatusUpdated, &mMainView, &MainView::updateDriveStatus);
     connect(&mDriveController, &DriveController::motorEnableChanged, &mMainView, &MainView::setMotorEnable);
     connect(&mMainView, &MainView::steeringModeChanged, this, [this](SteeringMode mode) {mDriveController.updateSteeringMode(mode);}); // directly call the slot (somehow the standard connection does not work) please investigate
+
+    connect(&mArmController, &ArmController::motorEnableChanged, &mMainView, &MainView::setMotorEnable);
+    connect(&mArmController, &ArmController::armModeChanged , &mMainView, &MainView::setArmMode);
+    connect(&mArmController, &ArmController::armJointChanged , &mMainView, &MainView::changeArmJoint);
+    connect(&mMainView, &MainView::armJointChanged, this, [this](ArmJoint joint){mArmController.changeOpenLoopJoint(joint);});
+    connect(&mMainView, &MainView::armModeChanged, this, [this](ArmMode armMode){mArmController.changeArmMode(armMode);});
+    connect(&mMainView, &MainView::closeLoopModeChanged, this, [this](ArmClosedLoopMode mode){mArmController.changeCloseLoopMode(mode);});
 
     connect(&mMainView, &MainView::joystickModeChanged, &mJoystickController, &JoystickController::setActiveController);
 

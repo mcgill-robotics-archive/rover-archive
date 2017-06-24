@@ -40,6 +40,9 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::steeringModeChanged);
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::updateSteeringMode);
     connect(joystickView, &JoystickView::modeChanged, this, &MainView::joystickModeChanged);
+    connect(armView, &ArmView::closeLoopModeChanged, this, &MainView::closeLoopModeChanged);
+    connect(armView, &ArmView::armJointChanged, this, &MainView::armJointChanged);
+    connect(armView, &ArmView::armModeChanged, this, &MainView::armModeChanged);
 }
 
 void MainView::addLine(QVBoxLayout *layout) {
@@ -92,4 +95,16 @@ void MainView::setOutputPower(double value) {
 
 void MainView::setTemperature(double value) {
     powerSupplyInformation->setTemperature(value);
+}
+
+void MainView::setArmMode(ArmMode mode) {
+    armView->setArmMode(mode);
+}
+
+void MainView::changeArmJoint(ArmJoint joint) {
+    armView->changeArmJoint(joint);
+}
+
+void MainView::changeCloseLoopMode(ArmClosedLoopMode mode) {
+    armView->changeCloseLoopMode(mode);
 }

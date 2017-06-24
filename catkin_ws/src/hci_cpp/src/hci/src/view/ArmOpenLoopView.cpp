@@ -5,6 +5,7 @@
 
 #include <QtWidgets/QGridLayout>
 #include "ArmOpenLoopView.h"
+#include <QDebug>
 
 ArmOpenLoopView::ArmOpenLoopView(QWidget *parent) : QWidget(parent) {
     QGridLayout* grid = new QGridLayout;

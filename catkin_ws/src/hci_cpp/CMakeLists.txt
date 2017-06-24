@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
         std_msgs
         drive_control
         rover_common
+        arm_control
         )
 
 include_directories(
