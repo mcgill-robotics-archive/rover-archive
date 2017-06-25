@@ -72,3 +72,4 @@ build_isolated/
 
 # MoveIt Specifics
 .rosinstall*
+*.bag

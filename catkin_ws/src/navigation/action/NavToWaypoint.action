@@ -1,0 +1,8 @@
+# Goal is a waypoint in the /map frame
+sensor_msgs/NavSatFix goal
+---
+# Result is true when we are there
+bool finished
+---
+# Feedback is the relative distance from the goal
+sensor_msgs/NavSatFix feedback

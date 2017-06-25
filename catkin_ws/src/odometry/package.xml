@@ -9,10 +9,6 @@
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
 
-
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
   <license>MIT</license>
 
 
@@ -29,6 +25,7 @@
   <author>Richard Zhang</author>
   <author>Malcolm Watt</author>
   <author>Jo Potochny</author>
+  <author>Bei Chen Liu</author>
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
   <!-- Example: -->

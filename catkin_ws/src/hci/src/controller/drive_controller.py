@@ -134,6 +134,7 @@ class DriveController(JoystickBase):
 
     def _filter_autonomous_nav(self, message):
         self.autonomous_message = message
+        self.autonomous_message.velocity_command.angular.z *= -1 
 
     def _publish(self):
         msg = DriveCommand()
