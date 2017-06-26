@@ -18,9 +18,9 @@ struct DriveStatusData
 
 enum SteeringMode
 {
-    ACKERMANN = 0,
-    POINT = 1,
-    TRANSLATE = 2
+    ACKERMANN = 1,
+    POINT = 2,
+    TRANSLATE = 3
 };
 
 

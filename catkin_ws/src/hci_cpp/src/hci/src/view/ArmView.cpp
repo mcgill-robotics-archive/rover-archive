@@ -30,12 +30,14 @@ ArmView::ArmView(QWidget *parent) : QWidget(parent) {
     connect(closedView, &ArmClosedLoopView::closeLoopModeChanged, this, &ArmView::closeLoopModeChanged);
     connect(openMode, &QPushButton::clicked, this, &ArmView::buttonModeClicked);
     connect(closedMode, &QPushButton::clicked, this, &ArmView::buttonModeClicked);
-    openMode->click();
 
     v1->addItem(h1);
     v1->addWidget(closedView);
     v1->addWidget(openView);
     setLayout(v1);
+    closedView->setDisabled(true);
+    openView->setDisabled(true);
+
 }
 
 void ArmView::setArmMode(ArmMode mode) {
@@ -43,6 +45,8 @@ void ArmView::setArmMode(ArmMode mode) {
     {
         closedView->hide();
         openView->show();
+        closedView->setDisabled(true);
+        openView->setDisabled(false);
         openMode->setChecked(true);
         closedMode->setChecked(false);
     }
@@ -50,6 +54,8 @@ void ArmView::setArmMode(ArmMode mode) {
     {
         closedView->show();
         openView->hide();
+        closedView->setDisabled(false);
+        openView->setDisabled(true);
         openMode->setChecked(false);
         closedMode->setChecked(true);
     }

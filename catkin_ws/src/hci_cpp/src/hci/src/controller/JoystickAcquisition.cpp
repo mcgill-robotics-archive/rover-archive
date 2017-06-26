@@ -107,5 +107,5 @@ void JoystickAcquisition::updateCommand() {
     data.buttons[11] = b12->isDown();
 
     emit joystickDataUpdated(data);
-    qDebug() << "Sent new joystick data";
+//    qDebug() << "Sent new joystick data";
 }

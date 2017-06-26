@@ -8,7 +8,7 @@
 
 enum ArmJoint
 {
-    BASE,
+    BASE = 1,
     D1,
     D2,
     END_EFFECTOR
@@ -16,13 +16,13 @@ enum ArmJoint
 
 enum ArmMode
 {
-    CLOSED,
+    CLOSED = 1,
     OPEN
 };
 
 enum ArmClosedLoopMode
 {
-    POSITION,
+    POSITION = 1,
     ORIENTATION
 };
 #endif //HCI_CPP_ARMDATA_H
