@@ -23,7 +23,7 @@ public:
     MainView(QWidget* parent=0);
     virtual ~MainView() {};
 
-    JoystickView* getJoystickView();;
+    JoystickView* getJoystickView();
 
 public slots:
     void updateSteeringMode(const SteeringMode& mode);

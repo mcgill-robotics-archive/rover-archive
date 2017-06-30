@@ -7,7 +7,7 @@
 #define HCI_CPP_ARMCONTROLLER_H
 
 #include <QtWidgets/QWidget>
-#include <ros/node_handle.h>
+#include <ros/ros.h>
 #include <model/ArmData.h>
 #include <arm_control/JointVelocities.h>
 #include "JoystickInterface.h"

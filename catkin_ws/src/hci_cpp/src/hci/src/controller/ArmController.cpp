@@ -4,16 +4,12 @@
 //
 
 #include "ArmController.h"
-#include <QDebug>
-#include <ros/node_handle.h>
-#include <arm_control/JointVelocities.h>
 
 ArmController::ArmController(ros::NodeHandle &nh): nodeHandle(nh) {
     mCommandPublisher = nodeHandle.advertise<arm_control::JointVelocities>("joint_velocitiy", 100);
 }
 
 void ArmController::handleJoystickData(JoystickData data) {
-    qDebug() << "Joystick data received in Arm Controller";
     enableMotors(data.buttons[0]);
 
     if (data.buttons[6])
@@ -79,6 +75,7 @@ void ArmController::changeOpenLoopJoint(ArmJoint joint) {
 }
 
 void ArmController::changeCloseLoopMode(ArmClosedLoopMode mode) {
+    Q_UNUSED(mode)
     ROS_WARN("Closed loop controller not used");
 }
 

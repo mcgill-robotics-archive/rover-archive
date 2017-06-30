@@ -16,6 +16,10 @@ JoystickAcquisition::JoystickAcquisition(QWidget *parent) : QWidget(parent) {
     a2 = new QSlider(Qt::Vertical, this);
     a3 = new QSlider(Qt::Vertical, this);
     a4 = new QSlider(Qt::Vertical, this);
+    a1->setRange(-100, 100);
+    a2->setRange(-100, 100);
+    a3->setRange(-100, 100);
+    a4->setRange(-100, 100);
 
     QHBoxLayout* hbox = new QHBoxLayout;
     hbox->addWidget(a1);

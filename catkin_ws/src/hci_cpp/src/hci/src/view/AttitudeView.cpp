@@ -5,7 +5,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include "AttitudeView.h"
 
-AttitudeView::AttitudeView(QWidget *parent) {
+AttitudeView::AttitudeView(QWidget *parent) : QWidget(parent) {
     QHBoxLayout * hbox = new QHBoxLayout;
     QVBoxLayout * vbox = new QVBoxLayout;
 
