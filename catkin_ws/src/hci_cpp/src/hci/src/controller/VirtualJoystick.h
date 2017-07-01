@@ -20,12 +20,13 @@
  *
  * TODO: implement real acquisition class
  */
-class JoystickAcquisition : public QWidget {
+class VirtualJoystick : public QWidget {
 Q_OBJECT
 public:
-    JoystickAcquisition(QWidget *parent = 0);
+    VirtualJoystick(QWidget *parent = 0);
 
-    virtual ~JoystickAcquisition() {};
+    virtual ~VirtualJoystick() {};
+
 signals:
     void joystickDataUpdated(JoystickData data);
 

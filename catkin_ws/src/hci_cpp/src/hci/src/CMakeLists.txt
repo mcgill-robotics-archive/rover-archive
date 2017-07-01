@@ -19,7 +19,7 @@ file(GLOB CONTROLLER_HEADERS controller/[^.]*.h)
 file(GLOB QRC_SOURCES resources/[^.]*.qrc)
 qt5_add_resources(GENERATED_RESOURCES ${QRC_SOURCES})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 add_executable(hci
         ${HCI_SOURCES}

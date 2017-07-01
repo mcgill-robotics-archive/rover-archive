@@ -9,7 +9,8 @@
 #include <QObject>
 #include <view/JoystickView.h>
 #include "JoystickInterface.h"
-#include "JoystickAcquisition.h"
+#include "VirtualJoystick.h"
+#include "HardwareJoystickController.h"
 
 /**
  * @brief Main controller class for joystick applications
@@ -69,7 +70,17 @@ private:
     JoystickView* mJoystickView;
     QHash<QString, JoystickInterface*> mControllerHash;
     JoystickInterface* mActiveController;
-    JoystickAcquisition* mJoystickAcquisition;
+
+    VirtualJoystick* mVirtualJoystick;
+    HardwareJoystickController* mHardwareJoystick;
+
+    enum JoystickType
+    {
+        Hardware = 1,
+        Software = 2
+    };
+
+    JoystickType mType;
 
 private slots:
     void joystickDataSlot(JoystickData data);
