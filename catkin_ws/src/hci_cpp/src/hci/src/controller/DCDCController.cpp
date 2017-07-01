@@ -17,9 +17,11 @@ void DCDCController::process() {
     ros::Subscriber output_voltageSubscriber = mNh.subscribe("/dcdc_nuc/output_voltage", 1, &DCDCController::output_voltage_ros_cb, this);
     ros::Subscriber temperatureSubscriber = mNh.subscribe("/dcdc_nuc/temperature", 1, &DCDCController::temperature_ros_cb, this);
 
+    ros::Rate r(10);
     while(mNh.ok())
     {
         ros::spinOnce();
+        r.sleep();
     }
     ROS_WARN("DCDC Converted controller exited");
 }
