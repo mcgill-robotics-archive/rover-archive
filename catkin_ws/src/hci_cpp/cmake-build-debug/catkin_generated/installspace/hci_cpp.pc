@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: hci_cpp
+Description: Description of hci_cpp
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: roscpp sensor_msgs std_msgs drive_control rover_common arm_control

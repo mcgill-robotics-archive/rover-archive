@@ -1,0 +1,6 @@
+# Hashes of file build rules.
+7b80266c06da5ff4f210ae872c82148b CMakeFiles/clean_test_results
+93aa2a836fdf0810b71f5af1fd0ab5c6 src/camera_viewer/src/CMakeFiles/hci_cpp_camera_viewer_automoc
+813f8005760f3f46f8465f732e401059 src/hci/src/CMakeFiles/hci_automoc
+1be4d5d27c2157336a180a6ddfd95782 src/hci/src/qrc_resource.cpp
+14b311651c338bc2c804d025b4742157 src/widgets/src/CMakeFiles/qFlightInstruments_automoc
