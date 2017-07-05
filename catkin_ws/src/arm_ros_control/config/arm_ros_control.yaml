@@ -29,11 +29,3 @@ arm:
     type: effort_controllers/JointPositionController
     joint: roll2
     pid: {p: 1.0, i: 0.5, d: 1.0}
-  slide_finger1_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: slide_finger1
-    pid: {p: 2.0, i: 0.5, d: 1.0}
-  slide_finger2_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: slide_finger2
-    pid: {p: 2.0, i: 0.5, d: 1.0}

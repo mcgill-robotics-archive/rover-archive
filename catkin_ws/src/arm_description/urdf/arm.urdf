@@ -489,7 +489,7 @@
   </link>
   <joint
     name="slide_finger1"
-    type="prismatic">
+    type="fixed">
     <origin
       xyz="0.00160020 0.038949 0"
       rpy="0 1.5708 0" />
@@ -505,15 +505,6 @@
       effort="200.0"
       velocity="2.0" />
   </joint>
-  <transmission name="slide_finger1_tran">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="slide_finger1">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="slide_finger1_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </actuator>
-  </transmission>
   <link
     name="finger2">
     <inertial>
@@ -556,7 +547,7 @@
   </link>
   <joint
     name="slide_finger2"
-    type="prismatic">
+    type="fixed">
     <origin
       xyz="-0.00160020 0.038949 0"
       rpy="0 -1.5708 0" />
@@ -572,13 +563,4 @@
       effort="200.0"
       velocity="2.0"  />
   </joint>
-  <transmission name="slide_finger2_tran">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="slide_finger2">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="slide_finger2_motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </actuator>
-  </transmission>
 </robot>

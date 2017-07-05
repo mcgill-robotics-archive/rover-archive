@@ -1,5 +1,7 @@
 controller_list:
   - name: fake_Arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
     joints:
       - base_yaw
       - base_pitch
@@ -7,7 +9,4 @@ controller_list:
       - roll1
       - pitch3
       - roll2
-  - name: fake_Grip_controller
-    joints:
-      - slide_finger1
 

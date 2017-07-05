@@ -1,0 +1,3 @@
+<launch>
+  <node name="joints_as" pkg="arm_moveit" type="joints_as.py"/>
+</launch>
