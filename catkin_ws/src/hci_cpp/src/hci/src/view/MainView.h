@@ -14,6 +14,7 @@
 #include "PowerSupplyInformation.h"
 #include "DriveView.h"
 #include "ArmView.h"
+#include "NavCameraView.h"
 
 class MainView : public QWidget{
 
@@ -24,6 +25,7 @@ public:
     virtual ~MainView() {};
 
     JoystickView* getJoystickView();
+    NavCameraView* getNavCamView();
 
 public slots:
     void updateSteeringMode(const SteeringMode& mode);
@@ -54,6 +56,7 @@ private:
     DriveView* driveView;
     QLabel* pMotorEnableStatus;
     ArmView* armView;
+    NavCameraView* navCameraView;
 
 };
 

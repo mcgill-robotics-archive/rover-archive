@@ -8,6 +8,7 @@
 
 MainView::MainView(QWidget *parent) : QWidget(parent) {
     QVBoxLayout * vbox = new QVBoxLayout;
+    QHBoxLayout * hbox = new QHBoxLayout;
 
     // Motor Enable information:
     {
@@ -25,6 +26,7 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     driveView = new DriveView(this);
     joystickView = new JoystickView(this);
     armView = new ArmView(this);
+    navCameraView = new NavCameraView(this);
 
     vbox->addWidget(driveView);
     addLine(vbox);
@@ -35,7 +37,10 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     vbox->addWidget(attitudeView);
     addLine(vbox);
     vbox->addWidget(powerSupplyInformation);
-    setLayout(vbox);
+
+    hbox->addWidget(navCameraView);
+    hbox->addItem(vbox);
+    setLayout(hbox);
 
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::steeringModeChanged);
     connect(driveView, &DriveView::steeringModeChanged, this, &MainView::updateSteeringMode);
@@ -107,4 +112,8 @@ void MainView::changeArmJoint(ArmJoint joint) {
 
 void MainView::changeCloseLoopMode(ArmClosedLoopMode mode) {
     armView->changeCloseLoopMode(mode);
+}
+
+NavCameraView *MainView::getNavCamView() {
+    return navCameraView;
 }

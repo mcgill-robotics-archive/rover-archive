@@ -3,6 +3,7 @@
 // david.lavoie-boutin (at) mail.mcgill.ca
 //
 
+#include <rimstreamer/NyanVideoFeed.h>
 #include "MainController.h"
 
 MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
@@ -73,6 +74,22 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     mMainView.show();
 
     ROS_INFO("MainController Initialized");
+
+
+    // FIXME: Temporary video feed creation, move to dedicated controller and use actual cameras.
+    // This is where people will witness the power of this interface and GStreamer for video processing, mouahahahahaha
+    rimstreamer::GstVideoFeedPtr catFeed(new rimstreamer::NyanVideoFeed(rimstreamer::CAT));
+    rimstreamer::GstVideoFeedPtr catFeed2(new rimstreamer::NyanVideoFeed(rimstreamer::DOG));
+    rimstreamer::GstVideoFeedPtr catFeed3(new rimstreamer::NyanVideoFeed(rimstreamer::CAT));
+
+    mMainView.getNavCamView()->setVideoFeed(catFeed, NavCameraView::TOP);
+    mMainView.getNavCamView()->setVideoFeed(catFeed2, NavCameraView::LEFT);
+    mMainView.getNavCamView()->setVideoFeed(catFeed3, NavCameraView::RIGHT);
+
+    catFeed->play();
+    catFeed2->play();
+    catFeed3->play();
+
 }
 
 MainController::~MainController()
