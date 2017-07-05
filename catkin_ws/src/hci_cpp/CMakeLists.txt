@@ -19,12 +19,13 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 
+catkin_package(CATKIN_DEPENDS roscpp sensor_msgs std_msgs drive_control rover_common arm_control)
+
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5GStreamer 1.2.0 REQUIRED)
 find_package(rimstreamer REQUIRED)
 
 include_directories(${QTGSTREAMER_INCLUDES})
 include_directories(${RIMSTREAMER_INCLUDE_DIRS})
-link_directories(${RIMSTREAMER_LIBRARIES})
 
 add_subdirectory(src)
