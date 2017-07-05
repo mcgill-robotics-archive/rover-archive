@@ -2,7 +2,7 @@
 <package>
   <name>hci_cpp</name>
   <version>0.0.0</version>
-  <description>The hci_cpp package</description>
+  <description>C++ implementation of the remote control software for McGill Robotics Rover Design Team</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
