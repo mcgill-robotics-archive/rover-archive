@@ -32,19 +32,16 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     // Move ROS Controllers to new threads to enable subscriber spins
     {
         QThread *driveControllerThread = new QThread;                                                       // Create thread object
-        mThreadList.append(driveControllerThread);                                                          // Record thread in list
         mDriveController.moveToThread(driveControllerThread);                                               // Assign QObject to thread
         connect(driveControllerThread, &QThread::started, &mDriveController, &DriveController::process);    // Connect intializing method
         driveControllerThread->start();                                                                     // Start thread
 
         QThread *dcdcControllerThread = new QThread;
-        mThreadList.append(dcdcControllerThread);
         dcdcController.moveToThread(dcdcControllerThread);
         connect(dcdcControllerThread, &QThread::started, &dcdcController, &DCDCController::process);
         dcdcControllerThread->start();
 
         QThread *armControllerThread = new QThread;
-        mThreadList.append(armControllerThread);
         mArmController.moveToThread(armControllerThread);
         connect(armControllerThread, &QThread::started, &mArmController, &ArmController::process);
         armControllerThread->start();
@@ -78,10 +75,6 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     ROS_INFO("MainController Initialized");
 }
 
-MainController::~MainController() {
-    for (int i = 0; i < mThreadList.length(); i++)
-    {
-        delete mThreadList.at(i);
-        mThreadList.removeAt(i);
-    }
+MainController::~MainController()
+{
 }

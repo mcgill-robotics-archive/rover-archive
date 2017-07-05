@@ -28,6 +28,7 @@ void HardwareJoystickController::process() {
         {
             mData.buttons[event.number] = event.value;
         }
+
         else if (event.isAxis())
         {
             if (event.number == 0)
@@ -39,7 +40,6 @@ void HardwareJoystickController::process() {
             else if (event.number == 3)
                 mData.a4 = (float) event.value / (float) JoystickEvent::MAX_AXES_VALUE;
         }
-
 
         emit joystickDataUpdated(mData);
         r.sleep();

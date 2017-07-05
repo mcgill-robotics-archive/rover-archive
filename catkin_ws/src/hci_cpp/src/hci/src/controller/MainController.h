@@ -31,8 +31,6 @@ private:
     ArmController mArmController;
     JoystickController mJoystickController;
     DCDCController dcdcController;
-
-    QList<QThread*> mThreadList;
 };
 
 
