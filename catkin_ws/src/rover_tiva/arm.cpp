@@ -169,13 +169,8 @@ int main(void) {
   while (1) {
     if (nh.getHardware()->time() - time_last_update >= 10) {
       // Brake Enable/Disable
-      if (!vel_a) {
-        brake_disengaged_a = false;
-      }
-
-      if (!vel_b) {
-        brake_disengaged_b = false;
-      }
+      brake_disengaged_a = (bool) vel_a;
+      brake_disengaged_b = (bool) vel_b;
 
       wait_brakes = false;
       wait_brakes |= bdc_set_brake(motor_a, brake_disengaged_a);
