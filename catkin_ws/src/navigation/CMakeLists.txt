@@ -9,14 +9,14 @@ project(navigation)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   actionlib
+  actionlib_msgs
+  genmsg
+  geometry_msgs
+  message_generation
   nav_msgs
   roscpp
   rospy
-  geometry_msgs
-  genmsg
-  actionlib_msgs
   sensor_msgs
-  message_generation
 )
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -108,13 +108,13 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES navigation
   CATKIN_DEPENDS
-  message_runtime
   actionlib_msgs
+  geometry_msgs
+  message_runtime
   nav_msgs
   roscpp
   rospy
   sensor_msgs
-  geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -208,7 +208,7 @@ include_directories(
 # catkin_add_nosetests(test)
 
 catkin_install_python(PROGRAMS
-                      scripts/navigation_action_client.py
-                      scripts/navigation_action_server.py
-                      scripts/navigation_command_node.py
+                      scripts/${PROJECT_NAME}_action_client.py
+                      scripts/${PROJECT_NAME}_action_server.py
+                      scripts/${PROJECT_NAME}_command_node.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

@@ -2,8 +2,8 @@
 <package>
   <name>arm_gazebo</name>
   <version>0.0.1</version>
-  <description>The arm_gazebo package</description>
- 
+  <description>Relevant worlds and launch files for gazebo sim with arm.</description>
+
   <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
   <author email="adrien.sauvestre@mail.mcgill.ca">Adrien Sauvestre</author>
 

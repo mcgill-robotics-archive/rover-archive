@@ -8,11 +8,11 @@ project(autonomy)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  dynamic_reconfigure
+  message_generation
   roscpp
   rospy
-  dynamic_reconfigure
   std_msgs
-  message_generation
 )
 
 ##   * uncomment the add_*_files sections below as needed

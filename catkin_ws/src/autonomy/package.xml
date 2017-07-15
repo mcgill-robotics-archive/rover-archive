@@ -2,7 +2,7 @@
 <package>
   <name>autonomy</name>
   <version>0.0.0</version>
-  <description>The autonomy package</description>
+  <description>Handle autonomous navigation.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

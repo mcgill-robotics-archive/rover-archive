@@ -1,6 +1,6 @@
 [submodule "catkin_ws/src/rosserial_tivac"]
 	path = catkin_ws/src/rosserial_tivac
-	url = https://github.com/vmatos/rosserial_tivac
+	url = https://github.com/mcgill-robotics/rosserial_tivac
 [submodule "catkin_ws/src/dcdc_nuc"]
 	path = catkin_ws/src/dcdc_nuc
 	url = git@github.com:mcgill-robotics/ros-dcdc-nuc

@@ -10,7 +10,7 @@ else()
     file(GLOB COM_SRCS
         src/comWrapper/comSerialUnix.c
         src/comWrapper/comDataLog.c  )
-endif(WIN32)
+endif()
 
 file(GLOB COM_HEADER src/comWrapper/[^.]*.h  )
 

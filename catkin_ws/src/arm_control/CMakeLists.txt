@@ -7,17 +7,17 @@ project(arm_control)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   message_generation
+  roscpp
   rospy
   std_msgs
-  roscpp
 )
 
 add_message_files(
   FILES
-  JointVelocities.msg
   ControlMode.msg
-  JointPosition.msg
   EncoderPosition.msg
+  JointPosition.msg
+  JointVelocities.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -38,10 +38,10 @@ generate_messages(
 
 catkin_package(
   CATKIN_DEPENDS
+  geometry_msgs
   message_runtime
   rospy
   std_msgs
-  geometry_msgs
 )
 
 catkin_install_python(

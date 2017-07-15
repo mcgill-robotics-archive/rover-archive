@@ -5,8 +5,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rosserial_client
   rosserial_tivac
-  std_msgs
   rover_common
+  std_msgs
 )
 
 rosserial_generate_ros_lib(
@@ -14,7 +14,7 @@ rosserial_generate_ros_lib(
   SCRIPT make_libraries_tiva
 )
 
-add_dependencies(rover_tiva_ros_lib
+add_dependencies(${PROJECT_NAME}_ros_lib
   rover_common_generate_messages_cpp
   rover_common_generate_messages
   rover_common_generate_messages_py

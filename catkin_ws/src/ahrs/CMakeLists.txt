@@ -3,11 +3,11 @@ project(ahrs)
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  sensor_msgs
-  std_msgs
   message_generation
   message_runtime
   roscpp
+  sensor_msgs
+  std_msgs
   tf
 )
 
@@ -37,7 +37,12 @@ generate_messages(
   std_msgs
 )
 
-catkin_package(CATKIN_DEPENDS message_runtime std_msgs geometry_msgs sensor_msgs)
+catkin_package(CATKIN_DEPENDS
+  geometry_msgs
+  message_runtime
+  sensor_msgs
+  std_msgs
+)
 
 ###########
 ## Build ##
@@ -47,39 +52,39 @@ if(NOT APPLE)
 
   find_package(Boost REQUIRED COMPONENTS system thread)
 
-    include_directories(libraries/include/ahrs)
-    include_directories(libraries/include/common)
-    include_directories(vendors/sbgCom/src)
+  include_directories(libraries/include/${PROJECT_NAME})
+  include_directories(libraries/include/common)
+  include_directories(vendors/sbgCom/src)
 
-    add_subdirectory(vendors)
-    add_subdirectory(libraries)
+  add_subdirectory(vendors)
+  add_subdirectory(libraries)
 
-    add_executable(ahrs_node
-        src/ahrs_node.cpp
-    )
+  add_executable(${PROJECT_NAME}_node
+    src/${PROJECT_NAME}_node.cpp
+  )
 
-    add_dependencies(ahrs_node
-        ahrs_generate_messages_cpp
-    )
+  add_dependencies(${PROJECT_NAME}_node
+    ${PROJECT_NAME}_generate_messages_cpp
+  )
 
-    target_link_libraries(
-        ahrs_node
-        ${catkin_LIBRARIES}
-        ahrs_lib
-        common
-    )
+  target_link_libraries(
+    ${PROJECT_NAME}_node
+    ${catkin_LIBRARIES}
+    ${PROJECT_NAME}_lib
+    common
+  )
 
-    #############
-    ## Install ##
-    #############
+  #############
+  ## Install ##
+  #############
 
-    ## Mark executables and/or libraries for installation
-    install(TARGETS ahrs_node
-      ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-      LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-      RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-    )
+  ## Mark executables and/or libraries for installation
+  install(TARGETS ${PROJECT_NAME}_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
 
-    catkin_install_python(PROGRAMS src/tf_broadcaster.py
-                          DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+  catkin_install_python(PROGRAMS src/tf_broadcaster.py
+                        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endif()

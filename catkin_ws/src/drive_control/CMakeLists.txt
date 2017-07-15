@@ -15,18 +15,22 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  WheelCommand.msg
   DriveCommand.msg
+  WheelCommand.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  geometry_msgs  std_msgs
+  geometry_msgs
+  std_msgs
 )
 
 catkin_package(
-    CATKIN_DEPENDS message_runtime   std_msgs geometry_msgs
+  CATKIN_DEPENDS
+  geometry_msgs
+  message_runtime
+  std_msgs
 )
 
 ################################################
@@ -61,5 +65,5 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-catkin_install_python(PROGRAMS src/drive_controller/DriveControl.py
+catkin_install_python(PROGRAMS src/${PROJECT_NAME}ler/DriveControl.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

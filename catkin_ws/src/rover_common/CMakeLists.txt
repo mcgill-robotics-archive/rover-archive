@@ -12,21 +12,21 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   DIRECTORY msg
   FILES
-  MotorStatus.msg
-  MotorControllerMode.msg
-  MagneticEncoder.msg
   DriveEncoder.msg
   DriveEncoderStamped.msg
+  MagneticEncoder.msg
+  MotorControllerMode.msg
+  MotorStatus.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
-  GetVoltageRead.srv
-  ResetWatchDog.srv
-  MotorSetAngularVel.srv
   BrakeMotor.srv
+  GetVoltageRead.srv
+  MotorSetAngularVel.srv
   ResetMotor.srv
+  ResetWatchDog.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

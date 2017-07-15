@@ -2,7 +2,7 @@
 <package>
   <name>drive_control</name>
   <version>0.1.0</version>
-  <description>The drive_control package maps a desired general vehicle linear and angular velocity
+  <description>Maps a desired general vehicle linear and angular velocity
   to velocity and angles of individual wheels on the 6 wheeled rover. </description>
 
   <maintainer email="david.lavoie-boutin@mail.mcgill.ca">David Lavoie-Boutin</maintainer>

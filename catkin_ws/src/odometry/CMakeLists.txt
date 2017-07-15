@@ -5,9 +5,6 @@ project(odometry)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  rospy
-  tf
-  robot_localization
   diagnostic_msgs
   diagnostic_updater
   geographic_msgs
@@ -16,10 +13,13 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   message_runtime
   nav_msgs
+  robot_localization
   roscpp
   roslint
+  rospy
   sensor_msgs
   std_msgs
+  tf
   tf2
   tf2_geometry_msgs
   tf2_ros
@@ -30,13 +30,13 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES odometry
   CATKIN_DEPENDS
-  nav_msgs
-  tf2_geometry_msgs
-  geographic_msgs
-  std_msgs
-  sensor_msgs
-  geometry_msgs
   diagnostic_msgs
+  geographic_msgs
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  std_msgs
+  tf2_geometry_msgs
 #  CATKIN_DEPENDS diagnostic_msgs diagnostic_updater geographic_msgs geometry_msgs message_filters message_generation message_runtime nav_msgs roscpp roslint sensor_msgs std_msgs tf2 tf2_geometry_msgs tf2_ros
 #  DEPENDS system_lib
 )

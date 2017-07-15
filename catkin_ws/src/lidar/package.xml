@@ -2,7 +2,7 @@
 <package>
   <name>lidar</name>
   <version>0.0.0</version>
-  <description>The lidar package</description>
+  <description>Old lidar package for 3d projection.</description>
 
   <maintainer email="malcolm.watt@mail.mcgill.ca">Malcolm Watt</maintainer>
 

@@ -6,28 +6,29 @@ project(rover_camera)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  message_generation
   roscpp
   rospy
   std_msgs
-  message_generation
 )
 
- add_service_files(
-   FILES
-   ChangeFeed.srv
- )
+add_service_files(
+  FILES
+  ChangeFeed.srv
+)
 
- generate_messages(
-   DEPENDENCIES
-   geometry_msgs   std_msgs
- )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs
+)
 
 
 catkin_package(
   CATKIN_DEPENDS
-  std_msgs
   geometry_msgs
   message_runtime
+  std_msgs
 )
 
 catkin_install_python(

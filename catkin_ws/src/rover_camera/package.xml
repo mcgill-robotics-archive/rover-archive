@@ -2,7 +2,7 @@
 <package>
   <name>rover_camera</name>
   <version>0.2.0</version>
-  <description>The rover_camera package</description>
+  <description>rover_camera</description>
 
   <maintainer email="david.lavoie-boutin@mail.mcgill.ca">David Lavoie-Boutin</maintainer>
   <license>GPLv2</license>

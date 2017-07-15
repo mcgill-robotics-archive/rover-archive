@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 project(lidar_description)
 
 find_package(catkin REQUIRED COMPONENTS
-  urdf
-  xacro
   roscpp
   rospy
   std_msgs
   tf
+  urdf
+  xacro
 )
 
 catkin_package(
