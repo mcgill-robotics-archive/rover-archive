@@ -11,10 +11,10 @@
 
 // TivaC specific includes
 extern "C" {
-  #include <driverlib/sysctl.h>
-  #include <driverlib/gpio.h>
-  #include <driverlib/pwm.h>
-  #include "inc/hw_memmap.h"
+#include <driverlib/sysctl.h>
+#include <driverlib/gpio.h>
+#include <driverlib/pwm.h>
+#include "inc/hw_memmap.h"
 }
 
 // MR Lib includes
@@ -167,7 +167,7 @@ int main(void) {
   uint8_t wait_brakes = false;
   uint32_t time_last_update = nh.getHardware()->time();
   while (1) {
-    if (nh.getHardware()->time() - time_last_update >= 10) {
+    if (nh.getHardware()->time() - time_last_update >= 100) {
       // Brake Enable/Disable
       brake_disengaged_a = (bool) vel_a;
       brake_disengaged_b = (bool) vel_b;
@@ -215,9 +215,10 @@ int main(void) {
 #endif
       }
 
-      // inc_dir_a = inc_get_direction(inc_a);
-      // inc_vel_a = inc_get_velocity(inc_a);
-      // inc_pos_a = inc_get_position(inc_a);
+      inc_dir_a = inc_get_direction(inc_a);
+      inc_vel_a = inc_get_velocity(inc_a);
+      inc_pos_a = inc_get_position(inc_a);
+      
       inc_a_msg.data = inc_get_position(inc_a);
       inc_encoder_a.publish(&inc_a_msg);
       inc_b_msg.data = inc_get_position(inc_b);
@@ -232,6 +233,7 @@ int main(void) {
       fault_msg_c.data = bdc_get_fault(motor_c);
       motor_fault_c.publish(&fault_msg_b);
 #endif
+      time_last_update= nh.getHardware()->time();  
     }
     nh.spinOnce();
   }
