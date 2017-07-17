@@ -21,24 +21,29 @@ Build Status
 | `dev`    | [![dev]][dev url]       |
 
 
-Initial Setup
+System Requirements
 ---
-Simply follow the compsys setup and select Rover when prompted.
+- Ubuntu 16.04 Xenial Xerus
+- ROS Kinetic Kame
+- McGill Robotics [Compsys](https://github.com/mcgill-robotics/compsys) Setup
 
 Building and Linting
 ---
-We use catkin_tools to build our system. From the `catkin_ws` directory:
+We use catkin_tools to build our system. **Both the build and lint step must
+pass before changes can be merged.** 
 
-**Build using**
+Get to the `catkin_ws` directory by issuing
+```bash
+roscd
+```
+**Build Step**
 ```bash
 catkin build
 ```
-**Lint**
+**Lint Step**
 ```bash
-catkin lint --explain src
+catkin lint --explain -W2 src --ignore target_name_collision --skip-pkg rosserial_tivac --strict
 ```
-
-Note that linting is for now only covering things like dependencies and build issues.
 
 Running the Rover
 ---
@@ -93,12 +98,6 @@ Finally, we need to launch the control station:
 ```bash
 roslaunch hci hci.launch
 ```
-
-
-API Documentation
----
-Jenkins generated doxygen documentation: 
-http://dev.mcgillrobotics.com:8080/job/rover_all/doxygen/
 
 Bagging using topics file
 ---
