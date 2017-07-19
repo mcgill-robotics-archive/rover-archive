@@ -62,6 +62,9 @@ extern "C" {
 // ROS nodehandle
 ros::NodeHandle nh;
 
+// Main logic rate
+uint32_t UPDATE_RATE = 10;
+
 // Motor speeds
 volatile int32_t vel_a = 0;
 volatile int32_t vel_b = 0;
@@ -167,7 +170,7 @@ int main(void) {
   uint8_t wait_brakes = false;
   uint32_t time_last_update = nh.getHardware()->time();
   while (1) {
-    if (nh.getHardware()->time() - time_last_update >= 100) {
+    if (nh.getHardware()->time() - time_last_update >= UPDATE_RATE) {
       // Brake Enable/Disable
       brake_disengaged_a = (bool) vel_a;
       brake_disengaged_b = (bool) vel_b;
@@ -233,7 +236,7 @@ int main(void) {
       fault_msg_c.data = bdc_get_fault(motor_c);
       motor_fault_c.publish(&fault_msg_b);
 #endif
-      time_last_update= nh.getHardware()->time();  
+      time_last_update = nh.getHardware()->time();  
     }
     nh.spinOnce();
   }
