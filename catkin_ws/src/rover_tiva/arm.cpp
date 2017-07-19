@@ -71,12 +71,6 @@ volatile int32_t vel_b = 0;
 #ifdef ARM_WRIST
 volatile int32_t vel_c = 0;
 #endif
-volatile uint32_t inc_pos_a = 0;
-volatile uint32_t inc_vel_a = 0;
-volatile int32_t inc_dir_a = 0;
-volatile uint32_t inc_pos_b = 0;
-volatile uint32_t inc_vel_b = 0;
-volatile int32_t inc_dir_b = 0;
 
 bool reset_flag = false;
 bool brake_disengaged_a = false;
@@ -218,10 +212,6 @@ int main(void) {
 #endif
       }
 
-      inc_dir_a = inc_get_direction(inc_a);
-      inc_vel_a = inc_get_velocity(inc_a);
-      inc_pos_a = inc_get_position(inc_a);
-      
       inc_a_msg.data = inc_get_position(inc_a);
       inc_encoder_a.publish(&inc_a_msg);
       inc_b_msg.data = inc_get_position(inc_b);
