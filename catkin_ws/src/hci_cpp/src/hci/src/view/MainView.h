@@ -15,6 +15,8 @@
 #include "DriveView.h"
 #include "ArmView.h"
 #include "NavCameraView.h"
+#include "ScienceView.h"
+#include "CameraFilterView.h"
 
 class MainView : public QWidget{
 
@@ -57,6 +59,8 @@ private:
     QLabel* pMotorEnableStatus;
     ArmView* armView;
     NavCameraView* navCameraView;
+    ScienceView* scienceView;
+    CameraFilterView* cameraFilterView;
 
 };
 

@@ -7,14 +7,26 @@
 #define HCI_CPP_SCIENCEVIEW_H
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QLabel>
+#include <ros/node_handle.h>
 
 
 class ScienceView : public QWidget {
     Q_OBJECT
 public:
-    ScienceView(QWidget *parent = 0);
+    ScienceView(QWidget *parent);
 
     virtual ~ScienceView() {};
+
+private:
+    QLabel* windSpeed;
+    QLabel* humidity;
+    QLabel* temperature;
+    QLabel* carriageSpeed;
+    QLabel* carriagePosition;
+    QLabel* drillSpeed;
+    QLabel* drillPosition;
+    QLabel* probeSpeed;
 };
 
 

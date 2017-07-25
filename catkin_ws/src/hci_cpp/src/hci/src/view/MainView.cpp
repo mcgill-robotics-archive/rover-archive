@@ -27,12 +27,20 @@ MainView::MainView(QWidget *parent) : QWidget(parent) {
     joystickView = new JoystickView(this);
     armView = new ArmView(this);
     navCameraView = new NavCameraView(this);
+    scienceView = new ScienceView(this);
+    cameraFilterView = new CameraFilterView(this);
+
+    QTabWidget* tab_widget = new QTabWidget(this);
+    tab_widget->addTab(scienceView, "Science");
+    tab_widget->addTab(cameraFilterView, "Waypoint Filter");
 
     vbox->addWidget(driveView);
     addLine(vbox);
     vbox->addWidget(joystickView);
     addLine(vbox);
     vbox->addWidget(armView);
+    addLine(vbox);
+    vbox->addWidget(tab_widget);
     addLine(vbox);
     vbox->addWidget(attitudeView);
     addLine(vbox);
