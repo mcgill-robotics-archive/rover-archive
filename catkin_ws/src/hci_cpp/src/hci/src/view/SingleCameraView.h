@@ -15,7 +15,7 @@ using namespace rimstreamer;
 class SingleCameraView : public QWidget {
 Q_OBJECT
 public:
-    SingleCameraView(QWidget *parent=0, bool showSelector=false);
+    SingleCameraView(QWidget *parent=0, bool showSelector=false, VideoFeedWidget::Orientation orientation=VideoFeedWidget::NONE);
 
     virtual ~SingleCameraView() {};
 

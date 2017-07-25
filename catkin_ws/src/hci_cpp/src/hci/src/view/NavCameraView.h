@@ -29,6 +29,9 @@ public:
     void releaseVideoFeed(ScreenID id);
     VideoFeedPtr getVideoFeed(ScreenID id);
 
+protected:
+    virtual void resizeEvent(QResizeEvent* event);
+
 private:
     SingleCameraView* topView;
     SingleCameraView* leftView;

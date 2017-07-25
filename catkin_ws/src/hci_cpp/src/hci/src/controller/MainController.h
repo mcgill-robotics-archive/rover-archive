@@ -13,6 +13,7 @@
 #include "JoystickController.h"
 #include "DCDCController.h"
 #include "ArmController.h"
+#include "NavCameraController.h"
 
 
 class MainController : public QObject {
@@ -31,6 +32,7 @@ private:
     ArmController mArmController;
     JoystickController mJoystickController;
     DCDCController dcdcController;
+    NavCameraController navCameraController;
 };
 
 

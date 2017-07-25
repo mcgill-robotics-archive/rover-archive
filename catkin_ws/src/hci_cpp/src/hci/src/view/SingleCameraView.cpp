@@ -6,9 +6,9 @@
 #include <QtWidgets/QVBoxLayout>
 #include "SingleCameraView.h"
 
-SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector) : QWidget(parent) {
+SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, VideoFeedWidget::Orientation orientation) : QWidget(parent) {
     mAvailableList = new QComboBox(this);
-    mScreenWidget = new rimstreamer::VideoFeedWidget(this);
+    mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, orientation);
 
     QVBoxLayout* layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
