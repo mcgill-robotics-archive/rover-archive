@@ -3,11 +3,10 @@
     url = git@github.com:mcgill-robotics/usb_cam.git
 [submodule "catkin_ws/src/rosserial_tivac"]
 	path = catkin_ws/src/rosserial_tivac
-	url = https://github.com/mcgill-robotics/rosserial_tivac
-[submodule "qt-gstreamer"]
-    path = qt-gstreamer
-    url = http://anongit.freedesktop.org/git/gstreamer/qt-gstreamer.git
-[submodule "rimstreamer"]
-    path = rimstreamer
-    url = git@github.com:dlavoieb/rimstreamer.git
-
+	url = https://github.com/vmatos/rosserial_tivac
+[submodule "catkin_ws/src/rover_tiva"]
+	path = catkin_ws/src/rover_tiva
+	url = git@github.com:mcgill-robotics/rover_tiva.git
+[submodule "catkin_ws/src/dcdc_nuc"]
+	path = catkin_ws/src/dcdc_nuc
+	url = git@github.com:mcgill-robotics/ros-dcdc-nuc

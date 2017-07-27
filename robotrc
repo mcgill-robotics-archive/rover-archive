@@ -10,8 +10,8 @@ fi
 
 alias startrover='tmuxinator start rover' 
 
-QGST_PATH=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install
-RIMSTREAMER_PATH=${ROBOTIC_PATH}/rover/rimstreamer/build/install
+QGST_PATH=${ROBOTIC_PATH}/rover/qt-gstreamer_lib
+RIMSTREAMER_PATH=${ROBOTIC_PATH}/rover/rimstreamer_lib
 export PATH=$PATH:$QGST_PATH/include:$QGST_PATH/lib
 export PATH=$PATH:$RIMSTREAMER_PATH/include:$RIMSTREAMER_PATH/lib
 

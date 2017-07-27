@@ -110,28 +110,32 @@ echo "Installing camera streaming dependencies"
 sudo apt install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev
 sudo apt install -qq qtbase5-dev qt5-qmake
 
+##################################################################################################
+####### DAVID GSTREAMER TEMPORARY REMOVAL OF STEPS, CURRENTLY REPLACED BY STATIC LIBRARIES #######
+##################################################################################################
+
 # install qt-gstreamer
-cd ${ROBOTIC_PATH}/rover/qt-gstreamer
+# cd ${ROBOTIC_PATH}/rover/qt-gstreamer
 
-if [[ ! -d build ]]; then
-    mkdir build
-fi
-echo "Compiling qt-gstreamer"
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
-make && make install
-# sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/imports/QtGstreamer /usr/lib/x86_64-linux-gnu/qt5/imports/
-sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
-sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/gstreamer-1.0/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0/
+# if [[ ! -d build ]]; then
+#     mkdir build
+# fi
+# echo "Compiling qt-gstreamer"
+# cd build
+# cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer/build/install -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
+# make && make install
+# # sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/imports/QtGstreamer /usr/lib/x86_64-linux-gnu/qt5/imports/
+# sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
+# sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/gstreamer-1.0/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0/
 
-# install rimsreamer, or the modified equivallent
-cd ${ROBOTIC_PATH}/rover/rimstreamer
-if [[ ! -d build ]]; then
-    mkdir build
-fi
-echo "Compiling rimstreamer"
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer/build/install
-make && make install
+# # install rimsreamer, or the modified equivallent
+# cd ${ROBOTIC_PATH}/rover/rimstreamer
+# if [[ ! -d build ]]; then
+#     mkdir build
+# fi
+# echo "Compiling rimstreamer"
+# cd build
+# cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer_lib
+# make && make install
 
 echo "All done with Rover setup!"

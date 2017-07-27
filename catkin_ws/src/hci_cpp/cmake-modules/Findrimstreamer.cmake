@@ -38,7 +38,7 @@ set(RIMSTREAMER_INCLUDE_DIRS ${RIMSTREAMER_INCLUDE_DIR})
 
 
 # Find QtGStreamer and add it to the dependencies
-set(Qt5GStreamer_DIR "$ENV{ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/cmake/Qt5GStreamer")
+set(Qt5GStreamer_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../qt-gstreamer_lib/lib/cmake/Qt5GStreamer")
 
 #find_package(Qt5Widgets REQUIRED)
 find_package(Qt5GStreamer REQUIRED)

@@ -29,4 +29,6 @@ find_package(Qt5GStreamer 1.2.0 REQUIRED)
 include_directories(${QTGSTREAMER_INCLUDES})
 include_directories(${RIMSTREAMER_INCLUDE_DIRS})
 
+message(${RIMSTREAMER_INCLUDE_DIRS})
+
 add_subdirectory(src)
