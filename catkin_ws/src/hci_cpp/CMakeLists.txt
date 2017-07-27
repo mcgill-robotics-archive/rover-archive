@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
         drive_control
         rover_common
         arm_control
+        ahrs
+        tf
         )
 
 include_directories(

@@ -14,7 +14,8 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         mArmController(nh),
         mJoystickController(mMainView.getJoystickView()),
         dcdcController(nh),
-        navCameraController(mMainView.getNavCamView())
+        navCameraController(mMainView.getNavCamView()),
+        navigationController(nh)
 {
     // Setup all the sub-controllers in the constructor
     mJoystickController.registerController(&mDriveController, "Drive");
@@ -47,6 +48,11 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         mArmController.moveToThread(armControllerThread);
         connect(armControllerThread, &QThread::started, &mArmController, &ArmController::process);
         armControllerThread->start();
+        
+        QThread *navigationThread = new QThread;
+        navigationController.moveToThread(navigationThread);
+        connect(navigationThread, &QThread::started, &navigationController, &NavigationController::process);
+        navigationThread->start();
     }
 
     // Connect all the stuff
@@ -70,6 +76,12 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     connect(&dcdcController, &DCDCController::OutputCurrentUpdated ,&mMainView, &MainView::setOutputCurrent);
     connect(&dcdcController, &DCDCController::OutputPowerUpdated ,&mMainView, &MainView::setOutputPower);
     connect(&dcdcController, &DCDCController::TemperatureUpdated ,&mMainView, &MainView::setTemperature);
+
+    connect(&navigationController, &NavigationController::pitchChanged, &mMainView, &MainView::setPitch);
+    connect(&navigationController, &NavigationController::rollChanged, &mMainView, &MainView::setRoll);
+    connect(&navigationController, &NavigationController::yawChanged, &mMainView, &MainView::setYaw);
+    connect(&navigationController, &NavigationController::longitudeChanged, &mMainView, &MainView::setLongitude);
+    connect(&navigationController, &NavigationController::latitudeChanged, &mMainView, &MainView::setLatitude);
 
     // Open the window
     mMainView.show();

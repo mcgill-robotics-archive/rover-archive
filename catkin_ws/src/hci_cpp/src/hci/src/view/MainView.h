@@ -42,6 +42,11 @@ public slots:
     void setArmMode(ArmMode mode);
     void changeArmJoint(ArmJoint joint);
     void changeCloseLoopMode(ArmClosedLoopMode mode);
+    void setPitch(float value);
+    void setRoll(float value);
+    void setYaw(float value);
+    void setLongitude(float value);
+    void setLatitude(float value);
 
 signals:
     void steeringModeChanged(const SteeringMode& mode);

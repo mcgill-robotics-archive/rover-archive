@@ -125,3 +125,23 @@ void MainView::changeCloseLoopMode(ArmClosedLoopMode mode) {
 NavCameraView *MainView::getNavCamView() {
     return navCameraView;
 }
+
+void MainView::setPitch(float value) {
+    attitudeView->setPitch(value);
+}
+
+void MainView::setRoll(float value) {
+    attitudeView->setRoll(value);
+}
+
+void MainView::setYaw(float value) {
+    attitudeView->setYaw(value);
+}
+
+void MainView::setLongitude(float value) {
+    attitudeView->setLongitude(value);
+}
+
+void MainView::setLatitude(float value) {
+    attitudeView->setLatitude(value);
+}
