@@ -2,7 +2,7 @@
 <package>
   <name>hci_cpp</name>
   <version>0.0.0</version>
-  <description>C++ implementation of the remote control software for McGill Robotics Rover Design Team</description>
+  <description>Ground control software for McGill Robotics Rover Design Team</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -46,12 +46,17 @@
   <build_depend>rover_common</build_depend>
   <build_depend>drive_control</build_depend>
   <build_depend>arm_control</build_depend>
+  <build_depend>ahrs</build_depend>
+  <build_depend>tf</build_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>rover_common</run_depend>
   <run_depend>drive_control</run_depend>
   <run_depend>arm_control</run_depend>
+  <run_depend>arm_control</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>ahrs</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

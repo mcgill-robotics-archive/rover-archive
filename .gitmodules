@@ -1,6 +1,6 @@
-[submodule "catkin_ws/src/usb_cam"]
-    path = catkin_ws/src/usb_cam
-    url = git@github.com:mcgill-robotics/usb_cam.git
+[submodule "catkin_ws/src/gscam"]
+    path = catkin_ws/src/gscam
+    url = https://github.com/ros-drivers/gscam.git
 [submodule "catkin_ws/src/rosserial_tivac"]
 	path = catkin_ws/src/rosserial_tivac
 	url = https://github.com/vmatos/rosserial_tivac

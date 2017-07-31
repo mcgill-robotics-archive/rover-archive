@@ -6,13 +6,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
+        ahrs
+        arm_control
+        drive_control
         roscpp
+        rover_common
         sensor_msgs
         std_msgs
-        drive_control
-        rover_common
-        arm_control
-        ahrs
         tf
         )
 
@@ -20,7 +20,15 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 
-catkin_package(CATKIN_DEPENDS roscpp sensor_msgs std_msgs drive_control rover_common arm_control)
+catkin_package(CATKIN_DEPENDS 
+        ahrs
+        arm_control
+        drive_control
+        roscpp
+        rover_common
+        sensor_msgs
+        std_msgs
+        tf)
 
 find_package(rimstreamer REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -28,7 +36,5 @@ find_package(Qt5GStreamer 1.2.0 REQUIRED)
 
 include_directories(${QTGSTREAMER_INCLUDES})
 include_directories(${RIMSTREAMER_INCLUDE_DIRS})
-
-message(${RIMSTREAMER_INCLUDE_DIRS})
 
 add_subdirectory(src)
