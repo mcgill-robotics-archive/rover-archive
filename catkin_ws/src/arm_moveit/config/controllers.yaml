@@ -12,27 +12,27 @@ controller_list:
     default: true
     joints:
       - base_pitch
-  - name: pitch2_as
+  - name: elbow_pitch_as
     type: FollowJointTrajectory
     action_ns: /
     default: true
     joints:
-      - pitch2
-  - name: roll1_as
+      - elbow_pitch
+  - name: elbow_roll_as
     type: FollowJointTrajectory
     action_ns: /
     default: true
     joints:
-      - roll1
-  - name: pitch3_as
+      - elbow_roll
+  - name: wrist_pitch_as
     type: FollowJointTrajectory
     action_ns: /
     default: true
     joints:
-      - pitch3
-  - name: roll2_as
+      - wrist_pitch
+  - name: wrist_roll_as
     type: FollowJointTrajectory
     action_ns: /
     default: true
     joints:
-      - roll2
+      - wrist_roll

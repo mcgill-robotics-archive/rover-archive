@@ -71,8 +71,8 @@ def joint_name_helper(joint_name):
 def main():
     rospy.init_node("joints_as")
 
-    joint_names = ["base_pitch", "base_yaw", "pitch2",
-                   "roll1", "pitch3", "roll2"]
+    joint_names = ["base_pitch", "base_yaw", "elbow_pitch",
+                   "elbow_roll", "wrist_pitch", "wrist_roll"]
 
     for joint in joint_names:
         action_server = JointActionServer(joint)

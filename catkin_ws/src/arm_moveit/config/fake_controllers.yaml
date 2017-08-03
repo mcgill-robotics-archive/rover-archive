@@ -5,8 +5,7 @@ controller_list:
     joints:
       - base_yaw
       - base_pitch
-      - pitch2
-      - roll1
-      - pitch3
-      - roll2
-
+      - elbow_pitch
+      - elbow_roll
+      - wrist_pitch
+      - wrist_roll

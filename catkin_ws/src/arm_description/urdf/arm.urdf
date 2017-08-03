@@ -2,7 +2,7 @@
   name="arm">
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/arm</robotNamespace>    
+      <robotNamespace>/arm</robotNamespace>
     </plugin>
   </gazebo>
   <link name="world"/>
@@ -228,7 +228,7 @@
     </collision>
   </link>
   <joint
-    name="pitch2"
+    name="elbow_pitch"
     type="continuous">
     <origin
       xyz="0 0.452768804137388 -0.0635"
@@ -243,12 +243,12 @@
       effort="200.0"
       velocity="2.0"  />
   </joint>
-  <transmission name="pitch2_tran">
+  <transmission name="elbow_pitch_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="pitch2">
+    <joint name="elbow_pitch">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="pitch2_motor">
+    <actuator name="elbow_pitch_motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
@@ -293,7 +293,7 @@
     </collision>
   </link>
   <joint
-    name="roll1"
+    name="elbow_roll"
     type="continuous">
     <origin
       xyz="0 0 0.00906290817805414"
@@ -308,12 +308,12 @@
       effort="200.0"
       velocity="0.5"  />
   </joint>
-  <transmission name="roll1_tran">
+  <transmission name="elbow_roll_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="roll1">
+    <joint name="elbow_roll">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="roll1_motor">
+    <actuator name="elbow_roll_motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
@@ -358,7 +358,7 @@
     </collision>
   </link>
   <joint
-    name="pitch3"
+    name="wrist_pitch"
     type="continuous">
     <origin
       xyz="0 0.432430108178054 0"
@@ -373,12 +373,12 @@
       effort="200.0"
       velocity="2.0"  />
   </joint>
-  <transmission name="pitch3_tran">
+  <transmission name="wrist_pitch_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="pitch3">
+    <joint name="wrist_pitch">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="pitch3_motor">
+    <actuator name="wrist_pitch_motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>
@@ -423,7 +423,7 @@
     </collision>
   </link>
   <joint
-    name="roll2"
+    name="wrist_roll"
     type="continuous">
     <origin
       xyz="0 0 -0.0768495238393263"
@@ -438,12 +438,12 @@
       effort="200.0"
       velocity="0.5"  />
   </joint>
-  <transmission name="roll2_tran">
+  <transmission name="wrist_roll_tran">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="roll2">
+    <joint name="wrist_roll">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="roll2_motor">
+    <actuator name="wrist_roll_motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </actuator>
   </transmission>

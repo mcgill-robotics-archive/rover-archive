@@ -12,10 +12,10 @@
     <group name="Arm">
         <joint name="base_yaw" />
         <joint name="base_pitch" />
-        <joint name="pitch2" />
-        <joint name="roll1" />
-        <joint name="pitch3" />
-        <joint name="roll2" />
+        <joint name="elbow_pitch" />
+        <joint name="elbow_roll" />
+        <joint name="wrist_pitch" />
+        <joint name="wrist_roll" />
     </group>
     <group name="Grip">
         <joint name="slide_finger1" />
@@ -25,10 +25,10 @@
     <group_state name="Rest" group="Arm">
         <joint name="base_pitch" value="-0.0345" />
         <joint name="base_yaw" value="-0.2762" />
-        <joint name="pitch2" value="1.3118" />
-        <joint name="pitch3" value="-0.2101" />
-        <joint name="roll1" value="-0.1036" />
-        <joint name="roll2" value="-0.3797" />
+        <joint name="elbow_pitch" value="1.3118" />
+        <joint name="wrist_pitch" value="-0.2101" />
+        <joint name="elbow_roll" value="-0.1036" />
+        <joint name="wrist_roll" value="-0.3797" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="Grip" parent_link="end_effector" group="Grip" />
