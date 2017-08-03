@@ -49,5 +49,6 @@
     <disable_collisions link1="diff2" link2="link2" reason="Adjacent" />
     <disable_collisions link1="end_effector" link2="finger1" reason="Adjacent" />
     <disable_collisions link1="end_effector" link2="finger2" reason="Adjacent" />
+    <disable_collisions link1="end_effector" link2="link2" reason="Default" />
     <disable_collisions link1="finger1" link2="finger2" reason="Default" />
 </robot>
