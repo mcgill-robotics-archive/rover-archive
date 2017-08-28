@@ -3,7 +3,7 @@
     <arg name="world_name" value="$(find arm_gazebo)/worlds/arm.world"/>
     <arg name="paused" value="true"/>
   </include>
-  
+
   <!-- Put URDF on parameter server -->
   <param name="robot_description" command="cat $(find arm_description)/urdf/arm.urdf" />
 

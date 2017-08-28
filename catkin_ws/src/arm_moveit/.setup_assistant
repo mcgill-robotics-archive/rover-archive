@@ -7,5 +7,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Adrien Sauvestre
     author_email: adrien.sauvestre@mail.mcgill.ca
-    generated_timestamp: 1479067309
-    
+    generated_timestamp: 1501681484

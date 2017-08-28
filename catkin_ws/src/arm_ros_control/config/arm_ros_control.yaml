@@ -2,30 +2,24 @@ arm:
   # Publish all joint states -----------------------------------
   joint_state_controller:
     type: joint_state_controller/JointStateController
-    publish_rate: 50
+    publish_rate: 1000
 
   # Position Controllers ---------------------------------------
-  base_yaw_position_controller:
-    type: effort_controllers/JointPositionController
+  base_yaw_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: base_yaw
-    pid: {p: 200.0, i: 10.0, d: 30.0}
-  base_pitch_position_controller:
-    type: effort_controllers/JointPositionController
+  base_pitch_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: base_pitch
-    pid: {p: 1200.0, i: 10.0, d: 50.0}
-  elbow_pitch_position_controller:
-    type: effort_controllers/JointPositionController
+  elbow_pitch_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: elbow_pitch
-    pid: {p: 800.0, i: 10.0, d: 30.0}
-  elbow_roll_position_controller:
-    type: effort_controllers/JointPositionController
+  elbow_roll_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: elbow_roll
-    pid: {p: 10.0, i: 2.0, d: 1.0}
-  wrist_pitch_position_controller:
-    type: effort_controllers/JointPositionController
+  wrist_pitch_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: wrist_pitch
-    pid: {p: 30.0, i: 2.7, d: 2.0}
-  wrist_roll_position_controller:
-    type: effort_controllers/JointPositionController
+  wrist_roll_effort_controller:
+    type: effort_controllers/JointEffortController
     joint: wrist_roll
-    pid: {p: 1.0, i: 0.5, d: 1.0}
