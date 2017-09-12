@@ -48,8 +48,14 @@ sudo apt-get install -qq ros-kinetic-convex-decomposition
 echo
 
 # urg_node
-echo "Installing urg_node.."
+echo "Installing urg_node..."
 sudo apt-get install -qq ros-kinetic-urg-node 
+echo
+
+
+# pid
+echo "Installing pid..."
+sudo apt-get install -qq ros-kinetic-pid 
 echo
 
 # ROS dependency update
