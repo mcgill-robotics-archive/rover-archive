@@ -1,4 +1,4 @@
-prefix=/home/david/mcgill/rover/qt-gstreamer_lib
+prefix=/home/david/McGill/rover/qt-gstreamer_lib
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include/Qt5GStreamer

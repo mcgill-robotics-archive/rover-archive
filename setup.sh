@@ -102,6 +102,9 @@ if [[ ! -f /usr/local/bin/lm4flash ]]; then
 fi
 
 if [[ ! -f ${HOME}/.tmuxinator/rover.yml ]]; then
+    if [[ ! -d ${HOME}/.tmuxinator ]]; then
+        mkdir ${HOME}/.tmuxinator
+    fi
     ln -s ${ROBOTIC_PATH}/rover/tmux/rover.yml ${HOME}/.tmuxinator/
 fi
 
@@ -125,8 +128,13 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer_lib -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
 make && make install
 # sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/imports/QtGstreamer /usr/lib/x86_64-linux-gnu/qt5/imports/
-sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
-sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/gstreamer-1.0/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0/
+if [[ ! -h /usr/lib/x86_64-linux-gnu/qt5/qml/QtGStreamer ]]; then
+    sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
+fi
+
+if [[ ! -h /usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstqt5videosink.so ]]; then
+    sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/gstreamer-1.0/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0/
+fi
 
 # install rimsreamer, or the modified equivallent
 cd ${ROBOTIC_PATH}/rover/rimstreamer

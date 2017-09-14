@@ -43,7 +43,7 @@ void JoystickController::registerController(JoystickInterface *controller, QStri
 void JoystickController::setActiveController(QString name) {
     if (mControllerHash.contains(name)) {
         if (mActiveController != mControllerHash[name]) {
-            ROS_INFO("JoystickCintroller.cpp: Requested controller %s", name.toStdString().c_str());
+            ROS_INFO("JoystickController.cpp: Requested controller %s", name.toStdString().c_str());
 
             if (mType == Hardware)
             {

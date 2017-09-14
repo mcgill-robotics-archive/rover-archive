@@ -16,11 +16,16 @@
 namespace rimstreamer
 {
 
+enum Orientation_t {
+    Landscape,
+    Portrait
+};
+
 class GenericAxisVideoFeed: public GstVideoFeed
 {
 public:
-    GenericAxisVideoFeed(const std::string &ipAddress, unsigned int cameraNo,
-                         QSize &resolution, const std::string cameraName);
+    GenericAxisVideoFeed(const std::string &ipAddress, unsigned int cameraNo, QSize &resolution,
+                             const std::string cameraName, Orientation_t orientation);
 
     virtual ~GenericAxisVideoFeed();
 

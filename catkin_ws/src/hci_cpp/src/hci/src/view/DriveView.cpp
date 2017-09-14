@@ -15,11 +15,11 @@ DriveView::DriveView(QWidget *parent) : QWidget(parent) {
     // Create drive mode selection
     {
         QLabel* modeTitle = new QLabel("Active Steering mode: ", this);
-        pActiveSetteringMode = new QLabel("None", this);
+        pActiveSteeringMode = new QLabel("None", this);
         QHBoxLayout* hbox1 = new QHBoxLayout;
         hbox1->setContentsMargins(0, 0, 0, 0);
         hbox1->addWidget(modeTitle);
-        hbox1->addWidget(pActiveSetteringMode);
+        hbox1->addWidget(pActiveSteeringMode);
 
         pEnableAckermann = new QPushButton("Ackermann", this);
         pEnableAckermann->setCheckable(true);
@@ -111,17 +111,17 @@ void DriveView::onModeButtonClick(const QAbstractButton *button) {
 void DriveView::updateSteeringMode(const SteeringMode &mode) {
     if (mode == ACKERMANN)
     {
-        pActiveSetteringMode->setText("ACKERMANN");
+        pActiveSteeringMode->setText("ACKERMANN");
         pEnableAckermann->setChecked(true);
     }
     else if (mode == POINT)
     {
-        pActiveSetteringMode->setText("POINT STEERING");
+        pActiveSteeringMode->setText("POINT STEERING");
         pEnablePoint->setChecked(true);
     }
     else
     {
-        pActiveSetteringMode->setText("TRANSLATION");
+        pActiveSteeringMode->setText("TRANSLATION");
         pEnableTranslate->setChecked(true);
     }
 }

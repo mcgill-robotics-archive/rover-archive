@@ -9,8 +9,8 @@
 
 NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     topView = new SingleCameraView(this, false);
-    leftView = new SingleCameraView(this, false, VideoFeedWidget::CW);
-    rightView = new SingleCameraView(this, false, VideoFeedWidget::CCW);
+    leftView = new SingleCameraView(this, false);
+    rightView = new SingleCameraView(this, false);
 
     QHBoxLayout *h = new QHBoxLayout;
     h->setContentsMargins(0, 0, 0, 0);
@@ -21,6 +21,10 @@ NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     v->setContentsMargins(0, 0, 0, 0);
     v->addItem(h);
     v->addWidget(topView);
+
+//    topView->setFixedSize(1024,768);
+//    leftView->setFixedSize(480, 640);
+//    rightView->setFixedSize(480, 640);
 
     setLayout(v);
 }
@@ -61,8 +65,8 @@ void NavCameraView::resizeEvent(QResizeEvent *event) {
     QSize widgetSize(size());
     qDebug() << widgetSize;
 
-    topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
-    leftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
-    rightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+//    topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
+//    leftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+//    rightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
     qDebug() << topView->size();
 }

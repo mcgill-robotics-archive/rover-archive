@@ -42,7 +42,7 @@ enum AxisF34Resolution_t {
 
 class AxisF34VideoFeed : public GenericAxisVideoFeed {
 public:
-    AxisF34VideoFeed(const std::string& ipAddress, AxisF34View_t cameraNo, AxisF34Resolution_t resolution);
+    AxisF34VideoFeed(const std::string& ipAddress, AxisF34View_t cameraNo, AxisF34Resolution_t resolution, Orientation_t orientation);
     virtual ~AxisF34VideoFeed();
 
 private:

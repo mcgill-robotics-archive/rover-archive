@@ -37,7 +37,7 @@ private:
     QPushButton* pEnableAckermann;
     QPushButton* pEnablePoint;
     QPushButton* pEnableTranslate;
-    QLabel* pActiveSetteringMode;
+    QLabel* pActiveSteeringMode;
 
 private slots:
     void onModeButtonClick(const QAbstractButton *button);
