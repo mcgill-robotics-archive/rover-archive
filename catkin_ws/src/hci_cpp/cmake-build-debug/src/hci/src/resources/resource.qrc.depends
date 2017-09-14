@@ -1,7 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-    <qresource>
-        <file>rover.jpg</file>
-        <file>rover2.jpg</file>
-        <file>rover3.jpg</file>
-    </qresource>
-</RCC>

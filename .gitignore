@@ -3,6 +3,7 @@ devel/
 devel_isolated/
 install/
 logs/
+cmake-build-debug/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -73,3 +74,4 @@ build_isolated/
 # MoveIt Specifics
 .rosinstall*
 *.bag
+
