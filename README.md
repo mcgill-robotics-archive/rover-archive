@@ -53,7 +53,7 @@ steps**:
 
 Add the rover to your computer's hosts: add 
 ```bash
-192.168.3.252 rover
+192.168.1.242 rover
 ```
 to your `/etc/hosts` file. You will now be able to ssh into the rover with
 ```bash
