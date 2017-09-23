@@ -1,0 +1,37 @@
+<launch>
+  <group ns="arm">
+    <!-- By default, we are not in debug mode -->
+    <arg name="debug" default="false" />
+
+    <!-- Start the joints action server -->
+    <node name="joints_as" pkg="arm_control" type="joints_as.py"/>
+
+    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+
+    <arg name="robot_description" default="robot_description"/>
+
+    <param name="$(arg robot_description)" textfile="$(find arm_control)/urdf/arm.urdf"/>
+    <param name="$(arg robot_description)_semantic" textfile="$(find arm_control)/config/arm_description.srdf" />
+    
+    <group ns="$(arg robot_description)_planning">
+      <rosparam command="load" file="$(find arm_control)/config/joint_limits.yaml"/>
+    </group>
+
+    <group ns="$(arg robot_description)_kinematics">
+      <rosparam command="load" file="$(find arm_control)/config/kinematics.yaml"/>
+    </group>
+  
+    <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find arm_control)/launch/moveit/move_group.launch">
+      <arg name="info" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- Run Rviz and load the default config to see the state of the move_group node -->
+    <include file="$(find arm_control)/launch/moveit/moveit_rviz.launch">
+      <arg name="config" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+  </group>
+</launch>
