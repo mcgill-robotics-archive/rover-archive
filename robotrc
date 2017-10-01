@@ -1,11 +1,11 @@
-#!/usr/bin/bash
+# This will be sourced by compsys
 
-if [[ -d ${ROBOTIC_PATH}/tivaware ]]; then
-    export TIVA_WARE_PATH=${ROBOTIC_PATH}/tivaware
+if [[ -d "${ROBOTIC_PATH}/tivaware" ]]; then
+    export TIVA_WARE_PATH="${ROBOTIC_PATH}/tivaware"
 fi
 
 if [[ -f /usr/bin/lm4flash ]]; then
-    export TIVA_FLASH_EXECUTABLE=lm4flash 
+    export TIVA_FLASH_EXECUTABLE=lm4flash
 fi
 
-alias startrover='tmuxinator start rover' 
+alias startrover='tmuxinator start rover'
