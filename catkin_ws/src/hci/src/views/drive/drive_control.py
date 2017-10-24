@@ -21,7 +21,7 @@ class DriveSettings(object):
     steering configurations supported
     """
 
-    def __init__(self, motor_enable=False, ackerman_steering=False, point_steering=False, translatory_steering=False):
+    def __init__(self, motor_enable=False, ackerman_steering=False, point_steering=False, translatory_steering=False, skid_steering=False):
         """!@brief Constructor initializes values
 
         @param self Python object pointer
@@ -35,6 +35,7 @@ class DriveSettings(object):
         self.ackerman_steering = ackerman_steering
         self.point_steering = point_steering
         self.translatory_steering = translatory_steering
+	self.skid_steering = skid_steering
 
 
 class SteeringMode(QWidget):
@@ -77,6 +78,8 @@ class SteeringMode(QWidget):
         self._pointsteer.setText("Point Steering")
         self._translate = QRadioButton(self)
         self._translate.setText("Translation")
+	self._skid = QRadioButton(self)
+        self._skid.setText("Skid Steering")
 
         self._enable = QCheckBox()
         self._enable.setText("Enable Motors")
@@ -84,6 +87,7 @@ class SteeringMode(QWidget):
         vbox1.addWidget(self._ackerman)
         vbox1.addWidget(self._pointsteer)
         vbox1.addWidget(self._translate)
+	vbox1.addWidget(self._skid)
         hbox1.addWidget(self._enable)
         hbox1.addItem(vbox1)
 
@@ -93,6 +97,8 @@ class SteeringMode(QWidget):
         self._ackerman.clicked.connect(self._handle_steering_mode)
         self._pointsteer.clicked.connect(self._handle_steering_mode)
         self._translate.clicked.connect(self._handle_steering_mode)
+	self._skid.clicked.connect(self._handle_steering_mode)
+
 
     def _handle_enable(self):
         """!@brief Enable button callback
@@ -119,14 +125,22 @@ class SteeringMode(QWidget):
             self._drive_settings.ackerman_steering = True
             self._drive_settings.point_steering = False
             self._drive_settings.translatory_steering = False
+            self._drive_settings.skid_steering = False
         elif self._pointsteer.isChecked():
             self._drive_settings.ackerman_steering = False
             self._drive_settings.point_steering = True
             self._drive_settings.translatory_steering = False
+            self._drive_settings.skid_steering = False
         elif self._translate.isChecked():
             self._drive_settings.ackerman_steering = False
             self._drive_settings.point_steering = False
             self._drive_settings.translatory_steering = True
+            self._drive_settings.skid_steering = False
+        elif self._skid.isChecked():
+            self._drive_settings.ackerman_steering = False
+            self._drive_settings.point_steering = False
+            self._drive_settings.translatory_steering = False        
+            self._drive_settings.skid_steering = True
 
         self.driveSettingsChanged.emit(self._drive_settings)
 
@@ -141,7 +155,7 @@ class SteeringMode(QWidget):
         self._enable.setChecked(motor_enable)
         self.driveSettingsChanged.emit(self._drive_settings)
 
-    def update_steering(self, ackerman_steering=False, point_steering=False, translatory_steering=False):
+    def update_steering(self, ackerman_steering=False, point_steering=False, translatory_steering=False, skid_steering=False):
         """!@brief External updates of the steering configuration buttons
 
         @param self Python object pointer
@@ -153,10 +167,12 @@ class SteeringMode(QWidget):
         self._ackerman.setChecked(ackerman_steering)
         self._pointsteer.setChecked(point_steering)
         self._translate.setChecked(translatory_steering)
+        self._skid.setChecked(skid_steering)
 
         self._drive_settings.ackerman_steering = ackerman_steering
         self._drive_settings.point_steering = point_steering
         self._drive_settings.translatory_steering = translatory_steering
+        self._drive_settings.skid_steering = skid_steering
 
         self.driveSettingsChanged.emit(self._drive_settings)
 
@@ -168,7 +184,7 @@ class SteeringMode(QWidget):
         """
 
         self._enable.setChecked(status.motor_enable)
-        self.update_steering(status.ackerman_steering, status.point_steering, status.translatory_steering)
+        self.update_steering(status.ackerman_steering, status.point_steering, status.translatory_steering, status.skid_steering)
 
     @pyqtSlot(int)
     def showEnableMotor(self, motor_enable):
@@ -206,6 +222,8 @@ if __name__ == "__main__":
                 stering = "point"
             elif drive_setting.translatory_steering:
                 stering = "translatory"
+            elif drive_setting.skid_steering:
+                stering = "skid"
             else:
                 stering = "none"
 

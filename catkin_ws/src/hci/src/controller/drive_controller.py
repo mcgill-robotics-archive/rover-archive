@@ -141,6 +141,7 @@ class DriveController(JoystickBase):
         msg.motion_ackerman = self._settings.ackerman_steering
         msg.motion_pointsteer = self._settings.point_steering
         msg.motion_translatory = self._settings.translatory_steering
+	msg.motion_skid = self._settings.skid_steering
         msg.motion_enable = self._settings.motor_enable
 
         msg.velocity_command = self._command
