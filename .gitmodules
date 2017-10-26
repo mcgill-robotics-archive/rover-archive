@@ -10,10 +10,4 @@
 [submodule "catkin_ws/src/dcdc_nuc"]
 	path = catkin_ws/src/dcdc_nuc
 	url = https://github.com/mcgill-robotics/ros-dcdc-nuc.git
-[submodule "qt-gstreamer"]
-    path = qt-gstreamer
-    url = http://anongit.freedesktop.org/git/gstreamer/qt-gstreamer.git
-[submodule "rimstreamer"]
-    path = rimstreamer
-    url = https://github.com/dlavoieb/rimstreamer.git
 
