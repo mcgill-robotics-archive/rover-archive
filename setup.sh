@@ -71,7 +71,7 @@ echo
 if [[ ! -d ../tivaware ]]; then
     echo "Setting up tivaware..."
     cd ..
-    git clone git@github.com:mcgill-robotics/tivaware
+    git clone https://github.com/mcgill-robotics/tivaware
     cd tivaware
     make clean
     make
@@ -84,7 +84,7 @@ if [[ ! -d ../tiva ]]; then
     cd ..
     mkdir -p tiva/catkin_ws/src
     cd tiva/catkin_ws/src
-    git clone git@github.com:mcgill-robotics/rover_tiva
+    git clone https://github.com/mcgill-robotics/rover_tiva
     cd rover_tiva
     if [[ ! -h /etc/udev/rules.d/71-rover-tiva.rules ]]; then
         sudo ln -s \
@@ -110,7 +110,7 @@ fi
 
 # install dependencies for gstreamer
 echo "Installing camera streaming dependencies"
-sudo apt install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev
+sudo apt install -qq libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-base gstreamer1.0-plugins-ugly gstreamer1.0-libav 
 sudo apt install -qq qtbase5-dev qt5-qmake
 
 ##################################################################################################
@@ -118,15 +118,15 @@ sudo apt install -qq qtbase5-dev qt5-qmake
 ##################################################################################################
 
 # install qt-gstreamer
-cd ${ROBOTIC_PATH}/rover/qt-gstreamer
-
-if [[ ! -d build ]]; then
-    mkdir build
-fi
-echo "Compiling qt-gstreamer"
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer_lib -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
-make && make install
+#cd ${ROBOTIC_PATH}/rover/qt-gstreamer
+#
+#if [[ ! -d build ]]; then
+#    mkdir build
+#fi
+#echo "Compiling qt-gstreamer"
+#cd build
+#cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/qt-gstreamer_lib -DUSE_GST_PLUGIN_DIR=OFF -DUSE_QT_PLUGIN_DIR=OFF -DQTGSTREAMER_EXAMPLES=OFF -DQTGSTREAMER_TESTS=OFF -DQT_VERSION=5
+#make && make install
 # sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer/build/install/lib/qt5/imports/QtGstreamer /usr/lib/x86_64-linux-gnu/qt5/imports/
 if [[ ! -h /usr/lib/x86_64-linux-gnu/qt5/qml/QtGStreamer ]]; then
     sudo ln -s ${ROBOTIC_PATH}/rover/qt-gstreamer_lib/lib/qt5/qml/QtGStreamer /usr/lib/x86_64-linux-gnu/qt5/qml/
@@ -137,13 +137,13 @@ if [[ ! -h /usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstqt5videosink.so ]]; the
 fi
 
 # install rimsreamer, or the modified equivallent
-cd ${ROBOTIC_PATH}/rover/rimstreamer
-if [[ ! -d build ]]; then
-    mkdir build
-fi
-echo "Compiling rimstreamer"
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer_lib
-make && make install
-
+#cd ${ROBOTIC_PATH}/rover/rimstreamer
+#if [[ ! -d build ]]; then
+#    mkdir build
+#fi
+#echo "Compiling rimstreamer"
+#cd build
+#cmake .. -DCMAKE_INSTALL_PREFIX=${ROBOTIC_PATH}/rover/rimstreamer_lib
+#make && make install
+#
 echo "All done with Rover setup!"
