@@ -91,7 +91,7 @@ void PoseDisplay::setYaw(float value) {
 void PoseDisplay::setLongitude(float value) {
     // TODO: Format this string beautifully
     QString str;
-    pLatitude->setText(str.setNum(value, 'f', 10));
+    pLongitude->setText(str.setNum(value, 'f', 10));
 }
 
 void PoseDisplay::setLatitude(float value) {
