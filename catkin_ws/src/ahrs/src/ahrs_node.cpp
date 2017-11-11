@@ -27,7 +27,7 @@ int main(int argc, char ** argv)
 
     lineranger::ahrs::AhrsConfig config;
     config.setSimulation(false);
-    config.setDeviceName("/dev/ahrs");
+    config.setDeviceName("/dev/ttyUSB0");
     boost::scoped_ptr<lineranger::ahrs::Ahrs> ahrs;
     try
     {

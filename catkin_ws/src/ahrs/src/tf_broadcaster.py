@@ -40,6 +40,11 @@ class AhrsTfBroadcaster:
     def handle_ahrs_msg(self, message):
         if self.first:
             rospy.loginfo("Received first message, tf are ready")
+            self.center_position = (
+                message.pose.pose.position.x,
+                message.pose.pose.position.y,
+                message.pose.pose.position.z)
+            self.first = False
 
         quat = (
             message.pose.pose.orientation.x,
@@ -50,7 +55,7 @@ class AhrsTfBroadcaster:
         euler = tf.transformations.euler_from_quaternion(quat)
         euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
 
-        self.br.sendTransform((0.5, 0, 0.4), (0, 0, 0, 1),
+        self.br.sendTransform(((message.pose.pose.position.x - self.center_position[0]) / 10, (message.pose.pose.position.y - self.center_position[1]) / 10 ,0), (0, 0, 0, 1),
                               rospy.Time.now(),
                               "ahrs_position", "base_link")
 
@@ -59,7 +64,7 @@ class AhrsTfBroadcaster:
         # The AHRS is by default (forward, right, down).
         local_orientation_adjustment = (1, 0, 0, 0)
 
-        self.br.sendTransform((0, 0, 0), local_orientation_adjustment,
+        self.br.sendTransform((0, 0, 0), quat,
                               rospy.Time.now(), "local_ahrs_orientation",
                               "ahrs_position")
 
@@ -68,7 +73,7 @@ class AhrsTfBroadcaster:
         # The AHRS is by default (north, east, down).
         sqrt2_2 = math.sqrt(2) / 2.0
         global_orientation_adjustment = (0, sqrt2_2, -sqrt2_2, 0)
-        self.br.sendTransform((0, 0, 0), global_orientation_adjustment,
+        self.br.sendTransform((0, 0, 0), quat,
                               rospy.Time.now(), "global_ahrs_orientation",
                               "ahrs_position")
 
