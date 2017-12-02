@@ -1,7 +1,31 @@
 <launch>
-    <group ns="ahrs">
-        <node name="urg_node" pkg="urg_node" type="urg_node" respawn="false" />
-        <node name="lidar_pcd_converter" pkg="lidar" type="lidar_pcd_converter" respawn="false" />
-        </node>
-    </group>
+	<!--
+	  Publish the transform from the base_link to the point on the rover where
+	  the lidar mount is fixed. The lidar is mounted 40cm ahead of and 50cm
+      above the center of rotation of the rover on the ground.
+	-->
+	<node pkg="tf2_ros" type="static_transform_publisher"
+		name="mount_tf_broadcaster"
+		args="0.4 0 0.5 0 0 0 base_link static_lidar_mount">
+	</node>
+
+	<!--
+	  Publish the transformation between the base of the fixed mount to the
+	  laser coordinate frame statically. The lidar is pitching downward at a
+      measured angle of 22 degrees digitaly and 24 degrees manually measured.
+      The happy median is 0.4 radians.
+	-->
+	<node pkg="tf2_ros" type="static_transform_publisher"
+		name="laser_tf_broadcaster"
+        args="0 0 0 0 0.4 0 static_lidar_mount laser">
+	</node>
+
+	<!-- Launch URG node which publishes laser scans in the laser frame. -->
+	<group ns="lidar">
+	    <node name="urg_node" pkg="urg_node" type="urg_node" >
+	        <param name="port" type="string" value="/dev/lidar"/>
+	        <param name="intensity" type="bool" value="true"/>
+	    </node>
+        <node name="lidar_pcd_converter" pkg="lidar" type="lidar_pcd_converter" respawn="false"></node>
+	</group>
 </launch>
