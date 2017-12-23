@@ -23,7 +23,7 @@
 #define JS_EVENT_INIT   0x80 // initial state of device
 
 /**
- * Encapsulates all data relevant to a sampled joystick event.
+ * \brief Encapsulates all data relevant to a sampled joystick event.
  */
 class JoystickEvent
 {
@@ -95,7 +95,7 @@ public:
 std::ostream& operator<<(std::ostream& os, const JoystickEvent& e);
 
 /**
- * Represents a joystick device. Allows data to be sampled from it.
+ * @brief Represents a joystick device. Allows data to be sampled from it.
  */
 class Joystick
 {

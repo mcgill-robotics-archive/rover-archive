@@ -6,6 +6,7 @@
 #ifndef HCI_CPP_DRIVEDATA_H
 #define HCI_CPP_DRIVEDATA_H
 
+/// \brief Container for the status information of the wheels
 struct DriveStatusData
 {
     bool flGood;
@@ -16,6 +17,7 @@ struct DriveStatusData
     bool brGood;
 };
 
+/// \brief Possible steering modes
 enum SteeringMode
 {
     ACKERMANN = 1,
