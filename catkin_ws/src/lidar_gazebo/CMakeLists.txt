@@ -13,14 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-
-
-
-
 
 ## Find gazebo
 find_package(gazebo REQUIRED)
@@ -43,7 +38,12 @@ catkin_package(
 )
 
 # Build our plugin
-
-add_library(tilting_unit_gazebo_plugin plugins/tilting_unit_control_plugin/src/tilting_unit_gazebo_plugin.cpp)
+add_library(tilting_unit_gazebo_plugin plugins/tilting_unit_gazebo_plugin.cpp)
 target_link_libraries(tilting_unit_gazebo_plugin ${Boost_libraries} ${GAZEBO_libraries} ${roscpp_libraries})
 
+install(TARGETS
+  tilting_unit_gazebo_plugin 
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

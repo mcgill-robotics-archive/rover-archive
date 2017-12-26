@@ -64,8 +64,8 @@
         <parent link="base_link"/>
         <child link="lidar_mount"/>
         <origin xyz="0 0 ${base_height+lidar_height/2}" rpy="0 0 0"/>
-        <!-- Allows tilting around the X axis" -->
-        <axis xyz="1 0 0"/>
+        <!-- Allows tilting around the Y axis" -->
+        <axis xyz="0 1 0"/>
     </joint>
 
     <!-- The joint affixing the laser to the tilt_lidar platform -->

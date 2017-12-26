@@ -42,13 +42,16 @@
         <topicName>/lidar/laser/scan</topicName>
         <frameName>hokuyo_link</frameName>
       </plugin>
-      <plugin name="tilting_unit_controller" filename="libtilting_unit_gazebo_plugin.so">
-        <!--<joint_states_topic_name>joint_states</joint_states_topic_name>
-        <tilting_unit_joint>tilt_lidar</tilting_unit_joint>
-            <theta_max>1.570796</theta_max>
-            <theta_min>-1.570796</theta_min>
-        <period>2.0</period>-->
-      </plugin>
     </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="tilting_unit_gazebo_plugin" filename="libtilting_unit_gazebo_plugin.so">
+      <!--<joint_states_topic_name>joint_states</joint_states_topic_name>
+        <tilting_unit_joint>tilt_lidar</tilting_unit_joint>
+        <theta_max>1.570796</theta_max>
+        <theta_min>-1.570796</theta_min>
+      <period>2.0</period>-->
+    </plugin>
   </gazebo>
 </robot>
