@@ -5,8 +5,6 @@
 
 #include "HardwareJoystickController.h"
 #include <ros/ros.h>
-//the bleow line was added
-#include <unistd.h>
 
 HardwareJoystickController::HardwareJoystickController() :
         mJoystick("/dev/input/js0")
