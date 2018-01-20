@@ -26,7 +26,6 @@ public:
     VideoFeedPtr getVideoFeed();
 
 //added
-//    void add_entry (std::string str);
     void set_mAvailable(QStringList lst);
     int set_Feed(int index);
 
