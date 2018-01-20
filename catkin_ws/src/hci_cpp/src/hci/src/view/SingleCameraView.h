@@ -9,6 +9,8 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QComboBox>
 #include <rimstreamer/VideoFeedWidget.h>
+//added 
+#include <QSizePolicy>
 
 using namespace rimstreamer;
 
@@ -23,10 +25,19 @@ public:
     void releaseVideoFeed();
     VideoFeedPtr getVideoFeed();
 
+//added
+//    void add_entry (std::string str);
+    void set_mAvailable(QStringList lst);
+    int set_Feed(int index);
+
 
 private:
     QComboBox* mAvailableList;
     rimstreamer::VideoFeedWidget* mScreenWidget;
+
+//added
+    int curr_topic;
+    
 };
 
 
