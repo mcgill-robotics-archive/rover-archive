@@ -1,0 +1,10 @@
+<launch>
+  <node type="laser_scan_assembler" pkg="laser_assembler" name="my_assembler" output="screen">
+    <remap from="scan" to="/lidar/laser/scan"/>
+    <param name="max_scans" type="int" value="400" />
+    <param name="fixed_frame" type="string" value="base_link" />
+  </node>
+
+  <node type="laser_scan_assembler" pkg="lidar" name="laser_scan_assembler" respawn="false" output="screen"/>
+
+</launch>
