@@ -8,11 +8,11 @@ This repository contains the ROS workspace used for the Mars Rover Project.
 Build Status
 ------------
 
-[master]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover_master
-[master url]: https://dev.mcgillrobotics.com/job/rover_master
+[master]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover/master
+[master url]: https://dev.mcgillrobotics.com/job/rover/job/master
 
-[dev]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover_dev
-[dev url]: https://dev.mcgillrobotics.com/job/rover_dev
+[dev]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover/dev
+[dev url]: https://dev.mcgillrobotics.com/job/rover/job/dev
 
 
 | Branch   | Status                  |
