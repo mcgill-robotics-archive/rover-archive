@@ -37,6 +37,7 @@ pipeline {
                 --ignore target_name_collision \
                 --ignore missing_install_target \
                 --ignore critical_var_append \
+                --ignore link_directory \
                 --skip-pkg rosserial_tivac \
                 --skip-pkg gscam
             '''
