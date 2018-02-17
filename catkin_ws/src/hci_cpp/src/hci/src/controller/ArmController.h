@@ -12,6 +12,7 @@
 #include <arm_control/JointVelocities.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Quaternion.h>
+#include <std_msgs/Bool.h>
 #include "JoystickInterface.h"
 
 
@@ -40,6 +41,7 @@ private:
     ros::NodeHandle& nodeHandle;
     ros::Publisher mCommandPublisher;
     ros::Publisher cCommandPublisher;
+    ros::Publisher eCommandPublisher;
     
     bool motorEnable;
     arm_control::JointVelocities jointVelocities;
@@ -47,17 +49,17 @@ private:
     ArmMode armMode;
     ArmJoint activeJoint;
     ArmClosedLoopMode closedLoopMode;
+    std_msgs::Bool execute;
     void changeArmPoint(float a1, float a2, float a3);
     void changeArmQuad(float a1, float a2, float a3);
 
     void publish();
     void enableMotors(bool enable);
+    void enableExecute (bool ex);
   
     float a1;
     float a2;
     float a3;
-    geometry_msgs::Pose emptyPose;
-
 };
 
 

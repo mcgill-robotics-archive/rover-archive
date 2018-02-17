@@ -7,11 +7,13 @@
 
 ArmController::ArmController(ros::NodeHandle &nh): nodeHandle(nh) {
     mCommandPublisher = nodeHandle.advertise<arm_control::JointVelocities>("joint_velocitiy", 100);
-    cCommandPublisher = nodeHandle.advertise<geometry_msgs::Pose>("closed_arm", 100);
+    cCommandPublisher = nodeHandle.advertise<geometry_msgs::Pose>("closed_arm_pose", 100);
+    eCommandPublisher = nodeHandle.advertise<std_msgs::Bool>("closed_arm_bool", 100);
 }
 
 void ArmController::handleJoystickData(JoystickData data) {
     enableMotors(data.buttons[0]);
+    enableExecute(data.buttons[0]);
 
     if (data.buttons[6])
         changeArmMode(OPEN);
@@ -43,17 +45,23 @@ void ArmController::handleJoystickData(JoystickData data) {
         }
     }
     else if (armMode == CLOSED){		//if the arm is in CLOSED mode
-        if (data.buttons[2]) 			//if button #3 was pressed on joystick, change to position
+        if (data.buttons[2]) 			//if button #3 was pressed on joystick, change to POSITION mode
             changeCloseLoopMode(POSITION);
-        else if (data.buttons[3])		//if button #4 was pressed on joystick, change to orientation
+        else if (data.buttons[3])		//if button #4 was pressed on joystick, change to ORIENTATION mode
             changeCloseLoopMode(ORIENTATION);
-        if(data.buttons[1]){
-             if (closedLoopMode == POSITION)	//if in POSITION,
+        if(data.buttons[1]){			//if button #2 is pressed on joystick, allow changes to message 
+             if (closedLoopMode == POSITION)		//if in POSITION, update 'closeArm.postion'
                  changeArmPoint(data.a1, data.a2, data.a3);
-             else if (closedLoopMode == ORIENTATION)//if in ORIENTATION
+             else if (closedLoopMode == ORIENTATION)	//if in ORIENTATION, update 'closeArm.orientation'
                  changeArmQuad(data.a1, data.a2, data.a3);
         }
     }
+        /*how the CLOSED mode works: if the motors are enabled (button #1), then the message is published; if not,
+            then a message of all zeros is published. If button #2 is pressed, then the message can be changed,
+            (meaning the POSE message 'closeArm' will change); if not, the message is static. Pressing buttons
+            #3 and #4 change the mode to Postion and Orientation respectively. Make sure you are in the proper mode
+            and press buttons #1 and #2 to update the message. Press #1 to continue sending that message
+        */ 
 }
 
 void ArmController::process() {
@@ -108,13 +116,8 @@ void ArmController::publish() {
     }
     else if (armMode == CLOSED)
     {
-        if (motorEnable){
             cCommandPublisher.publish(closeArm);
-	    ROS_INFO("ArmController.cpp /n pos.x: /t%f /n pos.y:/t%f /n pos.z:/t%f /n ori.x:/t%f /n ori.y:/t%f /n ori.z:/t%f /n ori.w:/t%f", closeArm.position.x, closeArm.position.y, closeArm.position.z,closeArm.orientation.x, closeArm.orientation.y, closeArm.orientation.z, closeArm.orientation.w);
-       }
-       else{
-            cCommandPublisher.publish(emptyPose);
-       }
+            eCommandPublisher.publish(execute);
     }
 }
 
@@ -124,6 +127,14 @@ void ArmController::enableMotors(bool enable) {
         motorEnable = enable;
         emit motorEnableChanged(motorEnable);
         ROS_INFO("ArmController.cpp: Changed motor enable to %s", (motorEnable ? "true" : "false"));
+    }
+}
+
+void ArmController::enableExecute(bool ex) {
+    if (execute.data != ex)
+    {
+        execute.data = ex;
+        ROS_INFO("ArmController.cpp: Changed execute to %s", (ex ? "true" : "false"));
     }
 }
 
