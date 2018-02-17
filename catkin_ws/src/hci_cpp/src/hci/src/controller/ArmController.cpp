@@ -88,9 +88,6 @@ void ArmController::changeOpenLoopJoint(ArmJoint joint) {
 }
 
 void ArmController::changeCloseLoopMode(ArmClosedLoopMode mode) {
-    //Q_UNUSED(mode)
-    //ROS_WARN("Closed loop controller not used");
-    //added:
     ROS_INFO("ArmController.cpp: ClosedLoop mode changed");
     if (closedLoopMode != mode){
         closedLoopMode = mode;

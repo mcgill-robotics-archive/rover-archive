@@ -36,7 +36,7 @@ private:
     rimstreamer::VideoFeedWidget* mScreenWidget;
 
 //added
-    int curr_topic;
+//    int curr_topic;
     
 };
 

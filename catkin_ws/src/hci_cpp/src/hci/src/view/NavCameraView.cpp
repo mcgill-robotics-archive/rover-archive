@@ -9,7 +9,7 @@
 
 NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     //create the 3 camera feeds, topView, leftView and rightView
-    topView = new SingleCameraView(this, true);
+    topView = new SingleCameraView(this, false);
     leftView = new SingleCameraView(this, false);
     rightView = new SingleCameraView(this, false);
 
