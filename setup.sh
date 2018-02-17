@@ -14,9 +14,9 @@ warning=$(tput bold; tput setaf 1)
 reset=$(tput sgr0)
 
 # Welcome the user
-echo "${header} Welcome to the Rover init script." 
+echo "${header} Welcome to the Rover init script."
 echo "This script automates initial dependency resolution and building of the"
-echo "workspace. It also optionally handles the setup of MoveIt! You will" 
+echo "workspace. It also optionally handles the setup of MoveIt! You will"
 echo "likely be prompted several times within the first minute.${reset}"
 echo
 
@@ -25,8 +25,8 @@ sudo echo "Checking for sudo priviledges..." || sudo -K
 sudo echo "Sudo priviledges are availlable!" || exit 1
 echo
 
-# Update from ubuntu repositories
-echo "Updating and upgrading using apt..."
+# Update apt package lists
+echo "Updating apt package lists..."
 sudo apt-get update
 echo
 
@@ -38,7 +38,7 @@ echo
 # Link udev rules
 if [[ ! -h /etc/udev/rules.d/11-rover-udev.rules ]]; then
     echo "Setting up udev rules..."
-    sudo ln -s ${ROBOTIC_PATH}/rover/11-rover-udev.rules /etc/udev/rules.d
+    sudo ln -s "${ROBOTIC_PATH}/rover/11-rover-udev.rules" /etc/udev/rules.d
 fi
 echo
 
@@ -48,8 +48,14 @@ sudo apt-get install -qq ros-kinetic-convex-decomposition
 echo
 
 # urg_node
-echo "Installing urg_node.."
-sudo apt-get install -qq ros-kinetic-urg-node 
+echo "Installing urg_node..."
+sudo apt-get install -qq ros-kinetic-urg-node
+echo
+
+
+# pid
+echo "Installing pid..."
+sudo apt-get install -qq ros-kinetic-pid
 echo
 
 # ROS dependency update
@@ -88,10 +94,10 @@ if [[ ! -d ../tiva ]]; then
     cd rover_tiva
     if [[ ! -h /etc/udev/rules.d/71-rover-tiva.rules ]]; then
         sudo ln -s \
-        ${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules \
+        "${ROBOTIC_PATH}/tiva/catkin_ws/src/rover_tiva/71-rover-tiva.rules" \
         /etc/udev/rules.d/71-rover-tiva.rules
     fi
-    cd ${ROBOTIC_PATH}/rover
+    cd "${ROBOTIC_PATH}/rover"
     echo
 fi
 
@@ -106,6 +112,7 @@ if [[ ! -f ${HOME}/.tmuxinator/rover.yml ]]; then
         mkdir ${HOME}/.tmuxinator
     fi
     ln -s ${ROBOTIC_PATH}/rover/tmux/rover.yml ${HOME}/.tmuxinator/
+
 fi
 
 # install dependencies for gstreamer

@@ -1,2 +1,0 @@
-bool Velocity
-bool Position

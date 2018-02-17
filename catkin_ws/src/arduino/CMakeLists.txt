@@ -7,41 +7,33 @@ project(arduino)
 
 if(APPLE) 
   set(ahrs_pkg)
-elseif(UNIX)
+  elseif(UNIX)
   set(ahrs_pkg ahrs)
 endif()
 find_package(catkin REQUIRED COMPONENTS
+  ${ahrs_pkg}
+  ${PROJECT_NAME}_msgs
   geometry_msgs
   roscpp
   rospy
-  rover_common
-  rosserial_arduino
+  rosserial_${PROJECT_NAME}
   rosserial_client
+  rover_common
   std_msgs
-  ${ahrs_pkg}
-  message_generation
-)
-
-add_service_files(DIRECTORY srv
-    FILES
-    Ram.srv
-    ResetArduino.srv
-)
-generate_messages(
-    DEPENDENCIES
-    std_msgs
-)
-
-catkin_package(
-    CATKIN_DEPENDS message_runtime std_msgs
 )
 
 rosserial_generate_ros_lib(
-    PACKAGE rosserial_arduino
+    PACKAGE rosserial_${PROJECT_NAME}
     SCRIPT make_libraries.py
 )
 
-add_dependencies(${PROJECT_NAME}_ros_lib ${${PROJECT_NAME}_EXPORTED_TARGETS})
+catkin_package(
+    CATKIN_DEPENDS geometry_msgs message_runtime std_msgs
+)
+
+include_directories(
+    ${catkin_INCLUDE_DIRS}
+)
 
 rosserial_configure_client(
     DIRECTORY src

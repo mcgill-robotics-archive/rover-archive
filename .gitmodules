@@ -1,13 +1,11 @@
-[submodule "catkin_ws/src/gscam"]
-    path = catkin_ws/src/gscam
-    url = https://github.com/ros-drivers/gscam.git
-[submodule "catkin_ws/src/rosserial_tivac"]
-	path = catkin_ws/src/rosserial_tivac
-	url = https://github.com/vmatos/rosserial_tivac
-[submodule "catkin_ws/src/rover_tiva"]
-	path = catkin_ws/src/rover_tiva
-	url = https://github.com/mcgill-robotics/rover_tiva.git
+
 [submodule "catkin_ws/src/dcdc_nuc"]
 	path = catkin_ws/src/dcdc_nuc
-	url = https://github.com/mcgill-robotics/ros-dcdc-nuc.git
+	url = git@github.com:mcgill-robotics/ros-dcdc-nuc
+[submodule "catkin_ws/src/rosserial"]
+	path = catkin_ws/src/rosserial
+	url = git@github.com:mcgill-robotics/rosserial.git
+[submodule "catkin_ws/src/usb_cam"]
+	path = catkin_ws/src/usb_cam
+	url = git@github.com:mcgill-robotics/usb_cam.git
 
