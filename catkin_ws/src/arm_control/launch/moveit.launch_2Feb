@@ -43,9 +43,9 @@
       <!-- base_pitch -->
       <node name="controller" pkg="pid" type="controller" ns="base_pitch_position_controller" output="screen" >
         <param name="node_name" value="base_pitch_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="600.0" />
+        <param name="Ki" value="300.0" />
+        <param name="Kd" value="15.0" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />
@@ -58,9 +58,9 @@
       <!-- base_yaw -->
       <node name="controller" pkg="pid" type="controller" ns="base_yaw_position_controller" output="screen" >
         <param name="node_name" value="base_yaw_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="20.0" />
+        <param name="Ki" value="2.0" />
+        <param name="Kd" value="1.0" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />
@@ -73,9 +73,9 @@
       <!-- elbow_pitch -->
       <node name="controller" pkg="pid" type="controller" ns="elbow_pitch_position_controller" output="screen" >
         <param name="node_name" value="elbow_pitch_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="400.0" />
+        <param name="Ki" value="40.0" />
+        <param name="Kd" value="3.8" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />
@@ -88,9 +88,9 @@
       <!-- wrist_pitch -->
       <node name="controller" pkg="pid" type="controller" ns="wrist_pitch_position_controller" output="screen" >
         <param name="node_name" value="wrist_pitch_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="15.4" />
+        <param name="Ki" value="7.0" />
+        <param name="Kd" value="0.1" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />
@@ -103,9 +103,9 @@
       <!-- elbow_roll -->
       <node name="controller" pkg="pid" type="controller" ns="elbow_roll_position_controller" output="screen" >
         <param name="node_name" value="elbow_roll_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="60.0" />
+        <param name="Ki" value="25.0" />
+        <param name="Kd" value="1.0" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />
@@ -118,9 +118,9 @@
       <!-- wrist_roll -->
       <node name="controller" pkg="pid" type="controller" ns="wrist_roll_position_controller" output="screen" >
         <param name="node_name" value="wrist_roll_position_controller" />
-        <param name="Kp" value="50.0" />
-        <param name="Ki" value="0.0" />
-        <param name="Kd" value="0.0" />
+        <param name="Kp" value="4.6" />
+        <param name="Ki" value="4.0" />
+        <param name="Kd" value="0.02" />
         <param name="upper_limit" value="1000000" />
         <param name="lower_limit" value="-1000000" />
         <param name="windup_limit" value="1000000" />

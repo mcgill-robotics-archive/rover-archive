@@ -48,19 +48,19 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "joint_states_dispatcher");
     ros::NodeHandle nh;
 
-    ros::Subscriber _joint_states_subscriber = nh.subscribe("arm/joint_states", 1, _dispatch_cb);
+    ros::Subscriber _joint_states_subscriber = nh.subscribe("joint_states", 1, _dispatch_cb);
 
-    _base_pitch_publisher = nh.advertise<std_msgs::Float64>("arm/base_pitch_position_controller/state", 1);
+    _base_pitch_publisher = nh.advertise<std_msgs::Float64>("base_pitch_position_controller/state", 1);
 
-    _base_yaw_publisher = nh.advertise<std_msgs::Float64>("arm/base_yaw_position_controller/state", 1);
+    _base_yaw_publisher = nh.advertise<std_msgs::Float64>("base_yaw_position_controller/state", 1);
 
-    _elbow_pitch_publisher = nh.advertise<std_msgs::Float64>("arm/elbow_pitch_position_controller/state", 1);
+    _elbow_pitch_publisher = nh.advertise<std_msgs::Float64>("elbow_pitch_position_controller/state", 1);
 
-    _elbow_roll_publisher = nh.advertise<std_msgs::Float64>("arm/elbow_roll_position_controller/state", 1);
+    _elbow_roll_publisher = nh.advertise<std_msgs::Float64>("elbow_roll_position_controller/state", 1);
 
-    _wrist_pitch_publisher = nh.advertise<std_msgs::Float64>("arm/wrist_pitch_position_controller/state", 1);
+    _wrist_pitch_publisher = nh.advertise<std_msgs::Float64>("wrist_pitch_position_controller/state", 1);
 
-    _wrist_roll_publisher = nh.advertise<std_msgs::Float64>("arm/wrist_roll_position_controller/state", 1);
+    _wrist_roll_publisher = nh.advertise<std_msgs::Float64>("wrist_roll_position_controller/state", 1);
 
     ros::spin();
 

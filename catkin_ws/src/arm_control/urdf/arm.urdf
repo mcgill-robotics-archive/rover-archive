@@ -1,9 +1,7 @@
 <robot
   name="arm">
   <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/arm</robotNamespace>
-    </plugin>
+    <plugin name="arm_control_plugin" filename="libarm_control_plugin.so"/>
   </gazebo>
   <link name="world"/>
   <link
@@ -564,3 +562,4 @@
       velocity="2.0"  />
   </joint>
 </robot>
+
