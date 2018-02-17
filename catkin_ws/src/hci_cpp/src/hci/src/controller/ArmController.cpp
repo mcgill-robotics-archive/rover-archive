@@ -47,7 +47,7 @@ void ArmController::handleJoystickData(JoystickData data) {
             changeCloseLoopMode(POSITION);
         else if (data.buttons[3])		//if button #4 was pressed on joystick, change to orientation
             changeCloseLoopMode(ORIENTATION);
-        if(motorEnable){
+        if(data.buttons[1]){
              if (closedLoopMode == POSITION)	//if in POSITION,
                  changeArmPoint(data.a1, data.a2, data.a3);
              else if (closedLoopMode == ORIENTATION)//if in ORIENTATION
