@@ -26,7 +26,7 @@ def main():
     # Instantiate a RobotCommander object which is an interface to the robot as a whole. Instantiate a PlanningSceneInterface object which is an interface to the world surrounding the robot.
     robot = moveit_commander.RobotCommander()
     scene = moveit_commander.PlanningSceneInterface()
-    group = moveit_commander.MoveGroupCommander("arm")
+    group = moveit_commander.MoveGroupCommander("Arm")
 
     # Create the subscribers on this node that, together, will execute Pose targets for the arm
     rospy.Subscriber("closed_arm_pose", Pose, callback_Pose)
