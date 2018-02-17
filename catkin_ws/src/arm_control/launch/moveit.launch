@@ -6,6 +6,9 @@
     <!-- Start the joints action server -->
     <node name="joints_as" pkg="arm_control" type="joints_as.py"/>
 
+    <!-- Start the script to pipe joystick Pose data into MoveIt -->
+    <node name="joystick_data" pkg="arm_control" type="joystick_arm.py"/>
+
     <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
 
     <arg name="robot_description" default="robot_description"/>

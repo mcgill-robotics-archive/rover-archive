@@ -14,8 +14,8 @@ def callback(data):
     # Instruct MoveIt to execute the pose_target
     group.go(wait=False)
 
-def listener():
-    rospy.init_node('joystick_listener', anonymous=True)
+def main():
+    rospy.init_node('joystick_data', anonymous=True)
 
     # Instantiate a RobotCommander object which is an interface to the robot as a whole. Instantiate a PlanningSceneInterface object which is an interface to the world surrounding the robot.
     robot = moveit_commander.RobotCommander()
@@ -26,8 +26,8 @@ def listener():
     rospy.Subscriber("closed_arm", Pose, callback)
     rospy.spin()
 
-if __name__=='__main__':
-    listener()
+if __name__ == '__main__':
+    main()
 
 
 
