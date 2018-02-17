@@ -6,13 +6,19 @@
 import rospy
 import moveit_commander
 import geometry_msgs.msg
+import std_msgs.msg
 
+# If closed_arm_bool's data is 'True' then we will execute the pose_target
+def callback_Exec(data):
+    if ( data.data ):
+        # Instruct MoveIt to execute the pose_target
+        group.go(wait=False)
 
-def callback(data):
+# This will update the set_target with the Pose data that "closed_arm" sends
+def callback_Pose(data):
     # Set the pose_target by passing it the Pose message we receive from our topic
     group.set_pose_target(data.data)
-    # Instruct MoveIt to execute the pose_target
-    group.go(wait=False)
+
 
 def main():
     rospy.init_node('joystick_data', anonymous=True)
@@ -22,8 +28,9 @@ def main():
     scene = moveit_commander.PlanningSceneInterface()
     group = moveit_commander.MoveGroupCommander("arm")
 
-    # Create a subscriber on this node
-    rospy.Subscriber("closed_arm", Pose, callback)
+    # Create the subscribers on this node that, together, will execute Pose targets for the arm
+    rospy.Subscriber("closed_arm_pose", Pose, callback_Pose)
+    rospy.Subscriber("closed_arm_bool", Bool, callback_Exec)
     rospy.spin()
 
 if __name__ == '__main__':
