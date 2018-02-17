@@ -8,27 +8,31 @@
 #include <QDebug>
 
 NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
-    topView = new SingleCameraView(this, false);
+    //create the 3 camera feeds, topView, leftView and rightView
+    topView = new SingleCameraView(this, true);
     leftView = new SingleCameraView(this, false);
     rightView = new SingleCameraView(this, false);
 
+    //create box h of layout that includes right and left cameras
     QHBoxLayout *h = new QHBoxLayout;
     h->setContentsMargins(0, 0, 0, 0);
     h->addWidget(leftView);
     h->addWidget(rightView);
-
+ 
+    //create final layout, with h on top and topView camera on bottom
     QVBoxLayout *v = new QVBoxLayout;
     v->setContentsMargins(0, 0, 0, 0);
     v->addItem(h);
     v->addWidget(topView);
 
-//    topView->setFixedSize(1024,768);
-//    leftView->setFixedSize(480, 640);
-//    rightView->setFixedSize(480, 640);
+    topView->setFixedSize(1024,768);
+    leftView->setFixedSize(480, 640);
+    rightView->setFixedSize(480, 640);
 
     setLayout(v);
 }
 
+//
 SingleCameraView *NavCameraView::screenPtr(NavCameraView::ScreenID id)
 {
     switch (id)
@@ -43,6 +47,7 @@ SingleCameraView *NavCameraView::screenPtr(NavCameraView::ScreenID id)
             return nullptr;
     }
 }
+
 
 void NavCameraView::setVideoFeed(const GstVideoFeedPtr &feed, ScreenID id) {
     SingleCameraView * screenPtr1 = screenPtr(id);
@@ -65,8 +70,8 @@ void NavCameraView::resizeEvent(QResizeEvent *event) {
     QSize widgetSize(size());
     qDebug() << widgetSize;
 
-//    topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
-//    leftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
-//    rightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+    topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
+    leftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+    rightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
     qDebug() << topView->size();
 }

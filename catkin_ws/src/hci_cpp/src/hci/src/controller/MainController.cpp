@@ -12,6 +12,7 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         mMainView(),
         mDriveController(nh),
         mArmController(nh),
+        mScienceController(nh), //
         mJoystickController(mMainView.getJoystickView()),
         dcdcController(nh),
         navCameraController(mMainView.getNavCamView()),
@@ -20,6 +21,7 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     // Setup all the sub-controllers in the constructor
     mJoystickController.registerController(&mDriveController, "Drive");
     mJoystickController.registerController(&mArmController, "Arm");
+    mJoystickController.registerController(&mScienceController, "Science");//
 
     // Since ROS subscriber information is coming from different threads, we
     // need to register the data types defined in the application with the
@@ -53,6 +55,11 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
         navigationController.moveToThread(navigationThread);
         connect(navigationThread, &QThread::started, &navigationController, &NavigationController::process);
         navigationThread->start();
+
+        QThread *scienceControllerThread = new QThread;								//
+	mScienceController.moveToThread(scienceControllerThread);						//
+        connect(scienceControllerThread, &QThread::started, &mScienceController, &ScienceController::process);	//
+        scienceControllerThread->start();									//
     }
 
     // Connect all the stuff
@@ -64,6 +71,7 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     connect(&mArmController, &ArmController::motorEnableChanged, &mMainView, &MainView::setMotorEnable);
     connect(&mArmController, &ArmController::armModeChanged , &mMainView, &MainView::setArmMode);
     connect(&mArmController, &ArmController::armJointChanged , &mMainView, &MainView::changeArmJoint);
+    connect(&mArmController, &ArmController::closedLoopModeChanged, &mMainView, &MainView::changeCloseLoopMode);
     connect(&mMainView, &MainView::armJointChanged, this, [this](ArmJoint joint){mArmController.changeOpenLoopJoint(joint);});
     connect(&mMainView, &MainView::armModeChanged, this, [this](ArmMode armMode){mArmController.changeArmMode(armMode);});
     connect(&mMainView, &MainView::closeLoopModeChanged, this, [this](ArmClosedLoopMode mode){mArmController.changeCloseLoopMode(mode);});
@@ -82,6 +90,13 @@ MainController::MainController(ros::NodeHandle& nh, ros::NodeHandle& pnh) :
     connect(&navigationController, &NavigationController::yawChanged, &mMainView, &MainView::setYaw);
     connect(&navigationController, &NavigationController::longitudeChanged, &mMainView, &MainView::setLongitude);
     connect(&navigationController, &NavigationController::latitudeChanged, &mMainView, &MainView::setLatitude);
+
+    connect(&mScienceController, &ScienceController::motorEnableChanged, &mMainView, &MainView::setMotorEnable);
+    connect(&mScienceController, &ScienceController::probeSpeedUpdate, &mMainView, &MainView::setProbeSpeed);
+    connect(&mScienceController, &ScienceController::drillSpeedUpdate, &mMainView, &MainView::setDrillSpeed);
+    connect(&mScienceController, &ScienceController::carriageSpeedUpdate, &mMainView, &MainView::setCarriageSpeed);
+
+    
 
     // Open the window
     mMainView.show();

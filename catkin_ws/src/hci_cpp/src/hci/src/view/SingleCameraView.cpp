@@ -13,13 +13,14 @@ SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, VideoFeed
     //Added
     int curr_topic;
 
+    //layout of camer view, including the combo box mAvailableList and the mScreenWidget
     QVBoxLayout* layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(mScreenWidget);
     layout->addWidget(mAvailableList);
-
+ 
+    //if the cameras are supposed to show the mAvailableList, do so, otherwise, hide it
     if (showSelector)
-
         mAvailableList->show();
     else
         mAvailableList->hide();

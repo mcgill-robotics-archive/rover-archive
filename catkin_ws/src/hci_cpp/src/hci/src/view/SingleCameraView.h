@@ -2,6 +2,7 @@
 // Created by David Lavoie-Boutin on 18/06/17.
 // david.lavoie-boutin (at) mail.mcgill.ca
 //
+//called in: NavCamera.h
 
 #ifndef HCI_CPP_CAMERAVIEW_H
 #define HCI_CPP_CAMERAVIEW_H
