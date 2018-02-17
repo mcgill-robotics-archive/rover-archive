@@ -27,8 +27,8 @@ public:
     VideoFeedPtr getVideoFeed();
 
 //added
-    void set_mAvailable(QStringList lst);
-    int set_Feed(int index);
+    //void set_mAvailable(QStringList lst);
+    //int set_Feed(int index);
 
 
 private:
@@ -36,7 +36,7 @@ private:
     rimstreamer::VideoFeedWidget* mScreenWidget;
 
 //added
-    int curr_topic;
+    //int curr_topic;
     
 };
 

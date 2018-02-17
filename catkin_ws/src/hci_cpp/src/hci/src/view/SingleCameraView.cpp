@@ -25,7 +25,7 @@ SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, VideoFeed
     else
         mAvailableList->hide();
     
-    mAvailableList->activated(mAvailableList->currentIndex());
+    //mAvailableList->activated(mAvailableList->currentIndex());
 
     setLayout(layout);
 }
@@ -44,6 +44,7 @@ VideoFeedPtr SingleCameraView::getVideoFeed() {
 
 //added
 
+/**
 void SingleCameraView::set_mAvailable(QStringList lst) {
    mAvailableList->clear();
 
@@ -56,6 +57,7 @@ int SingleCameraView::set_Feed(int index) {
         curr_topic = topic;
     }
     return curr_topic;
-}
+}**/
+
 
     
