@@ -27,8 +27,8 @@ public:
     VideoFeedPtr getVideoFeed();
 
 //added
-    void set_mAvailable(QStringList lst);
-    int set_Feed(int index);
+   // void set_mAvailable(QStringList lst);
+    //int set_Feed(int index);
 
 
 private:
