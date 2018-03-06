@@ -6,6 +6,8 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <tf/transform_datatypes.h> // Daniel: added as it converts geometric Quaternion to tf Quaternion
+#include <tf/transform_broadcaster.h> // Daniel: Needed to create a broadcaster
 #include <std_msgs/Float32.h>
 
 const int PI = 3.1415926535897931;
@@ -55,10 +57,49 @@ namespace gazebo {
             z_velocity_sub = node.subscribe<std_msgs::Float32>(z_velocity_topic, 10, boost::bind(&TiltUnitPlugin::z_velocity_callback, this, _1));
 
             update_connection = event::Events::ConnectWorldUpdateBegin(boost::bind(&TiltUnitPlugin::OnUpdate, this));
+
+            // Daniel's:
+            tf::TransformBroadcaster broadcaster;
         }
 
         // Called by the world update start event
         void OnUpdate() {
+            // Daniel's (START)
+
+            // Instantiate a ModelState object to use in Gazebo library call to get current pose (returns a math_pose 
+            gazebo::physics::ModelState model_state = gazebo::physics::ModelState(this->model);
+            gazebo::math::Pose math_pose = model_state.GetPose();
+            
+            // Fully construct a geometry Pose (instead of a math one)
+            geometry_msgs::Pose cur_pose;
+
+            cur_pose.position.x = math_pose.pos.x;
+            cur_pose.position.y = math_pose.pos.y;
+            cur_pose.position.z = math_pose.pos.z;
+
+            cur_pose.orientation.x = math_pose.rot.x;
+            cur_pose.orientation.y = math_pose.rot.y;
+            cur_pose.orientation.z = math_pose.rot.z;
+            cur_pose.orientation.w = math_pose.rot.w;
+
+
+            // TF stamped msg, composed of: 'std_msgs/Header' header, string child_frame_id and a geometry_msgs/Transform 
+            geometry_msgs::TransformStamped trans_msg;
+            trans_msg.header.frame_id = "base";         // Probably the world
+            trans_msg.header.stamp = ros::Time::now();
+            trans_msg.child_frame_id = "base_link";     // Probably the lidar('s base)
+
+            // 'Transform transform' attribute == "the transform between two coordinate frames in free space" using a Vector3 and a Quaternion (both geometry_msg)
+            trans_msg.transform.translation.x = cur_pose.position.x;
+            trans_msg.transform.translation.y = cur_pose.position.y;
+            trans_msg.transform.translation.z = cur_pose.position.z;
+            trans_msg.transform.rotation = cur_pose.orientation;
+
+
+            // Updates by broadcasting the current transform/translation
+            broadcaster.sendTransform(trans_msg);
+
+            // (END)
 
             if(theta_max == theta_min) {
               tilting_unit_joint->SetPosition(0, 0);
@@ -126,6 +167,8 @@ namespace gazebo {
         physics::ModelPtr model;
         physics::JointPtr tilting_unit_joint;
         sensor_msgs::JointState tilting_unit_joint_state;
+      
+        tf::TransformBroadcaster broadcaster; // Daniel: TF broadcaster
 
     }; // Register this plugin with the simulator
     GZ_REGISTER_MODEL_PLUGIN(TiltUnitPlugin)
