@@ -60,6 +60,21 @@ namespace gazebo {
 
             // Daniel's:
             tf::TransformBroadcaster broadcaster;
+            // Move the model a little higher so friction /w the ground isn't an issue
+
+
+            math::Pose init_pose = math::Pose( math::Vector3(0, 0, 0.25), math::Quaternion(0, 0, 0, 0));
+            this->model->gazebo::physics::Entity::SetInitialRelativePose( math::Pose(init_pose) ); // Use a math::Pose
+
+
+            //this->model->dirtyPose = init_pose;
+
+            //gazebo::physics::Entity::SetRelativePose() // Use a math::Pose
+/*
+            this->model->SetLinearVel(math::Vector3(0, 0, 0.5));
+            ros::Duration(0.25).sleep(); // Sleep for 0.25s
+            this->model->SetLinearVel(math::Vector3(0, 0, 0));
+//*/
         }
 
         // Called by the world update start event
@@ -123,6 +138,7 @@ namespace gazebo {
             joint_state_pub.publish(tilting_unit_joint_state);
 
             this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
+            //this->model->SetAngularVel(math::Vector3(0, 0, 0)); // Daniel: strip all angular velocity so that the model doesn't fall over
 
             return;
         }
