@@ -6,7 +6,6 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
-#include <tf/transform_datatypes.h> // Daniel: added as it converts geometric Quaternion to tf Quaternion
 #include <tf/transform_broadcaster.h> // Daniel: Needed to create a broadcaster
 #include <std_msgs/Float32.h>
 
@@ -60,28 +59,7 @@ namespace gazebo {
 
             // Daniel's:
             tf::TransformBroadcaster broadcaster;
-            // Move the model a little higher so friction /w the ground isn't an issue
-
-
-            //math::Pose init_pose = math::Pose( math::Vector3(0, 0, 5), math::Quaternion(0, 0, 0, 0));
-            //this->model->gazebo::physics::Entity::SetInitialRelativePose( math::Pose(init_pose) ); // Use a math::Pose
-
-
-            //this->model->dirtyPose = init_pose;
-
-            //gazebo::physics::Entity::SetRelativePose() // Use a math::Pose
-/*
-            this->model->SetLinearVel(math::Vector3(0, 0, 0.5));
-
-            gazebo::physics::ModelState model_state = gazebo::physics::ModelState(this->model);
-            gazebo::math::Pose math_pose = model_state.GetPose();
-
-            while (!(math_pose.pos.z < 0.5)) {
-                math_pose = model_state.GetPose();
-            }
-            this->model->SetLinearVel(math::Vector3(0, 0, 0));
-//*/
-            this->init = false;
+            this->init = false; // Set to true, once model's Pose.z > 0.5
         }
 
         // Called by the world update start event
@@ -92,6 +70,7 @@ namespace gazebo {
             gazebo::physics::ModelState model_state = gazebo::physics::ModelState(this->model);
             gazebo::math::Pose math_pose = model_state.GetPose();
 
+            // I.e. If we haven't yet reached 0.5, set z.velocity to 0.5 and continue simulating (nb it wouldn't simulate if stuck in a while loop)
             if (!this->init) {
                 this->model->SetLinearVel(math::Vector3(0, 0, 0.5));
                 if ( math_pose.pos.z > 0.5 ) {
@@ -152,10 +131,9 @@ namespace gazebo {
 
             joint_state_pub.publish(tilting_unit_joint_state);
             
+            // Daniel: Only if we're finished getting the lidar high enough, do we want to modify the linear velocity with our topics
             if(this->init)
                 this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
-
-            //this->model->SetAngularVel(math::Vector3(0, 0, 0)); // Daniel: strip all angular velocity so that the model doesn't fall over
 
             return;
         }
