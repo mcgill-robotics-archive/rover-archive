@@ -2,14 +2,17 @@
 <robot>
   <gazebo reference="base_link">
     <material>Gazebo/Blue</material>
+    <turnGravityOff>true</turnGravityOff>
   </gazebo>
 
   <gazebo reference="lidar">
     <material>Gazebo/White</material>
+    <turnGravityOff>true</turnGravityOff>
   </gazebo>
 
   <!-- hokuyo -->
   <gazebo reference="hokuyo_link">
+    <turnGravityOff>true</turnGravityOff>
     <sensor type="ray" name="head_hokuyo_sensor">
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>

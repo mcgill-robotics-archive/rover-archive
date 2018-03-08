@@ -63,8 +63,8 @@ namespace gazebo {
             // Move the model a little higher so friction /w the ground isn't an issue
 
 
-            math::Pose init_pose = math::Pose( math::Vector3(0, 0, 0.25), math::Quaternion(0, 0, 0, 0));
-            this->model->gazebo::physics::Entity::SetInitialRelativePose( math::Pose(init_pose) ); // Use a math::Pose
+            //math::Pose init_pose = math::Pose( math::Vector3(0, 0, 5), math::Quaternion(0, 0, 0, 0));
+            //this->model->gazebo::physics::Entity::SetInitialRelativePose( math::Pose(init_pose) ); // Use a math::Pose
 
 
             //this->model->dirtyPose = init_pose;
@@ -72,9 +72,16 @@ namespace gazebo {
             //gazebo::physics::Entity::SetRelativePose() // Use a math::Pose
 /*
             this->model->SetLinearVel(math::Vector3(0, 0, 0.5));
-            ros::Duration(0.25).sleep(); // Sleep for 0.25s
+
+            gazebo::physics::ModelState model_state = gazebo::physics::ModelState(this->model);
+            gazebo::math::Pose math_pose = model_state.GetPose();
+
+            while (!(math_pose.pos.z < 0.5)) {
+                math_pose = model_state.GetPose();
+            }
             this->model->SetLinearVel(math::Vector3(0, 0, 0));
 //*/
+            this->init = false;
         }
 
         // Called by the world update start event
@@ -84,7 +91,15 @@ namespace gazebo {
             // Instantiate a ModelState object to use in Gazebo library call to get current pose (returns a math_pose 
             gazebo::physics::ModelState model_state = gazebo::physics::ModelState(this->model);
             gazebo::math::Pose math_pose = model_state.GetPose();
-            
+
+            if (!this->init) {
+                this->model->SetLinearVel(math::Vector3(0, 0, 0.5));
+                if ( math_pose.pos.z > 0.5 ) {
+                    this->model->SetLinearVel(math::Vector3(0, 0, 0));
+                    this->init = true;
+                }
+            }
+
             // Fully construct a geometry Pose (instead of a math one)
             geometry_msgs::Pose cur_pose;
 
@@ -136,8 +151,10 @@ namespace gazebo {
             tilting_unit_joint_state.velocity[0] = tilting_unit_joint->GetVelocity(0);
 
             joint_state_pub.publish(tilting_unit_joint_state);
+            
+            if(this->init)
+                this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
 
-            this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
             //this->model->SetAngularVel(math::Vector3(0, 0, 0)); // Daniel: strip all angular velocity so that the model doesn't fall over
 
             return;
@@ -185,6 +202,7 @@ namespace gazebo {
         sensor_msgs::JointState tilting_unit_joint_state;
       
         tf::TransformBroadcaster broadcaster; // Daniel: TF broadcaster
+        bool init; // Daniel: used to levitate the lidar
 
     }; // Register this plugin with the simulator
     GZ_REGISTER_MODEL_PLUGIN(TiltUnitPlugin)
