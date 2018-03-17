@@ -9,6 +9,8 @@ project(rover_nav)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   move_base
+  move_base_msgs
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -199,5 +201,5 @@ include_directories(
 
 ## Add files to build
 
-add_executable(simple_navigation_goals src/simple_navigation_goals.cpp)
-target_link_libraries(simple_navigation_goals ${catkin_LIBRARIES})
+add_executable(navigation_goals src/navigation_goals.cpp)
+target_link_libraries(navigation_goals ${catkin_LIBRARIES})

@@ -50,8 +50,11 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>move_base</build_depend>
+  <build_depend>move_base_msgs</build_depend>
   <build_export_depend>move_base</build_export_depend>
   <exec_depend>move_base</exec_depend>
+  <build_export_depend>move_base_msgs</build_export_depend>
+  <exec_depend>move_base_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
