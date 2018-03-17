@@ -37,19 +37,12 @@ class AhrsTfBroadcaster:
 	self.point_cloud.header = self.h
 	
 	self.start_time = rospy.Time.now()
-
-	#self.drift_x = -0.00001
-	#self.drift_y = -0.000295
-	#self.x =0.06
-	#self.y =0
-	self.drift_x=0
-	self.drift_y=0
-	self.x=0
-	self.y=0
+	self.longitude =0
+	self.latitude =0
 	self.start_time = rospy.Time.now() 
-	self.time = rospy.Time.now()
-	self.positionList = []
-        self.center_position = (0, 0, 0)
+	self.time_pointCloud = rospy.Time.now()
+	self.time_lastMessage = rospy.Time.now()
+        self.center_gps_position = (0, 0, 0)
         self.last_tf = None
         self.first = True
         rospy.loginfo("tf_broadcaster initialized, waiting for messages")
@@ -60,21 +53,20 @@ class AhrsTfBroadcaster:
 
     def handle_service(self, req):
         if self.last_tf is not None:
-            self.center_position = (
-                self.last_tf.x,
-                self.last_tf.y,
-                self.last_tf.z)
+	    self.center_gps_position = (
+		self.last_tf.latitude,
+		self.last_tf.longitude,
+		self.last_tf.altitude)
         return CenterWorldFrameResponse(True)
         pass
 
     def handle_ahrs_msg(self, message):
         if self.first:
             rospy.loginfo("Received first message, tf are ready")
-            self.center_position = (
-                message.pose.pose.position.x,
-                message.pose.pose.position.y,
-                message.pose.pose.position.z)
-	    self.positionList.append(self.center_position)
+	    self.center_gps_position = (
+		message.gps.latitude,
+		message.gps.longitude,
+		message.gps.altitude)
             self.first = False
 
         quat = (
@@ -86,16 +78,13 @@ class AhrsTfBroadcaster:
         euler = tf.transformations.euler_from_quaternion(quat)
         euler_fixed = (euler[0], -1 * euler[1], -1 * euler[2])
 	
-	if self.last_tf is not None:
-		self.x += (message.pose.pose.position.x - self.last_tf.x)- self.drift_x
-		self.y += (message.pose.pose.position.y - self.last_tf.y)- (self.drift_y )
-	else: 
-		self.x += (message.pose.pose.position.x - self.drift_x)
-		self.y += (message.pose.pose.position.y - self.drift_y)
+	self.latitude = message.gps.latitude - self.center_gps_position[0]
+	self.longitude = message.gps.longitude - self.center_gps_position[1]
 
-        self.br.sendTransform(( self.x, self.y, 0), (0, 0, 0, 1),
-                              rospy.Time.now(),
-                              "ahrs_position", "base_link")
+	
+	self.br.sendTransform((self.latitude,self.longitude,0),(0, 0, 0, 1),
+				rospy.Time.now(),
+				"ahrs_gps_position", "gps")
        
         # This adjustment makes the local frame for the ahrs conform with
         # the (forward, left, up) standard for local robot coordinate frames.
@@ -116,15 +105,17 @@ class AhrsTfBroadcaster:
                               rospy.Time.now(), "global_ahrs_orientation",
                               "ahrs_position")
 	
-        self.last_tf = message.pose.pose.position
+
+        #self.last_tf = message.pose.pose.position
+	self.last_tf = message.gps
 	#record position every 5s
-	if (rospy.Time.now()-rospy.Duration(5)) >= self.time :
+	if (rospy.Time.now()-rospy.Duration(5)) >= self.time_pointCloud :
 		self.point = Point()
-		self.point.x = self.x
-		self.point.y = self.y
+		self.point.x = message.gps.latitude
+		self.point.y = message.gps.longitude
 		self.point.z = 0
 		self.point_cloud.points.append(self.point)
-		self.time = rospy.Time.now()
+		self.time_pointCloud = rospy.Time.now()
 		
 	self.ahrsPublisher.publish(self.point_cloud)
 
