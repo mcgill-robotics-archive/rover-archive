@@ -20,9 +20,10 @@ public:
 
     enum ScreenID
     {
-        TOP = 1,
-        LEFT = 2,
-        RIGHT = 3
+        TOP_RIGHT = 1,
+        TOP_LEFT = 2,
+        BOTTOM_LEFT = 3,
+        BOTTOM_RIGHT = 4
     };
 
     void setVideoFeed(const GstVideoFeedPtr& feed, ScreenID id);
@@ -33,9 +34,10 @@ protected:
     virtual void resizeEvent(QResizeEvent* event);
 
 private:
-    SingleCameraView* topView;
-    SingleCameraView* leftView;
-    SingleCameraView* rightView;
+    SingleCameraView* topRightView;
+    SingleCameraView* topLeftView;
+    SingleCameraView* bottomLeftView;
+    SingleCameraView* bottomRightView;
 
     SingleCameraView* screenPtr(ScreenID id);
 };

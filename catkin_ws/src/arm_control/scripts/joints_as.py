@@ -122,7 +122,7 @@ def joint_name_helper(joint_name):
 
 
 def main():
-    rospy.init_node("joints_as")
+    rospy.init_node("armexecute_kinematic_path")
 
     joint_names = ["base_pitch", "base_yaw", "elbow_pitch",
                    "elbow_roll", "wrist_pitch", "wrist_roll"]
