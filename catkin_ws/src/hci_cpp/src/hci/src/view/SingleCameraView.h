@@ -11,14 +11,24 @@
 #include <QtWidgets/QComboBox>
 #include <rimstreamer/VideoFeedWidget.h>
 //added 
+#include "CameraAngleSelect.h"
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
 #include <QSizePolicy>
+#include <QImage>
+#include <QLabel>
+#include <QTransform> 
+#include <QPixmap> 
+#include <QString>
 
 using namespace rimstreamer;
 
 class SingleCameraView : public QWidget {
 Q_OBJECT
+
+
 public:
-    SingleCameraView(QWidget *parent= nullptr, bool showSelector=false, VideoFeedWidget::Orientation orientation=VideoFeedWidget::NONE);
+    SingleCameraView(QWidget *parent= nullptr, bool showSelector=false, int angle=0, VideoFeedWidget::Orientation orientation=VideoFeedWidget::NONE);
 
     virtual ~SingleCameraView() = default;
 
@@ -27,17 +37,27 @@ public:
     VideoFeedPtr getVideoFeed();
 
 //added
-   // void set_mAvailable(QStringList lst);
-    //int set_Feed(int index);
-
+    void set_mAvailable(QStringList lst);
+    int set_Feed(int index);
+    void set_angle(double ang);
+    void newSample(QImage image); 
+    void addEntry(QString string);
+    void setList(QStringList list);
+    void topicCallback(int index);
 
 private:
     QComboBox* mAvailableList;
     rimstreamer::VideoFeedWidget* mScreenWidget;
-
+    QLabel* imageDisplay;
+    CameraAngleSelect *angleSelector;
+    QString activeTopic;
 //added
-//    int curr_topic;
-    
+    QSizePolicy sizePolicy;
+    int curr_topic; 
+    double angle;
+    QImage imageNew;
+    QPixmap pixmap;
+    QString topic;
 };
 
 
