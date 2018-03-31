@@ -8,6 +8,8 @@
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h> // Daniel: Needed to create a broadcaster
 #include <std_msgs/Float32.h>
+#include <geometry_msgs/Twist.h>
+#include <stdlib.h>
 
 const int PI = 3.1415926535897931;
 
@@ -24,6 +26,8 @@ namespace gazebo {
             x_velocity_topic = "/x_velocity_lidar";
             y_velocity_topic = "/y_velocity_lidar";
             z_velocity_topic = "/z_velocity_lidar";
+
+            navigation_twist_topic = "/cmd_vel";
 
             tilting_unit_joint_state.name.resize(1);
             tilting_unit_joint_state.position.resize(1);
@@ -54,6 +58,8 @@ namespace gazebo {
             x_velocity_sub = node.subscribe<std_msgs::Float32>(x_velocity_topic, 10, boost::bind(&TiltUnitPlugin::x_velocity_callback, this, _1));
             y_velocity_sub = node.subscribe<std_msgs::Float32>(y_velocity_topic, 10, boost::bind(&TiltUnitPlugin::y_velocity_callback, this, _1));
             z_velocity_sub = node.subscribe<std_msgs::Float32>(z_velocity_topic, 10, boost::bind(&TiltUnitPlugin::z_velocity_callback, this, _1));
+
+            navigation_twist_subscriber = node.subscribe<geometry_msgs::Twist>(navigation_twist_topic, 10, boost::bind(&TiltUnitPlugin::navigation_twist_callback, this, _1));
 
             update_connection = event::Events::ConnectWorldUpdateBegin(boost::bind(&TiltUnitPlugin::OnUpdate, this));
 
@@ -120,6 +126,14 @@ namespace gazebo {
             if( (joint_angle >= theta_max && rot_speed > 0.0) || (joint_angle <= theta_min && rot_speed < 0.0) ) {
                 rot_speed *= -1;
             }
+
+            // Daniel: Only if we're finished getting the lidar high enough, do we want to modify the linear velocity with our topics
+            if(this->init) {
+                this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
+                this->model->SetAngularVel(math::Vector3(x_rotation, y_rotation, z_rotation));
+                
+                //this->model->SetWorldTwist(math::Vector3(x_velocity, y_velocity, z_velocity), math::Vector3(x_rotation, y_rotation, z_rotation), true);
+            }
           
             tilting_unit_joint->SetEffortLimit(0, 5.0);
             tilting_unit_joint->SetVelocity(0, rot_speed);
@@ -131,9 +145,7 @@ namespace gazebo {
 
             joint_state_pub.publish(tilting_unit_joint_state);
             
-            // Daniel: Only if we're finished getting the lidar high enough, do we want to modify the linear velocity with our topics
-            if(this->init)
-                this->model->SetLinearVel(math::Vector3(x_velocity, y_velocity, z_velocity));
+            
 
             return;
         }
@@ -153,6 +165,18 @@ namespace gazebo {
             this->z_velocity = velocity->data;
         }
 
+        void navigation_twist_callback(const geometry_msgs::Twist::ConstPtr &twist)
+        {
+            geometry_msgs::Vector3 linear = twist->linear;
+            geometry_msgs::Vector3 angular = twist->angular;
+            this->x_velocity = linear.x;
+            this->y_velocity = linear.y;
+            this->z_velocity = linear.z;
+            this->x_rotation = angular.x;
+            this->y_rotation = angular.y;
+            this->z_rotation = angular.z;
+        }
+
       private:
         event::ConnectionPtr update_connection; // Pointer to the update event connection
         ros::NodeHandle node;                   // ROS Nodehandle
@@ -160,11 +184,13 @@ namespace gazebo {
         ros::Subscriber x_velocity_sub;
         ros::Subscriber y_velocity_sub;
         ros::Subscriber z_velocity_sub;
+        ros::Subscriber navigation_twist_subscriber;
 
         std::string joint_states_topic;
         std::string x_velocity_topic;
         std::string y_velocity_topic;
         std::string z_velocity_topic;
+        std::string navigation_twist_topic;
 
         double theta_max; //[rad]
         double theta_min; //[rad]
@@ -174,6 +200,10 @@ namespace gazebo {
         float x_velocity;
         float y_velocity;
         float z_velocity;
+
+        float x_rotation;
+        float y_rotation;
+        float z_rotation;
         
         physics::ModelPtr model;
         physics::JointPtr tilting_unit_joint;
