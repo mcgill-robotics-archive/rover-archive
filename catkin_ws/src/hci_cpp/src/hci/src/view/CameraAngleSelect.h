@@ -25,7 +25,7 @@ public:
     QString angleText(int angle);
 
 signals:
-    
+    void angleChanged(int angle);
 
 private:
     QHBoxLayout layout;

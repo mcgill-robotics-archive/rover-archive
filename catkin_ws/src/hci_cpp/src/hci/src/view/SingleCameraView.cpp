@@ -5,14 +5,25 @@
 
 
 #include "SingleCameraView.h"
+#include <QtGlobal>
 
-SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle, VideoFeedWidget::Orientation orientation) : QWidget(parent) {
+SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle, int ind, VideoFeedWidget::Orientation orientation) : QWidget(parent) {
     mAvailableList = new QComboBox(this);
     mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, orientation);
     //Added
     angleSelector = new CameraAngleSelect(this, angle);
     imageDisplay = new QLabel(this);
 
+    setList();
+    mAvailableList->setCurrentIndex(ind);
+    camAngle = angle;
+
+    
+    //connect mAvailableList with indexIsChanged (will emit indexChanged signal)
+    connect(mAvailableList, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &SingleCameraView::indexIsChanged);
+
+    //connect angelSelector with angleChanged (using signal angleChanged(int) from CameraAngelSelect.cpp)
+    connect(angleSelector, &CameraAngleSelect::angleChanged, this, &SingleCameraView::changeAngle);
 
     sizePolicy = QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     mAvailableList->setSizePolicy(sizePolicy);
@@ -38,13 +49,6 @@ SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle
         mAvailableList->hide();
         angleSelector->hide();
     }
-    
-
-//to Add (translate from Python)
-/*
-    self._angle_selector.turnAngle.connect(self.set_angle)
-    self._topic_selector.activated.connect(self._topic_sel_callback)
-*/
 
     setLayout(layout);
 }
@@ -61,35 +65,27 @@ VideoFeedPtr SingleCameraView::getVideoFeed() {
     return mScreenWidget->getVideoFeed();
 }
 
-//added
-void SingleCameraView::set_angle(double ang){
-    angle = ang;
-    angleSelector->defaultAngle(ang);
-}
 
-void SingleCameraView::newSample(QImage image){
-    if (image.isNull())
-        imageDisplay->setText("No image");
+void SingleCameraView::indexIsChanged(int index){
+    ROS_INFO("The index was changed");
+    
+    emit indexChanged(index);
+} 
 
-    else{
-        if (angle != 0)
-            imageNew = image.transformed(QTransform().rotate(angle), Qt::SmoothTransformation);
-        else
-            imageNew = image;
-        imageNew = imageNew.scaled(this->width(), this->height(), Qt::KeepAspectRatio, Qt::FastTransformation); 
-        pixmap = QPixmap::fromImage(imageNew);
-        imageDisplay->setPixmap(pixmap);
-    } 
-}
-
-void SingleCameraView::addEntry(QString string){
-    if( !string.isNull())
-        mAvailableList->addItem(string);
-}
-
-void SingleCameraView::setList(QStringList list){ 
-    mAvailableList->clear();
-    mAvailableList->addItems(list);
+void SingleCameraView::setList(){
+    QStringList * list = new QStringList;
+    /*
+    list->append("Camera 1");    //index 0
+    list->append("Camera 2");    //index 1
+    list->append("Camera 3");
+    list->append("Camera 4");
+    list->append("Hikcamera 5");
+    list->append("Hikcamera 6"); //index 5
+    */
+    list->append("Bottom");
+    list->append("Top Left");
+    list->append("Top Right");
+    mAvailableList->addItems(*list);
 }
 
 void SingleCameraView::topicCallback(int index){
@@ -104,20 +100,22 @@ void SingleCameraView::topicCallback(int index){
     }
 }
 
-/*void SingleCameraView::set_mAvailable(QStringList lst) {
-   mAvailableList->clear();
-
-   mAvailableList->addItems (lst);
+void SingleCameraView::changeAngle(int angle){
+    camAngle = angle;
+    if (camAngle == 90) {
+        //delete mScreenWidget;
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CW);
+    }
+    if (camAngle == 270) {
+        //delete mScreenWidget;
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CCW);
+    }
+    else {
+        //delete mScreenWidget;
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::NONE);
+    }
 }
 
-int SingleCameraView::set_Feed(int index) {
-    if (index < mAvailableList->count()) {
-        int topic =index; 
-        curr_topic = topic;
-    }
-    return curr_topic;
-}*/
-        
 
 
 

@@ -51,22 +51,28 @@ void CameraAngleSelect::defaultAngle(int ang){
 }
 
 void CameraAngleSelect::changeAngle(){
+    int ang; 
     if(deg0->isChecked()){
-        angle = 90;
+        ang = 0;
+        ROS_INFO("CameraAngleSelect: angle is changed to 0");
+    }
+    else if(deg90->isChecked()){
+        ang = 90;
         ROS_INFO("CameraAngleSelect: angle is changed to 90");
     }
     else if (deg180->isChecked()){
-        angle = 180;   
+        ang = 180;   
         ROS_INFO("CameraAngleSelect: angle is changed to 180");
     }
     else if (deg270->isChecked()){
-        angle = 270;
+        ang = 270;
         ROS_INFO("CameraAngleSelect: angle is changed to 270");
     }
     else{
-        angle = 0; 
+        ang = 0; 
         ROS_INFO("CameraAngleSelect: angle is changed to 0");
     }
+    emit angleChanged(ang);
 }
 
 QString CameraAngleSelect::angleText(int angle){

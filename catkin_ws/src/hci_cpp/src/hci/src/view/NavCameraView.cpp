@@ -9,15 +9,16 @@
 
 NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     //create the 3 camera feeds, topView, leftView and rightView
+
+    topView = new SingleCameraView(this, true, 0, 0);
+    bottomLeftView = new SingleCameraView(this, true, 270, 1);
+    bottomRightView = new SingleCameraView(this, true, 9, 2);
 /*
-    topView = new SingleCameraView(this, true, 0);
-    leftView = new SingleCameraView(this, true, 270);
-    rightView = new SingleCameraView(this, true, 90);
-*/
     topLeftView = new SingleCameraView(this, false, 270);
     topRightView = new SingleCameraView(this, false, 90);
     bottomLeftView = new SingleCameraView(this, false, 270);
     bottomRightView = new SingleCameraView(this, false, 90);
+*/
 
     //create box hB of bottom layout that includes right and left cameras
     QHBoxLayout *hB = new QHBoxLayout;
@@ -25,26 +26,32 @@ NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     hB->addWidget(bottomLeftView);
     hB->addWidget(bottomRightView);
     
+/*
     //create box h of top layout that includes right and left cameras
     QHBoxLayout *hT = new QHBoxLayout;
-    hT->setContentsMargins(0, 0, 0, 0);
     hT->addWidget(topLeftView);
-    hBT->addWidget(topRightView);
+    hT->addWidget(topRightView);
+*/
  
     //create final layout, with h on top and topView camera on bottom
     QVBoxLayout *v = new QVBoxLayout;
     v->setContentsMargins(0, 0, 0, 0);
-    v->addItem(hT);
+    //v->addItem(hT);
     v->addItem(hB);
-    //v->addWidget(topView);
+    v->addWidget(topView);
 
-    //topView->setFixedSize(1024,768);
-    topLeftView->setFixedSize(480, 640);
-    topRightView->setFixedSize(480, 640);
+    topView->setFixedSize(1024,768);
+    //topLeftView->setFixedSize(480, 640);
+    //topRightView->setFixedSize(480, 640);
     bottomLeftView->setFixedSize(480, 640);
     bottomRightView->setFixedSize(480, 640);
 
     setLayout(v);
+
+    //connect cameras to control feeds
+    //connect(topView, &SingleCameraView::indexChanged, this, &NavCameraView::topChangedIndex);
+    //connect(bottomLeftView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomLeftChangedIndex);
+    //connect(bottomRightView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomRightChangedIndex);
 }
 
 
@@ -52,8 +59,10 @@ SingleCameraView *NavCameraView::screenPtr(NavCameraView::ScreenID id)
 {
     switch (id)
     {
-        case TOP_RIGHT:
-            return topRightView;
+        case TOP:
+            return topView;
+        //case TOP_RIGHT:
+            //return topRightView;
         case TOP_LEFT:
             return topLeftView;
         case BOTTOM_LEFT:
@@ -87,10 +96,37 @@ void NavCameraView::resizeEvent(QResizeEvent *event) {
     QSize widgetSize(size());
     qDebug() << widgetSize;
 
-    //topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
-    topLeftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
-    topRightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+    topView->setFixedSize(width(), 0.36 * widgetSize.height() - 5);
+    //topLeftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
+    //topRightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
     bottomLeftView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
     bottomRightView->setFixedSize(width()/2, (1-0.36) * widgetSize.height() - 2);
     qDebug() << topView->size();
 }
+
+int NavCameraView::changedIndex(int index){
+    return index;
+}
+
+void NavCameraView::topChangedIndex(int index){
+    emit changeFeed(TOP, index); 
+}
+
+void NavCameraView::bottomLeftChangedIndex(int index){
+    emit changeFeed(BOTTOM_LEFT, index); 
+}
+
+void NavCameraView::bottomRightChangedIndex(int index){
+    emit changeFeed(BOTTOM_RIGHT, index); 
+}
+
+
+
+
+
+
+
+
+
+
+

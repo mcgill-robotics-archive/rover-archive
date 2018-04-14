@@ -28,7 +28,7 @@ Q_OBJECT
 
 
 public:
-    SingleCameraView(QWidget *parent= nullptr, bool showSelector=false, int angle=0, VideoFeedWidget::Orientation orientation=VideoFeedWidget::NONE);
+    SingleCameraView(QWidget *parent= nullptr, bool showSelector=false, int angle=0, int ind=0, VideoFeedWidget::Orientation orientation=VideoFeedWidget::NONE);
 
     virtual ~SingleCameraView() = default;
 
@@ -39,11 +39,16 @@ public:
 //added
     void set_mAvailable(QStringList lst);
     int set_Feed(int index);
-    void set_angle(double ang);
+    //void set_angle(double ang);
     void newSample(QImage image); 
     void addEntry(QString string);
-    void setList(QStringList list);
+    void setList();//QStringList list);
     void topicCallback(int index);
+    void indexIsChanged(int index);
+    void changeAngle(int angle);
+
+signals:
+    void indexChanged(int index);
 
 private:
     QComboBox* mAvailableList;
@@ -54,10 +59,12 @@ private:
 //added
     QSizePolicy sizePolicy;
     int curr_topic; 
-    double angle;
+    int camAngle;
     QImage imageNew;
     QPixmap pixmap;
     QString topic;
+
+
 };
 
 
