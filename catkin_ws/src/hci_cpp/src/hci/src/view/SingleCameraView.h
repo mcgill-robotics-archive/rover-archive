@@ -45,7 +45,9 @@ public:
     void setList();//QStringList list);
     void topicCallback(int index);
     void indexIsChanged(int index);
+    rimstreamer::VideoFeedWidget* setAngle(int angle);
     void changeAngle(int angle);
+    void newLayout();
 
 signals:
     void indexChanged(int index);
@@ -60,9 +62,12 @@ private:
     QSizePolicy sizePolicy;
     int curr_topic; 
     int camAngle;
+    bool showListAngle;
     QImage imageNew;
     QPixmap pixmap;
     QString topic;
+    QVBoxLayout* layout;
+    QHBoxLayout* settings;
 
 
 };

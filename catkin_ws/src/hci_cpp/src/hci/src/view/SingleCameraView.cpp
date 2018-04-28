@@ -9,10 +9,12 @@
 
 SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle, int ind, VideoFeedWidget::Orientation orientation) : QWidget(parent) {
     mAvailableList = new QComboBox(this);
-    mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, orientation);
+    //mScreenWidget = setAngle(angle);//new rimstreamer::VideoFeedWidget(this, 0, orientation);
+    rimstreamer::VideoFeedWidget* feedWidget = setAngle(angle);
     //Added
     angleSelector = new CameraAngleSelect(this, angle);
     imageDisplay = new QLabel(this);
+    showListAngle = showSelector;
 
     setList();
     mAvailableList->setCurrentIndex(ind);
@@ -22,15 +24,17 @@ SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle
     //connect mAvailableList with indexIsChanged (will emit indexChanged signal)
     connect(mAvailableList, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &SingleCameraView::indexIsChanged);
 
-    //connect angelSelector with angleChanged (using signal angleChanged(int) from CameraAngelSelect.cpp)
+    //connect angelSelector with changeAngle (using signal angleChanged(int) from CameraAngelSelect.cpp)
     connect(angleSelector, &CameraAngleSelect::angleChanged, this, &SingleCameraView::changeAngle);
 
     sizePolicy = QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     mAvailableList->setSizePolicy(sizePolicy);
     angleSelector->setSizePolicy(sizePolicy);
     
-
-    //layout of camer view, including the combo box mAvailableList and the mScreenWidget
+    layout = new QVBoxLayout;
+    settings = new QHBoxLayout;
+    newLayout();
+    /*//layout of camer view, including the combo box mAvailableList and the mScreenWidget
     QVBoxLayout* layout = new QVBoxLayout;
     QHBoxLayout* settings = new QHBoxLayout;
 
@@ -50,7 +54,7 @@ SingleCameraView::SingleCameraView(QWidget *parent, bool showSelector, int angle
         angleSelector->hide();
     }
 
-    setLayout(layout);
+    setLayout(layout);*/
 }
 
 void SingleCameraView::setVideoFeed(const GstVideoFeedPtr &feed) {
@@ -100,21 +104,60 @@ void SingleCameraView::topicCallback(int index){
     }
 }
 
-void SingleCameraView::changeAngle(int angle){
+rimstreamer::VideoFeedWidget* SingleCameraView::setAngle(int angle){
+    //rimstreamer::VideoFeedWidget* newScreenWidget;
     camAngle = angle;
     if (camAngle == 90) {
-        //delete mScreenWidget;
         mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CW);
     }
-    if (camAngle == 270) {
-        //delete mScreenWidget;
+    else if (camAngle == 270) {
         mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CCW);
     }
     else {
-        //delete mScreenWidget;
         mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::NONE);
     }
+    return mScreenWidget;
 }
+
+void SingleCameraView::changeAngle(int angle){
+    //rimstreamer::VideoFeedWidget* thisScreenWidget;
+    camAngle = angle;
+    if (camAngle == 90) {
+        delete mScreenWidget;
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CW);
+    }
+    else if (camAngle == 270) {
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::CCW);
+    }
+    else {
+        mScreenWidget = new rimstreamer::VideoFeedWidget(this, 0, VideoFeedWidget::NONE);
+    }
+    //mScreenWidget = thisScreenWidget;
+    delete layout;
+    delete settings;
+    newLayout();
+}
+
+void SingleCameraView::newLayout(){
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(mScreenWidget);
+    settings->addWidget(mAvailableList);
+    settings->addWidget(angleSelector);
+    layout->addItem(settings);
+ 
+    //if the cameras are supposed to show the mAvailableList/angleSelector, do so, otherwise, hide it
+    if (showListAngle){
+        mAvailableList->show();
+        angleSelector->show();
+    }
+    else{
+        mAvailableList->hide();
+        angleSelector->hide();
+    }
+
+    setLayout(layout);
+}
+    
 
 
 
