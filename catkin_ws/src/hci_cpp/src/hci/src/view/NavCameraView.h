@@ -34,6 +34,7 @@ public:
     void topChangedIndex(int index);
     void bottomLeftChangedIndex(int index);
     void bottomRightChangedIndex(int index);
+    void changeFeed(QWidget* baseFeed, int index);
 
 protected:
     virtual void resizeEvent(QResizeEvent* event);
@@ -44,6 +45,7 @@ private:
     SingleCameraView* topLeftView;
     SingleCameraView* bottomLeftView;
     SingleCameraView* bottomRightView;
+    QVBoxLayout *v;
 
     SingleCameraView* screenPtr(ScreenID id);
 

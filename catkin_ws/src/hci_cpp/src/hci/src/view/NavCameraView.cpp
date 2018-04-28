@@ -34,7 +34,7 @@ NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
 */
  
     //create final layout, with h on top and topView camera on bottom
-    QVBoxLayout *v = new QVBoxLayout;
+    v = new QVBoxLayout;
     v->setContentsMargins(0, 0, 0, 0);
     //v->addItem(hT);
     v->addItem(hB);
@@ -49,9 +49,9 @@ NavCameraView::NavCameraView(QWidget *parent) : QWidget(parent) {
     setLayout(v);
 
     //connect cameras to control feeds
-    //connect(topView, &SingleCameraView::indexChanged, this, &NavCameraView::topChangedIndex);
-    //connect(bottomLeftView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomLeftChangedIndex);
-    //connect(bottomRightView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomRightChangedIndex);
+    connect(topView, &SingleCameraView::indexChanged, this, &NavCameraView::topChangedIndex);
+    connect(bottomLeftView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomLeftChangedIndex);
+    connect(bottomRightView, &SingleCameraView::indexChanged, this, &NavCameraView::bottomRightChangedIndex);
 }
 
 
@@ -108,17 +108,41 @@ int NavCameraView::changedIndex(int index){
     return index;
 }
 
+
 void NavCameraView::topChangedIndex(int index){
-    emit changeFeed(TOP, index); 
+    int ind = index;
+    changeFeed(topView, ind); 
 }
 
 void NavCameraView::bottomLeftChangedIndex(int index){
-    emit changeFeed(BOTTOM_LEFT, index); 
+    int ind = index;
+    changeFeed(bottomLeftView, ind); 
 }
 
 void NavCameraView::bottomRightChangedIndex(int index){
-    emit changeFeed(BOTTOM_RIGHT, index); 
+    int ind = index;
+    changeFeed(bottomRightView, ind); 
 }
+
+/*input: QWidget baseFeed, int index
+  output: none, effect is to change the layout
+  Comments: translate the index to the opsition you want the baseFeed to be in (called newFeed)
+               swap the feeds and update the layout 
+*/
+
+void NavCameraView::changeFeed(QWidget* baseFeed, int index){
+    QWidget *newFeed;
+    if (index == 0)
+         newFeed = topView;//new SingleCameraView(this, true, 0, 0);
+    else if (index == 1)
+         newFeed = bottomLeftView;//new SingleCameraView(this, true, 0, 1);
+    else if (index == 2)
+         newFeed = bottomRightView;//new SingleCameraView(this, true, 0, 2);
+    v->replaceWidget(baseFeed, newFeed);
+    //v->replaceWidget(newFeed, baseFeed);
+    v->update();    
+}
+
 
 
 
