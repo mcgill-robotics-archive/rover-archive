@@ -1,6 +1,6 @@
 #include <Wire.h>
-#include <INA226.h> // current monitor library
 #include <Servo.h> //servo library
+#include "INA226.h" // current monitor library
 #include "AMT203-V_INC.h" //quadrature encoder library, incremental
 #include "BDC_DRV8842.h" //brushed driver controller library 
 

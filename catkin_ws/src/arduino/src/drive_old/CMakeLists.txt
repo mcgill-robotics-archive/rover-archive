@@ -1,5 +1,6 @@
 include_directories(${ROS_LIB_DIR})
 include_directories(../utilities)
+include_directories(../MotorController/include)
 
 # Remove this if using an Arduino without native USB (eg, other than Leonardo)
 # add_definitions(-DUSB_CON)
@@ -7,15 +8,20 @@ include_directories(../utilities)
 set(SOURCES
         main.cpp
         ${ROS_LIB_DIR}/time.cpp
+        SteeringWheel.cpp
+        Wheel.cpp
         )
 
 set(HEADERS
+        SteeringWheel.h
+        Wheel.h
+        pins_drive.h
         )
 
 generate_arduino_firmware(drive
     SRCS ${SOURCES}
     HDRS ${HEADERS}
-    LIBS amt203v_abs bdc_drv8842 bldc_afroesc encoder
-    BOARD micro
-    PORT /dev/arduino_micro
+    LIBS MotorControllerLib ram
+    BOARD mega2560
+    PORT /dev/mega_drive
 )
