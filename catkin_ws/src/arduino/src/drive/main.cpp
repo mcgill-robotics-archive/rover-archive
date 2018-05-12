@@ -1,163 +1,273 @@
+//Drive System, Electrical Division, Mars Rover Team of McGill Robotics
+//Raymond So, Amanda Bianco, Lin Miao and Wendy Li
+//Winter 2018
+
+//Drive and steering code for each board (4) of the Mars Rover's drive system. It includes:
+//      -Publisher for steering functionality per board: absolute encoder angle
+//      -Subscriber for steering  functionality per board: brushed motor
+//      -Publisher for driving functionality per board: incremental encoder distance
+//      -Subscribers for driving functionality per board: brushless motors
+//      -Fault detection publisher for each brushed driver for steering
+//      -Fuse detection publisher per board
+//      -Common reset subscriber for all brushed drivers for steering
+
+
+#include <ros.h>
 #include <Arduino.h>
-#include "main.h"
-#include "ram/ram.h"
-#include "rover_common/MotorStatus.h"
-#include "rover_common/MotorControllerMode.h"
-#include "pins_drive.h"
+#include <std_msgs/Int16.h>
+#include <std_msgs/Bool.h>
+
+#include "BLDC_AfroESC/BLDC_AfroESC.h"
+#include "BDC_DRV8842/BDC_DRV8842.h"
+#include "AMT203-V_ABS/AMT203-V_ABS.h"
+
+#include <Servo.h>
+#include <Encoder/Encoder.h>
 
 
+ros::NodeHandle driveSystem;
 
-ros::NodeHandle nh;
-rover_common::MotorStatus motorStatusMessage;
 
-ros::ServiceServer<arduino_msgs::Ram::Request, arduino_msgs::Ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
-ros::Publisher motorStatusPublisher("/motor_status", &motorStatusMessage);
-ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
-ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );
-ros::Subscriber<geometry_msgs::Twist> panTiltSubscriber("/pan_camera_command", &panTiltCallback);
+BDC * brushedMotor;
+AMT_ABS * absEncoder;
+BLDC * brushlessMotor1;
+BLDC * brushlessMotor2;
 
-motor::MotorConfig configFL;
-motor::MotorConfig configML;
-motor::MotorConfig configBL;
-motor::MotorConfig configFR;
-motor::MotorConfig configMR;
-motor::MotorConfig configBR;
+
+//Variables for distance calculation using incremental encoder data:
+int oldTheta = 0;
+int newTheta = 0;
+double dist = 0.0;
+const float Pi = 3.14159;
+
+
+//Specify board location:
+enum boardLocation {
+  FRONT_LEFT,
+  FRONT_RIGHT,
+  BACK_LEFT,
+  BACK_RIGHT
+};
+
+boardLocation location = FRONT_LEFT; //Manually set according to board location on Rover
+
+
+//Publishers and subscribers for steering:
+const char * steering_topic1;
+const char * steering_topic2;
+
+std_msgs::Int16 absEncoder_angle; 
+ros::Publisher * steeringEncoder;
+
+void steering_messageCb( const std_msgs::Int16& steering_msg) {
+  brushedMotor -> PWM(steering_msg.data);
+}
+ros::Subscriber<std_msgs::Int16> * steeringMotor;
+
+
+//Publishers and subscribers for driving:
+Side roverSide;
+const char * drive_topic1;
+const char * drive_topic2;
+const char * drive_topic3;
+Encoder * Enc;
+
+std_msgs::Int16 incEncoder_distance;
+ros::Publisher * driveEncoder;
+
+void driveMotor1_messageCb( const std_msgs::Int16& driveMotor1_msg) {
+  brushlessMotor1 -> PWM(driveMotor1_msg.data);
+}
+ros::Subscriber<std_msgs::Int16> * driveMotor1;
+
+void driveMotor2_messageCb( const std_msgs::Int16& driveMotor2_msg) {
+  brushlessMotor2 -> PWM(driveMotor2_msg.data);
+}
+ros::Subscriber<std_msgs::Int16> * driveMotor2;
+
+
+//Publisher for fault detection:
+const char * fault_topic;
+
+std_msgs::Bool driveFaultStatus;
+ros::Publisher * steeringFault;
+
+
+//Publisher for fuse detection:
+const char * fuse_topic;
+
+std_msgs::Bool driveFuseStatus;
+ros::Publisher * driveFuse;
+
+
+//Subscriber for reset:
+
+void steeringReset_messageCb( const std_msgs::Bool& steeringReset_msg) {
+  brushedMotor -> RST();
+}
+ros::Subscriber<std_msgs::Bool> * steeringReset;
+
 
 void setup() {
-    nh.initNode();
 
-    nh.advertiseService(ramService);
-    nh.subscribe(movingSubscriber);
-    nh.subscribe(driveSubscriber);
-    nh.subscribe(panTiltSubscriber);
-    nh.advertise(motorStatusPublisher);
+  //Define roverSide, topics and incremental encoder pinout according to board location on Rover:
 
-    configFL.enablePin = FL_ENABLE_PIN;
-    configFL.data1Pin = FL_DATA1_PIN;
-    configFL.data2Pin = FL_DATA2_PIN;
-    configFL.directionPin = FL_DIRECTION_PIN;
-    configFL.feedbackPin = FL_READY_PIN;
-    configFL.speedPin = FL_DRIVE_PIN;
+  if (location == FRONT_RIGHT) {
 
-    configML.enablePin = ML_ENABLE_PIN;
-    configML.data1Pin = ML_DATA1_PIN;
-    configML.data2Pin = ML_DATA2_PIN;
-    configML.directionPin = ML_DIRECTION_PIN;
-    configML.feedbackPin = ML_READY_PIN;
-    configML.speedPin = ML_DRIVE_PIN;
+    roverSide = RIGHT;
 
-    configBL.enablePin = BL_ENABLE_PIN;
-    configBL.data1Pin = BL_DATA1_PIN;
-    configBL.data2Pin = BL_DATA2_PIN;
-    configBL.directionPin = BL_DIRECTION_PIN;
-    configBL.feedbackPin = BL_READY_PIN;
-    configBL.speedPin = BL_DRIVE_PIN;
+    steering_topic1 = "FR_absAngle";
+    steering_topic2 = "FR_steeringPWM";
+    drive_topic1 = "R_drivePWM";
+    drive_topic2 = "MR_drivePWM";
+    drive_topic3 = "FR_distance";
+    fuse_topic = "FR_fuse";
+    fault_topic = "FR_fault";
 
-    configFR.enablePin = FR_ENABLE_PIN;
-    configFR.data1Pin = FR_DATA1_PIN;
-    configFR.data2Pin = FR_DATA2_PIN;
-    configFR.directionPin = FR_DIRECTION_PIN;
-    configFR.feedbackPin = FR_READY_PIN;
-    configFR.speedPin = FR_DRIVE_PIN;
+    Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
+  }
 
-    configMR.enablePin = MR_ENABLE_PIN;
-    configMR.data1Pin = MR_DATA1_PIN;
-    configMR.data2Pin = MR_DATA2_PIN;
-    configMR.directionPin = MR_DIRECTION_PIN;
-    configMR.feedbackPin = MR_READY_PIN;
-    configMR.speedPin = MR_DRIVE_PIN;
+  else if (location == FRONT_LEFT) {
 
-    configBR.enablePin = BR_ENABLE_PIN;
-    configBR.data1Pin = BR_DATA1_PIN;
-    configBR.data2Pin = BR_DATA2_PIN;
-    configBR.directionPin = BR_DIRECTION_PIN;
-    configBR.feedbackPin = BR_READY_PIN;
-    configBR.speedPin = BR_DRIVE_PIN;
+    roverSide = LEFT;
 
-#ifdef MAXON_CONTROLLERS
-    configFL.controllerType = motor::_MAXON;
-    configML.controllerType = motor::_MAXON;
-    configBL.controllerType = motor::_MAXON;
-    configFR.controllerType = motor::_MAXON;
-    configMR.controllerType = motor::_MAXON;
-    configBR.controllerType = motor::_MAXON;
-#endif
-#ifdef AFRO_CONTROLLERS
-    configFL.controllerType = motor::_AfroESC;
-    configML.controllerType = motor::_AfroESC;
-    configBL.controllerType = motor::_AfroESC;
-    configFR.controllerType = motor::_AfroESC;
-    configMR.controllerType = motor::_AfroESC;
-    configBR.controllerType = motor::_AfroESC;
-#endif
+    steering_topic1 = "FL_absAngle";
+    steering_topic2 = "FL_steeringPWM";
+    drive_topic1 = "L_drivePWM";
+    drive_topic2 = "ML_drivePWM";
+    drive_topic3 = "FL_distance";
+    fuse_topic = "FL_fuse";
+    fault_topic = "FL_fault";
 
-    leftFront = new drive::SteeringWheel(configFL, FL_STEERING_PIN, &nh);
-    leftBack = new drive::SteeringWheel(configBL, BL_STEERING_PIN, &nh);
-    rightFront = new drive::SteeringWheel(configFR, FR_STEERING_PIN, &nh);
-    rightBack = new drive::SteeringWheel(configBR, BR_STEERING_PIN, &nh);
+    Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
+  }
 
-    middleLeft = new drive::Wheel(configML, &nh);
-    middleRight = new drive::Wheel(configMR, &nh);
+  else if (location == BACK_RIGHT) {
 
-    mastCameraController = new pan_tilt_control::PanTiltControl(CAMERA_PAN_SERVO, CAMERA_TILT_SERVO, nh);
-    nh.loginfo("Drive controller ready");
+    roverSide = RIGHT;
+
+    steering_topic1 = "BR_absAngle";
+    steering_topic2 = "BR_steeringPWM";
+    drive_topic1 = "R_drivePWM";
+    drive_topic2 = "MR_drivePWM";
+    drive_topic3 = "BR_distance";
+    fuse_topic = "BR_fuse";
+    fault_topic = "BR_fault";
+
+    Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
+  }
+
+  else if (location == BACK_LEFT) {
+
+    roverSide = LEFT;
+
+    steering_topic1 = "BL_absAngle";
+    steering_topic2 = "BL_steeringPWM";
+    drive_topic1 = "L_drivePWM";
+    drive_topic2 = "ML_drivePWM";
+    drive_topic3 = "BL_distance";
+    fuse_topic = "BL_fuse";
+    fault_topic = "BL_fault";
+
+    Enc = new Encoder(2, 3);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
+  }
+
+  driveSystem.initNode();
+
+  //Steering:
+  steeringEncoder = new ros::Publisher(steering_topic1, &absEncoder_angle);
+  driveSystem.advertise(*steeringEncoder);
+
+  steeringMotor = new ros::Subscriber<std_msgs::Int16>(steering_topic2, &steering_messageCb);
+  driveSystem.subscribe(*steeringMotor);
+
+  brushedMotor = new BDC(11, 13, 7, 8);
+  absEncoder = new AMT_ABS(SS);
+
+
+  //Driving:
+  driveEncoder = new ros::Publisher(drive_topic3, &incEncoder_distance);
+  driveSystem.advertise(*driveEncoder);
+
+  driveMotor1 =  new ros::Subscriber<std_msgs::Int16>(drive_topic1, &driveMotor1_messageCb);
+  driveSystem.subscribe(*driveMotor1);
+
+  driveMotor2 = new ros::Subscriber<std_msgs::Int16>(drive_topic2, &driveMotor2_messageCb);
+  driveSystem.subscribe(*driveMotor2);
+
+  brushlessMotor1 = new BLDC(6, roverSide);
+  brushlessMotor2 = new BLDC(5, roverSide);
+
+
+  //Fault Detection:
+  steeringFault = new ros::Publisher(fault_topic, &driveFaultStatus);
+  driveSystem.advertise(*steeringFault);
+  
+  pinMode(4, OUTPUT);
+
+
+  //Fuse Detection:
+  driveFuse = new ros::Publisher(fuse_topic, &driveFuseStatus);
+  driveSystem.advertise(*driveFuse);
+
+  //Reset:
+  steeringReset = new ros::Subscriber<std_msgs::Bool>("steeringReset", &steeringReset_messageCb);
+  driveSystem.subscribe(*steeringReset);
 }
 
-void loop()
-{
-    if ((millis() - lastSend > MOTOR_STATUS_UPDATE_RATE))
-    {
-        sendMotorStatus(motorStatusPublisher);
-        lastSend = millis();
+
+
+void loop() {
+
+  //Fault Detection:
+  driveFaultStatus.data = brushedMotor -> FLT();
+  if (driveFaultStatus.data == HIGH) {
+    steeringFault -> publish(&driveFaultStatus);
+  }
+
+
+  //Fuse Detection:
+  driveFuseStatus.data = digitalRead(4);
+  if (driveFuseStatus.data == HIGH) { 
+    driveFuse -> publish(&driveFuseStatus);
+  }
+
+
+  //Steering:
+  absEncoder_angle.data = absEncoder -> DEG();
+  steeringEncoder -> publish(&absEncoder_angle);
+
+
+  //Driving:
+  //Distance calculation using incremental encoder data:
+  unsigned int currPosition = Enc -> read();
+  newTheta = currPosition * 360.0 / 65536;
+
+  if (newTheta != oldTheta) {
+    if (newTheta - oldTheta > 300) {
+      dist = dist + ((newTheta - 360 - oldTheta) / 360.0) * (0.2286 * Pi);
     }
+    else if (newTheta - oldTheta < -300) {
+      dist = dist + ((newTheta + 360 - oldTheta) / 360.0) * (0.2286 * Pi);
+    }
+    else {
+      dist = dist + ((newTheta - oldTheta) / 360.0) * (0.2286 * Pi);
+    }
+    oldTheta = newTheta;
 
-    nh.spinOnce();
-    delay(1);
+    incEncoder_distance.data = dist;
+    driveEncoder -> publish(&incEncoder_distance);
+  }
+
+
+  driveSystem.spinOnce();
+  delay(1);
+
 }
 
-void driveCallback( const drive_control::WheelCommand& setPoints )
-{
-    leftFront->setSpeed(-setPoints.flv);
-    leftFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.flsa)));
-    leftBack->setSpeed(-setPoints.blv);
-    leftBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.blsa)));
 
-    rightFront->setSpeed(setPoints.frv);
-    rightFront->setSteeringAngle((int) (90.0 + radToDeg(setPoints.frsa)));
-    rightBack->setSpeed(setPoints.brv);
-    rightBack->setSteeringAngle((int) (90.0 + radToDeg(setPoints.brsa)));
 
-    middleLeft->setSpeed(-setPoints.mlv);
-    middleRight->setSpeed(setPoints.mrv);
-}
 
-void callbackMoving( const std_msgs::Bool& boolean)
-{
-    leftFront->enable(boolean.data);
-    leftBack->enable(boolean.data);
-    middleLeft->enable(boolean.data);
-    rightBack->enable(boolean.data);
-    rightFront->enable(boolean.data);
-    middleRight->enable(boolean.data);
-}
 
-void panTiltCallback(const geometry_msgs::Twist& speeds) {
-    mastCameraController->setTiltSpeed(speeds.linear.y);
-    mastCameraController->setPanSpeed(speeds.linear.x);
-}
 
-void sendMotorStatus(ros::Publisher &publisher) {
-    motorStatusMessage.fl = leftFront->getStatus();
-    motorStatusMessage.ml = middleLeft->getStatus();
-    motorStatusMessage.bl = leftBack->getStatus();
 
-    motorStatusMessage.fr = rightFront->getStatus();
-    motorStatusMessage.mr = middleRight->getStatus();
-    motorStatusMessage.br = rightBack->getStatus();
-    publisher.publish(&motorStatusMessage);
-}
-
-float radToDeg(float rad)
-{
-    return rad / PI * 180.0;
-}

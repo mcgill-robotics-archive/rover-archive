@@ -5,17 +5,16 @@ include_directories(../utilities)
 # add_definitions(-DUSB_CON)
 
 set(SOURCES
-        main.cpp
-        ${ROS_LIB_DIR}/time.cpp
+        science_controller.cpp
         )
 
 set(HEADERS
         )
 
-generate_arduino_firmware(drive
+generate_arduino_firmware(science
     SRCS ${SOURCES}
     HDRS ${HEADERS}
-    LIBS amt203v_abs bdc_drv8842 bldc_afroesc encoder
-    BOARD micro
-    PORT /dev/arduino_micro
+    LIBS amt203v_inc bdv_drv8842 ina226
+    BOARD mega2560
+    PORT /dev/mega_science
 )

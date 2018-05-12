@@ -41,4 +41,6 @@ rosserial_configure_client(
 )
 
 rosserial_add_client_target(src drive ALL)
-# rosserial_add_client_target(drive drive-upload)
+rosserial_add_client_target(src drive-upload)
+
+#rosserial_add_client_target(src science ALL)
