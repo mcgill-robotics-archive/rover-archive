@@ -10,7 +10,8 @@ BDC * controller;
 
 void setup() {
   Serial.begin(9600);
-  controller = new BDC(9, 6, 13, 11);
+  controller = new BDC(9, 6, 13, 11);//crg
+  //controller = new BDC(8, 7, 12, 10);//drill
   delay(300);
   Serial.println("Ready");
 }
@@ -19,7 +20,7 @@ void loop() {
     Serial.println("Fault");
     controller->RST();
   } else {
-    while (Serial.available() > 1) {
+    while (Serial.available() > 0) {
       PWM_val = Serial.parseInt();
       controller->PWM(PWM_val);
       Serial.println(PWM_val);
