@@ -1,0 +1,10 @@
+<launch>
+<group ns="axis">
+    <node name="axis_driver" pkg="axis_camera" type="axis.py" args="_hostname=192.168.3.100 _password='elgordo21'"/>
+    <node name="image_republisher" pkg="image_transport" type="republish" args="compressed in:=image_raw raw out:=image_raw"/>
+    <node name="image_proc" pkg="image_proc" type="image_proc"/>
+    <node name="mono_odometer" pkg="viso2_ros" type="mono_odometer">
+        <remap from="image" to="image_mono"/>
+    </node>
+</group>
+</launch>
