@@ -70,3 +70,28 @@ ScienceView::ScienceView(QWidget *parent) : QWidget(parent) {
 
     setLayout(mainBox);
 }
+
+//update the probe speed displayed --> DOES NOT connect to actal probe (pretty sure)
+void ScienceView::setProbeSpeed(float value) {
+    QString str;
+    str.setNum(value,'f',2);
+    str.append(""); //add text here to indicate the units of the speed
+    probeSpeed->setText(str);
+}
+
+//update the drill speed displayed --> DOES NOT connect to actal drill (pretty sure)
+void ScienceView::setDrillSpeed(float value){
+    QString str;
+    str.setNum(value,'f',2);
+    str.append(""); //add text here to indicate the units of the speed
+    drillSpeed->setText(str);
+}
+
+//update the drill speed displayed --> DOES NOT connect to actal drill (pretty sure)
+void ScienceView::setCarriageSpeed(float value){
+    QString str;
+    str.setNum(value,'f',2);
+    str.append(""); //add text here to indicate the units of the speed
+    carriageSpeed->setText(str);
+}
+

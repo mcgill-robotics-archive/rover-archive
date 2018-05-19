@@ -17,15 +17,19 @@ public:
     NavCameraController(NavCameraView* navCameraView);
 
     virtual ~NavCameraController() {};
+    void changeFeed(NavCameraView::ScreenID id, int index);
+    void stopFeedOf(NavCameraView::ScreenID id, int ind);
 
 private:
     NavCameraView* navCamViewPtr;
 
-    rimstreamer::GstVideoFeedPtr topFeedPtr;
-    rimstreamer::GstVideoFeedPtr leftFeedPtr;
-    rimstreamer::GstVideoFeedPtr rightFeedPrt;
+    rimstreamer::GstVideoFeedPtr feed1Ptr;
+    rimstreamer::GstVideoFeedPtr feed2Ptr;
+    rimstreamer::GstVideoFeedPtr feed3Ptr;
 
-
+    int topInd; //keep track of the current feed at TOP, bottomRight, etc. 
+    int bottomRightInd;
+    int bottomLeftInd;
 };
 
 

@@ -144,4 +144,19 @@ void MainView::setLongitude(float value) {
 
 void MainView::setLatitude(float value) {
     attitudeView->setLatitude(value);
+} 
+
+//
+void MainView::setProbeSpeed(float value) {
+    scienceView->setProbeSpeed(value);
 }
+
+void MainView::setDrillSpeed(float value) {
+    scienceView->setDrillSpeed(value);
+}
+
+void MainView::setCarriageSpeed(float value){
+    scienceView->setCarriageSpeed(value);
+}
+    
+

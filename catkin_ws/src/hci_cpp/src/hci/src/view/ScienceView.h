@@ -18,6 +18,17 @@ public:
 
     virtual ~ScienceView() {};
 
+public slots:
+    void setCarriageSpeed(float value);
+    //void setCarriagePosition(double value);
+    void setProbeSpeed(float value);
+    void setDrillSpeed(float value);
+    //void setDrillPosition(double value);
+    //void setWindSpeed(double value);
+    //void setHumidity(double value);
+    //void setTemperature(double value);
+//Above: allow you to update the values on the HCI display to the value given 
+
 private:
     QLabel* windSpeed;
     QLabel* humidity;

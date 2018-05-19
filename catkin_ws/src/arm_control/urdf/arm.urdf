@@ -1,0 +1,565 @@
+<robot
+  name="arm">
+  <gazebo>
+    <plugin name="arm_control_plugin" filename="libarm_control_plugin.so"/>
+  </gazebo>
+  <link name="world"/>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-3.46092935468471E-17 0.003175 -1.62642805331993E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.147282476469233" />
+      <inertia
+        ixx="0.000285945904679027"
+        ixy="1.12729461221996E-39"
+        ixz="1.90259613619369E-22"
+        iyy="0.000570902009748482"
+        iyz="-3.12979823055017E-38"
+        izz="0.000285945904679027" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/base_link_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="world_fix"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="world" />
+    <child
+      link="base_link" />
+  </joint>
+  <link
+    name="arm_base">
+    <inertial>
+      <origin
+        xyz="-0.0299178330393912 0.0600845676415873 0.0432876191345184"
+        rpy="0 0 0" />
+      <mass
+        value="1.07263545959926" />
+      <inertia
+        ixx="0.00347213296615178"
+        ixy="-0.00040505792156729"
+        ixz="0.000867021580015744"
+        iyy="0.00645084377980577"
+        iyz="0.000285103993143188"
+        izz="0.00478851610588594" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/arm_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/arm_base_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_yaw"
+    type="continuous">
+    <origin
+      xyz="0 0 0.00634999999999998"
+      rpy="1.5707963267949 -2.3371962784201E-17 -1.8628998344518" />
+    <parent
+      link="base_link" />
+    <child
+      link="arm_base" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
+  </joint>
+   <transmission name="base_yaw_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_yaw">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_yaw_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="9.03505442667873E-12 0.302576807533383 -0.0300742216594631"
+        rpy="0 0 0" />
+      <mass
+        value="1.36045203504809" />
+      <inertia
+        ixx="0.0444019718109751"
+        ixy="1.31838053542056E-05"
+        ixz="7.52650407139267E-05"
+        iyy="0.00723617677403896"
+        iyz="-0.00601003159539375"
+        izz="0.0472959150463397" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/link1_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_pitch"
+    type="continuous">
+    <origin
+      xyz="0 0.0750951 0"
+      rpy="0.442957283043391 6.10622663543836E-16 2.85064834697979E-16" />
+    <parent
+      link="arm_base" />
+    <child
+      link="link1" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
+  </joint>
+  <transmission name="base_pitch_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_pitch">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_pitch_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="diff1">
+    <inertial>
+      <origin
+        xyz="-1.03444269747288E-08 3.11799264185453E-08 -0.037120138759444"
+        rpy="0 0 0" />
+      <mass
+        value="0.22290258094587" />
+      <inertia
+        ixx="0.000390833161217846"
+        ixy="-5.934049700694E-10"
+        ixz="-2.4662550062067E-10"
+        iyy="0.00051821547158745"
+        iyz="2.1678955352908E-10"
+        izz="0.000310268261005331" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/diff1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/diff1_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="elbow_pitch"
+    type="continuous">
+    <origin
+      xyz="0 0.452768804137388 -0.0635"
+      rpy="0.152152878773275 1.27675647831893E-15 3.14159265358979" />
+    <parent
+      link="link1" />
+    <child
+      link="diff1" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
+  </joint>
+  <transmission name="elbow_pitch_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="elbow_pitch">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="elbow_pitch_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="1.38777878078145E-17 0.235597033240132 -3.28760670531558E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.580638766374297" />
+      <inertia
+        ixx="0.0105436170045345"
+        ixy="-1.62630325872826E-19"
+        ixz="4.55364912443912E-18"
+        iyy="0.00189011732935982"
+        iyz="-1.75866448679679E-06"
+        izz="0.0119433893258268" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/link2_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="elbow_roll"
+    type="continuous">
+    <origin
+      xyz="0 0 0.00906290817805414"
+      rpy="-1.5707963267949 4.9960036108132E-16 -3.02066843525624" />
+    <parent
+      link="diff1" />
+    <child
+      link="link2" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="0.5"  />
+  </joint>
+  <transmission name="elbow_roll_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="elbow_roll">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="elbow_roll_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="diff2">
+    <inertial>
+      <origin
+        xyz="1.41428922434406E-07 1.10477895221006E-07 -0.0179623613813851"
+        rpy="0 0 0" />
+      <mass
+        value="0.109394214433751" />
+      <inertia
+        ixx="8.88584306350342E-05"
+        ixy="3.33329995615982E-10"
+        ixz="3.52131719325076E-10"
+        iyy="0.000140888806333952"
+        iyz="4.72911453336191E-11"
+        izz="8.94894240460481E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/diff2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/diff2_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wrist_pitch"
+    type="continuous">
+    <origin
+      xyz="0 0.432430108178054 0"
+      rpy="3.12735368407058 -1.38777878078145E-16 -6.66133814775094E-16" />
+    <parent
+      link="link2" />
+    <child
+      link="diff2" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      effort="200.0"
+      velocity="2.0"  />
+  </joint>
+  <transmission name="wrist_pitch_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wrist_pitch">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wrist_pitch_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="end_effector">
+    <inertial>
+      <origin
+        xyz="0.0174206283127111 0.00663602504527228 0.0156565730137049"
+        rpy="0 0 0" />
+      <mass
+        value="0.18801084998517" />
+      <inertia
+        ixx="0.000131883565757878"
+        ixy="-3.85038730383147E-05"
+        ixz="4.57746030548113E-05"
+        iyy="0.000496821850931453"
+        iyz="-3.46048769719134E-05"
+        izz="0.000495445061030056" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/end_effector.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.996078431372549 0.996078431372549 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/end_effector_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wrist_roll"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.0768495238393263"
+      rpy="-1.57079632679489 3.08086889333481E-15 0.379261683076635" />
+    <parent
+      link="diff2" />
+    <child
+      link="end_effector" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      effort="200.0"
+      velocity="0.5"  />
+  </joint>
+  <transmission name="wrist_roll_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wrist_roll">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wrist_roll_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  <link
+    name="finger1">
+    <inertial>
+      <origin
+        xyz="3.44791976636394E-08 0.0201460203222931 0.0175270157979482"
+        rpy="0 0 0" />
+      <mass
+        value="0.0227611478993928" />
+      <inertia
+        ixx="2.07017941483461E-05"
+        ixy="2.71452399610466E-11"
+        ixz="-1.29658561507477E-11"
+        iyy="5.59431186185703E-06"
+        iyz="-4.21109021700405E-06"
+        izz="1.90535997567972E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/finger1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.952941176470588 0.952941176470588 0.952941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/finger1_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="slide_finger1"
+    type="fixed">
+    <origin
+      xyz="0.00160020 0.038949 0"
+      rpy="0 1.5708 0" />
+    <parent
+      link="end_effector" />
+    <child
+      link="finger1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0.0"
+      upper="0.0473958"
+      effort="200.0"
+      velocity="2.0" />
+  </joint>
+  <link
+    name="finger2">
+    <inertial>
+      <origin
+        xyz="6.14005104537796E-08 0.020146013278479 0.0175270181220752"
+        rpy="0 0 0" />
+      <mass
+        value="0.0227611430860343" />
+      <inertia
+        ixx="2.07017884546001E-05"
+        ixy="4.60032604856172E-11"
+        ixz="-2.0924624563224E-11"
+        iyy="5.59430485912641E-06"
+        iyz="-4.21108850760687E-06"
+        izz="1.90535880112427E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/finger2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.952941176470588 0.952941176470588 0.952941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://arm_control/meshes/obbs/finger2_obb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="slide_finger2"
+    type="fixed">
+    <origin
+      xyz="-0.00160020 0.038949 0"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="end_effector" />
+    <child
+      link="finger2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0.0"
+      upper="0.0473958"
+      effort="200.0"
+      velocity="2.0"  />
+  </joint>
+</robot>
+

@@ -1,0 +1,38 @@
+controller_manager_ns: controller_manager
+controller_list:
+  - name: base_yaw_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - base_yaw
+  - name: base_pitch_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - base_pitch
+  - name: elbow_pitch_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - elbow_pitch
+  - name: elbow_roll_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - elbow_roll
+  - name: wrist_pitch_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - wrist_pitch
+  - name: wrist_roll_as
+    type: FollowJointTrajectory
+    action_ns: /
+    default: true
+    joints:
+      - wrist_roll

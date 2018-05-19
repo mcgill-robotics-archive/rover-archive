@@ -8,6 +8,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QVBoxLayout>
+#include <std_msgs/Float32.h>
 #include <model/DriveData.h>
 #include "JoystickView.h"
 #include "AttitudeView.h"
@@ -47,6 +48,9 @@ public slots:
     void setYaw(float value);
     void setLongitude(float value);
     void setLatitude(float value);
+    void setProbeSpeed(float value);
+    void setDrillSpeed(float value);
+    void setCarriageSpeed(float value);
 
 signals:
     void steeringModeChanged(const SteeringMode& mode);

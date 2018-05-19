@@ -8,11 +8,11 @@ This repository contains the ROS workspace used for the Mars Rover Project.
 Build Status
 ------------
 
-[master]: http://dev.mcgillrobotics.com/buildStatus/icon?job=rover_master
-[master url]: http://dev.mcgillrobotics.com/job/rover_master
+[master]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover/master
+[master url]: https://dev.mcgillrobotics.com/job/rover/job/master
 
-[dev]: http://dev.mcgillrobotics.com/buildStatus/icon?job=rover_dev
-[dev url]: http://dev.mcgillrobotics.com/job/rover_dev
+[dev]: https://dev.mcgillrobotics.com/buildStatus/icon?job=rover/dev
+[dev url]: https://dev.mcgillrobotics.com/job/rover/job/dev
 
 
 | Branch   | Status                  |
@@ -53,7 +53,7 @@ steps**:
 
 Add the rover to your computer's hosts: add 
 ```bash
-192.168.3.252 rover
+192.168.1.242 rover
 ```
 to your `/etc/hosts` file. You will now be able to ssh into the rover with
 ```bash

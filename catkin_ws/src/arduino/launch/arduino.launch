@@ -1,3 +1,0 @@
-<launch>
-    <include file="$(find arduino)/launch/drive.launch"/>
-</launch>

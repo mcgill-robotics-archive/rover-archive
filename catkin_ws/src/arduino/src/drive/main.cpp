@@ -10,7 +10,7 @@
 ros::NodeHandle nh;
 rover_common::MotorStatus motorStatusMessage;
 
-ros::ServiceServer<arduino::Ram::Request, arduino::Ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
+ros::ServiceServer<arduino_msgs::Ram::Request, arduino_msgs::Ram::Response> ramService("~free_ram",&RAM::freeRamCallback);
 ros::Publisher motorStatusPublisher("/motor_status", &motorStatusMessage);
 ros::Subscriber<std_msgs::Bool> movingSubscriber("/is_moving", &callbackMoving);
 ros::Subscriber<drive_control::WheelCommand> driveSubscriber("/wheel_command", &driveCallback );

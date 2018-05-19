@@ -1,0 +1,136 @@
+<launch>
+  <group ns="arm">
+    <!-- By default, we are not in debug mode -->
+    <arg name="debug" default="false" />
+
+    <!-- Start the joints action server -->
+    <node name="joints_as" pkg="arm_control" type="joints_as.py"/>
+
+    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+
+    <arg name="robot_description" default="robot_description"/>
+
+    <param name="$(arg robot_description)" textfile="$(find arm_control)/urdf/arm.urdf"/>
+    <param name="$(arg robot_description)_semantic" textfile="$(find arm_control)/config/arm_description.srdf" />
+    
+    <group ns="$(arg robot_description)_planning">
+      <rosparam command="load" file="$(find arm_control)/config/joint_limits.yaml"/>
+    </group>
+
+    <group ns="$(arg robot_description)_kinematics">
+      <rosparam command="load" file="$(find arm_control)/config/kinematics.yaml"/>
+    </group>
+  
+    <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find arm_control)/launch/moveit/move_group.launch">
+      <arg name="info" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- Run Rviz and load the default config to see the state of the move_group node -->
+    <include file="$(find arm_control)/launch/moveit/moveit_rviz.launch">
+      <arg name="config" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+  <!-- Code from, now deleted file, arm.launch: -->
+
+      <!-- Dispatch /arm/joint_states to individual topics -->
+      <node name="joint_states_dispatcher" pkg="arm_simulation" type="joint_states_dispatcher" />
+
+      <!-- Load the PID controllers -->
+
+      <!-- base_pitch -->
+      <node name="controller" pkg="pid" type="controller" ns="base_pitch_position_controller" output="screen" >
+        <param name="node_name" value="base_pitch_position_controller" />
+        <param name="Kp" value="600.0" />
+        <param name="Ki" value="300.0" />
+        <param name="Kd" value="15.0" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/base_pitch_velocity_controller/command" />
+      </node>
+
+      <!-- base_yaw -->
+      <node name="controller" pkg="pid" type="controller" ns="base_yaw_position_controller" output="screen" >
+        <param name="node_name" value="base_yaw_position_controller" />
+        <param name="Kp" value="20.0" />
+        <param name="Ki" value="2.0" />
+        <param name="Kd" value="1.0" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/base_yaw_velocity_controller/command" />
+      </node>
+
+      <!-- elbow_pitch -->
+      <node name="controller" pkg="pid" type="controller" ns="elbow_pitch_position_controller" output="screen" >
+        <param name="node_name" value="elbow_pitch_position_controller" />
+        <param name="Kp" value="400.0" />
+        <param name="Ki" value="40.0" />
+        <param name="Kd" value="3.8" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/elbow_pitch_velocity_controller/command" />
+      </node>
+
+      <!-- wrist_pitch -->
+      <node name="controller" pkg="pid" type="controller" ns="wrist_pitch_position_controller" output="screen" >
+        <param name="node_name" value="wrist_pitch_position_controller" />
+        <param name="Kp" value="15.4" />
+        <param name="Ki" value="7.0" />
+        <param name="Kd" value="0.1" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/wrist_pitch_velocity_controller/command" />
+      </node>
+
+      <!-- elbow_roll -->
+      <node name="controller" pkg="pid" type="controller" ns="elbow_roll_position_controller" output="screen" >
+        <param name="node_name" value="elbow_roll_position_controller" />
+        <param name="Kp" value="60.0" />
+        <param name="Ki" value="25.0" />
+        <param name="Kd" value="1.0" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/elbow_roll_velocity_controller/command" />
+      </node>
+
+      <!-- wrist_roll -->
+      <node name="controller" pkg="pid" type="controller" ns="wrist_roll_position_controller" output="screen" >
+        <param name="node_name" value="wrist_roll_position_controller" />
+        <param name="Kp" value="4.6" />
+        <param name="Ki" value="4.0" />
+        <param name="Kd" value="0.02" />
+        <param name="upper_limit" value="1000000" />
+        <param name="lower_limit" value="-1000000" />
+        <param name="windup_limit" value="1000000" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <remap from="setpoint" to="command" />
+        <remap from="control_effort" to="/arm/wrist_roll_velocity_controller/command" />
+      </node>
+
+<!-- End of code from arm.launch: -->
+
+  </group>
+</launch>
