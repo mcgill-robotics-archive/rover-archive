@@ -22,25 +22,20 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-rosserial_generate_ros_lib(
-    PACKAGE rosserial_${PROJECT_NAME}
-    SCRIPT make_libraries.py
-)
-
 catkin_package(
-    CATKIN_DEPENDS geometry_msgs message_runtime std_msgs
+    CATKIN_DEPENDS geometry_msgs message_runtime std_msgs roscpp
 )
 
 include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-rosserial_configure_client(
-    DIRECTORY src
-    TOOLCHAIN_FILE ${ROSSERIAL_ARDUINO_TOOLCHAIN}
+add_executable(drive_serial src/drive/drive_serial.cpp)
+target_link_libraries(drive_serial ${catkin_LIBRARIES})
+
+install(TARGETS
+  drive_serial
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
-rosserial_add_client_target(src drive ALL)
-rosserial_add_client_target(src drive-upload)
-
-#rosserial_add_client_target(src science ALL)

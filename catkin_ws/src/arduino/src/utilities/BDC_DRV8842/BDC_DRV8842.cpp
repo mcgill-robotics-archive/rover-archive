@@ -1,9 +1,9 @@
 #include "BDC_DRV8842.h"
 
-BDC::BDC(int In1, int In2, int nRST, int nFLT){
+BDC::BDC(uint8_t In1, uint8_t In2, uint8_t nRST, uint8_t nFLT){
   pinMode(In1, OUTPUT);
   _In1 = In1;
-   pinMode(In2, OUTPUT);
+  pinMode(In2, OUTPUT);
   _In2 = In2;
   pinMode(nRST, OUTPUT);
   _nRST = nRST;
@@ -38,8 +38,8 @@ void BDC::PWM(int PWM_val){
 }
 
 void BDC::RST(){
-  digitalWrite(_nRST , LOW);
-  digitalWrite(_nFLT , HIGH); 
+  digitalWrite(_nRST, LOW);
+  digitalWrite(_nFLT, HIGH); 
   delay(500);
   digitalWrite(_nRST, HIGH);
   delay(250);

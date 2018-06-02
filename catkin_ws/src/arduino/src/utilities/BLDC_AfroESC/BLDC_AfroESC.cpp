@@ -2,9 +2,8 @@
 
 BLDC::BLDC(int pin, Side lr)
 {
-	_pin = pin;
-	_lr = lr;
-	_motor.attach(_pin);
+    _lr = lr;
+	_motor.attach(pin);
 	_motor.writeMicroseconds(1500);
   delay(2000);
 }

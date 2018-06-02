@@ -14,7 +14,6 @@ class BLDC{
 		BLDC(int pin, Side lr);
 		void PWM(int PWM);
 	private:
-		int _pin;
 		Side _lr;
 		Servo _motor;
 };

@@ -5,16 +5,16 @@
 
 class BDC{
   public:
-    BDC(int In1, int In2, int nRST, int nFLT);
+    BDC(uint8_t In1, uint8_t In2, uint8_t nRST, uint8_t nFLT);
     void PWM(int PWM_val);
     void RST();
-	  int FLT();
+	int FLT();
   
   private: 
-    int _In1;
-	  int _In2;
-	  int _nRST;
-	  int _nFLT;
+    uint8_t _In1;
+	uint8_t _In2;
+    uint8_t _nRST;
+	uint8_t _nFLT;
 };
 
 #endif

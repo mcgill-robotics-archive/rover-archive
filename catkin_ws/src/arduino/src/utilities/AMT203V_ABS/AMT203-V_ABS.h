@@ -6,11 +6,9 @@
 class AMT_ABS{
 	public:
 		AMT_ABS(int CSB);
-		int DEG();
+		int DEG(float * angle);
 	private:
 		int _CSB;
-		float _deg;
-		uint16_t _ABSposition;
 		uint16_t _ABSposition_last;
 };
 

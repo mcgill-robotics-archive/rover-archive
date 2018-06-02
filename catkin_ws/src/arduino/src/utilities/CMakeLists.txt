@@ -6,8 +6,8 @@ add_subdirectory(pwm_test)
 add_subdirectory(HX711)
 
 # New from 2018
-add_subdirectory(AMT203-V_ABS)
-add_subdirectory(AMT203-V_INC)
+add_subdirectory(AMT203V_ABS)
+add_subdirectory(AMT203V_INC)
 add_subdirectory(BDC_DRV8842)
 add_subdirectory(BLDC_AfroESC)
 add_subdirectory(INA226)
