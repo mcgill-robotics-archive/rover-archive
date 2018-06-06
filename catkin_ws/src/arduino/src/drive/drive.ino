@@ -13,7 +13,7 @@
 #include "BLDC_AfroESC.h"
 #include "BDC_DRV8842.h"
 #include "AMT203-V_ABS.h"
-brushlessMotor1 -> PWM(incoming_msg.speed_motor1);
+
 #define SERIAL_VERSION 1
 
 const char * serial_id = "drive";
@@ -86,14 +86,18 @@ void setup(){
 
 }
 
-void read_n_bytes_from_serial(int n, char * buffer) {
+int read_n_bytes_from_serial(int n, char * buffer) {
   int counter = 0;
-
+  unsigned long read_begin_time = millis();
   while(counter < n) {
     if(Serial.available() > 0) {
       buffer[counter++] = Serial.read();
     }
+
+    if((millis() - read_begin_time) > 1000) return -1;
   }
+  
+  return 0;
 }
 
 void loop(){
@@ -167,17 +171,37 @@ void loop(){
     }
 
     char version_number;
-    read_n_bytes_from_serial(1, &version_number);
+    int err = read_n_bytes_from_serial(1, &version_number);
+    
+    if(err == -1) { 
+      serial_state = CLEARING; 
+      return; 
+    }
 
     char incoming_serial_id_length;
-    read_n_bytes_from_serial(1, &incoming_serial_id_length);
+    err = read_n_bytes_from_serial(1, &incoming_serial_id_length);
+
+    if(err == -1) { 
+      serial_state = CLEARING; 
+      return; 
+    }
 
     char serial_id_buffer[31];
 
-    read_n_bytes_from_serial(incoming_serial_id_length, serial_id_buffer);
+    err = read_n_bytes_from_serial(incoming_serial_id_length, serial_id_buffer);
+
+    if(err == -1) { 
+      serial_state = CLEARING; 
+      return; 
+    }
 
     char data_buffer[255];
-    read_n_bytes_from_serial(sizeof(DriveSerialComputerMsg), data_buffer);
+    err = read_n_bytes_from_serial(sizeof(DriveSerialComputerMsg), data_buffer);
+
+    if(err == -1) { 
+      serial_state = CLEARING; 
+      return; 
+    }
 
     memcpy(&incoming_msg, data_buffer, sizeof(DriveSerialComputerMsg));
     brushlessMotor1 -> PWM(incoming_msg.speed_motor1);

@@ -18,7 +18,7 @@
 #include "drive_serial_msgs.h"
 
 // uncomment this to debug reads
-//#define SERIALPORTDEBUG 
+#define SERIALPORTDEBUG 
 
 #define SERIAL_VERSION 1
 #define PORT "/dev/ttyACM0" // Temporary
@@ -118,11 +118,11 @@ int serialport_write(int fd, const char* str, int length)
 {
     int n = write(fd, str, length);
 
-    int i = 0;
-    while(i<n) {
-        printf("%02x\n", str[i++]);
-    
-    }
+//    int i = 0;
+//    while(i<n) {
+//        printf("%02x\n", str[i++]);
+//    
+//    }
 
     if( n!=length ) {
         perror("serialport_write: couldn't write whole string\n");
@@ -202,7 +202,7 @@ void close_and_reopen_port(int fd) {
 
 void receive_message(int fd) {
     char buf[4096] = {-1};
-    int waht = serialport_read_n_bytes(fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
+    int waht = serialport_read_n_bytes(fd, buf, sizeof(DriveSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
 
     if(waht == -2 || waht == -1) {
         close_and_reopen_port(fd);
@@ -269,8 +269,27 @@ int main() {
                 continue;
             }
         } else if(serial_state == FIRST_MESSAGE) {
-            receive_message(fd);
-            continue;
+            char buf[4096] = {-1};
+            int waht = serialport_read_n_bytes(fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
+
+            if(waht == -2 || waht == -1) {
+                close_and_reopen_port(fd);
+                serial_state = WAITING_FOR_HANDSHAKE;
+                continue;            
+            } else if (waht == 0) {
+                DriveSerialArduinoMsg msg;
+
+                memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
+
+                printf("Size: %ld, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n", 
+                        sizeof(DriveSerialArduinoMsg), buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
+
+                last_received_msg = msg;
+
+                serial_state = RECEIVING;
+                continue;
+            }
+            
         } else if(serial_state = RECEIVING) {
             send_message(fd);
             receive_message(fd);
