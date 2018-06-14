@@ -40,14 +40,13 @@ short newTheta = 0;
 double dist = 0.0;
 const float Pi = 3.14159;
 
-DrivePosition pos = FRONT_LEFT;
 double steering_angle= 10 ;
 short distance; // I WANT SPEED 1&2 FEEDBACK HERE
 char fault; // boolean
 char fuse; // boolean
 
 //Define roverSide, topics and incremental encoder pinout according to board location on Rover:
-DrivePosition location = FRONT_LEFT; //Manually set according to board location on Rover
+DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
 DriveSerialArduinoMsg outgoing_message;
 DriveSerialComputerMsg incoming_msg = {};
 
@@ -94,7 +93,7 @@ int read_n_bytes_from_serial(int n, char * buffer) {
       buffer[counter++] = Serial.read();
     }
 
-    if((millis() - read_begin_time) > 1000) return -1;
+    if((millis() - read_begin_time) > 10000) return -1;
   }
   
   return 0;
@@ -107,7 +106,7 @@ void loop(){
       last_read_time = millis();
     }
 
-    if(millis() - last_read_time > 1000) {
+    if(millis() - last_read_time > 3000) {
       serial_state = WAITING_FOR_HANDSHAKE;
     }
   } else if(serial_state == WAITING_FOR_HANDSHAKE) {
@@ -147,23 +146,23 @@ void loop(){
 
       //Driving:
       //Distance calculation using incremental encoder data:
-      unsigned int currPosition = (int) Enc -> read();
-      newTheta = currPosition * 360.0 / 65536;
-
-      if (newTheta != oldTheta) {
-        if (newTheta - oldTheta > 300) {
-          dist = dist + ((newTheta - 360 - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        else if (newTheta - oldTheta < -300) {
-          dist = dist + ((newTheta + 360 - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        else {
-          dist = dist + ((newTheta - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        oldTheta = newTheta;
-
-        outgoing_message.distance = dist;
-      }
+//      unsigned int currPosition = (int) Enc -> read();
+//      newTheta = currPosition * 360.0 / 65536;
+//
+//      if (newTheta != oldTheta) {
+//        if (newTheta - oldTheta > 300) {
+//          dist = dist + ((newTheta - 360 - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        else if (newTheta - oldTheta < -300) {
+//          dist = dist + ((newTheta + 360 - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        else {
+//          dist = dist + ((newTheta - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        oldTheta = newTheta;
+//
+//        outgoing_message.distance = dist;
+//      }
 
       memcpy(buffer + msg_size - sizeof(DriveSerialArduinoMsg), &outgoing_message, sizeof(DriveSerialArduinoMsg));
       Serial.write(buffer, msg_size);
@@ -204,8 +203,11 @@ void loop(){
     }
 
     memcpy(&incoming_msg, data_buffer, sizeof(DriveSerialComputerMsg));
+
+    
     brushlessMotor1 -> PWM(incoming_msg.speed_motor1);
-    brushlessMotor2 -> PWM(incoming_msg.speed_motor1);
+    brushlessMotor2 -> PWM(incoming_msg.speed_motor2);
+    outgoing_message.distance = incoming_msg.speed_motor1;
     //delay(10);
   }
 }

@@ -13,6 +13,7 @@ endif()
 find_package(catkin REQUIRED COMPONENTS
   ${ahrs_pkg}
   ${PROJECT_NAME}_msgs
+  drive_control
   geometry_msgs
   roscpp
   rospy
@@ -23,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
-    CATKIN_DEPENDS geometry_msgs message_runtime std_msgs roscpp
+    CATKIN_DEPENDS drive_control geometry_msgs message_runtime std_msgs roscpp
 )
 
 include_directories(
