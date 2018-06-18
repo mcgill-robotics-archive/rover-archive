@@ -41,7 +41,7 @@ struct Port {
     DriveSerialArduinoMsg last_received_msg;
 };
 
-Port ports[2];
+Port ports[1];
 
 int num_boards = sizeof(ports)/sizeof(Port);
 
@@ -288,11 +288,11 @@ int main(int argc, char *argv []) {
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/wheel_command", 1000, wheel_command_cb);
 
-    ports[0].address = "/dev/ttyACM1";
+    ports[0].address = "/dev/ttyACM0";
     ports[0].state = WAITING_FOR_HANDSHAKE;
 
-    ports[1].address = "/dev/ttyACM0";
-    ports[1].state = WAITING_FOR_HANDSHAKE;
+//    ports[1].address = "/dev/ttyACM1";
+//    ports[1].state = WAITING_FOR_HANDSHAKE;
 
 //    ports[2].address = "/dev/ttyACM5";
 //    ports[2].state = WAITING_FOR_HANDSHAKE;
