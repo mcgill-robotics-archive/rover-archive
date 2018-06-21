@@ -139,8 +139,8 @@ class Steering:
             # multiplying this by the sign of the velocity makes the angular
             # velocity of the rover different than the input, but is of a more
             # natural movement
-            self.output_command.flsa *= sign_w
-            self.output_command.frsa *= sign_w
+            self.output_command.flsa *= sign_w / (2*math.pi) * 360
+            self.output_command.frsa *= sign_w / (2*math.pi) * 360
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
 
@@ -177,8 +177,8 @@ class Steering:
         # movement may occur to position wheels even if
         # robot is not moving around
         # wheels have specific angle - all of them should form a circle together
-        self.output_command.flsa = self.pointSteeringAngle  # forms circle
-        self.output_command.frsa = -self.output_command.flsa
+        self.output_command.flsa = self.pointSteeringAngle / (2*math.pi) * 360 # forms circle
+        self.output_command.frsa = -self.output_command.flsa 
         self.output_command.blsa = -self.output_command.flsa
         self.output_command.brsa = self.output_command.flsa
 
@@ -241,10 +241,10 @@ class Steering:
         elif sign_x < 0 and theta > 0:  # make theta negative
             theta = theta - math.pi
 
-        self.output_command.flsa = theta
-        self.output_command.frsa = theta
-        self.output_command.blsa = theta
-        self.output_command.brsa = theta
+        self.output_command.flsa = theta / (2*math.pi) * 360
+        self.output_command.frsa = theta / (2*math.pi) * 360
+        self.output_command.blsa = theta / (2*math.pi) * 360
+        self.output_command.brsa = theta / (2*math.pi) * 360
         # translate linear velocity to rotational velocity of wheel
         # along with the correct direction
 
