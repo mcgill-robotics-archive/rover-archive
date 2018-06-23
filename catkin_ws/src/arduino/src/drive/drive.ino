@@ -47,7 +47,10 @@ char fault; // boolean
 char fuse; // boolean
 
 //Define roverSide, topics and incremental encoder pinout according to board location on Rover:
-DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
+//DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
+//DrivePosition location = FRONT_LEFT; //Manually set according to board location on Rover
+//DrivePosition location = BACK_LEFT; //Manually set according to board location on Rover
+DrivePosition location = BACK_RIGHT; //Manually set according to board location on Rover
 DriveSerialArduinoMsg outgoing_message;
 DriveSerialComputerMsg incoming_msg = {};
 
@@ -55,29 +58,37 @@ double steering_angle  = 0.0;
 double steering_target = 0.0;
 double steering_PWM    = 0.0;
 
-PID steering_pid = PID(&steering_angle, &steering_PWM, &steering_target, 7.0, 0.0, 0.0, DIRECT);
+PID steering_pid = PID(&steering_angle, &steering_PWM, &steering_target, 2.0, 0.5, 0.5, DIRECT);
 
 void setup(){
   incoming_msg.pos = 0;
-  Serial.begin(9600);
+  Serial.begin(115200);
   last_read_time = millis();
 
   if (location == FRONT_RIGHT) {
+    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == FRONT_LEFT) {
+    brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_RIGHT) {
+    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_LEFT) {
+    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(2, 3);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
@@ -85,13 +96,10 @@ void setup(){
   brushedMotor = new BDC(11, 13, 7, 8);
   absEncoder = new AMT_ABS(SS);
 
-  brushlessMotor1 = new BLDC(6, roverSide);
-  brushlessMotor2 = new BLDC(5, roverSide);
-
   pinMode(4, OUTPUT);
 
   steering_pid.SetMode(AUTOMATIC);
-  steering_pid.SetOutputLimits(-100, 100);
+  steering_pid.SetOutputLimits(-40, 40);
 
   brushlessMotor1->PWM(0);
   brushlessMotor2->PWM(0);
@@ -152,11 +160,13 @@ void loop(){
       //Side: to be set for testing
       outgoing_message.pos = location;
 
+      if(brushedMotor -> FLT()) { brushedMotor -> RST(); }
+
       //Fault Detection:
       outgoing_message.fault = brushedMotor -> FLT();
 
       //Fuse Detection:
-      outgoing_message.fuse = steering_PWM;//digitalRead(4);
+      outgoing_message.fuse = steering_PWM;//incoming_msg.speed_motor1;//steering_PWM;//digitalRead(4);
 
       //Steering:
       
@@ -255,12 +265,23 @@ void loop(){
       steering_target -= 360;
     }
 
-    if(steering_target%360 > 90 && steering target%360 > 270) {
+
+
+    //if((int)steering_target%360 > 90 && (int)steering_target%360 > 270) {
       steering_pid.Compute();
+
+      if(location == BACK_LEFT) {
+        steering_PWM = -steering_PWM;
+      }
+      
       brushedMotor->PWM(steering_PWM);
-    } else {
-      brushedMotor->PWM(0);
-    }
+
+      if(location == BACK_LEFT) {
+        steering_PWM = -steering_PWM;
+      }
+    //} else {
+    //  brushedMotor->PWM(0);
+    //}
     //delay(10);
   }
 }
