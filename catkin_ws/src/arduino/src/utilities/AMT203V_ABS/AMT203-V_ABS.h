@@ -1,15 +1,3 @@
-//****************************************************************//
-// Electrical Division, Mars Rover Team of McGill Robotics
-// Authors: Alexandre Coulombe, Adrien Sauvestre, Jeslan Rajendram 
-// Winter 2018
-// version: 1.0
-//  
-// AMT203-v encoder code used in Mars Rover's
-// Arm system and Drive system 
-// Functionality:
-//            - Retrieve absolute angular position value
-//            - Set encoder 0 location
-//****************************************************************//
 #ifndef AMT_ABS_h
 #define AMT_ABS_h
 
@@ -18,12 +6,9 @@
 class AMT_ABS{
 	public:
 		AMT_ABS(int CSB);
-    boolean SPI_set_0();
-		float DEG();
+		int DEG(double * angle);
 	private:
 		int _CSB;
-		float _deg;
-		uint16_t _ABSposition;
 		uint16_t _ABSposition_last;
 };
 
