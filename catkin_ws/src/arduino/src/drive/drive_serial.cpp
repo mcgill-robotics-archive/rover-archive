@@ -14,6 +14,7 @@
 #include <string.h>   // String function definitions 
 #include <sys/ioctl.h>
 #include <stdint.h>
+#include <sys/time.h>
 
 #include "ros/ros.h"
 #include "drive_control/WheelCommand.h"
@@ -31,7 +32,8 @@ enum SerialState {
     WAITING_FOR_HANDSHAKE, 
     CLEARING,
     FIRST_MESSAGE,
-    RECEIVING
+    RECEIVING,
+    TIMEDOUT
 };
 
 struct Port {
@@ -39,9 +41,11 @@ struct Port {
     int fd;
     SerialState state = WAITING_FOR_HANDSHAKE;
     DriveSerialArduinoMsg last_received_msg;
+    timeval previous_time;
+    int timeout;
 };
 
-Port ports[1];
+Port ports[2];
 
 int num_boards = sizeof(ports)/sizeof(Port);
 
@@ -198,17 +202,9 @@ int serialport_flush(int fd)
     return tcflush(fd, TCIOFLUSH);
 }
 
-void close_and_reopen_port(Port * port) {
-    serialport_close(port->fd);
-
-    usleep(10000000); // Give some time in case it's rebooting, might need adjustments
-
-    do {
-        printf("Reopen %s\n", port->address);
-        port->fd = serialport_init(port->address, 9600);
-    } while(port->fd == -1);
-
-    serialport_flush(port->fd);
+int reopen_port(Port * port) {
+    printf("Reopen %s\n", port->address);
+    return serialport_init(port->address, 9600);
 }
 
 void receive_message(Port * port) {
@@ -216,8 +212,9 @@ void receive_message(Port * port) {
     int waht = serialport_read_n_bytes(port->fd, buf, sizeof(DriveSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
 
     if(waht == -2 || waht == -1) {
-        close_and_reopen_port(port);
-        port->state = WAITING_FOR_HANDSHAKE;
+        port->timeout = 10000;
+        serialport_close(port->fd);
+        port->state = TIMEDOUT;
         return;            
     } else if (waht == 0) {
         DriveSerialArduinoMsg msg;
@@ -291,8 +288,8 @@ int main(int argc, char *argv []) {
     ports[0].address = "/dev/ttyACM0";
     ports[0].state = WAITING_FOR_HANDSHAKE;
 
-//    ports[1].address = "/dev/ttyACM1";
-//    ports[1].state = WAITING_FOR_HANDSHAKE;
+    ports[1].address = "/dev/ttyACM1";
+    ports[1].state = WAITING_FOR_HANDSHAKE;
 
 //    ports[2].address = "/dev/ttyACM5";
 //    ports[2].state = WAITING_FOR_HANDSHAKE;
@@ -314,14 +311,24 @@ int main(int argc, char *argv []) {
             if(port->state == WAITING_FOR_HANDSHAKE) {
                 
                 char buf[4096] = {-1};
-                int waht = serialport_read_until(port->fd, buf, '0', 4096, 10000); // @TODO, to make this more robust, should be reading a large number of '0' in a row. Larger than max message size; 
+                int waht = serialport_read_n_bytes(port->fd, buf, 512, 1000);
+
+                bool ready = true;
+
+                for(int byte_count = 0; byte_count < 512; byte_count++) {
+                    if(buf[byte_count] != '0') {
+                        ready = false;                        
+                    }                
+                }
                 printf("%x\n", buf[0]);
-                if(waht == 0 && buf[0] == '0') {
+                if(waht == 0 && ready) {
                     serialport_write(port->fd, "0", 1);
                     port->state = CLEARING;   
                     //continue;         
                 } else {
-                    close_and_reopen_port(port);
+                    port->timeout = 10000;
+                    serialport_close(port->fd);
+                    port->state = TIMEDOUT;
                     //continue;
                 }
 
@@ -330,8 +337,9 @@ int main(int argc, char *argv []) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
                 if(waht == -2 || waht == -1) {
-                    close_and_reopen_port(port);
-                    port->state = WAITING_FOR_HANDSHAKE;
+                    port->timeout = 10000;
+                    serialport_close(port->fd);
+                    port->state = TIMEDOUT;
                     //continue;            
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
@@ -343,8 +351,9 @@ int main(int argc, char *argv []) {
                 int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
 
                 if(waht == -2 || waht == -1) {
-                    close_and_reopen_port(port);
-                    port->state = WAITING_FOR_HANDSHAKE;
+                    port->timeout = 10000;
+                    serialport_close(port->fd);
+                    port->state = TIMEDOUT;
                     //continue;            
                 } else if (waht == 0) {
                     DriveSerialArduinoMsg msg;
@@ -363,6 +372,27 @@ int main(int argc, char *argv []) {
                 send_message(port);
                 receive_message(port);
                 //continue;
+            } else if(port->state == TIMEDOUT) {
+                if(port->timeout > 0) {
+
+                    if(port->previous_time.tv_sec == 0 && port->previous_time.tv_usec == 0) { gettimeofday(&(port->previous_time), NULL); } // Init previous time for the first time.
+
+                    timeval current_time;
+                    gettimeofday(&current_time, NULL);
+                    int elapsed_time = 1000*(current_time.tv_sec - port->previous_time.tv_sec) + (current_time.tv_usec - port->previous_time.tv_usec) / 1000;
+
+                    port->timeout -= elapsed_time;
+
+                    port->previous_time = current_time;
+                } else {
+                    port->fd = reopen_port(port);
+                    if(port->fd != 1) {
+                        serialport_flush(port->fd);
+                        port->previous_time.tv_sec  = 0;
+                        port->previous_time.tv_usec = 0;
+                        port->state = WAITING_FOR_HANDSHAKE;
+                    }
+                }       
             }
         }
     }
