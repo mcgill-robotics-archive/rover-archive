@@ -32,6 +32,7 @@ float command_elbow_pitch = 0;
 float command_elbow_roll = 0;
 float command_wrist_pitch = 0;
 float command_wrist_roll = 0;
+float command_speed_end_eff = 0;
 
 enum SerialState {
     WAITING_FOR_HANDSHAKE, 
@@ -254,7 +255,7 @@ void send_message(Port* port) {
 
         outgoing_msg.angle_motor_A  = command_wrist_pitch;
         outgoing_msg.angle_motor_B  = command_wrist_roll;
-        outgoing_msg.speed_end_eff  = //command;               //TO DO
+        outgoing_msg.speed_end_eff  = command_speed_end_eff;               //TO DO
 
     } else if(position == BACKARM) {
     	outgoing_msg.angle_motor_A  = command_elbow_pitch;
@@ -293,18 +294,22 @@ void arm_wrist_roll_command_cb(const std_msgs::Float32::ConstPtr& msg)
 {
     command_wrist_roll = msg->data;
 }
+void arm_speed_end_eff_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_speed_end_eff = msg->data;
+}
 
 int main(int argc, char *argv []) {
 
     ros::init(argc, argv, "drive_serial_controller");
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/arm/base_pitch_position_controller/command", 1000, arm_base_pitch_command_cb);
-    ros::Subscriber sub = n.subscribe("/arm/base_yaw_position_controller/command", 1000, arm_base_yaw_command_cb);
-    ros::Subscriber sub = n.subscribe("/arm/elbow_pitch_position_controller/command", 1000, arm_elbow_pitch_command_cb);
-    ros::Subscriber sub = n.subscribe("/arm/elbow_roll_position_controller/command", 1000, arm_elbow_roll_command_cb);
-    ros::Subscriber sub = n.subscribe("/arm/wrist_pitch_position_controller/command", 1000, arm_wrist_pitch_command_cb);
-    ros::Subscriber sub = n.subscribe("/arm/wrist_roll_position_controller/command", 1000, arm_wrist_roll_command_cb);
-    
+    ros::Subscriber base_pitch_sub = n.subscribe("/arm/base_pitch_position_controller/command", 1000, arm_base_pitch_command_cb);
+    ros::Subscriber base_yaw_sub = n.subscribe("/arm/base_yaw_position_controller/command", 1000, arm_base_yaw_command_cb);
+    ros::Subscriber elbow_pitch_sub = n.subscribe("/arm/elbow_pitch_position_controller/command", 1000, arm_elbow_pitch_command_cb);
+    ros::Subscriber elbow_roll_sub = n.subscribe("/arm/elbow_roll_position_controller/command", 1000, arm_elbow_roll_command_cb);
+    ros::Subscriber wrist_pitch_sub = n.subscribe("/arm/wrist_pitch_position_controller/command", 1000, arm_wrist_pitch_command_cb);
+    ros::Subscriber wrist_roll_sub = n.subscribe("/arm/wrist_roll_position_controller/command", 1000, arm_wrist_roll_command_cb);
+    //add speed of end effector subscriber
 
     ports[0].address = "/dev/ttyACM5";
     ports[0].state = WAITING_FOR_HANDSHAKE;
