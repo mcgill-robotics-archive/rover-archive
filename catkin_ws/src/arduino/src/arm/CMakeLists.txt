@@ -12,7 +12,7 @@ set(SOURCES
 set(HEADERS
         )
 
-generate_arduino_firmware(drive
+generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     LIBS amt203v_abs bdc_drv8842 ina226

@@ -20,10 +20,10 @@ struct  __attribute__((packed, aligned(1))) ArmSerialArduinoMsg {  //message goi
 
 struct __attribute__((packed, aligned(1))) ArmSerialComputerMsg {   //message going to the arduino
     ArmPosition pos;                       
-    short angle_motor_A;
-    short angle_motor_B;
-    short angle_motor_C;
-    short angle_motor_D;
-    short speed_end_eff;
+    float angle_motor_A;
+    float angle_motor_B;
+    float angle_motor_C;
+    float angle_motor_D;
+    float speed_end_eff;
 };
 

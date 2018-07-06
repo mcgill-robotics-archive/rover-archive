@@ -226,7 +226,7 @@ void receive_message(Port * port) {
 
         memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
 
-        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %d, Angle_B: %d, Angle_C: %d, Angle_D: %d, Current_A: %d, Current_B: %d, Current_C: %d, Current_D: %d, Claw position: %d, Fault: %02x\n", 
+        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
                 port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
 
         port->last_received_msg = msg;
@@ -378,7 +378,7 @@ int main(int argc, char *argv []) {
 
                     memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
                     
-                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %d, Angle_B: %d, Angle_C: %d, Angle_D: %d, Current_A: %d, Current_B: %d, Current_C: %d, Current_D: %d, Claw position: %d, Fault: %02x\n", 
+                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
                             port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
                     port->last_received_msg = msg;
 
