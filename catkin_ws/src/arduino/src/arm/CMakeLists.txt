@@ -16,6 +16,6 @@ generate_arduino_firmware(arm
     SRCS ${SOURCES}
     HDRS ${HEADERS}
     LIBS amt203v_abs bdc_drv8842 ina226
-    BOARD micro
+    BOARD mega
     PORT /dev/ttyACM0
 )

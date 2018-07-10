@@ -6,12 +6,12 @@
 // MOSTLY TAKEN FROM https://github.com/todbot/arduino-serial/
 // ACTUALLY USE THIS GUY's STUFF IF IT ENDS UP WORKING
 
-#include <stdio.h>    // Standard input/output definitions 
-#include <unistd.h>   // UNIX standard function definitions 
-#include <fcntl.h>    // File control definitions 
-#include <errno.h>    // Error number definitions 
-#include <termios.h>  // POSIX terminal control definitions 
-#include <string.h>   // String function definitions 
+#include <stdio.h>    // Standard input/output definitions
+#include <unistd.h>   // UNIX standard function definitions
+#include <fcntl.h>    // File control definitions
+#include <errno.h>    // Error number definitions
+#include <termios.h>  // POSIX terminal control definitions
+#include <string.h>   // String function definitions
 #include <sys/ioctl.h>
 #include <stdint.h>
 #include <sys/time.h>
@@ -19,10 +19,10 @@
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 
-#include "arm_serial_msgs.h"
+#include "arm_serial_msg.h"
 
 // uncomment this to debug reads
-//#define SERIALPORTDEBUG 
+//#define SERIALPORTDEBUG
 
 #define SERIAL_VERSION 1
 
@@ -35,7 +35,7 @@ float command_wrist_roll = 0;
 float command_speed_end_eff = 0;
 
 enum SerialState {
-    WAITING_FOR_HANDSHAKE, 
+    WAITING_FOR_HANDSHAKE,
     CLEARING,
     FIRST_MESSAGE,
     RECEIVING,
@@ -117,7 +117,7 @@ int serialport_init(const char* serialport, int baud)
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 0;
     //toptions.c_cc[VTIME] = 20;
-    
+
     tcsetattr(fd, TCSANOW, &toptions);
     if( tcsetattr(fd, TCSAFLUSH, &toptions) < 0) {
         perror("init_serialport: Couldn't set term attributes");
@@ -141,7 +141,7 @@ int serialport_write(int fd, const char* str, int length)
 //    int i = 0;
 //    while(i<n) {
 //        printf("%02x\n", str[i++]);
-//    
+//
 //    }
 
     if( n!=length ) {
@@ -155,7 +155,7 @@ int serialport_write(int fd, const char* str, int length)
 int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    while(i < n && timeout>0) { 
+    while(i < n && timeout>0) {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -164,12 +164,12 @@ int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
-    } 
+    }
 
     // Don't do that actually. buf[i] = 0;  // null terminate the string
     return 0;
@@ -180,7 +180,7 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
 {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    do { 
+    do {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -189,10 +189,10 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
     } while( b[0] != until && i < buf_max && timeout>0 );
 
@@ -221,7 +221,7 @@ void receive_message(Port * port) {
         port->timeout = 10000;
         serialport_close(port->fd);
         port->state = TIMEDOUT;
-        return;            
+        return;
     } else if (waht == 0) {
         ArmSerialArduinoMsg msg;
 
@@ -262,7 +262,7 @@ void send_message(Port* port) {
     	outgoing_msg.angle_motor_B  = command_elbow_roll;
     	outgoing_msg.angle_motor_C  = command_base_pitch;
     	outgoing_msg.angle_motor_D  = command_base_yaw;
-    	
+
     }
 
     memcpy(buffer + msg_size - sizeof(ArmSerialComputerMsg), &outgoing_msg, sizeof(ArmSerialComputerMsg));
@@ -332,7 +332,7 @@ int main(int argc, char *argv []) {
             printf("\n\n\nBoard %s, State %d\n", port->address, port->state);
 
             if(port->state == WAITING_FOR_HANDSHAKE) {
-                
+
                 char buf[4096] = {-1};
                 int waht = serialport_read_n_bytes(port->fd, buf, 512, 1000);
 
@@ -340,14 +340,14 @@ int main(int argc, char *argv []) {
 
                 for(int byte_count = 0; byte_count < 512; byte_count++) {
                     if(buf[byte_count] != '0') {
-                        ready = false;                        
-                    }                
+                        ready = false;
+                    }
                 }
                 printf("%x\n", buf[0]);
                 if(waht == 0 && ready) {
                     serialport_write(port->fd, "0", 1);
-                    port->state = CLEARING;   
-                    //continue;         
+                    port->state = CLEARING;
+                    //continue;
                 } else {
                     port->timeout = 10000;
                     serialport_close(port->fd);
@@ -355,7 +355,7 @@ int main(int argc, char *argv []) {
                     //continue;
                 }
 
-                
+
             } else if(port->state == CLEARING) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
@@ -363,7 +363,7 @@ int main(int argc, char *argv []) {
                     port->timeout = 10000;
                     serialport_close(port->fd);
                     port->state = TIMEDOUT;
-                    //continue;            
+                    //continue;
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
                     //continue;
@@ -371,18 +371,18 @@ int main(int argc, char *argv []) {
 
             } else if(port->state == FIRST_MESSAGE) {
                 char buf[4096] = {-1};
-                int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
+                int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(ArmSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
 
                 if(waht == -2 || waht == -1) {
                     port->timeout = 10000;
                     serialport_close(port->fd);
                     port->state = TIMEDOUT;
-                    //continue;            
+                    //continue;
                 } else if (waht == 0) {
                     ArmSerialArduinoMsg msg;
 
                     memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
-                    
+
                     printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
                             port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
                     port->last_received_msg = msg;
@@ -390,7 +390,7 @@ int main(int argc, char *argv []) {
                     port->state = RECEIVING;
                     //continue;
                 }
-                
+
             } else if(port->state == RECEIVING) {
                 send_message(port);
                 receive_message(port);
@@ -415,7 +415,7 @@ int main(int argc, char *argv []) {
                         port->previous_time.tv_usec = 0;
                         port->state = WAITING_FOR_HANDSHAKE;
                     }
-                }       
+                }
             }
         }
     }
