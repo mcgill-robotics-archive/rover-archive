@@ -11,11 +11,12 @@ enum Side{
 
 class BLDC{
 	public:
-		BLDC(int pin, Side lr);
+		BLDC(int pin, Side lr, int zero);
 		void PWM(int PWM);
 	private:
 		Side _lr;
 		Servo _motor;
+        int _zero;
 };
 
 #endif

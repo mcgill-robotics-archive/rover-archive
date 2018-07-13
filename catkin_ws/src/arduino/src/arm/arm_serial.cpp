@@ -17,16 +17,22 @@
 #include <sys/time.h>
 
 #include "ros/ros.h"
-#include "drive_control/WheelCommand.h"
+#include "std_msgs/Float32.h"
 
-#include "drive_serial_msgs.h"
+#include "arm_serial_msg.h"
 
 // uncomment this to debug reads
 //#define SERIALPORTDEBUG
 
 #define SERIAL_VERSION 1
 
-drive_control::WheelCommand command = drive_control::WheelCommand();
+float command_base_pitch = 0;
+float command_base_yaw = 0;
+float command_elbow_pitch = 0;
+float command_elbow_roll = 0;
+float command_wrist_pitch = 0;
+float command_wrist_roll = 0;
+float command_speed_end_eff = 0;
 
 enum SerialState {
     WAITING_FOR_HANDSHAKE,
@@ -40,12 +46,12 @@ struct Port {
     char * address;
     int fd;
     SerialState state = WAITING_FOR_HANDSHAKE;
-    DriveSerialArduinoMsg last_received_msg;
+    ArmSerialArduinoMsg last_received_msg;
     timeval previous_time;
     int timeout;
 };
 
-Port ports[4];
+Port ports[2];
 
 int num_boards = sizeof(ports)/sizeof(Port);
 
@@ -202,47 +208,27 @@ int serialport_flush(int fd)
     return tcflush(fd, TCIOFLUSH);
 }
 
-<<<<<<< HEAD
-void close_and_reopen_port(Port * port) {
-    serialport_close(port->fd);
-
-    usleep(10000000); // Give some time in case it's rebooting, might need adjustments
-
-    do {
-        printf("Reopen %s\n", port->address);
-        port->fd = serialport_init(port->address, 9600);
-    } while(port->fd == -1 && ros::ok());
-
-    serialport_flush(port->fd);
-=======
 int reopen_port(Port * port) {
     printf("Reopen %s\n", port->address);
     return serialport_init(port->address, 9600);
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
 }
 
 void receive_message(Port * port) {
     char buf[4096] = {-1};
-    int waht = serialport_read_n_bytes(port->fd, buf, sizeof(DriveSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
+    int waht = serialport_read_n_bytes(port->fd, buf, sizeof(ArmSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
 
     if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
-        close_and_reopen_port(port);
-        port->state = WAITING_FOR_HANDSHAKE;
-        return;
-=======
         port->timeout = 10000;
         serialport_close(port->fd);
         port->state = TIMEDOUT;
-        return;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
+        return;
     } else if (waht == 0) {
-        DriveSerialArduinoMsg msg;
+        ArmSerialArduinoMsg msg;
 
-        memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
+        memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
 
-        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
-                port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
+        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
+                port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
 
         port->last_received_msg = msg;
 
@@ -252,73 +238,87 @@ void receive_message(Port * port) {
 }
 
 void send_message(Port* port) {
-    const char * serial_id = "drive";
-    int msg_size = 1 + 1 + strlen(serial_id) + sizeof(DriveSerialComputerMsg); // Constant
+    const char * serial_id = "armer";
+    int msg_size = 1 + 1 + strlen(serial_id) + sizeof(ArmSerialComputerMsg); // Constant
     char buffer[255];
     buffer[0] = SERIAL_VERSION;
     buffer[1] = (char) strlen(serial_id);
     memcpy(buffer + 2, serial_id, buffer[1]);
 
-    DriveSerialComputerMsg outgoing_msg = {};
+    ArmSerialComputerMsg outgoing_msg = {};
 
-    DrivePosition position = port->last_received_msg.pos;
+    ArmPosition position = port->last_received_msg.pos;
 
     outgoing_msg.pos = position;
 
-    if(position == FRONT_LEFT) {
+    if(position == FOREARM) {
 
-        outgoing_msg.speed_motor1   = command.flv;
-        outgoing_msg.speed_motor2   = command.mlv;
-        outgoing_msg.steering_angle = command.flsa;
+        outgoing_msg.angle_motor_A  = command_wrist_pitch;
+        outgoing_msg.angle_motor_B  = command_wrist_roll;
+        outgoing_msg.speed_end_eff  = command_speed_end_eff;               //TO DO
 
-    } else if(position == FRONT_RIGHT) {
-
-        outgoing_msg.speed_motor1   = command.frv;
-        outgoing_msg.speed_motor2   = command.mrv;
-        outgoing_msg.steering_angle = command.frsa;
-
-    } else if(position == BACK_LEFT) {
-
-        outgoing_msg.speed_motor1   = command.blv;
-        outgoing_msg.steering_angle = command.blsa;
-
-    } else if(position == BACK_RIGHT) {
-
-        outgoing_msg.speed_motor1   = command.brv;
-        outgoing_msg.steering_angle = command.brsa;
+    } else if(position == BACKARM) {
+    	outgoing_msg.angle_motor_A  = command_elbow_pitch;
+    	outgoing_msg.angle_motor_B  = command_elbow_roll;
+    	outgoing_msg.angle_motor_C  = command_base_pitch;
+    	outgoing_msg.angle_motor_D  = command_base_yaw;
 
     }
 
-    memcpy(buffer + msg_size - sizeof(DriveSerialComputerMsg), &outgoing_msg, sizeof(DriveSerialComputerMsg));
+    memcpy(buffer + msg_size - sizeof(ArmSerialComputerMsg), &outgoing_msg, sizeof(ArmSerialComputerMsg));
 
     serialport_write(port->fd, (char *) buffer, msg_size);
 }
 
-void wheel_command_cb(const drive_control::WheelCommand::ConstPtr& msg)
+void arm_base_pitch_command_cb(const std_msgs::Float32::ConstPtr& msg)
 {
-    command = *msg;
+    command_base_pitch = msg->data;
+}
+void arm_base_yaw_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_base_yaw = msg->data;
+}
+void arm_elbow_pitch_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_elbow_pitch = msg->data;
+}
+void arm_elbow_roll_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_elbow_roll = msg->data;
+}
+void arm_wrist_pitch_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_wrist_pitch = msg->data;
+}
+void arm_wrist_roll_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_wrist_roll = msg->data;
+}
+void arm_speed_end_eff_command_cb(const std_msgs::Float32::ConstPtr& msg)
+{
+    command_speed_end_eff = msg->data;
 }
 
 int main(int argc, char *argv []) {
 
     ros::init(argc, argv, "drive_serial_controller");
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("/wheel_command", 1000, wheel_command_cb);
+    ros::Subscriber base_pitch_sub = n.subscribe("/arm/base_pitch_position_controller/command", 1000, arm_base_pitch_command_cb);
+    ros::Subscriber base_yaw_sub = n.subscribe("/arm/base_yaw_position_controller/command", 1000, arm_base_yaw_command_cb);
+    ros::Subscriber elbow_pitch_sub = n.subscribe("/arm/elbow_pitch_position_controller/command", 1000, arm_elbow_pitch_command_cb);
+    ros::Subscriber elbow_roll_sub = n.subscribe("/arm/elbow_roll_position_controller/command", 1000, arm_elbow_roll_command_cb);
+    ros::Subscriber wrist_pitch_sub = n.subscribe("/arm/wrist_pitch_position_controller/command", 1000, arm_wrist_pitch_command_cb);
+    ros::Subscriber wrist_roll_sub = n.subscribe("/arm/wrist_roll_position_controller/command", 1000, arm_wrist_roll_command_cb);
+    //add speed of end effector subscriber
 
-    ports[0].address = "/dev/ttyACM0";
+    ports[0].address = "/dev/ttyACM5";
     ports[0].state = WAITING_FOR_HANDSHAKE;
 
-    ports[1].address = "/dev/ttyACM1";
+    ports[1].address = "/dev/ttyACM6";
     ports[1].state = WAITING_FOR_HANDSHAKE;
 
-    ports[2].address = "/dev/ttyACM2";
-    ports[2].state = WAITING_FOR_HANDSHAKE;
-
-    ports[3].address = "/dev/ttyACM3";
-    ports[3].state = WAITING_FOR_HANDSHAKE;
-
     for(int i = 0; i < num_boards; i++) {
-        ports[i].fd = serialport_init(ports[i].address, 115200);
+        ports[i].fd = serialport_init(ports[i].address, 9600);
         serialport_flush(ports[i].fd);
     }
 
@@ -334,19 +334,15 @@ int main(int argc, char *argv []) {
             if(port->state == WAITING_FOR_HANDSHAKE) {
 
                 char buf[4096] = {-1};
-<<<<<<< HEAD
-                int waht = serialport_read_until(port->fd, buf, '0', 4096, 10000); // @TODO, to make this more robust, should be reading a large number of '0' in a row. Larger than max message size;
-=======
                 int waht = serialport_read_n_bytes(port->fd, buf, 512, 1000);
 
                 bool ready = true;
 
                 for(int byte_count = 0; byte_count < 512; byte_count++) {
                     if(buf[byte_count] != '0') {
-                        ready = false;                        
-                    }                
+                        ready = false;
+                    }
                 }
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
                 printf("%x\n", buf[0]);
                 if(waht == 0 && ready) {
                     serialport_write(port->fd, "0", 1);
@@ -364,16 +360,10 @@ int main(int argc, char *argv []) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
                 if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
-                    close_and_reopen_port(port);
-                    port->state = WAITING_FOR_HANDSHAKE;
-                    //continue;
-=======
                     port->timeout = 10000;
                     serialport_close(port->fd);
                     port->state = TIMEDOUT;
-                    //continue;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
+                    //continue;
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
                     //continue;
@@ -381,26 +371,20 @@ int main(int argc, char *argv []) {
 
             } else if(port->state == FIRST_MESSAGE) {
                 char buf[4096] = {-1};
-                int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
+                int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(ArmSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
 
                 if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
-                    close_and_reopen_port(port);
-                    port->state = WAITING_FOR_HANDSHAKE;
-                    //continue;
-=======
                     port->timeout = 10000;
                     serialport_close(port->fd);
                     port->state = TIMEDOUT;
-                    //continue;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
+                    //continue;
                 } else if (waht == 0) {
-                    DriveSerialArduinoMsg msg;
+                    ArmSerialArduinoMsg msg;
 
-                    memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
+                    memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
 
-                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
-                            port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
+                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
+                            port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
                     port->last_received_msg = msg;
 
                     port->state = RECEIVING;
@@ -431,7 +415,7 @@ int main(int argc, char *argv []) {
                         port->previous_time.tv_usec = 0;
                         port->state = WAITING_FOR_HANDSHAKE;
                     }
-                }       
+                }
             }
         }
     }
