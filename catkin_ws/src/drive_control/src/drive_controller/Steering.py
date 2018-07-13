@@ -23,17 +23,17 @@ class Steering:
 
         self.mid_wh_offset = rospy.get_param('control/middle_wh_offset', 0.106)
         # angle on the wheels for point steering
-        self.pointSteeringAngle = math.pi / 2 - math.atan(self.B / self.D)
+        self.pointSteeringAngle = -(math.pi / 2 - math.atan(self.B / self.D))*180/math.pi
         # radius from the wheels to the middle of the rover for point steering
         self.pointSteeringRadius = math.sqrt(self.D ** 2 + self.B ** 2)
-        
+
         self.zero = 1e-10  # Offers protection against numbers very close to zero
 
         # minimum rhoMin (just in front of wheel)
         self.rhoMin = self.B + self.W / 2
 
         pass
-    
+
     def stop(self):
         """
         Bring the 6 wheels to a stop, sets velocity 0 to all wheels
@@ -103,10 +103,10 @@ class Steering:
             # translate linear velocity to rotational velocity of wheel
             # along with the correct direction
             self.output_command.flv = vBody / self.R * sign_v
-            self.output_command.frv = self.output_command.flv
+            self.output_command.frv = - self.output_command.flv
             self.output_command.mlv = self.output_command.flv
-            self.output_command.mrv = self.output_command.flv
-            self.output_command.blv = self.output_command.flv
+            self.output_command.mrv = - self.output_command.flv
+            self.output_command.blv = - self.output_command.flv
             self.output_command.brv = self.output_command.flv
 
         else:  # moving forward at an angle
@@ -139,8 +139,8 @@ class Steering:
             # multiplying this by the sign of the velocity makes the angular
             # velocity of the rover different than the input, but is of a more
             # natural movement
-            self.output_command.flsa *= sign_w / (2*math.pi) * 360
-            self.output_command.frsa *= sign_w / (2*math.pi) * 360
+            self.output_command.flsa *= -sign_w * 360 / (2*math.pi)
+            self.output_command.frsa *= -sign_w * 360 / (2*math.pi)
             self.output_command.blsa = -self.output_command.flsa
             self.output_command.brsa = -self.output_command.frsa
 
@@ -153,7 +153,7 @@ class Steering:
 
             # the individual velocities of each of the wheels
             self.output_command.flv = vpLin / self.R
-            self.output_command.frv = vsLin / self.R
+            self.output_command.frv = -vsLin / self.R
             # notice the middle wheels have different distance to ICR center of rotation
             #self.output_command.mlv = sign_v * dist_mid_left * wBody / self.R
             #self.output_command.mrv = sign_v * dist_mid_right * wBody / self.R
@@ -161,8 +161,8 @@ class Steering:
             self.output_command.mlv = self.output_command.flv
             self.output_command.mrv = self.output_command.frv
 
-            self.output_command.blv = self.output_command.flv
-            self.output_command.brv = self.output_command.frv
+            self.output_command.blv = -self.output_command.flv
+            self.output_command.brv = -self.output_command.frv
         self.output_command.blv *= -1
         self.output_command.brv *= -1
 
@@ -177,8 +177,8 @@ class Steering:
         # movement may occur to position wheels even if
         # robot is not moving around
         # wheels have specific angle - all of them should form a circle together
-        self.output_command.flsa = self.pointSteeringAngle / (2*math.pi) * 360 # forms circle
-        self.output_command.frsa = -self.output_command.flsa 
+        self.output_command.flsa = self.pointSteeringAngle  # forms circle
+        self.output_command.frsa = -self.output_command.flsa
         self.output_command.blsa = -self.output_command.flsa
         self.output_command.brsa = self.output_command.flsa
 
@@ -196,11 +196,11 @@ class Steering:
             v = wBody * r  # linear velocity of each wheel
 
             self.output_command.flv = v / self.R  # match angular velocity to rotation of wheel
-            self.output_command.frv = -self.output_command.flv  # should all move in circle
+            self.output_command.frv = self.output_command.flv  # should all move in circle
             self.output_command.mlv = wBody * self.B / self.R  # same angular velocity
-            self.output_command.mrv = -self.output_command.mlv
+            self.output_command.mrv = self.output_command.mlv
             self.output_command.blv = self.output_command.flv
-            self.output_command.brv = -self.output_command.blv
+            self.output_command.brv = self.output_command.blv
 
 
     def translationalMotion(self, y, x):
@@ -241,10 +241,10 @@ class Steering:
         elif sign_x < 0 and theta > 0:  # make theta negative
             theta = theta - math.pi
 
-        self.output_command.flsa = theta / (2*math.pi) * 360
-        self.output_command.frsa = theta / (2*math.pi) * 360
-        self.output_command.blsa = theta / (2*math.pi) * 360
-        self.output_command.brsa = theta / (2*math.pi) * 360
+        self.output_command.flsa = theta
+        self.output_command.frsa = theta
+        self.output_command.blsa = theta
+        self.output_command.brsa = theta
         # translate linear velocity to rotational velocity of wheel
         # along with the correct direction
 
