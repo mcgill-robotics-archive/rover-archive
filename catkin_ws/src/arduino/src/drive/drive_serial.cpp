@@ -6,12 +6,12 @@
 // MOSTLY TAKEN FROM https://github.com/todbot/arduino-serial/
 // ACTUALLY USE THIS GUY's STUFF IF IT ENDS UP WORKING
 
-#include <stdio.h>    // Standard input/output definitions 
-#include <unistd.h>   // UNIX standard function definitions 
-#include <fcntl.h>    // File control definitions 
-#include <errno.h>    // Error number definitions 
-#include <termios.h>  // POSIX terminal control definitions 
-#include <string.h>   // String function definitions 
+#include <stdio.h>    // Standard input/output definitions
+#include <unistd.h>   // UNIX standard function definitions
+#include <fcntl.h>    // File control definitions
+#include <errno.h>    // Error number definitions
+#include <termios.h>  // POSIX terminal control definitions
+#include <string.h>   // String function definitions
 #include <sys/ioctl.h>
 #include <stdint.h>
 
@@ -21,14 +21,14 @@
 #include "drive_serial_msgs.h"
 
 // uncomment this to debug reads
-//#define SERIALPORTDEBUG 
+//#define SERIALPORTDEBUG
 
 #define SERIAL_VERSION 1
 
 drive_control::WheelCommand command = drive_control::WheelCommand();
 
 enum SerialState {
-    WAITING_FOR_HANDSHAKE, 
+    WAITING_FOR_HANDSHAKE,
     CLEARING,
     FIRST_MESSAGE,
     RECEIVING
@@ -41,7 +41,7 @@ struct Port {
     DriveSerialArduinoMsg last_received_msg;
 };
 
-Port ports[2];
+Port ports[4];
 
 int num_boards = sizeof(ports)/sizeof(Port);
 
@@ -107,7 +107,7 @@ int serialport_init(const char* serialport, int baud)
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 0;
     //toptions.c_cc[VTIME] = 20;
-    
+
     tcsetattr(fd, TCSANOW, &toptions);
     if( tcsetattr(fd, TCSAFLUSH, &toptions) < 0) {
         perror("init_serialport: Couldn't set term attributes");
@@ -131,7 +131,7 @@ int serialport_write(int fd, const char* str, int length)
 //    int i = 0;
 //    while(i<n) {
 //        printf("%02x\n", str[i++]);
-//    
+//
 //    }
 
     if( n!=length ) {
@@ -145,7 +145,7 @@ int serialport_write(int fd, const char* str, int length)
 int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    while(i < n && timeout>0) { 
+    while(i < n && timeout>0) {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -154,12 +154,12 @@ int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
-    } 
+    }
 
     // Don't do that actually. buf[i] = 0;  // null terminate the string
     return 0;
@@ -170,7 +170,7 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
 {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    do { 
+    do {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -179,10 +179,10 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
     } while( b[0] != until && i < buf_max && timeout>0 );
 
@@ -206,7 +206,7 @@ void close_and_reopen_port(Port * port) {
     do {
         printf("Reopen %s\n", port->address);
         port->fd = serialport_init(port->address, 9600);
-    } while(port->fd == -1);
+    } while(port->fd == -1 && ros::ok());
 
     serialport_flush(port->fd);
 }
@@ -218,13 +218,13 @@ void receive_message(Port * port) {
     if(waht == -2 || waht == -1) {
         close_and_reopen_port(port);
         port->state = WAITING_FOR_HANDSHAKE;
-        return;            
+        return;
     } else if (waht == 0) {
         DriveSerialArduinoMsg msg;
 
         memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
 
-        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n", 
+        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
                 port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
 
         port->last_received_msg = msg;
@@ -288,17 +288,20 @@ int main(int argc, char *argv []) {
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe("/wheel_command", 1000, wheel_command_cb);
 
-    ports[0].address = "/dev/ttyACM1";
+    ports[0].address = "/dev/ttyACM0";
     ports[0].state = WAITING_FOR_HANDSHAKE;
 
-    ports[1].address = "/dev/ttyACM0";
+    ports[1].address = "/dev/ttyACM1";
     ports[1].state = WAITING_FOR_HANDSHAKE;
 
-//    ports[2].address = "/dev/ttyACM5";
-//    ports[2].state = WAITING_FOR_HANDSHAKE;
+    ports[2].address = "/dev/ttyACM2";
+    ports[2].state = WAITING_FOR_HANDSHAKE;
+
+    ports[3].address = "/dev/ttyACM3";
+    ports[3].state = WAITING_FOR_HANDSHAKE;
 
     for(int i = 0; i < num_boards; i++) {
-        ports[i].fd = serialport_init(ports[i].address, 9600);
+        ports[i].fd = serialport_init(ports[i].address, 115200);
         serialport_flush(ports[i].fd);
     }
 
@@ -312,27 +315,27 @@ int main(int argc, char *argv []) {
             printf("\n\n\nBoard %s, State %d\n", port->address, port->state);
 
             if(port->state == WAITING_FOR_HANDSHAKE) {
-                
+
                 char buf[4096] = {-1};
-                int waht = serialport_read_until(port->fd, buf, '0', 4096, 10000); // @TODO, to make this more robust, should be reading a large number of '0' in a row. Larger than max message size; 
+                int waht = serialport_read_until(port->fd, buf, '0', 4096, 10000); // @TODO, to make this more robust, should be reading a large number of '0' in a row. Larger than max message size;
                 printf("%x\n", buf[0]);
                 if(waht == 0 && buf[0] == '0') {
                     serialport_write(port->fd, "0", 1);
-                    port->state = CLEARING;   
-                    //continue;         
+                    port->state = CLEARING;
+                    //continue;
                 } else {
                     close_and_reopen_port(port);
                     //continue;
                 }
 
-                
+
             } else if(port->state == CLEARING) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
                 if(waht == -2 || waht == -1) {
                     close_and_reopen_port(port);
                     port->state = WAITING_FOR_HANDSHAKE;
-                    //continue;            
+                    //continue;
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
                     //continue;
@@ -345,20 +348,20 @@ int main(int argc, char *argv []) {
                 if(waht == -2 || waht == -1) {
                     close_and_reopen_port(port);
                     port->state = WAITING_FOR_HANDSHAKE;
-                    //continue;            
+                    //continue;
                 } else if (waht == 0) {
                     DriveSerialArduinoMsg msg;
 
                     memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
-                    
-                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n", 
+
+                    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
                             port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
                     port->last_received_msg = msg;
 
                     port->state = RECEIVING;
                     //continue;
                 }
-                
+
             } else if(port->state == RECEIVING) {
                 send_message(port);
                 receive_message(port);

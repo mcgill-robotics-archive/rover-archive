@@ -6,19 +6,19 @@ import rospy
 __author__ = 'David Lavoie-Boutin'
 
 ## Class WheelOutput is used as a structure to agglomerate the output values for the wheel velocities and angles.
-# 
+#
 # The member naming follows the following standard:
-# 
+#
 # front   : f
 # middle  : m
 # back    : b
-# 
+#
 # left    : l
 # right   : r
-# 
+#
 # velocity        : v
 # steering angle  : sa
-# 
+#
 # Combine one of each group and form the front-left-steering-angle: flsa
 #
 class WheelOutputData:
@@ -48,7 +48,7 @@ class WheelOutputData:
         self.flsa = 0
         self.frsa = 0
         self.blsa = 0
-        self.brsa = 0     
+        self.brsa = 0
 
     ## This member function creates a proper output ros message using the values contained in this class.
     #
@@ -61,12 +61,12 @@ class WheelOutputData:
         command.frsa = self.frsa
         command.blsa = self.blsa
         command.brsa = self.brsa
-        command.flv = self.flv * 7
-        command.frv = self.frv * 7
-        command.mlv = self.mlv * 7
-        command.mrv = self.mrv * 7
-        command.blv = self.blv * 7
-        command.brv = self.brv * 7
+        command.flv = self.flv * 11
+        command.frv = self.frv * 11
+        command.mlv = self.mlv * 11
+        command.mrv = self.mrv * 11
+        command.blv = self.blv * 11
+        command.brv = self.brv * 11
 
         return command
 
