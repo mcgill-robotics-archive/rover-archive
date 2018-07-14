@@ -6,12 +6,12 @@
 // MOSTLY TAKEN FROM https://github.com/todbot/arduino-serial/
 // ACTUALLY USE THIS GUY's STUFF IF IT ENDS UP WORKING
 
-#include <stdio.h>    // Standard input/output definitions 
-#include <unistd.h>   // UNIX standard function definitions 
-#include <fcntl.h>    // File control definitions 
-#include <errno.h>    // Error number definitions 
-#include <termios.h>  // POSIX terminal control definitions 
-#include <string.h>   // String function definitions 
+#include <stdio.h>    // Standard input/output definitions
+#include <unistd.h>   // UNIX standard function definitions
+#include <fcntl.h>    // File control definitions
+#include <errno.h>    // Error number definitions
+#include <termios.h>  // POSIX terminal control definitions
+#include <string.h>   // String function definitions
 #include <sys/ioctl.h>
 #include <stdint.h>
 #include <sys/time.h>
@@ -23,7 +23,7 @@
 #include "arduino_serial_msgs.h"
 
 // uncomment this to debug reads
-//#define SERIALPORTDEBUG 
+//#define SERIALPORTDEBUG
 
 #define SERIAL_VERSION 1
 //Drive command
@@ -44,7 +44,7 @@ float command_angle_pitch = 0;
 float command_angle_tilt  = 0;
 
 enum SerialState {
-    WAITING_FOR_HANDSHAKE, 
+    WAITING_FOR_HANDSHAKE,
     CLEARING,
     FIRST_MESSAGE,
     RECEIVING,
@@ -126,7 +126,7 @@ int serialport_init(const char* serialport, int baud)
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 0;
     //toptions.c_cc[VTIME] = 20;
-    
+
     tcsetattr(fd, TCSANOW, &toptions);
     if( tcsetattr(fd, TCSAFLUSH, &toptions) < 0) {
         perror("init_serialport: Couldn't set term attributes");
@@ -150,7 +150,7 @@ int serialport_write(int fd, const char* str, int length)
 //    int i = 0;
 //    while(i<n) {
 //        printf("%02x\n", str[i++]);
-//    
+//
 //    }
 
     if( n!=length ) {
@@ -164,7 +164,7 @@ int serialport_write(int fd, const char* str, int length)
 int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    while(i < n && timeout>0) { 
+    while(i < n && timeout>0) {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -173,12 +173,12 @@ int serialport_read_n_bytes(int fd, char * buf, int n,  int timeout) {
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
-    } 
+    }
 
     // Don't do that actually. buf[i] = 0;  // null terminate the string
     return 0;
@@ -189,7 +189,7 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
 {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    do { 
+    do {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -198,10 +198,10 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
             if( timeout==0 ) return -2;
             continue;
         }
-#ifdef SERIALPORTDEBUG  
+#ifdef SERIALPORTDEBUG
         printf("serialport_read_until: i=%d, n=%d b='%02x'\n",i,n,b[0]); // debug
 #endif
-        buf[i] = b[0]; 
+        buf[i] = b[0];
         i++;
     } while( b[0] != until && i < buf_max && timeout>0 );
 
@@ -230,13 +230,13 @@ void drive_receive_message(Port * port) {
         port->timeout = 10000;
         serialport_close(port->fd);
         port->state = TIMEDOUT;
-        return;            
+        return;
     } else if (waht == 0) {
         DriveSerialArduinoMsg msg;
 
         memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
 
-        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n", 
+        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
                 port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
 
         port->board = msg.pos;
@@ -475,7 +475,7 @@ int main(int argc, char *argv []) {
             printf("\n\n\nBoard %s, State %d\n", port->address, port->state);
 
             if(port->state == WAITING_FOR_HANDSHAKE) {
-                
+
                 char buf[4096] = {-1};
                 int waht = serialport_read_n_bytes(port->fd, buf, 512, 1000);
 
@@ -483,14 +483,14 @@ int main(int argc, char *argv []) {
 
                 for(int byte_count = 0; byte_count < 512; byte_count++) {
                     if(buf[byte_count] != '0') {
-                        ready = false;                        
-                    }                
+                        ready = false;
+                    }
                 }
                 printf("%x\n", buf[0]);
                 if(waht == 0 && ready) {
                     serialport_write(port->fd, "0", 1);
-                    port->state = CLEARING;   
-                    //continue;         
+                    port->state = CLEARING;
+                    //continue;
                 } else {
                     port->timeout = 10000;
                     serialport_close(port->fd);
@@ -498,7 +498,7 @@ int main(int argc, char *argv []) {
                     //continue;
                 }
 
-                
+
             } else if(port->state == CLEARING) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
@@ -506,7 +506,7 @@ int main(int argc, char *argv []) {
                     port->timeout = 10000;
                     serialport_close(port->fd);
                     port->state = TIMEDOUT;
-                    //continue;            
+                    //continue;
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
                     //continue;
@@ -569,11 +569,12 @@ int main(int argc, char *argv []) {
             		    		port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.share_state, msg.battery1_voltage, msg.battery2_voltage, msg.system_voltage, msg.fuse);
             		    port->board = msg.pos;
             		    port->state = RECEIVING;
+                }
             	}
             	else if(port->board == SCIENCE){
 
             	}
-                
+
             } else if(port->state == RECEIVING) {
             	if(port->board == FRONT_LEFT || port->board == FRONT_RIGHT || port->board == BACK_LEFT || port->board == BACK_RIGHT){
             		drive_send_message(port);
@@ -611,7 +612,7 @@ int main(int argc, char *argv []) {
                         port->previous_time.tv_usec = 0;
                         port->state = WAITING_FOR_HANDSHAKE;
                     }
-                }       
+                }
             }
         }
     }

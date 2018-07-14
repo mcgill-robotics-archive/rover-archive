@@ -10,7 +10,7 @@ enum __attribute__((__packed__)) BoardPosition {
 };
 
 struct  __attribute__((packed, aligned(1))) DriveSerialArduinoMsg { // Rename to feedback
-    DrivePosition pos;
+    BoardPosition pos;
     float steering_angle;
     short distance; // I WANT SPEED 1&2 FEEDBACK HERE
     char fault; // boolean
@@ -18,7 +18,7 @@ struct  __attribute__((packed, aligned(1))) DriveSerialArduinoMsg { // Rename to
 };
 
 struct __attribute__((packed, aligned(1))) DriveSerialComputerMsg { // Rename to command
-    DrivePosition pos;
+    BoardPosition pos;
     float steering_angle;
     short speed_motor1;
     short speed_motor2;
@@ -26,7 +26,7 @@ struct __attribute__((packed, aligned(1))) DriveSerialComputerMsg { // Rename to
 };
 
 struct  __attribute__((packed, aligned(1))) ArmSerialArduinoMsg {  //message going to the computer
-    ArmPosition pos;
+    BoardPosition pos;
     float Angle_A;
     float Angle_B;
     float Angle_C;
@@ -40,7 +40,7 @@ struct  __attribute__((packed, aligned(1))) ArmSerialArduinoMsg {  //message goi
 };
 
 struct __attribute__((packed, aligned(1))) ArmSerialComputerMsg {   //message going to the arduino
-    ArmPosition pos;
+    BoardPosition pos;
     float angle_motor_A;
     float angle_motor_B;
     float angle_motor_C;
@@ -49,6 +49,7 @@ struct __attribute__((packed, aligned(1))) ArmSerialComputerMsg {   //message go
 };
 
 struct  __attribute__((packed, aligned(1))) PowerSerialArduinoMsg {  //message going to the computer
+    BoardPosition pos;
     char fuse;        //each bit represents a fuse
     char share_state;
     float battery1_voltage;
@@ -57,6 +58,7 @@ struct  __attribute__((packed, aligned(1))) PowerSerialArduinoMsg {  //message g
 };
 
 struct __attribute__((packed, aligned(1))) PowerSerialComputerMsg {   //message going to the arduino
+    BoardPosition pos;
     char power_state;
     short angle_pitch;
     short angle_tilt;

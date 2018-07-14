@@ -35,7 +35,7 @@ add_executable(drive_serial src/drive/drive_serial.cpp)
 target_link_libraries(drive_serial ${catkin_LIBRARIES})
 add_executable(arm_serial src/arm/arm_serial.cpp)
 target_link_libraries(arm_serial ${catkin_LIBRARIES})
-add_executable(arm_serial src/serial/arduino_serial.cpp)
+add_executable(arduino_serial src/serial/arduino_serial.cpp)
 target_link_libraries(arduino_serial ${catkin_LIBRARIES})
 
 install(TARGETS
