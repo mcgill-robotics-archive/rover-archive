@@ -1,0 +1,3 @@
+int8 power_state
+int16 angle_pitch
+int16 angle_tilt

@@ -33,9 +33,12 @@ include_directories(
 
 add_executable(drive_serial src/drive/drive_serial.cpp)
 target_link_libraries(drive_serial ${catkin_LIBRARIES})
+add_executable(arm_serial src/arm/arm_serial.cpp)
+target_link_libraries(arm_serial ${catkin_LIBRARIES})
 
 install(TARGETS
   drive_serial
+  arm_serial
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
