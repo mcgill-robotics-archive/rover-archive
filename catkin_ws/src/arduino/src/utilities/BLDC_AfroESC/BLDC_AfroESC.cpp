@@ -1,11 +1,10 @@
 #include "BLDC_AfroESC.h"
 
-BLDC::BLDC(int pin, Side lr, int zero)
+BLDC::BLDC(int pin, Side lr)
 {
     _lr = lr;
-    _zero = zero;
 	_motor.attach(pin);
-	_motor.writeMicroseconds(_zero);
+	_motor.writeMicroseconds(1500);
   delay(2000);
 }
 
@@ -16,7 +15,7 @@ void BLDC::PWM(int us){
 	if(us < -255 || us > 255){
 		us = 255*(abs(us)/us);
 	}
-
-	_motor.writeMicroseconds((int) ((750/255)*us + _zero));
-
+	
+	_motor.writeMicroseconds((int) ((450/255)*us + 1460));
+	
 }

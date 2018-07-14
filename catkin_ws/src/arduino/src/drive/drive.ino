@@ -1,15 +1,13 @@
 // @TODO:
 // Clean up
+// Add timeout and reset if not receiving messages from computer.
 
-#include <Arduino.h>
-#include <string.h>
-
+#include<Arduino.h>
+#include<string.h>
 
 #include "drive_serial_msgs.h"
 
 #include <Servo.h>
-
-#include "PID_v1.h"
 #include "Encoder.h"
 
 #include "BLDC_AfroESC.h"
@@ -42,53 +40,37 @@ short newTheta = 0;
 double dist = 0.0;
 const float Pi = 3.14159;
 
+double steering_angle= 10 ;
 short distance; // I WANT SPEED 1&2 FEEDBACK HERE
 char fault; // boolean
 char fuse; // boolean
 
 //Define roverSide, topics and incremental encoder pinout according to board location on Rover:
-//DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
-//DrivePosition location = FRONT_LEFT; //Manually set according to board location on Rover
-//DrivePosition location = BACK_LEFT; //Manually set according to board location on Rover
-DrivePosition location = BACK_RIGHT; //Manually set according to board location on Rover
+DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
 DriveSerialArduinoMsg outgoing_message;
 DriveSerialComputerMsg incoming_msg = {};
 
-double steering_angle  = 0.0;
-double steering_target = 0.0;
-double steering_PWM    = 0.0;
-
-PID steering_pid = PID(&steering_angle, &steering_PWM, &steering_target, 2.0, 0.5, 0.5, DIRECT);
-
 void setup(){
   incoming_msg.pos = 0;
-  Serial.begin(115200);
+  Serial.begin(9600);
   last_read_time = millis();
 
   if (location == FRONT_RIGHT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == FRONT_LEFT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_RIGHT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_LEFT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(2, 3);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
@@ -96,14 +78,10 @@ void setup(){
   brushedMotor = new BDC(11, 13, 7, 8);
   absEncoder = new AMT_ABS(SS);
 
+  brushlessMotor1 = new BLDC(6, roverSide);
+  brushlessMotor2 = new BLDC(5, roverSide);
+
   pinMode(4, OUTPUT);
-
-  steering_pid.SetMode(AUTOMATIC);
-  steering_pid.SetOutputLimits(-40, 40);
-
-  brushlessMotor1->PWM(0);
-  brushlessMotor2->PWM(0);
-  brushedMotor->PWM(0);
 
 }
 
@@ -123,9 +101,6 @@ int read_n_bytes_from_serial(int n, char * buffer) {
 
 void loop(){
   if(serial_state == CLEARING) {
-    brushlessMotor1->PWM(0);
-    brushlessMotor2->PWM(0);
-    brushedMotor->PWM(0);
     while(Serial.available() > 0) {
       Serial.read();
       last_read_time = millis();
@@ -135,9 +110,6 @@ void loop(){
       serial_state = WAITING_FOR_HANDSHAKE;
     }
   } else if(serial_state == WAITING_FOR_HANDSHAKE) {
-    brushlessMotor1->PWM(0);
-    brushlessMotor2->PWM(0);
-    brushedMotor->PWM(0);
     Serial.write("0", 1); // Fix me!
     Serial.flush(); // Maybe
     if(Serial.available() > 0) {
@@ -160,41 +132,37 @@ void loop(){
       //Side: to be set for testing
       outgoing_message.pos = location;
 
-      if(brushedMotor -> FLT()) { brushedMotor -> RST(); }
-
       //Fault Detection:
       outgoing_message.fault = brushedMotor -> FLT();
 
       //Fuse Detection:
-      outgoing_message.fuse = steering_PWM;//incoming_msg.speed_motor1;//steering_PWM;//digitalRead(4);
+      outgoing_message.fuse = digitalRead(4);
 
       //Steering:
-      
-      int encoder_err = absEncoder -> DEG(&steering_angle);
+      int encoder_err = absEncoder -> DEG(&outgoing_message.steering_angle);
       if(encoder_err == -1) {
         // that means we don't have the encoder, do something about it.
       }
-      outgoing_message.steering_angle = steering_angle;
 
       //Driving:
       //Distance calculation using incremental encoder data:
-      unsigned int currPosition = (int) Enc -> read();
-      newTheta = currPosition * 360.0 / 65536;
-
-      if (newTheta != oldTheta) {
-        if (newTheta - oldTheta > 300) {
-          dist = dist + ((newTheta - 360 - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        else if (newTheta - oldTheta < -300) {
-          dist = dist + ((newTheta + 360 - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        else {
-          dist = dist + ((newTheta - oldTheta) / 360.0) * (0.2286 * Pi);
-        }
-        oldTheta = newTheta;
-
-        outgoing_message.distance = dist;
-      }
+//      unsigned int currPosition = (int) Enc -> read();
+//      newTheta = currPosition * 360.0 / 65536;
+//
+//      if (newTheta != oldTheta) {
+//        if (newTheta - oldTheta > 300) {
+//          dist = dist + ((newTheta - 360 - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        else if (newTheta - oldTheta < -300) {
+//          dist = dist + ((newTheta + 360 - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        else {
+//          dist = dist + ((newTheta - oldTheta) / 360.0) * (0.2286 * Pi);
+//        }
+//        oldTheta = newTheta;
+//
+//        outgoing_message.distance = dist;
+//      }
 
       memcpy(buffer + msg_size - sizeof(DriveSerialArduinoMsg), &outgoing_message, sizeof(DriveSerialArduinoMsg));
       Serial.write(buffer, msg_size);
@@ -206,9 +174,6 @@ void loop(){
     
     if(err == -1) { 
       serial_state = CLEARING; 
-      brushlessMotor1->PWM(0);
-      brushlessMotor2->PWM(0);
-      brushedMotor->PWM(0);
       return; 
     }
 
@@ -217,9 +182,6 @@ void loop(){
 
     if(err == -1) { 
       serial_state = CLEARING; 
-      brushlessMotor1->PWM(0);
-      brushlessMotor2->PWM(0);
-      brushedMotor->PWM(0);
       return; 
     }
 
@@ -229,9 +191,6 @@ void loop(){
 
     if(err == -1) { 
       serial_state = CLEARING; 
-      brushlessMotor1->PWM(0);
-      brushlessMotor2->PWM(0);
-      brushedMotor->PWM(0);
       return; 
     }
 
@@ -239,49 +198,16 @@ void loop(){
     err = read_n_bytes_from_serial(sizeof(DriveSerialComputerMsg), data_buffer);
 
     if(err == -1) { 
-      serial_state = CLEARING;
-      brushlessMotor1->PWM(0);
-      brushlessMotor2->PWM(0);
-      brushedMotor->PWM(0);
+      serial_state = CLEARING; 
       return; 
     }
 
     memcpy(&incoming_msg, data_buffer, sizeof(DriveSerialComputerMsg));
-   
-    brushlessMotor1->PWM(incoming_msg.speed_motor1);
-    brushlessMotor2->PWM(incoming_msg.speed_motor2);
+
     
-    steering_target = incoming_msg.steering_angle;
-    
-    while(steering_target < 0) {
-      steering_target += 360;
-    }
-
-    if(steering_angle >= 180 && steering_target <= 180) {
-      steering_target += 360;
-    }
-
-    if(steering_angle <= 180 && steering_target >= 180) {
-      steering_target -= 360;
-    }
-
-
-
-    //if((int)steering_target%360 > 90 && (int)steering_target%360 > 270) {
-      steering_pid.Compute();
-
-      if(location == BACK_LEFT) {
-        steering_PWM = -steering_PWM;
-      }
-      
-      brushedMotor->PWM(steering_PWM);
-
-      if(location == BACK_LEFT) {
-        steering_PWM = -steering_PWM;
-      }
-    //} else {
-    //  brushedMotor->PWM(0);
-    //}
+    brushlessMotor1 -> PWM(incoming_msg.speed_motor1);
+    brushlessMotor2 -> PWM(incoming_msg.speed_motor2);
+    outgoing_message.distance = incoming_msg.speed_motor1;
     //delay(10);
   }
 }

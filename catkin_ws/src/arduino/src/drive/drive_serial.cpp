@@ -14,7 +14,6 @@
 #include <string.h>   // String function definitions
 #include <sys/ioctl.h>
 #include <stdint.h>
-#include <sys/time.h>
 
 #include "ros/ros.h"
 #include "drive_control/WheelCommand.h"
@@ -32,8 +31,7 @@ enum SerialState {
     WAITING_FOR_HANDSHAKE,
     CLEARING,
     FIRST_MESSAGE,
-    RECEIVING,
-    TIMEDOUT
+    RECEIVING
 };
 
 struct Port {
@@ -41,8 +39,6 @@ struct Port {
     int fd;
     SerialState state = WAITING_FOR_HANDSHAKE;
     DriveSerialArduinoMsg last_received_msg;
-    timeval previous_time;
-    int timeout;
 };
 
 Port ports[4];
@@ -202,7 +198,6 @@ int serialport_flush(int fd)
     return tcflush(fd, TCIOFLUSH);
 }
 
-<<<<<<< HEAD
 void close_and_reopen_port(Port * port) {
     serialport_close(port->fd);
 
@@ -214,11 +209,6 @@ void close_and_reopen_port(Port * port) {
     } while(port->fd == -1 && ros::ok());
 
     serialport_flush(port->fd);
-=======
-int reopen_port(Port * port) {
-    printf("Reopen %s\n", port->address);
-    return serialport_init(port->address, 9600);
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
 }
 
 void receive_message(Port * port) {
@@ -226,16 +216,9 @@ void receive_message(Port * port) {
     int waht = serialport_read_n_bytes(port->fd, buf, sizeof(DriveSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
 
     if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
         close_and_reopen_port(port);
         port->state = WAITING_FOR_HANDSHAKE;
         return;
-=======
-        port->timeout = 10000;
-        serialport_close(port->fd);
-        port->state = TIMEDOUT;
-        return;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
     } else if (waht == 0) {
         DriveSerialArduinoMsg msg;
 
@@ -334,28 +317,14 @@ int main(int argc, char *argv []) {
             if(port->state == WAITING_FOR_HANDSHAKE) {
 
                 char buf[4096] = {-1};
-<<<<<<< HEAD
                 int waht = serialport_read_until(port->fd, buf, '0', 4096, 10000); // @TODO, to make this more robust, should be reading a large number of '0' in a row. Larger than max message size;
-=======
-                int waht = serialport_read_n_bytes(port->fd, buf, 512, 1000);
-
-                bool ready = true;
-
-                for(int byte_count = 0; byte_count < 512; byte_count++) {
-                    if(buf[byte_count] != '0') {
-                        ready = false;                        
-                    }                
-                }
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
                 printf("%x\n", buf[0]);
-                if(waht == 0 && ready) {
+                if(waht == 0 && buf[0] == '0') {
                     serialport_write(port->fd, "0", 1);
                     port->state = CLEARING;
                     //continue;
                 } else {
-                    port->timeout = 10000;
-                    serialport_close(port->fd);
-                    port->state = TIMEDOUT;
+                    close_and_reopen_port(port);
                     //continue;
                 }
 
@@ -364,16 +333,9 @@ int main(int argc, char *argv []) {
                 char buf[4096] = {-1};
                 int waht = serialport_read_until(port->fd, buf, SERIAL_VERSION, 4096, 10000); // clear '0's
                 if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
                     close_and_reopen_port(port);
                     port->state = WAITING_FOR_HANDSHAKE;
                     //continue;
-=======
-                    port->timeout = 10000;
-                    serialport_close(port->fd);
-                    port->state = TIMEDOUT;
-                    //continue;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
                 } else if (waht == 0 && buf[0] == 1) {
                     port->state = FIRST_MESSAGE;
                     //continue;
@@ -384,16 +346,9 @@ int main(int argc, char *argv []) {
                 int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
 
                 if(waht == -2 || waht == -1) {
-<<<<<<< HEAD
                     close_and_reopen_port(port);
                     port->state = WAITING_FOR_HANDSHAKE;
                     //continue;
-=======
-                    port->timeout = 10000;
-                    serialport_close(port->fd);
-                    port->state = TIMEDOUT;
-                    //continue;            
->>>>>>> 883b02fc4ec38fa4355b6dac7e33c2bd44d36e2e
                 } else if (waht == 0) {
                     DriveSerialArduinoMsg msg;
 
@@ -411,27 +366,6 @@ int main(int argc, char *argv []) {
                 send_message(port);
                 receive_message(port);
                 //continue;
-            } else if(port->state == TIMEDOUT) {
-                if(port->timeout > 0) {
-
-                    if(port->previous_time.tv_sec == 0 && port->previous_time.tv_usec == 0) { gettimeofday(&(port->previous_time), NULL); } // Init previous time for the first time.
-
-                    timeval current_time;
-                    gettimeofday(&current_time, NULL);
-                    int elapsed_time = 1000*(current_time.tv_sec - port->previous_time.tv_sec) + (current_time.tv_usec - port->previous_time.tv_usec) / 1000;
-
-                    port->timeout -= elapsed_time;
-
-                    port->previous_time = current_time;
-                } else {
-                    port->fd = reopen_port(port);
-                    if(port->fd != 1) {
-                        serialport_flush(port->fd);
-                        port->previous_time.tv_sec  = 0;
-                        port->previous_time.tv_usec = 0;
-                        port->state = WAITING_FOR_HANDSHAKE;
-                    }
-                }       
             }
         }
     }
