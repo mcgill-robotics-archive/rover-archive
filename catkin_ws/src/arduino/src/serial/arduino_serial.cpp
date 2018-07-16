@@ -514,67 +514,76 @@ int main(int argc, char *argv []) {
 
             } else if(port->state == FIRST_MESSAGE) {
             	char buf[4096] = {-1};
-            	if(port->board == FRONT_LEFT || port->board == FRONT_RIGHT || port->board == BACK_LEFT || port->board == BACK_RIGHT){
-            		int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(DriveSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7
-            		if(waht == -2 || waht == -1) {
-            			port->timeout = 10000;
-            		    serialport_close(port->fd);
-            		    port->state = TIMEDOUT;
-            		    //continue;
-            		} else if (waht == 0) {
-            			DriveSerialArduinoMsg msg;
+            	int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(BoardPosition)-1+7, 1000); // @TODO: Don't use hardcoded 7
+            	if(waht == -2 || waht == -1) {
+            		port->timeout = 10000;
+            	    serialport_close(port->fd);
+            	    port->state = TIMEDOUT;
+            	    //continue;
+            	} else if (waht == 0) {
+                    BoardPosition board_id;
+                    memcpy(&board_id, buf+7, sizeof(BoardPosition));
+                    port->board = board_id;
+                    
+                    if(port->board == FRONT_LEFT || port->board == FRONT_RIGHT || port->board == BACK_LEFT || port->board == BACK_RIGHT){
+                        int waht = serialport_read_n_bytes(port->fd, buf+7+sizeof(BoardPosition), sizeof(DriveSerialArduinoMsg)-1+7-sizeof(BoardPosition), 1000); // @TODO: Don't use hardcoded 7
+                        if(waht == -2 || waht == -1) {
+                            port->timeout = 10000;
+                            serialport_close(port->fd);
+                            port->state = TIMEDOUT;
+                            //continue;
+                        } else if (waht == 0) {
+                            DriveSerialArduinoMsg msg;
 
-            		    memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
+                            memcpy(&msg, buf+7, sizeof(DriveSerialArduinoMsg));
 
-            		    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
-            		            port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
-            		    port->board = msg.pos;
-     		            port->state = RECEIVING;
-            		    //continue;
-            		}
-            	}
-            	else if(port->board == FOREARM || port->board == BACKARM){
-            		int waht = serialport_read_n_bytes(port->fd, buf+1, sizeof(ArmSerialArduinoMsg)-1+7, 1000); // @TODO: Don't use hardcoded 7.
+                            printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle: %f, Distance %04x, Fault: %02x, Fuse: %02x\n",
+                                    port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.steering_angle, msg.distance, msg.fault, msg.fuse);
+                            port->board = msg.pos;
+                            port->state = RECEIVING;
+                            //continue;
+                        }
+                    }
+                    else if(port->board == FOREARM || port->board == BACKARM){
+                        int waht = serialport_read_n_bytes(port->fd, buf+7+sizeof(BoardPosition), sizeof(ArmSerialArduinoMsg)-1+7-sizeof(BoardPosition), 1000); // @TODO: Don't use hardcoded 7.
+                        if(waht == -2 || waht == -1) {
+                            port->timeout = 10000;
+                            serialport_close(port->fd);
+                            port->state = TIMEDOUT;
+                            //continue;
+                        } else if (waht == 0) {
+                            ArmSerialArduinoMsg msg;
 
-            		if(waht == -2 || waht == -1) {
-            			port->timeout = 10000;
-            		    serialport_close(port->fd);
-            		    port->state = TIMEDOUT;
-            		    //continue;
-            		} else if (waht == 0) {
-            			ArmSerialArduinoMsg msg;
+                            memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
 
-            		    memcpy(&msg, buf+7, sizeof(ArmSerialArduinoMsg));
+                            printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
+                                    port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
+                            port->board = msg.pos;
+                            port->state = RECEIVING;
+                        }
+                    }
+                    else if(port->board == POWER){
+                        int waht = serialport_read_n_bytes(port->fd, buf+7+sizeof(BoardPosition), sizeof(PowerSerialArduinoMsg)-1+7-sizeof(BoardPosition), 1000); // @TODO: Don't use hardcoded 7.
+                        if(waht == -2 || waht == -1) {
+                            port->timeout = 10000;
+                            serialport_close(port->fd);
+                            port->state = TIMEDOUT;
 
-            		    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Angle_A: %f, Angle_B: %f, Angle_C: %f, Angle_D: %f, Current_A: %f, Current_B: %f, Current_C: %f, Current_D: %f, Claw position: %f, Fault: %02x\n",
-            		            port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.Angle_A, msg.Angle_B, msg.Angle_C, msg.Angle_D, msg.Current_A, msg.Current_B, msg.Current_C, msg.Current_D, msg.claw_position, msg.fault);
-            		    port->board = msg.pos;
-            		    port->state = RECEIVING;
-            		}
-            	}
-            	else if(port->board == POWER){
-            		int waht = serialport_read_n_bytes(port->fd, buf, sizeof(PowerSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
+                        } else if (waht == 0) {
+                            PowerSerialArduinoMsg msg;
 
-            		if(waht == -2 || waht == -1) {
-            			port->timeout = 10000;
-            		    serialport_close(port->fd);
-            		    port->state = TIMEDOUT;
+                            memcpy(&msg, buf+7, sizeof(PowerSerialArduinoMsg));
 
-            		} else if (waht == 0) {
-            		    PowerSerialArduinoMsg msg;
+                            printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Share_State: %c, Battery 1(V): %f, Battery 2(V): %f, System(V): %f, Fuse: %02x\n",
+                                    port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.share_state, msg.battery1_voltage, msg.battery2_voltage, msg.system_voltage, msg.fuse);
+                            port->board = msg.pos;
+                            port->state = RECEIVING;
+                        }
+                    }
+                    else if(port->board == SCIENCE){
 
-            		    memcpy(&msg, buf+7, sizeof(PowerSerialArduinoMsg));
-
-            		    printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Share_State: %c, Battery 1(V): %f, Battery 2(V): %f, System(V): %f, Fuse: %02x\n",
-            		    		port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.share_state, msg.battery1_voltage, msg.battery2_voltage, msg.system_voltage, msg.fuse);
-            		    port->board = msg.pos;
-            		    port->state = RECEIVING;
+                    }
                 }
-            	}
-            	else if(port->board == SCIENCE){
-
-            	}
-
             } else if(port->state == RECEIVING) {
             	if(port->board == FRONT_LEFT || port->board == FRONT_RIGHT || port->board == BACK_LEFT || port->board == BACK_RIGHT){
             		drive_send_message(port);
