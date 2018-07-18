@@ -1,0 +1,14 @@
+<launch>
+	<node name="camera2" pkg="axis_camera" type="axis.py" ns="camera2">
+		<param name="hostname" value="192.168.3.100" />
+ 		<param name="camera" value="2" />
+	</node>
+	<node name="camera3" pkg="axis_camera" type="axis.py" ns="camera3">
+		<param name="hostname" value="192.168.3.100" />
+ 		<param name="camera" value="3" />
+	</node>
+	<node name="camera4" pkg="axis_camera" type="axis.py" ns="camera4">
+		<param name="hostname" value="192.168.3.100" />
+ 		<param name="camera" value="4" />
+	</node>
+</launch>

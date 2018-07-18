@@ -1,0 +1,7 @@
+// checkout feature/visual_odometry 
+// Enable Networking
+
+roslaunch axis_camera rover_camera.launch
+// to see camera3, do the same with camera2, camera4
+rosrun image_view image_view image:=/camera3/image_raw _image_transport:=compressed
+

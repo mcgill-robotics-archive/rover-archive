@@ -32,7 +32,7 @@ class StreamThread(threading.Thread):
             rospy.sleep(2) # if stream stays intact we shouldn't get to this
 
     def formURL(self):
-        self.url = 'http://%s/mjpg/2/video.mjpg' % self.axis.hostname
+        self.url = 'http://%s/mjpg/video.mjpg' % self.axis.hostname
         self.url += "?fps=0&resolution=%dx%d" % (self.axis.width, 
                                                             self.axis.height)
 
