@@ -6,8 +6,7 @@ enum __attribute__((__packed__)) BoardPosition {
   FOREARM,
   BACKARM,
   POWER,
-  SCIENCE,
-  NONE
+  SCIENCE
 };
 
 struct  __attribute__((packed, aligned(1))) DriveSerialArduinoMsg { // Rename to feedback

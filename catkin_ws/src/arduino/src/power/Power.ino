@@ -1,5 +1,5 @@
 #include "INA3221.h"
-#include "power_serial_msg.h"
+#include "arduino_serial_msgs.h"
 #include <Servo.h>
 
 #define SERIAL_VERSION 1
@@ -13,8 +13,9 @@ SerialFSM serial_state = CLEARING;
 unsigned long last_read_time = 0;
 
 PowerSerialArduinoMsg outgoing_msg;
-PowerSerialComputerMsg incoming_msg;
-const char* serial_id = "POWER";
+PowerSerialComputerMsg incoming_msg = {};
+const char* serial_id = "power";
+BoardPosition location = POWER;
 
 int LTC_E2 = 7; //Control Battery 2 for load sharing
 int LTC_E1 = 8; //Control Battery 1 for load sharing
@@ -29,7 +30,6 @@ int Fuse_12V = A5; //Fuse Detect 12V
 // LIPO_Battery_2 Channel is 2;
 // Load_Sharing Channel is 3;
 INA3221 V_monitor;
-float BusVoltage[3] = {0,0,0};
 
 Servo pitch;
 Servo tilt;
@@ -42,7 +42,7 @@ int read_n_bytes_from_serial(int n, char * buffer) {
       buffer[counter++] = Serial.read();
     }
 
-    if((millis() - read_begin_time) > 1000) return -1;
+    if((millis() - read_begin_time) > 10000) return -1;
   }
   
   return 0;
@@ -72,13 +72,13 @@ void LoadShare(char activity){
 char Share_state(){
   char state;
   if(digitalRead(LTC_E1)==false &&digitalRead(LTC_E2)==false){
-     state = 0;
+     state = '0';
   }
   else if(digitalRead(LTC_E1)==true &&digitalRead(LTC_E2)==false){
-     state = 1;
+     state = '1';
   }
   else if(digitalRead(LTC_E1)==false &&digitalRead(LTC_E2)==true){
-     state = 2;
+     state = '2';
   }
   return state;
 }
@@ -93,6 +93,7 @@ void setup() {
   V_monitor.begin();
   pinMode(LTC_E2, OUTPUT);
   pinMode(LTC_E1, OUTPUT);
+  LoadShare(0);
   pinMode(Fuse_Drive1, INPUT);
   pinMode(Fuse_Drive2, INPUT);
   pinMode(Fuse_Arm, INPUT);
@@ -100,7 +101,7 @@ void setup() {
   pinMode(Fuse_12V, INPUT);
   pitch.attach(5);
   tilt.attach(6);
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -135,6 +136,7 @@ void loop() {
      buffer[0] = SERIAL_VERSION;
      buffer[1] = (char) strlen(serial_id);
      memcpy(buffer+2, serial_id, buffer[1]);
+     outgoing_msg.pos  = location;
      outgoing_msg.fuse = 0x00;
      outgoing_msg.fuse += Fuse_pop(Fuse_Drive1)<<5;              //change these for the char bit mapping
      outgoing_msg.fuse += Fuse_pop(Fuse_Drive2)<<4;
@@ -143,6 +145,9 @@ void loop() {
      outgoing_msg.fuse += Fuse_pop(Fuse_5V)<<1;
      outgoing_msg.fuse += Fuse_pop(Fuse_12V);
      outgoing_msg.share_state = Share_state();
+     outgoing_msg.battery1_voltage = V_monitor.getBusVoltage_V(1);
+     outgoing_msg.battery2_voltage = V_monitor.getBusVoltage_V(2);
+     outgoing_msg.system_voltage   = V_monitor.getBusVoltage_V(3);     
      memcpy(buffer + msg_size - sizeof(PowerSerialArduinoMsg), &outgoing_msg, sizeof(PowerSerialArduinoMsg));
      Serial.write(buffer, msg_size);
    }

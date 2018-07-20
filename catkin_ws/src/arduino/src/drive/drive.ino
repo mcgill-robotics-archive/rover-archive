@@ -3,15 +3,10 @@
 
 #include <Arduino.h>
 #include <string.h>
-
-
-#include "drive_serial_msgs.h"
-
+#include "arduino_serial_msgs.h"
 #include <Servo.h>
-
 #include "PID_v1.h"
 #include "Encoder.h"
-
 #include "BLDC_AfroESC.h"
 #include "BDC_DRV8842.h"
 #include "AMT203-V_ABS.h"
@@ -47,10 +42,10 @@ char fault; // boolean
 char fuse; // boolean
 
 //Define roverSide, topics and incremental encoder pinout according to board location on Rover:
-//DrivePosition location = FRONT_RIGHT; //Manually set according to board location on Rover
-//DrivePosition location = FRONT_LEFT; //Manually set according to board location on Rover
-//DrivePosition location = BACK_LEFT; //Manually set according to board location on Rover
-DrivePosition location = BACK_RIGHT; //Manually set according to board location on Rover
+//BoardPosition location = FRONT_RIGHT; //Manually set according to board location on Rover
+//BoardPosition location = FRONT_LEFT; //Manually set according to board location on Rover
+BoardPosition location = BACK_LEFT; //Manually set according to board location on Rover
+//BoardPosition location = BACK_RIGHT; //Manually set according to board location on Rover
 DriveSerialArduinoMsg outgoing_message;
 DriveSerialComputerMsg incoming_msg = {};
 
@@ -66,34 +61,34 @@ void setup(){
   last_read_time = millis();
 
   if (location == FRONT_RIGHT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
+    brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1500); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == FRONT_LEFT) {
     brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1500); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_RIGHT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
+    brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1500); // Tuned
     roverSide = RIGHT;
     Enc = new Encoder(3, 2);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
   else if (location == BACK_LEFT) {
-    brushlessMotor1 = new BLDC(6, roverSide, 1463); // Tuned
-    brushlessMotor2 = new BLDC(5, roverSide, 1463); // Tuned
+    brushlessMotor1 = new BLDC(6, roverSide, 1500); // Tuned
+    brushlessMotor2 = new BLDC(5, roverSide, 1500); // Tuned
     roverSide = LEFT;
     Enc = new Encoder(2, 3);  /* Rignt wheel: (B, A),  Left wheel: (A, B)*/
   }
 
-  brushedMotor = new BDC(11, 13, 7, 8);
+  brushedMotor = new BDC(11, 13, 7, 8, 1);
   absEncoder = new AMT_ABS(SS);
 
   pinMode(4, OUTPUT);
@@ -265,23 +260,8 @@ void loop(){
       steering_target -= 360;
     }
 
-
-
-    //if((int)steering_target%360 > 90 && (int)steering_target%360 > 270) {
       steering_pid.Compute();
 
-      if(location == BACK_LEFT) {
-        steering_PWM = -steering_PWM;
-      }
-      
       brushedMotor->PWM(steering_PWM);
-
-      if(location == BACK_LEFT) {
-        steering_PWM = -steering_PWM;
-      }
-    //} else {
-    //  brushedMotor->PWM(0);
-    //}
-    //delay(10);
   }
 }
