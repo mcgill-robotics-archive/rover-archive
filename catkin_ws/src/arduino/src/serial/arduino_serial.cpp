@@ -392,6 +392,109 @@ void power_send_message(Port* port) {
     serialport_write(port->fd, (char *) buffer, msg_size);
 }
 
+void science_send_message(Port* port){
+    const char * serial_id = "scifi";
+    int msg_size = 1 + 1 + strlen(serial_id) + sizeof(ScienceSerialComputerMsg); // Constant
+    char buffer[255];
+    buffer[0] = SERIAL_VERSION;
+    buffer[1] = (char) strlen(serial_id);
+    memcpy(buffer + 2, serial_id, buffer[1]);
+    
+    ScienceSerialComputerMsg outgoing_msg = {};
+    
+    BoardPosition position = port->board;
+    
+    // science change
+    // TODO: set up computermsg ros
+    outgoing_msg.pos         = position;
+//    outgoing_msg.power_state = command_power_state;
+//    outgoing_msg.angle_pitch = command_angle_pitch;
+//    outgoing_msg.angle_tilt  = command_angle_tilt;
+    
+    memcpy(buffer + msg_size - sizeof(ScienceSerialComputerMsg), &outgoing_msg, sizeof(ScienceSerialComputerMsg));
+    
+    serialport_write(port->fd, (char *) buffer, msg_size);
+}
+void science_receive_message(Port* port){
+    char buf[4096] = {-1};
+    int waht = serialport_read_n_bytes(port->fd, buf, sizeof(ScienceSerialArduinoMsg)+7, 1000); // @TODO: Don't use hardcoded 7.
+    if(waht == -2 || waht == -1) {
+        port->timeout = 10000;
+        serialport_close(port->fd);
+        port->state = TIMEDOUT;
+        return;
+    } else if (waht == 0) {
+        ScienceSerialArduinoMsg msg;
+        
+        memcpy(&msg, buf+7, sizeof(ScienceSerialArduinoMsg));
+        
+        String type;
+        switch(msg.data_type){
+            case 0x00:
+                // do something
+                break;
+            case 0x01:
+                type = "Wind Speed";
+                break;
+            case 0x02:
+                type = "UV";
+                break;
+            case 0x03:
+                type = "Soil Humidity";
+                break;
+            case 0x04:
+                type = "Soil Temp";
+                break;
+            case 0x05:
+                type = "Air Temp(C)";
+                break;
+            case 0x06:
+                type = "Pressure(Pascal)";
+                break;
+            case 0x07:
+                type = "Altitude(m)";
+                break;
+            case 0x08:
+                type = "Air Temp2(C)"; //
+                break;
+            case 0x09:
+                type = "Air Humidity";
+                break;
+            case 0x0A:
+                type = "CO2";
+                break;
+            case 0x0B:
+                type = "VOC";
+                break;
+            case 0x0C:
+                type = "scale TA";
+                break;
+            case 0x0D:
+                type = "scale TB";
+                break;
+            case 0x0E:
+                type = "scale BA";
+                break;
+            case 0x0F:
+                type = "scale TB";
+                break;
+            default:
+                // do something
+                break;
+        }
+        
+        
+        printf("Port: %s, Version: %d, ID length: %d, ID:%c%c%c%c%c, Position: %d, Fault:%02x, CRG Current:%f, Drill Current:%f, Data Type: %s, Data: %f",
+               port->address, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], msg.pos, msg.fault, msg.currentC, msg.currentD, type ,msg.data);
+//        printf("LimitSwitchCT: %c, LimitSwitchPT: %c, LimitSwitchCB: %c, LimitSwitchPT: %c, DrillFault: %c, DrillFault: %c",(msg.fault%64)/32, (msg.fault%32)/16,(msg.fault%16)/8,(msg.fault%8)/4,(msg.fault%4)/2,msg.fault%2);
+        
+        port->board = msg.pos;
+        
+        port->state = RECEIVING;
+        return;
+    }
+}
+
 void wheel_command_cb(const drive_control::WheelCommand::ConstPtr& msg)
 {
     command = *msg;
@@ -433,6 +536,8 @@ void power_tilt_command_cb(const std_msgs::Float32::ConstPtr& msg)
 {
     command_angle_tilt = msg->data;
 }
+// science change
+// TODO: ros stuff
 
 int main(int argc, char *argv []) {
 
@@ -545,7 +650,8 @@ int main(int argc, char *argv []) {
             		power_receive_message(port);
             	}
             	else if(port->board == SCIENCE){
-
+                    science_send_message(port);
+                    science_receive_message(port);
             	}
                 //continue;
             } else if(port->state == TIMEDOUT) {

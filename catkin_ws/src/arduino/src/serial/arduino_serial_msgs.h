@@ -63,3 +63,20 @@ struct __attribute__((packed, aligned(1))) PowerSerialComputerMsg {   //message 
     short angle_pitch;
     short angle_tilt;
 };
+
+struct  __attribute__((packed, aligned(1))) ScienceSerialArduinoMsg {  //message going to the computer
+    BoardPosition pos;
+    char fault; //fault[5]-fault[2] limits switches, fault[1],[0] motor fault
+    float currentC;
+    float currentD;
+    char data_type;
+    float data;
+};
+
+struct __attribute__((packed, aligned(1))) ScienceSerialComputerMsg {   //message going to the arduino
+    BoardPosition pos;
+    char msid;// 1 for idle + 4 expressions for servo+ 2 expressions for motors
+    char data_type;
+    short ms_pwm;
+    
+};
