@@ -22,7 +22,7 @@ echo
 
 # Ask for sudo privileges if not already availlable.
 sudo echo "Checking for sudo priviledges..." || sudo -K
-sudo echo "Sudo priviledges are availlable!" || exit 1
+sudo echo "Sudo priviledges are availlable!" || exit 
 echo
 
 # Update apt package lists
@@ -44,34 +44,34 @@ echo
 
 # convex_decompositon
 echo "Installing convex_decomposition..."
-sudo apt-get install -qq ros-kinetic-convex-decomposition
+sudo apt-get install -qq ros-melodic-convex-decomposition
 echo
 
 # urg_node
 echo "Installing urg_node..."
-sudo apt-get install -qq ros-kinetic-urg-node
+sudo apt-get install -qq ros-melodic-urg-node
 echo
 
 
 # pid
 echo "Installing pid..."
-sudo apt-get install -qq ros-kinetic-pid
+sudo apt-get install -qq ros-melodic-pid
 echo
 
 # ROS dependency update
 echo "Installing ros dependencies for catkin workspace..."
 rosdep update
 rosdep install -y --from-paths ./catkin_ws --ignore-src \
-    --skip-keys=rover_msgs --skip-keys=ros_lib --rosdistro kinetic
+    --skip-keys=rover_msgs --skip-keys=ros_lib --rosdistro melodic
 echo
 
 # Set up MoveIt!
 echo "Installing MoveIt! from repositories..."
-sudo apt-get install -qq ros-kinetic-moveit
+sudo apt-get install -qq ros-melodic-moveit
 echo
 
 echo "Installing gcc-arm-none-eabi..."
-sudo apt-get install -qq ros-kinetic-rosserial-tivac gcc-arm-none-eabi
+sudo apt-get install -qq ros-melodic-rosserial-tivac gcc-arm-none-eabi
 echo
 
 if [[ ! -d ../tivaware ]]; then
