@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find rover_camera)/launch/pantilt.launch" />
-    <include file="$(find rover_camera)/launch/wideAngle.launch" />
-</launch>

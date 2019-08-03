@@ -1,5 +1,0 @@
-<launch>
-  <!-- Launch navigation action client -->
-  <node pkg="navigation" type="navigation_action_client.py"
-      name="navigation_action_client" output="screen" />
-</launch>

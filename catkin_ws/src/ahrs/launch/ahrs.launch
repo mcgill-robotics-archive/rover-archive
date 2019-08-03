@@ -1,7 +1,0 @@
-<launch>
-    <group ns="ahrs">
-        <node name="ahrs_node" pkg="ahrs" type="ahrs_node" respawn="false" />
-        <node name="tf_broadcaster" pkg="ahrs" type="tf_broadcaster.py" respawn="false">
-        </node>
-    </group>
-</launch>

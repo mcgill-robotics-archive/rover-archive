@@ -1,3 +1,0 @@
-<launch>
-    <node pkg="arm_control" type="firmware_remap.py" name="tiva_topic_remap" output="screen" respawn="true" />
-</launch>

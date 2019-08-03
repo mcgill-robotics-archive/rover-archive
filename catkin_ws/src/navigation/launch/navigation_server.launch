@@ -1,9 +1,0 @@
-<launch>
-  <!-- Launch the navigation action server -->
-  <node pkg="navigation" type="navigation_action_server.py"
-      name="nav_to_waypoint_server" output="screen" />
-
-  <!-- Auto nav drive commands -->
-  <node pkg="navigation" type="navigation_command_node.py" name="nav_node"
-      output="screen" />
-</launch>

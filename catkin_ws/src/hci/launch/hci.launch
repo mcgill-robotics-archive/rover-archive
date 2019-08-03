@@ -1,7 +1,0 @@
-<launch>
-    <arg name="map" default="false"/>
-    <node pkg="hci" type="hci.py" name="$(anon hci)" >
-        <param name="map_enable" value="$(arg map)" />
-    </node>
-
-</launch>

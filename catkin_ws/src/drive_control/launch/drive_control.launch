@@ -1,3 +1,0 @@
-<launch>
-    <node pkg="drive_control" type="DriveControl.py" name="drive_controller" output="screen" />
-</launch>

@@ -1,2 +1,0 @@
-std_msgs/Header header
-rover_common/DriveEncoder drive_encoder
